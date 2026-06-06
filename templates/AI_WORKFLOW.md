@@ -1,0 +1,40 @@
+# {{APP_NAME}} — How this repo is built (DevByAlex workflow)
+
+This project is built with the **DevByAlex** autonomous workflow. `docs/STATUS.md`
+is the live control file; this file is the map.
+
+## Stages
+
+1. **Plan** (human-gated)
+   - `/plan-spec` → `docs/SPEC.md` — interview until the spec is complete.
+   - `/plan-guide` → `docs/IMPLEMENTATION_GUIDE.md` + `docs/features/*` — granular,
+     ordered build plan.
+   - `/plan-wireframes` → `docs/wireframes/` — Figma frames per feature (needs a
+     Figma MCP).
+   - **Alex approves** the spec, guide, and wireframes. The dev stage is blocked
+     until the three gates in `docs/STATUS.md` are checked.
+
+2. **Dev** (autonomous once gates are met)
+   - `/dev-scaffold` — one-time baseline (skeleton, tooling, tests, CI).
+   - `/dev-auth` — authentication first; security & privacy prioritized.
+   - `/feature-loop <id>` — per feature: parallel tests + implementation →
+     feature validation → integration validation → align to guide/wireframes →
+     update STATUS.
+   - `/dev-autopilot` — advances the build one safe step per run; this is what a
+     schedule calls.
+
+3. **Launch readiness**
+   - Staging deploy — **manual** (Alex).
+   - `/launch-acceptance` → `docs/ACCEPTANCE_TESTS.md` — a computer-use-runnable
+     pass over critical flows against staging.
+   - Companions: `/staging-smoke-test`, `/launch-readiness`.
+
+## Rules of the road
+
+- Work happens on branches, not the default branch.
+- Agents never self-approve a gate; approvals are Alex's.
+- `docs/STATUS.md` stays accurate and the test suite stays green at every stop.
+- Tests trace to the spec; never weakened just to make code pass.
+- Security and privacy beat convenience — most of all in auth.
+
+To run unattended, see `docs/SCHEDULING.md` in the DevByAlex repo.
