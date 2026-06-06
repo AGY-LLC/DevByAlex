@@ -31,6 +31,8 @@ _One paragraph. Traceable to a spec core-job._
 
 - _Which wireframe screens; the states each needs (default, empty, loading,
   error, onboarding, upgrade)._
+- _SEO (public pages only): page title/description, heading hierarchy, image
+  alt text, canonical/structured data if applicable._
 
 ## Acceptance criteria (tests are written from THIS — keep it outcome-based)
 
@@ -38,6 +40,9 @@ _One paragraph. Traceable to a spec core-job._
 - [ ] _Failure path: …_
 - [ ] _Edge case: …_
 - [ ] _Security boundary: … (authz, ownership/IDOR, validation, rate limit)_
+- [ ] _Accessibility (UI features — WCAG 2.2 AA): semantic structure + correct
+      name/role, keyboard-operable with visible focus, sufficient contrast,
+      adequate target size, labels tied to inputs and errors._
 
 ## Security & privacy notes
 

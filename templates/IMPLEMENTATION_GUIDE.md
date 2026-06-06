@@ -37,6 +37,16 @@
 - **Env/config:** _Zod-validated env, `.env.example`, secrets handling._
 - **Testing strategy:** _what's unit vs. integration vs. E2E; high-risk areas
   that must be covered (auth, permissions, billing, validation, critical flows)._
+- **Accessibility:** _WCAG 2.2 AA baseline — semantic HTML, labels/roles,
+  keyboard + visible focus, contrast, target size, reduced-motion. Verified by
+  `accessibility-critique` at launch._
+- **SEO (public surfaces):** _semantic HTML, framework metadata (titles/
+  descriptions/OpenGraph), sitemap + robots, JSON-LD, canonical/hreflang.
+  Verified by `seo-audit` at launch (needs `docs/BRAND.md`)._
+- **Legal / consent:** _Terms of Service + Privacy Policy routes; cookie consent
+  banner (web) that gates non-essential cookies/analytics until consent; account
+  deletion / data-export path where GDPR/CCPA applies. Verified by
+  `launch-compliance`._
 - **CI:** _install → lint → typecheck → test → build._
 
 ## Notes / decisions

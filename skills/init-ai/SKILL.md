@@ -77,9 +77,10 @@ integration), this is idempotent — re-copy to update, don't duplicate.
 **External dependency a self-sufficient cloud/CI run still needs:** the
 **BuildsByAlex MCP** (`https://buildsbyalex.com/mcp` + an `Authorization` token).
 The reused skills (`scout`, `fix-errors`, `issue-checker`, `test-suite-developer`,
-`staging-smoke-test`, `launch-readiness`) are now **vendored into `<app>/.claude`
-by the provisioner**, so a committed checkout carries them — but the BBA MCP is
-not in the repo. A local cron sees it via `~/.claude`; a cloud/CI runner does
+`staging-smoke-test`, `launch-readiness`, `prose-check`, `seo-audit`,
+`accessibility-critique`, `marketer-brand-generation`, `marketer-copywriting`) are
+now **vendored into `<app>/.claude` by the provisioner**, so a committed checkout
+carries them — but the BBA MCP is not in the repo. A local cron sees it via `~/.claude`; a cloud/CI runner does
 **not**. Note this in the summary so the user wires the BBA token into the runner
 before scheduling there — `/dev-schedule` does this (see `docs/SCHEDULING.md`).
 
@@ -132,6 +133,24 @@ in the summary (offer to merge, don't overwrite silently):
 Fill placeholders (`{{APP_NAME}}`, `{{DATE}}`, stack) from Step 2. Convert any
 relative date to an absolute one.
 
+**Additive backfill into files that already exist (never rewrite).** A repo
+integrated before a workflow update — or with hand-written `docs/` — will have a
+`SPEC.md`/`STATUS.md` that predates newer sections. Do **not** regenerate the
+file. Instead, check whether these specific additions are present and **append
+only the missing ones**, leaving every existing line and checkbox state exactly
+as found:
+- `docs/SPEC.md` — the **Legal, privacy & compliance** and **SEO &
+  discoverability** sections. Append them as stubs tagged `(needs review)` if
+  absent; if present, leave them.
+- `docs/STATUS.md` — the two hard gates (`Legal & compliance passed`,
+  `Accessibility (WCAG 2.2 AA) passed`), the `Brand foundation (docs/BRAND.md)`
+  plan row, and the four launch rows (legal/compliance, accessibility, SEO,
+  prose). Add any that are missing **unchecked**; never alter the state of a box
+  that's already there.
+Note every backfilled item in the summary so the user can fill the new spec
+stubs. If unsure whether a section is "really" present (e.g. worded differently),
+flag it for the user rather than appending a duplicate.
+
 ### Step 5 — Reconcile STATUS from reality
 This is the part that makes integration work. Walk what you found in Step 2 and
 set each checkbox/row in `docs/STATUS.md` to match the code, not the template
@@ -141,6 +160,9 @@ defaults:
   real features sits in `dev`; an empty one sits in `plan`.
 - **Gates**: leave approval gates (spec/guide/wireframes approved) **unchecked**
   unless an existing doc explicitly records Alex's approval. Never self-approve.
+  The two **hard launch gates** (`Legal & compliance passed`, `Accessibility
+  (WCAG 2.2 AA) passed`) also stay **unchecked** — they need a clean
+  `/launch-compliance` scan plus Alex's sign-off, neither knowable from code.
 - **Plan rows**: check `SPEC.md` / `IMPLEMENTATION_GUIDE.md` / wireframes only
   if those docs exist with real content.
 - **Dev rows**: check **Scaffold** if tooling/skeleton/CI exist. For
@@ -163,6 +185,12 @@ defaults:
   separate. Set each feature's **Status** to `in-progress` (validation pending),
   not `done`, unless validation evidence exists.
 - **Launch rows**: check only if the corresponding artifact exists and passed.
+  The compliance rows (legal/compliance, accessibility, SEO, prose) and the two
+  hard gates stay **unchecked** on integration — `/launch-compliance` hasn't run
+  yet. Frame this as *not-yet-verified*, **not** *broken*: an existing app isn't
+  regressed by mounting the workflow; it simply gains explicit compliance gates it
+  must pass (via `/launch-compliance` → `fix-errors`) before it's marked
+  ship-ready.
 
 For a blank repo this is trivial (almost everything unchecked). For an existing
 repo, this backfills the board so the workflow can pick up mid-stream — and the
@@ -185,7 +213,8 @@ anything that needs a human. The routing rules:
 |------------|-------------|
 | blank, no spec | `/plan-spec` — run the interview |
 | existing code, no spec | backfill: `/plan-spec reverse` (infer spec from code), then `/plan-guide`, then re-reconcile |
-| has spec, no guide | `/plan-guide` — expand the approved spec |
+| has spec, **public-facing, no `docs/BRAND.md`** | `/marketer-brand-generation` — brand foundation (seeds SEO + voice), then `/plan-guide` |
+| has spec (+ brand if public-facing), no guide | `/plan-guide` — expand the approved spec |
 | has guide, no wireframes, **no UI yet** | `/plan-wireframes` — generate (needs Figma MCP) |
 | has guide, no wireframes, **UI already exists** | `/plan-wireframes capture` — inventory existing screens (no Figma needed) |
 | guide + wireframes done, **gates unchecked** | Tell Alex to review & approve — dev is blocked |
@@ -193,7 +222,7 @@ anything that needs a human. The routing rules:
 | scaffolded, no auth at all | `/dev-auth` (build) |
 | scaffolded, **auth present but unvalidated** | `/dev-auth validate` — audit + harden the existing auth |
 | auth validated, features remain | `/dev-autopilot` (or `/feature-loop <feature>`) — validate/harden existing features first, then build missing ones |
-| all features built + validated | `/launch-acceptance`, then launch-readiness |
+| all features built + validated | `/launch-acceptance`, then `/launch-compliance` (legal/a11y/SEO/prose — drives the hard gates) + `/launch-readiness` |
 
 If integrating a code-first repo with no spec, recommend backfilling the spec
 and guide **from the code** before any further building, so the autopilot has a

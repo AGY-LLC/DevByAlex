@@ -56,8 +56,11 @@ In priority order, choose the first that isn't done:
 2. **Authentication** not done → run `/dev-auth`.
 3. A **feature** not done → pick the highest-priority not-done feature from the
    table (respect build order / dependencies) and run `/feature-loop <id>`.
-4. **All features done** → set next action to `/launch-acceptance` and stop
-   (launch stage begins; staging deploy is manual).
+4. **All features done** → set next action to `/launch-acceptance` (then
+   `/launch-compliance`) and stop. The launch stage begins; staging deploy is
+   manual, and the **Legal & compliance** + **Accessibility (WCAG 2.2 AA)** hard
+   gates must be clean and signed off before ship — treat them like the approval
+   gates: never self-check, never cross.
 
 Honor dependencies: don't start a feature whose prerequisites aren't done.
 

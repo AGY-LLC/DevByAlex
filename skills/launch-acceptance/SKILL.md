@@ -51,8 +51,9 @@ Flag any done feature with no acceptance coverage.
 ### Step 4 — Update STATUS and route
 - Check **Launch → Acceptance tests written**.
 - Recommend the companion skills: `staging-smoke-test` (human-walkable
-  config/integration check) and `launch-readiness` (codebase go/no-go audit)
-  before promoting to production.
+  config/integration check), `launch-readiness` (codebase go/no-go audit), and
+  `launch-compliance` (the legal / accessibility / SEO / prose scan that drives
+  the two hard launch gates) before promoting to production.
 - Add a log line; set `## Next action` accordingly.
 
 ## Rules
@@ -62,7 +63,8 @@ Flag any done feature with no acceptance coverage.
 - Cover critical paths and key failure paths; don't try to cover everything.
 - Never embed real secrets/credentials — use placeholders + a setup note.
 - This verifies staging behavior; it doesn't replace the codebase audit
-  (`launch-readiness`) or the config smoke test (`staging-smoke-test`).
+  (`launch-readiness`), the config smoke test (`staging-smoke-test`), or the
+  compliance scan (`launch-compliance`).
 
 ## Output
 

@@ -18,10 +18,12 @@
 # repo is wanted and the repo will always be present at this path.
 #
 # It ALSO vendors the workflow's reused skills (test-suite-developer, scout,
-# issue-checker, fix-errors, staging-smoke-test, launch-readiness) from the
-# operator's user scope (~/.claude/skills) into the app, so a cloud/CI checkout
-# carries them too — they are not otherwise in this repo. Pass --no-reused to
-# skip; set DEVBYALEX_REUSED_SKILLS_DIR to source them from elsewhere.
+# issue-checker, fix-errors, staging-smoke-test, launch-readiness, prose-check,
+# seo-audit, accessibility-critique, marketer-brand-generation,
+# marketer-copywriting) from the operator's user scope (~/.claude/skills) into the
+# app, so a cloud/CI checkout carries them too — they are not otherwise in this
+# repo. Pass --no-reused to skip; set DEVBYALEX_REUSED_SKILLS_DIR to source them
+# from elsewhere.
 #
 # Usage:
 #   ./install.sh <app-path>             # copy skills + agents + templates (+ reused skills) into <app>/.claude
@@ -106,7 +108,7 @@ done
 # app's project scope too so any runner carries the full toolset. Override the
 # source with DEVBYALEX_REUSED_SKILLS_DIR; pass --no-reused to skip.
 REUSED_SRC="${DEVBYALEX_REUSED_SKILLS_DIR:-$HOME/.claude/skills}"
-REUSED_SKILLS="test-suite-developer scout issue-checker fix-errors staging-smoke-test launch-readiness"
+REUSED_SKILLS="test-suite-developer scout issue-checker fix-errors staging-smoke-test launch-readiness prose-check seo-audit accessibility-critique marketer-brand-generation marketer-copywriting"
 if [ "$MODE" = "uninstall" ]; then
   for name in $REUSED_SKILLS; do place_one "$REUSED_SRC/$name" "$SKILLS_DST"; done
 elif [ "$REUSED" = "yes" ]; then

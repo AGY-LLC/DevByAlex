@@ -15,10 +15,13 @@
 - [ ] Implementation guide approved
 - [ ] Wireframes approved   ← the **dev stage is blocked** until these three are checked
 - [ ] Staging deployed (manual)
+- [ ] Legal & compliance passed   ← **hard gate**: not ship-ready until the `/launch-compliance` scan is clean
+- [ ] Accessibility (WCAG 2.2 AA) passed   ← **hard gate**: not ship-ready until the a11y audit is clean
 
 ## Plan
 
 - [ ] `docs/SPEC.md` written
+- [ ] Brand foundation (`docs/BRAND.md`) — if public-facing (`/marketer-brand-generation`)
 - [ ] `docs/IMPLEMENTATION_GUIDE.md` written
 - [ ] Wireframes created (`docs/wireframes/`)
 
@@ -41,6 +44,10 @@ Status: `todo` → `in-progress` → `blocked` → `done`.
 - [ ] Acceptance tests written (`docs/ACCEPTANCE_TESTS.md`)
 - [ ] Staging smoke test passed
 - [ ] Launch-readiness audit passed
+- [ ] Legal/compliance scan passed — ToS, privacy policy, cookie consent (`/launch-compliance`)
+- [ ] Accessibility audit passed (WCAG 2.2 AA)
+- [ ] SEO audit passed
+- [ ] Prose pass done
 
 ## Next action
 

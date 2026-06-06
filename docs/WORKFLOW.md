@@ -12,7 +12,8 @@ is the live control file every skill reads and writes.
                          ┌──────────────────────────── PLAN (human-gated) ───────────────────────────┐
   /init-ai  ──────────►  │  /plan-spec ──► /plan-guide ──► /plan-wireframes                            │
   (bootstrap STATUS)     │   SPEC.md        GUIDE.md +      Figma frames +                             │
-                         │                  feature cards   wireframes/README                          │
+                         │   (+legal+SEO)   feature cards   wireframes/README · copy prose-checked     │
+                         │   └► /marketer-brand-generation → BRAND.md (if public-facing, before guide)  │
                          └───────────────────────────────┬───────────────────────────────────────────┘
                                       Alex approves spec + guide + wireframes  (3 gates)
                                                           │
@@ -27,8 +28,9 @@ is the live control file every skill reads and writes.
                                           all features done
                                                           │
                          ┌──────────────────────────── LAUNCH READINESS ────────────────────────────┐
-                         │  (manual staging deploy)  ──►  /launch-acceptance  ──►  /staging-smoke-test │
-                         │                                 ACCEPTANCE_TESTS.md      + /launch-readiness │
+                         │  (manual staging deploy) ─► /launch-acceptance ─► /launch-compliance ─►     │
+                         │   ACCEPTANCE_TESTS.md   legal·a11y·SEO·prose   + /staging-smoke-test        │
+                         │   + /launch-readiness   ⮡ Legal & Accessibility = HARD gates (block ship)   │
                          └──────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -48,6 +50,7 @@ is the live control file every skill reads and writes.
 | `dev-autopilot` | dev | Advances the build one safe step per run (what a schedule calls). |
 | `dev-schedule` | dev/ops | Sets up the unattended schedule that calls `dev-autopilot` off an explicitly named working branch; wires the cloud runner's BBA token as a secret. |
 | `launch-acceptance` | launch | Writes the computer-use-runnable staging acceptance test. |
+| `launch-compliance` | launch | Legal (ToS / privacy policy / cookie consent), accessibility (WCAG 2.2 AA), SEO, and prose scans; drives the two hard launch gates + a fix queue. Reuses `launch-readiness`, `accessibility-critique`, `seo-audit`, `prose-check`. |
 
 ### Agents (the specialists the feature loop deploys)
 
@@ -70,7 +73,14 @@ and so any runner has them, `install.sh` **vendors these into each app's
 - `issue-checker` — confirms a finding is real before it's fixed.
 - `fix-errors` — drives a findings queue to zero during the validation loops.
 - `staging-smoke-test` — human-walkable config/integration check at launch.
-- `launch-readiness` — codebase go/no-go audit at launch.
+- `launch-readiness` — codebase go/no-go audit at launch (incl. legal/policy).
+- `prose-check` — strips AI tells from copy (plan wireframes + launch prose pass).
+- `seo-audit` — code-level SEO audit at launch (needs `docs/BRAND.md`).
+- `accessibility-critique` — WCAG 2.2 AA audit at launch → `A11Y-xxx` fix queue.
+- `marketer-brand-generation` — writes `docs/BRAND.md` in the plan stage (seeds
+  SEO + voice; required by `seo-audit`).
+- `marketer-copywriting` — on-brand copy when wireframe/launch prose needs more
+  than a cleanup pass.
 - `uiux-init` / `uiux-audit` — optional design-doc + UI alignment alongside
   wireframes.
 
@@ -114,7 +124,8 @@ app "done."
 
 ## Invariants the whole system upholds
 
-- **Gates are human.** Agents never self-approve spec/guide/wireframes/deploy.
+- **Gates are human.** Agents never self-approve spec/guide/wireframes/deploy, or
+  the legal-compliance / accessibility ship gates.
 - **Tests trace to the spec.** Test-author and implementer run in parallel and
   blind, so tests verify behavior, not whatever the code happens to do.
 - **Validators judge, they don't fix.** Separation keeps the gates honest; the
@@ -127,5 +138,9 @@ app "done."
   current branch; a cron names the branch explicitly. Use a dedicated iteration
   branch (e.g. `staging`/`autopilot`), not a protected default.
 - **Security & privacy beat convenience**, most of all in auth.
+- **Legal & accessibility are hard launch gates.** Terms of Service, a privacy
+  policy accurate to real data flows, a web cookie-consent banner, and WCAG 2.2 AA
+  conformance are designed for in the plan and verified by `/launch-compliance`
+  before ship — no launch with either gate open.
 
 See `docs/SCHEDULING.md` for running the dev stage unattended.

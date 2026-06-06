@@ -87,6 +87,10 @@ in so later stages can reference them.
   actually implements today (note missing empty/loading/error states as gaps —
   they become candidate work in the feature board, not invented designs).
 
+Include the **legal/consent surfaces** the spec's compliance section requires —
+Terms of Service page, Privacy Policy page, and the **cookie consent banner**
+(web) — as screens in their own right so the flow accounts for them.
+
 Group screens by feature and by the end-to-end flow a user walks.
 
 ### Step 3 — Produce the wireframe artifact
@@ -99,6 +103,16 @@ Group screens by feature and by the end-to-end flow a user walks.
   in — plus the navigation flow between screens. This documented inventory **is**
   the wireframe artifact for an existing app; flag it as captured-from-code so a
   later reader knows it reflects the current UI, not an approved redesign.
+
+**Prose-check the copy (both modes).** Run the `prose-check` skill over the copy
+you authored (GENERATE) or captured (CAPTURE) — CTAs, empty states, labels,
+headings, error/validation messages — and strip AI tells before this artifact
+becomes what features are built and validated against.
+
+**Note accessibility structure per screen (both modes).** Record heading order,
+where labels/landmarks/focus belong, and the primary keyboard path — so the build
+inherits a11y intent, not just layout (it's verified later by
+`accessibility-critique` against the WCAG 2.2 AA hard gate).
 
 ### Step 4 — Index in docs/wireframes/README.md
 Write `docs/wireframes/README.md` from `../../templates/wireframes-README.md`:

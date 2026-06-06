@@ -30,6 +30,25 @@
   multi-tenant? Privacy/compliance requirements. (Security is top priority in
   the build.)_
 
+## Legal, privacy & compliance (the "don't get sued" section)
+
+> Decided here, built in the guide, verified at launch by `/launch-compliance`.
+> This captures the requirements; it is not legal advice.
+
+- **Data collected & PII:** _What personal data is collected/stored/shared, and
+  with which third parties (analytics, payments, email, AI providers)?_
+- **Terms of Service:** _Required? (yes for accounts/payments/UGC.) Who owns it?_
+- **Privacy Policy:** _Required? Must stay accurate to the data flows above._
+- **Cookie consent (web):** _Needed? Required when non-essential cookies /
+  analytics / trackers run, esp. for EU/UK visitors — banner must gate them
+  until consent._
+- **Regulatory regimes in scope:** _GDPR / UK-GDPR, CCPA/CPRA, COPPA or other
+  age-gating, sector rules (HIPAA, PCI). Mark "none — internal tool" if truly N/A._
+- **User-rights obligations:** _Account deletion, data export/access — required
+  where GDPR/CCPA applies._
+- **Accessibility target:** _Default **WCAG 2.2 AA** (ADA / Section 508 / EAA
+  exposure). Note any AAA goals or platform-native a11y requirements._
+
 ## Monetization
 
 - _Free / paid / subscription / one-time? Plans, gating._
@@ -49,6 +68,20 @@
 - **Brand assets:** _logo, colors, type, existing URLs._
 - **References loved / hated:** _…_
 - **Anti-patterns to avoid:** _…_
+
+## SEO & discoverability
+
+> Drives the SEO structure baked into the guide and verified by `/seo-audit` at
+> launch. Brand (`docs/BRAND.md`, from `/marketer-brand-generation`) seeds page
+> titles, descriptions, locale targeting, and schema — generate it if this app
+> is public-facing.
+
+- **Public / marketing surfaces:** _Landing, marketing pages, blog, public
+  content — or is this a private/internal app where SEO is N/A?_
+- **Target audience & key terms:** _Who's searching, and for what?_
+- **Locales / i18n:** _Languages/regions to target (drives hreflang)._
+- **Brand foundation:** _`docs/BRAND.md` exists? If not and the app is
+  public-facing, run `/marketer-brand-generation` before the guide._
 
 ## Integrations & constraints
 

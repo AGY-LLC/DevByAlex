@@ -58,6 +58,17 @@ answers. Work backwards from the user. Cover at minimum:
    `plan-wireframes` depends on them.
 10. **Integrations & constraints** — third parties, compliance, deadlines,
     non-negotiables.
+11. **Legal, privacy & compliance** (the "don't get sued" set) — what personal
+    data/PII is collected and shared with whom; does it need **Terms of Service**
+    and a **Privacy Policy**; does the web app need a **cookie consent banner**
+    (yes when non-essential cookies/analytics run, esp. EU/UK); which **regimes**
+    apply (GDPR/UK-GDPR, CCPA/CPRA, COPPA/age, sector rules); account
+    deletion/data-export obligations; and the **accessibility target** (default
+    **WCAG 2.2 AA**). These become a build feature and the launch hard gates.
+12. **SEO & discoverability** — is the app public-facing (landing/marketing/blog)
+    or private? target audience & key terms; locales/i18n; and whether a brand
+    foundation (`docs/BRAND.md`) exists. If public-facing and none exists, plan to
+    run `/marketer-brand-generation` before the guide.
 
 After each batch, reflect back what you heard and list what's still open. Keep
 going until nothing important is open.
@@ -66,28 +77,43 @@ going until nothing important is open.
 Before writing, state your confidence and list any remaining assumptions. If
 you are not confident, ask more — do not paper over a gap with a guess. Only
 proceed when the open-questions list is empty or every remaining item is
-genuinely deferrable and marked as such.
+genuinely deferrable and marked as such. **The spec is not approvable while the
+legal/privacy posture (ToS, privacy policy, cookie consent, regimes) or the
+accessibility target is undecided** — these drive the build and the launch hard
+gates, so they can't be left blank.
 
 ### Step 4 — Write docs/SPEC.md
 Use `../../templates/SPEC.md` as the structure. Capture problem, users, core
-jobs, out-of-scope, data-model sketch, auth/privacy requirements, monetization,
-platform, the design/UX answers (verbatim enough for wireframing), integrations,
-constraints, and the success definition. Convert relative dates to absolute.
+jobs, out-of-scope, data-model sketch, auth/privacy requirements, the
+**legal/privacy/compliance** section (data/PII, ToS, privacy policy, cookie
+consent, regimes, user-rights, accessibility target), monetization, platform,
+the design/UX answers (verbatim enough for wireframing), the **SEO &
+discoverability** section, integrations, constraints, and the success definition.
+Convert relative dates to absolute.
 
 ### Step 5 — Update STATUS and route
 - Check the **Plan → SPEC.md written** row in `docs/STATUS.md`.
-- Set `## Next action` to `/plan-guide`.
+- Set `## Next action`: if the app is **public-facing and `docs/BRAND.md` does
+  not exist**, route to `/marketer-brand-generation` first (it seeds SEO + voice
+  and is required by the launch `seo-audit`), then `/plan-guide`. Otherwise set
+  it to `/plan-guide`.
 - Add a log line.
 - Tell the user the spec needs **their approval** (a gate) and that the next
-  step is `/plan-guide`.
+  step is the brand step (if public-facing) then `/plan-guide`.
 
 ## reverse mode (backfill from code)
 When invoked on an existing repo with no spec: read the code, routes, schema,
 and README; infer problem/users/core jobs/data model/auth/monetization; write
 `docs/SPEC.md` with every inferred section tagged `(inferred — needs review)`.
-Then ask the user only the questions the code can't answer (intent, audience,
-out-of-scope, success). Don't block the workflow on a perfect backfill, but
-flag the gaps.
+**Also infer the legal/SEO posture from what's already there** — does the code
+have ToS/privacy routes, a cookie-consent banner, analytics/trackers, PII
+collection, public marketing pages, i18n? Record what exists vs. what's missing
+in the **Legal, privacy & compliance** and **SEO & discoverability** sections,
+tagged `(inferred — needs review)`; don't invent requirements the app clearly
+doesn't need (e.g. cookie consent for a private internal tool). Then ask the user
+only the questions the code can't answer (intent, audience, out-of-scope,
+success, which regimes apply). Don't block the workflow on a perfect backfill,
+but flag the gaps.
 
 ## Rules
 
@@ -100,5 +126,6 @@ flag the gaps.
 
 ## Output
 
-`docs/SPEC.md` written/updated, STATUS advanced, next action set to
-`/plan-guide`, and an explicit request for Alex's approval.
+`docs/SPEC.md` written/updated (incl. legal/compliance + SEO posture), STATUS
+advanced, next action set to `/marketer-brand-generation` (public-facing, no
+brand yet) or `/plan-guide`, and an explicit request for Alex's approval.

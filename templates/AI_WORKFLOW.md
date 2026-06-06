@@ -6,11 +6,14 @@ is the live control file; this file is the map.
 ## Stages
 
 1. **Plan** (human-gated)
-   - `/plan-spec` → `docs/SPEC.md` — interview until the spec is complete.
+   - `/plan-spec` → `docs/SPEC.md` — interview until the spec is complete
+     (incl. legal/privacy/compliance + SEO posture).
+   - `/marketer-brand-generation` → `docs/BRAND.md` — brand foundation, **if the
+     app is public-facing** (seeds SEO titles/locale + prose voice).
    - `/plan-guide` → `docs/IMPLEMENTATION_GUIDE.md` + `docs/features/*` — granular,
-     ordered build plan.
+     ordered build plan (incl. a compliance/legal feature + a11y/SEO cross-cutting).
    - `/plan-wireframes` → `docs/wireframes/` — Figma frames per feature (needs a
-     Figma MCP).
+     Figma MCP); copy is `prose-check`ed.
    - **Alex approves** the spec, guide, and wireframes. The dev stage is blocked
      until the three gates in `docs/STATUS.md` are checked.
 
@@ -27,6 +30,10 @@ is the live control file; this file is the map.
    - Staging deploy — **manual** (Alex).
    - `/launch-acceptance` → `docs/ACCEPTANCE_TESTS.md` — a computer-use-runnable
      pass over critical flows against staging.
+   - `/launch-compliance` — legal scan (ToS, privacy policy, cookie consent),
+     `accessibility-critique` (WCAG 2.2 AA), `seo-audit`, and `prose-check`;
+     reconciles a fix queue and the two **hard gates** (Legal & compliance,
+     Accessibility) that block ship-ready in `docs/STATUS.md`.
    - Companions: `/staging-smoke-test`, `/launch-readiness`.
 
 ## Rules of the road

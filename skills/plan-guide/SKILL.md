@@ -39,6 +39,14 @@ single `feature-loop` pass can build, test, and validate. Authentication is its
 own first-class item (built by `dev-auth`, not the generic loop). Keep features
 small enough to validate but whole enough to be meaningful.
 
+When the spec's **Legal, privacy & compliance** section calls for them, add a
+first-class **"Compliance & legal" feature** (one card, one row) covering: a
+**Terms of Service** page, a **Privacy Policy** page that stays accurate to the
+real data flows, a **cookie consent banner on web** that gates non-essential
+cookies/analytics until consent, and an **account deletion / data-export** path
+where GDPR/CCPA applies. This feature is what `/launch-compliance` verifies
+against the legal hard gate.
+
 ### Step 3 — Detail each feature
 For every feature, write a feature card from `../../templates/feature-card.md`
 at `docs/features/<NN>-<slug>.md` containing:
@@ -53,7 +61,11 @@ at `docs/features/<NN>-<slug>.md` containing:
   onboarding/upgrade states.
 - **Acceptance criteria** — the concrete checklist the `feature-validator` and
   the acceptance test will hold the feature to. **This is what the test-author
-  writes tests from** — make it outcome-based, not implementation-based.
+  writes tests from** — make it outcome-based, not implementation-based. For any
+  feature with UI, **include accessibility criteria** (WCAG 2.2 AA: semantic
+  structure + name/role, keyboard + visible focus, contrast, target size, labeled
+  inputs/errors), and for public pages an **SEO** line (title/description,
+  headings, alt text).
 - **Security & privacy notes** — authz rules, PII handling, validation.
 - **Dependencies** — which other features/scaffold/auth must exist first.
 
@@ -66,9 +78,12 @@ table ordering.
 ### Step 5 — Write docs/IMPLEMENTATION_GUIDE.md
 Use `../../templates/IMPLEMENTATION_GUIDE.md`. It links to each feature card,
 states the build order with rationale, lists cross-cutting concerns (auth model,
-error handling, logging, env/config, testing strategy, CI), and the stack
-decisions (default to Alex's: TypeScript strict, Zod at boundaries, thin route
-handlers + services, Prisma with reviewed migrations, Jest + Playwright).
+error handling, logging, env/config, testing strategy, **accessibility** (WCAG
+2.2 AA baseline), **SEO** (semantic HTML, framework metadata, sitemap/robots,
+JSON-LD), **legal/consent** (ToS + privacy routes, cookie-consent + analytics
+gating), CI), and the stack decisions (default to Alex's: TypeScript strict, Zod
+at boundaries, thin route handlers + services, Prisma with reviewed migrations,
+Jest + Playwright).
 
 ### Step 6 — Seed STATUS and route
 - Populate the **Features** table in `docs/STATUS.md` with one row per feature
