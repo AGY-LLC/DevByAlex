@@ -11,10 +11,18 @@ metadata:
 # init-ai — Bootstrap or integrate the DevByAlex workflow
 
 The entry point for every project. Given a path to an app folder, this skill
-makes the repo workflow-ready: it writes the `docs/` control files the rest of
+makes the repo workflow-ready: it **provisions the workflow into the app's own
+project scope** (`<app>/.claude/`), writes the `docs/` control files the rest of
 the workflow reads, then sets each stage's status and the next-action queue
 **from what the repo has actually done**, so it works the same on a blank repo
 or a half-built one.
+
+The workflow is installed **per project, never user-scoped** (`~/.claude`). User
+scope would load the workflow into every repo and couldn't keep each app's
+`docs/STATUS.md` context pinned to that app. Project scope means the skills load
+only inside the target app, and a cron / headless run there carries the app's
+own workflow logic and reads the app's own STATUS to know its stage and next
+action.
 
 It does **not** build anything. It sets up state and routes you (or the
 autopilot) to the right next stage. Respect the approval gates — never advance
@@ -31,8 +39,14 @@ into the dev stage on your own.
 
 - **Target path**: the first argument, else the current working directory.
   Confirm it with the user if it's ambiguous.
-- The DevByAlex **templates** live next to this skill at `../../templates/`
-  (relative to this skill dir). Read them from there; copy, don't symlink.
+- The DevByAlex **templates** live at `../../templates/` relative to this skill
+  dir. That path resolves both when this skill runs from the source repo
+  (`<repo>/skills/init-ai` → `<repo>/templates/`) and when it runs from an app it
+  has already provisioned (`<app>/.claude/skills/init-ai` →
+  `<app>/.claude/templates/`). Read them from there; copy, don't symlink.
+- The **provisioner** is `install.sh` at the source repo root. It copies this
+  repo's `skills/`, `agents/`, and `templates/` into `<app>/.claude/`. Resolve
+  the repo root from this skill's real location (`../../` from the skill dir).
 - If the project is one of Alex's tracked projects, pull context from the
   BuildsByAlex MCP (`mcp__buildsbyalex__start_here`, `get_projects`,
   `get_project_context`) to seed the spec and stack assumptions.
@@ -44,6 +58,31 @@ Resolve the path. If it doesn't exist, ask whether to create it. State plainly
 which absolute folder you're about to initialize and that you will not
 overwrite existing files without asking.
 
+### Step 1.5 — Provision the workflow into the app (project scope)
+Install the workflow into the target's own `.claude/` so it loads only in that
+app and a cron there is self-sufficient. Run the source repo's provisioner:
+
+```bash
+<repo-root>/install.sh <target-app>          # copy (default) — self-contained, commit-able
+<repo-root>/install.sh <target-app> --symlink # only for dogfooding on this machine
+```
+
+This copies `skills/`, `agents/`, and `templates/` into `<app>/.claude/`. Default
+to **copy** — a copied app survives clone/CI and can commit its workflow; symlink
+only when the user explicitly wants a live link back to the source repo on this
+machine. It only touches the DevByAlex-managed names, so the app's own unrelated
+`.claude` skills are left alone. If a target app already has these (re-run /
+integration), this is idempotent — re-copy to update, don't duplicate.
+
+**External dependency a self-sufficient cloud/CI run still needs:** the
+**BuildsByAlex MCP** (`https://buildsbyalex.com/mcp` + an `Authorization` token).
+The reused skills (`scout`, `fix-errors`, `issue-checker`, `test-suite-developer`,
+`staging-smoke-test`, `launch-readiness`) are now **vendored into `<app>/.claude`
+by the provisioner**, so a committed checkout carries them — but the BBA MCP is
+not in the repo. A local cron sees it via `~/.claude`; a cloud/CI runner does
+**not**. Note this in the summary so the user wires the BBA token into the runner
+before scheduling there — `/dev-schedule` does this (see `docs/SCHEDULING.md`).
+
 ### Step 2 — Detect repo state (read-only pass)
 Inventory the target without changing anything. Capture:
 - **VCS**: is it a git repo? current branch, has commits?
@@ -51,11 +90,17 @@ Inventory the target without changing anything. Capture:
   `Gemfile`; framework (Next.js, Expo, Vite, Astro…); package manager;
   TypeScript; ORM (Prisma/Drizzle); test runner; lint/format config; CI under
   `.github/workflows`.
-- **Surfaces already built**: `src/`/`app/` routes, components, API handlers,
-  a database schema/migrations, an **auth** implementation (look for
-  next-auth/Clerk/Lucia/Supabase/session/jwt/middleware), payments (Stripe).
+- **Surfaces already built**: `src`/`app` routes, components, API handlers,
+  a database schema/migrations, payments (Stripe).
+- **Auth**: is there a real auth implementation (next-auth/Clerk/Lucia/Supabase/
+  session/jwt/middleware)? Record **presence** — but note you cannot tell from
+  code whether it was ever *security-validated*. Auth-present and auth-validated
+  are different facts; keep them separate (this drives Step 5).
+- **Existing UI / screens**: enumerate the screens that already exist (pages,
+  routes, top-level views). If there's real UI, the wireframe artifact should
+  later be **captured** from it, not generated from scratch (drives Step 6).
 - **Existing tests**: unit/integration/e2e, and whether they pass if cheap to
-  check.
+  check. Note that passing tests don't tell you whether they trace to the spec.
 - **Existing DevByAlex docs**: `docs/STATUS.md`, `docs/SPEC.md`,
   `docs/IMPLEMENTATION_GUIDE.md`, `docs/features/`, `docs/wireframes/`,
   `docs/ACCEPTANCE_TESTS.md`. If present, you are **integrating**, not
@@ -81,7 +126,7 @@ in the summary (offer to merge, don't overwrite silently):
 | `SPEC.md` | `docs/SPEC.md` | stub if blank; keep if it exists |
 | `IMPLEMENTATION_GUIDE.md` | `docs/IMPLEMENTATION_GUIDE.md` | stub if blank |
 | `feature-card.md` | `docs/features/_TEMPLATE.md` | copied per-feature later |
-| `wireframes-README.md` | `docs/wireframes/README.md` | Figma index |
+| `wireframes-README.md` | `docs/wireframes/README.md` | screen index (Figma frames or captured-from-code) |
 | `ACCEPTANCE_TESTS.md` | `docs/ACCEPTANCE_TESTS.md` | stub if blank |
 
 Fill placeholders (`{{APP_NAME}}`, `{{DATE}}`, stack) from Step 2. Convert any
@@ -98,17 +143,38 @@ defaults:
   unless an existing doc explicitly records Alex's approval. Never self-approve.
 - **Plan rows**: check `SPEC.md` / `IMPLEMENTATION_GUIDE.md` / wireframes only
   if those docs exist with real content.
-- **Dev rows**: check **Scaffold** if tooling/skeleton/CI exist; check
-  **Authentication** only if a real auth implementation is present.
+- **Dev rows**: check **Scaffold** if tooling/skeleton/CI exist. For
+  **Authentication**, the box means *built **and** validated* — so **leave it
+  unchecked when auth code exists but has not been through the security loop.**
+  Don't reward mere presence: add a note "(auth present — needs validation)" and
+  route a validation pass (Step 6). Only check it if an existing doc records that
+  auth was actually security-validated.
 - **Feature table**: for an existing repo, enumerate the features you can
-  identify from routes/modules/nav and add a row per feature with a
-  best-effort per-step status (Spec/Wireframe/Tests/Impl/Feat-Valid/
-  Integ-Valid/Aligned). Mark every inferred value `(needs review)` — observed
-  facts and guesses must stay separated.
+  identify from routes/modules/nav and add a row per feature. Fill the columns
+  honestly from what code can prove and **no more**:
+  - **Impl** → ✅ `(needs review)` when the feature's code clearly exists.
+  - **Tests** → only ✅ if tests for that feature actually exist (and note you
+    can't tell if they trace to the spec).
+  - **Feat-Valid / Integ-Valid / Aligned** → leave **⬜**. These mean "passed the
+    validators / aligned to an approved guide+wireframes," none of which can be
+    known from code. A shipped-but-never-validated feature is impl-present,
+    validation-pending — not done.
+  Mark every inferred value `(needs review)`; keep observed facts and guesses
+  separate. Set each feature's **Status** to `in-progress` (validation pending),
+  not `done`, unless validation evidence exists.
 - **Launch rows**: check only if the corresponding artifact exists and passed.
 
 For a blank repo this is trivial (almost everything unchecked). For an existing
-repo, this backfills the board so the workflow can pick up mid-stream.
+repo, this backfills the board so the workflow can pick up mid-stream — and the
+honest result is that a working app starts with most validation columns empty.
+
+**Set expectations for `partial`/`mature` repos.** Because validation columns
+start empty, the **first phase of autopilot is validate-and-harden, not new
+building**: it re-certifies existing auth and features (tests backfilled from the
+spec, `scout`/validators run, fixes applied) before adding anything new. Say this
+plainly in the summary so "the autopilot will finish my app" maps to "it will
+first prove what's there is correct." This is how existing code earns its way to
+launch-ready.
 
 ### Step 6 — Seed the next-action queue and TODO
 Set the single `## Next action` line in `STATUS.md` to the correct next step
@@ -118,37 +184,60 @@ anything that needs a human. The routing rules:
 | Repo state | Next action |
 |------------|-------------|
 | blank, no spec | `/plan-spec` — run the interview |
+| existing code, no spec | backfill: `/plan-spec reverse` (infer spec from code), then `/plan-guide`, then re-reconcile |
 | has spec, no guide | `/plan-guide` — expand the approved spec |
-| has guide, no wireframes | `/plan-wireframes` — needs Figma MCP |
+| has guide, no wireframes, **no UI yet** | `/plan-wireframes` — generate (needs Figma MCP) |
+| has guide, no wireframes, **UI already exists** | `/plan-wireframes capture` — inventory existing screens (no Figma needed) |
 | guide + wireframes done, **gates unchecked** | Tell Alex to review & approve — dev is blocked |
 | gates approved, no scaffold | `/dev-scaffold` |
-| scaffolded, no auth | `/dev-auth` |
-| auth done, features remain | `/dev-autopilot` (or `/feature-loop <feature>`) |
-| existing code, no spec | backfill: `/plan-spec` in *reverse-engineer* mode, then `/plan-guide`, then reconcile |
-| all features done | `/launch-acceptance`, then launch-readiness |
+| scaffolded, no auth at all | `/dev-auth` (build) |
+| scaffolded, **auth present but unvalidated** | `/dev-auth validate` — audit + harden the existing auth |
+| auth validated, features remain | `/dev-autopilot` (or `/feature-loop <feature>`) — validate/harden existing features first, then build missing ones |
+| all features built + validated | `/launch-acceptance`, then launch-readiness |
 
 If integrating a code-first repo with no spec, recommend backfilling the spec
 and guide **from the code** before any further building, so the autopilot has a
 target to validate against.
 
-### Step 7 — Optionally make the workflow live
-If the user wants the workflow active in this repo:
+**Pick a working branch for the dev stage.** The dev skills push straight to the
+working branch (no PRs). For an existing repo with a real `main`, tell the user
+to use a dedicated iteration branch (e.g. `autopilot`/`staging`) — and to pass
+`--branch <name>` to any cron — so unattended runs don't push to a protected
+default. Note this in the summary and `## Blockers / open questions` if no such
+branch exists yet.
+
+### Step 7 — Make the workflow discoverable + ready to schedule
+The skills are already provisioned into `<app>/.claude/` (Step 1.5), so they load
+when the app is opened in Claude Code. To finish wiring it in:
 - Offer to add a short `## DevByAlex workflow` section to the repo's
   `CLAUDE.md` pointing at `docs/AI_WORKFLOW.md` and `docs/STATUS.md`.
-- If they want unattended runs, point them at `docs/SCHEDULING.md` in the
-  DevByAlex repo (do **not** create cron jobs from here).
+- Decide whether `<app>/.claude/{skills,agents,templates}` should be committed
+  (so clones and CI carry the workflow) or gitignored (machine-local only).
+  Recommend committing for any repo you'll run unattended on a remote/CI.
+- If they want unattended runs, route them to **`/dev-schedule`** (and
+  `docs/SCHEDULING.md`), and remind them a cloud/CI runner still needs the
+  **BuildsByAlex MCP token** wired in as a secret — the vendored reused skills
+  already travel in the committed `.claude/`. Do **not** create cron jobs from
+  here; `/dev-schedule` is the dedicated place.
 
 ### Step 8 — Report
 Print a tight summary:
 - Absolute path initialized and detected stack + maturity.
 - Which files were created vs. already present (and thus left alone).
 - The reconciled stage and the **one** next action.
+- For an existing repo: **what's present but unvalidated** — auth, and the count
+  of features that are impl-present/validation-pending — and the explicit note
+  that autopilot's first phase is validate-and-harden, not new building.
+- The working branch to use for the dev stage (and a flag if none exists yet).
 - Any blockers/open questions and anything marked `(needs review)`.
 
 ## Rules
 
 - **Never overwrite** an existing `docs/*` file without explicit confirmation.
   Bootstrapping is additive.
+- **Project scope only.** Install into `<app>/.claude/`, never `~/.claude`. Only
+  touch the DevByAlex-managed skill/agent names; leave the app's own unrelated
+  `.claude` entries alone. Default to copy, not symlink.
 - **Never check an approval gate** yourself. Gates are Alex's to set.
 - **Never start building.** This skill only sets up state and routes.
 - Keep `STATUS.md` short and current; push detail into feature cards and the
@@ -159,5 +248,6 @@ Print a tight summary:
 
 ## Output
 
-A workflow-ready `docs/` directory in the target repo with a reconciled
+A workflow-ready app: the DevByAlex skills/agents/templates provisioned into
+`<app>/.claude/` (project scope) and a `docs/` directory with a reconciled
 `STATUS.md`, plus a summary ending in the single recommended next command.

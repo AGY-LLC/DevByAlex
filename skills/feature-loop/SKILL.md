@@ -41,12 +41,17 @@ The agents and the skills they lean on:
 ### Step 0 — Load the feature
 Read the feature card `docs/features/<id>.md`, its acceptance criteria, the
 relevant section of `docs/IMPLEMENTATION_GUIDE.md`, the wireframe screens for
-this feature, and `docs/STATUS.md`. Create/checkout a branch `feat/<slug>`.
-Mark the feature row **in-progress** in STATUS.
+this feature, and `docs/STATUS.md`. Build on the **working branch** — the branch
+you're on, or the one `dev-autopilot` passed down; **don't create a per-feature
+branch.** Mark the feature row **in-progress** in STATUS.
 
-### Step 1 — Tests and implementation, in parallel
-Spawn **two separate subagents in the same message** so they run concurrently
-and independently:
+First decide whether this feature is **greenfield** (no real implementation yet)
+or **existing** (already built — common when `init-ai` integrated an existing
+repo and marked the row impl-present-but-unvalidated). The check: does the
+feature's code already exist and roughly work?
+
+**Greenfield — build:** Spawn **two separate subagents in the same message** so
+they run concurrently and independently:
 - **`test-author`** — writes tests purely from the feature card's acceptance
   criteria and behaviors (success paths, failure paths, edge cases, security
   boundaries). It must **not** read or shape itself around the implementation —
@@ -58,6 +63,15 @@ and independently:
 Keeping them apart is the point: it stops tests from being written just to pass
 whatever code happens to exist. Wait for both, then run the suite once to see
 where they meet (some failures are expected and good — they reveal real gaps).
+
+**Existing — harden, don't rebuild:** the code is already there, so do **not**
+re-implement it. Spawn `test-author` only, to **backfill tests from the card's
+acceptance criteria** (still blind to the implementation, so the tests certify
+the spec's behavior rather than rubber-stamping the current code). Run them: any
+failure is a real gap between what's built and what the spec requires — those
+feed the validation loop below as fixes, not rewrites. Reserve a fresh
+implementation for a screen/behavior the card requires that genuinely doesn't
+exist yet.
 
 ### Step 2 — Feature validation
 Spawn the **`feature-validator`** agent. It:
@@ -88,7 +102,8 @@ With the feature fully built and both validations clean:
   the guide/wireframe for Alex to update — don't silently diverge).
 - Mark every step for this feature ✅ and the row **done** in
   `docs/STATUS.md`; add a log line (branch, commit, what shipped).
-- Commit the branch. Leave the suite green.
+- Commit and **push to the working branch** (`git push origin HEAD:<branch>`) —
+  no PR. Leave the suite green before pushing.
 - Set `## Next action` to the next not-done feature (or `/launch-acceptance`
   if this was the last).
 
@@ -100,7 +115,9 @@ With the feature fully built and both validations clean:
   re-validate. Don't mark done with red tests or open findings.
 - Don't expand scope beyond the feature card; surface new ideas as proposals.
 - Keep STATUS the live source of truth — update it as you move through steps.
-- Re-running on a partially-built feature must resume, not restart.
+- **Existing code is hardened, not rebuilt.** On a feature that's already built
+  (or partially built), resume: backfill spec-traced tests, validate, and fix —
+  don't re-implement working behavior or restart from scratch.
 
 ## Output
 

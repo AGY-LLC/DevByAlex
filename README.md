@@ -11,37 +11,45 @@ under the workflow.
 
 ## Quick start
 
+The workflow installs **per project** (`<app>/.claude/`), never user-scoped —
+so it loads only inside the target app and each app's `docs/STATUS.md` stays its
+own context. `/init-ai` does this for you; `install.sh` is the same provisioning
+you can run by hand to bootstrap a brand-new app before `init-ai` is loaded.
+
 ```bash
-# 1. Make the skills + agents live in ~/.claude (symlinks back to this repo)
-./install.sh
-#    (restart Claude Code, or it'll re-scan skills/agents on next launch)
-
-# 2. In a chat, bootstrap a target app (blank or existing):
+# 1. Bootstrap a target app (blank or existing). This provisions the workflow
+#    into <app>/.claude/ AND stamps its docs/:
 /init-ai /path/to/your/app
+#    — or, before init-ai is available there, drop the skills in from the shell:
+#    ./install.sh /path/to/your/app   (copies skills+agents+templates; --symlink to dogfood)
+#    then open that app and run: /init-ai .
 
-# 3. Plan it (human-gated):
+# 2. Plan it (human-gated):
 /plan-spec        # interview → docs/SPEC.md
 /plan-guide       # → docs/IMPLEMENTATION_GUIDE.md + docs/features/*
-/plan-wireframes  # → Figma frames (needs a Figma MCP)
+/plan-wireframes  # → Figma frames (needs a write-capable Figma MCP)
 #    …then YOU approve the spec, guide, and wireframes in docs/STATUS.md
 
-# 4. Build it (autonomous once gates are approved):
+# 3. Build it (autonomous once gates are approved):
 /dev-scaffold     # one-time baseline
 /dev-auth         # authentication first
 /dev-autopilot .  # advance the build one safe step (run repeatedly / on a schedule)
 
-# 5. Launch readiness (staging deploy is manual):
+# 4. Launch readiness (staging deploy is manual):
 /launch-acceptance
 ```
 
-To run the dev stage unattended, see **[docs/SCHEDULING.md](docs/SCHEDULING.md)**.
+To run the dev stage unattended, use **`/dev-schedule`** — it preflights, picks a
+tier, takes the explicit working branch (e.g. `staging`, never assumed `main`),
+and wires the runner's BuildsByAlex MCP token in as a secret. See
+**[docs/SCHEDULING.md](docs/SCHEDULING.md)** for the underlying recipes.
 
 ## What's in here
 
 ```
 .claude-plugin/plugin.json   plugin manifest
-install.sh                   symlink (or --copy) skills + agents into ~/.claude
-skills/                      the 9 stage skills (init-ai, plan-*, dev-*, launch-*)
+install.sh                   provision skills+agents+templates (+ vendored reused skills) into <app>/.claude
+skills/                      the 10 stage/ops skills (init-ai, plan-*, dev-*, dev-schedule, launch-*)
 agents/                      the 5 specialist agents the feature loop deploys
 templates/                   the docs/ files init-ai stamps into a target repo
 docs/WORKFLOW.md             the full architecture and invariants
@@ -57,17 +65,28 @@ agent, the existing skills it reuses, and the invariants that make autonomy safe
 - **Human gates** between plan and dev (spec/guide/wireframes approval) and a
   manual staging deploy — agents never self-approve.
 - **One safe step per autopilot run**, all state in the repo, so the loop is
-  bounded, resumable, and reviewable (PR per step).
+  bounded, resumable, and reviewable (one commit per step).
+- **Push straight to the working branch** — no per-step branches, no PR pile-up
+  that slows iteration. Interactive runs use the current branch; a cron names the
+  **working branch it builds off explicitly** (e.g. `staging`, not assumed
+  `main`). Green suite is the gate.
 - **Tests trace to the spec** (test-author and implementer run blind, in
-  parallel); **validators judge but don't fix**; **branches + green suite** at
-  every stop.
+  parallel); **validators judge but don't fix**; **green suite** at every stop.
 - **Security & privacy first**, most of all in auth.
 
 ## Requirements
 
 - Claude Code with the **BuildsByAlex MCP** connected (supplies Alex's encoded
   best-practice playbooks and stack conventions).
-- A **Figma MCP** for the wireframing stage (`/plan-wireframes` stops and points
-  you to setup if none is connected).
-- The reused skills in `~/.claude/skills`: `test-suite-developer`, `scout`,
-  `issue-checker`, `fix-errors`, `staging-smoke-test`, `launch-readiness`.
+- A **write-capable Figma MCP** for the wireframing stage — the official remote
+  server with **write-to-canvas** (`claude plugin install figma@claude-plugins-official`,
+  then `/plugin` → OAuth). Read-only "design → code" servers can't create frames;
+  write-to-canvas needs a Full seat (or a Dev seat writing into a draft file).
+  `/plan-wireframes` stops and points you to setup if none is connected.
+- The reused skills — `test-suite-developer`, `scout`, `issue-checker`,
+  `fix-errors`, `staging-smoke-test`, `launch-readiness`. On your machine they
+  live in `~/.claude/skills`; `install.sh` / `init-ai` now **vendor them into the
+  target app's `.claude/skills`**, so a committed checkout carries them to any
+  cloud/CI runner. The one runner dependency that doesn't cover is the
+  **BuildsByAlex MCP token** — `/dev-schedule` wires that in. See
+  `docs/SCHEDULING.md`.

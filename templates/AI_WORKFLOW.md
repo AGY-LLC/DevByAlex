@@ -31,7 +31,10 @@ is the live control file; this file is the map.
 
 ## Rules of the road
 
-- Work happens on branches, not the default branch.
+- Dev work commits and pushes **straight to the working branch** — the branch you
+  call the skill on, or the one a cron sets explicitly. No per-step branches, no
+  PR pile-up. Use a dedicated iteration branch (e.g. `staging`/`autopilot`), not a
+  protected default.
 - Agents never self-approve a gate; approvals are Alex's.
 - `docs/STATUS.md` stays accurate and the test suite stays green at every stop.
 - Tests trace to the spec; never weakened just to make code pass.

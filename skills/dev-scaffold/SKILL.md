@@ -35,9 +35,10 @@ Expo for native), Zod at boundaries, thin route handlers with a `services/`
 layer, Prisma (review migration SQL before prod), Jest for unit/integration,
 Playwright for E2E, ESLint/Biome, structured directories.
 
-### Step 2 — Create a branch
-Per Alex's rule, work on a branch (`chore/scaffold`), not the default branch,
-unless told otherwise.
+### Step 2 — Confirm the working branch
+Work on the **working branch** — the branch you're on, or the one `dev-autopilot`
+passed down. Don't create a separate scaffold branch; the dev stage commits and
+pushes straight to the working branch.
 
 ### Step 3 — Scaffold
 Stand up, in dependency order:
@@ -61,7 +62,8 @@ green — a scaffold that doesn't boot is not done.
 ### Step 5 — Update STATUS and route
 - Check **Dev → Scaffold**; add a log line with branch + commit.
 - Set `## Next action` to `/dev-auth`.
-- Commit the branch (don't merge to default unless told).
+- Commit and **push to the working branch** (`git push origin HEAD:<branch>`) —
+  no PR.
 
 ## Rules
 
@@ -73,5 +75,5 @@ green — a scaffold that doesn't boot is not done.
 
 ## Output
 
-A runnable, linted, tested skeleton on a branch, STATUS scaffold checked, next
-action `/dev-auth`.
+A runnable, linted, tested skeleton pushed to the working branch, STATUS scaffold
+checked, next action `/dev-auth`.

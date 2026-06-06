@@ -35,12 +35,14 @@ That skill defines the canonical four steps; follow it exactly:
    failure. Loop until clean; if an integration fix reopens the feature, redo
    step 2.
 4. **Align + status** — confirm the feature matches the implementation guide and
-   wireframes, update `docs/STATUS.md` (steps ✅, row done, log line), and commit
-   the branch.
+   wireframes, update `docs/STATUS.md` (steps ✅, row done, log line), then commit
+   and push to the working branch.
 
 ## Rules
 
-- Work on a branch `feat/<slug>`; never merge to the default branch unless told.
+- Work on the **working branch** (the one `feature-loop`/`dev-autopilot` is
+  running on); commit and push straight to it — **no per-feature branch, no PR.**
+  Leave the suite green before pushing.
 - Stay within the feature's scope; surface new ideas as proposals, don't build
   them.
 - Never mark the feature done with red tests or open findings.

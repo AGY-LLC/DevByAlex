@@ -1,7 +1,7 @@
 ---
 name: plan-wireframes
-description: "Stage 3 of the DevByAlex plan phase — create low-fidelity wireframe designs for each feature so the flow of the app is understood before any code is written. Drives a Figma MCP to build one wireframe frame per key screen (with empty/loading/error/onboarding/upgrade states), using the design/UX answers captured in docs/SPEC.md. Writes docs/wireframes/README.md indexing every frame and the screen-to-feature mapping. REQUIRES a Figma MCP server to be configured — if none is connected, it stops and tells the user how to set one up rather than faking it. Use after the implementation guide exists, when the user says 'wireframe the app', 'design the screens', or 'create the wireframes'."
-argument-hint: "[optional: feature or screen to wireframe]"
+description: "Stage 3 of the DevByAlex plan phase — establish the wireframe artifact each feature is later validated against. Two modes. GENERATE mode (greenfield): drives a write-capable Figma MCP to build one low-fidelity frame per key screen (with empty/loading/error/onboarding/upgrade states) from the design/UX answers in docs/SPEC.md. CAPTURE mode (existing app with UI already built): inventories the app's EXISTING screens from the code and documents them — no Figma MCP required — so the wireframe gate can be satisfied for an integrated repo without re-designing UI that already exists. Either way writes docs/wireframes/README.md indexing screens, states, and the screen-to-feature mapping. Use after the implementation guide exists, when the user says 'wireframe the app', 'design the screens', 'create the wireframes', or 'document the existing screens'."
+argument-hint: "[optional: feature/screen; or 'capture' to inventory an existing app's screens]"
 license: MIT
 metadata:
   author: alex-yoza
@@ -10,24 +10,51 @@ metadata:
 
 # plan-wireframes — Wireframe every feature (Figma MCP)
 
-The third plan stage. Produces low-fidelity wireframes for each feature so the
-app's flow is clear before the dev stage starts. Wireframes plus the
-implementation guide are the two artifacts Alex approves to unlock the dev
-stage, and the artifacts each finished feature is later checked against.
+The third plan stage. Produces the wireframe artifact each feature is later
+validated against, so the app's flow is clear before the dev stage proceeds.
+Wireframes plus the implementation guide are the two artifacts Alex approves to
+unlock the dev stage.
 
-## Prerequisite: a Figma MCP server
+## Two modes — pick one first
 
-This skill **drives a Figma MCP**. Before doing anything, verify a Figma MCP is
+- **GENERATE** (greenfield / a feature with no UI yet): design new low-fidelity
+  frames in Figma from the spec's design/UX answers. **Needs a write-capable
+  Figma MCP.** This is the default for a blank app.
+- **CAPTURE** (integrated/existing repo that already has the UI built): the
+  screens exist in code — don't redesign them. **Inventory** the existing screens
+  and document them as the wireframe artifact. **No Figma MCP required.** Use this
+  when `init-ai` classified the repo `partial`/`mature`, the user passes
+  `capture`, or there's already real UI in the codebase.
+
+Choosing: if the feature/app already has built screens, prefer CAPTURE — it's
+faster, doesn't need Figma, and reflects reality (you validate against what's
+actually shipping, not a redesign). Only GENERATE for screens that don't exist
+yet.
+
+## Prerequisite for GENERATE mode: a Figma MCP server
+
+GENERATE mode **drives a Figma MCP**. Before generating, verify a Figma MCP is
 connected (look for `figma`-prefixed tools, e.g. via ToolSearch). **If none is
-connected, stop** and tell the user to configure one — do not hand-wave
-wireframes in markdown as a substitute. Setup pointer:
+connected, either switch to CAPTURE mode (if the screens already exist) or stop**
+and tell the user to configure one — do not hand-wave generated wireframes in
+markdown as a substitute. (CAPTURE mode does not need Figma at all.)
+
+**It must be a *write-capable* Figma MCP** — this skill *creates* frames, so a
+read-only "design → code" server (the old Dev Mode codegen server, or framelink /
+`figma-developer-mcp`) will connect but cannot wireframe. Use the official remote
+Figma MCP server with **write-to-canvas** (the `use_figma` tool):
 
 ```
-# A Figma MCP server (e.g. the official Figma Dev Mode MCP, or a community
-# server such as figma-developer-mcp / framelink) must be registered:
-claude mcp add figma -- <command-or-URL for the Figma MCP server>
-# then provide the Figma access token / file key the server expects.
+# Official remote server (Anthropic-hosted, browser OAuth — no token to paste):
+claude plugin install figma@claude-plugins-official
+# then: /plugin → Installed → figma → complete the OAuth → shows "connected".
 ```
+
+Write-to-canvas is free during Figma's beta but needs the right seat: a **Full
+seat** writes anywhere; a **Dev seat** writes only inside **draft** files — so
+wireframe a new app into a Figma draft and a Dev seat suffices. (The local
+desktop server at `127.0.0.1:3845` is Enterprise/Org-only and read-focused — not
+sufficient here.)
 
 Record in `docs/wireframes/README.md` which Figma file/project the frames live
 in so later stages can reference them.
@@ -42,30 +69,44 @@ in so later stages can reference them.
 ## Workflow
 
 ### Step 1 — Confirm prerequisites
-- A Figma MCP is connected (else stop, per above).
-- `docs/SPEC.md` (design/UX answers) and `docs/IMPLEMENTATION_GUIDE.md` +
-  feature cards exist. If the design/UX answers are missing from the spec, send
-  the user back to `/plan-spec` rather than inventing tone/density.
-- If `docs/DESIGN.md` exists (from `/uiux-init`), honor its tokens so wireframes
-  match the intended visual direction.
+- **Pick the mode** (GENERATE vs CAPTURE) per the section above.
+- **GENERATE only:** a write-capable Figma MCP is connected (else switch to
+  CAPTURE if the screens exist, or stop). `docs/SPEC.md` design/UX answers must
+  exist — if missing, send the user back to `/plan-spec` rather than inventing
+  tone/density.
+- `docs/IMPLEMENTATION_GUIDE.md` + feature cards exist (both modes).
+- If `docs/DESIGN.md` exists (from `/uiux-init`), honor its tokens.
 
 ### Step 2 — Build the screen list
-From the feature cards, enumerate every key screen and, for each, the states it
-needs (default, empty, loading, error, onboarding, upgrade where relevant) and
-the primary user action. Group screens by feature and by the end-to-end flow a
-user walks.
+- **GENERATE:** from the feature cards, enumerate every key screen and the states
+  each needs (default, empty, loading, error, onboarding, upgrade where relevant)
+  and its primary user action.
+- **CAPTURE:** enumerate the **existing** screens from the code — routes/pages
+  (`app/`, `pages/`, router config), top-level views/components, and navigation.
+  For each, record its file path, primary user action, and which states it
+  actually implements today (note missing empty/loading/error states as gaps —
+  they become candidate work in the feature board, not invented designs).
 
-### Step 3 — Create frames via the Figma MCP
-For each screen: create a low-fidelity frame (layout, hierarchy, key copy,
-primary CTA, and the relevant states) using the Figma MCP. Keep it lo-fi —
-structure and flow, not pixel polish. Lay frames out per feature, and add flow
-arrows/links between screens so the navigation is legible. Use real placeholder
-copy (Alex prefers concrete copy over lorem ipsum).
+Group screens by feature and by the end-to-end flow a user walks.
+
+### Step 3 — Produce the wireframe artifact
+- **GENERATE:** for each screen, create a low-fidelity Figma frame (layout,
+  hierarchy, key copy, primary CTA, relevant states). Keep it lo-fi — structure
+  and flow, not pixel polish. Lay frames out per feature with flow arrows between
+  screens. Use concrete placeholder copy (Alex prefers it over lorem ipsum).
+- **CAPTURE:** do **not** open Figma. Write a per-screen description from the code
+  — purpose, key elements, primary action, states present, and the file it lives
+  in — plus the navigation flow between screens. This documented inventory **is**
+  the wireframe artifact for an existing app; flag it as captured-from-code so a
+  later reader knows it reflects the current UI, not an approved redesign.
 
 ### Step 4 — Index in docs/wireframes/README.md
 Write `docs/wireframes/README.md` from `../../templates/wireframes-README.md`:
-- The Figma file/project link.
-- A table mapping **feature → screens → frame link → states covered**.
+- **GENERATE:** the Figma file/project link.
+  **CAPTURE:** state "captured from existing code (no Figma)" and link the source
+  files instead of frames.
+- A table mapping **feature → screens → (frame link *or* source file) → states
+  covered** (mark states that are missing in CAPTURE mode).
 - The intended primary user flow(s) as an ordered list of screens.
 
 ### Step 5 — Update STATUS and route
@@ -78,12 +119,19 @@ Write `docs/wireframes/README.md` from `../../templates/wireframes-README.md`:
 
 ## Rules
 
-- **No Figma MCP, no wireframes.** Stop and route to setup; never fabricate.
+- **GENERATE mode: no Figma MCP, no generated wireframes.** Stop and route to
+  setup, or switch to CAPTURE if the screens already exist — never fabricate
+  Figma frames in markdown.
+- **CAPTURE mode documents reality, it doesn't design.** Describe screens that
+  exist in the code; don't invent new ones or redesign. Record missing states as
+  gaps for the feature board, not as wireframes.
 - Wireframes are low-fidelity: flow and structure first.
 - Cover the non-happy states (empty/loading/error) — they're where flows break.
-- Don't unlock the dev stage; that's Alex's approval to give.
+- Don't unlock the dev stage; that's Alex's approval to give (he approves a
+  captured inventory the same way he'd approve generated frames).
 
 ## Output
 
-Figma wireframe frames per feature, `docs/wireframes/README.md` indexing them,
+The wireframe artifact for every feature — Figma frames (GENERATE) or a
+documented screen inventory (CAPTURE) — `docs/wireframes/README.md` indexing them,
 STATUS advanced, and a request for Alex's approval of the guide + wireframes.

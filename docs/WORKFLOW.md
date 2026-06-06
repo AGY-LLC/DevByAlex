@@ -41,11 +41,12 @@ is the live control file every skill reads and writes.
 | `init-ai` | entry | Bootstraps/integrates the workflow into a repo; reconciles STATUS from what's already done. |
 | `plan-spec` | plan | Interviews to a complete spec; `reverse` mode backfills from code. |
 | `plan-guide` | plan | Expands the spec into a granular, ordered guide + feature cards. |
-| `plan-wireframes` | plan | Drives a Figma MCP to wireframe each feature. |
+| `plan-wireframes` | plan | Wireframe each feature — GENERATE via Figma MCP (greenfield) or CAPTURE existing screens from code (existing app, no Figma). |
 | `dev-scaffold` | dev | One-time baseline: skeleton, tooling, tests, CI. |
-| `dev-auth` | dev | Authentication first, security & privacy prioritized. |
+| `dev-auth` | dev | Authentication first, security & privacy prioritized. Validate-existing mode audits + hardens auth an existing repo already has. |
 | `feature-loop` | dev | The per-feature 4-step build/validate engine. |
 | `dev-autopilot` | dev | Advances the build one safe step per run (what a schedule calls). |
+| `dev-schedule` | dev/ops | Sets up the unattended schedule that calls `dev-autopilot` off an explicitly named working branch; wires the cloud runner's BBA token as a secret. |
 | `launch-acceptance` | launch | Writes the computer-use-runnable staging acceptance test. |
 
 ### Agents (the specialists the feature loop deploys)
@@ -60,8 +61,9 @@ is the live control file every skill reads and writes.
 
 ### Existing skills it reuses (not reinvented)
 
-The workflow leans on skills already in `~/.claude/skills` rather than
-duplicating them:
+The workflow leans on skills that already exist rather than duplicating them —
+and so any runner has them, `install.sh` **vendors these into each app's
+`.claude/skills`** at provision time (sourced from `~/.claude/skills`):
 
 - `test-suite-developer` — the test-author's engine.
 - `scout` — the validators' adversarial review (feature-scoped and whole-repo).
@@ -84,6 +86,32 @@ approval gates (Alex-only), the plan/dev/launch checkboxes, the **feature table*
 keys off, the blockers list, and a log. Keep it short; detail lives in feature
 cards and the log.
 
+## Integrating an existing (not-yet-launch-ready) repo
+
+`init-ai` works on a half-built repo, not just a blank one — but "finish my app"
+routes through the same gates, so the path is **backfill → validate → build the
+rest**:
+
+1. **Backfill the plan from code.** No spec/guide exist, so `init-ai` routes to
+   `/plan-spec reverse` (infer the spec from code, tag inferences) → `/plan-guide`.
+   The wireframe gate is satisfied by `/plan-wireframes capture` — an inventory of
+   the screens already in the code, **no Figma needed** — since the UI exists.
+2. **Alex approves the three gates.** Dev stays blocked until then; an existing
+   codebase doesn't bypass approval.
+3. **Validate before building.** `init-ai` does **not** check off existing work as
+   done: auth that exists but was never security-validated stays unchecked
+   (`/dev-auth validate` audits + hardens it), and existing features are recorded
+   impl-present / validation-pending. So autopilot's **first phase is
+   validate-and-harden** — backfill spec-traced tests, run the validators, fix —
+   re-certifying what's there before adding anything new.
+4. **Then build the rest** via the normal feature loop, pushing to the working
+   branch (use a dedicated iteration branch on a repo with a real `main`).
+
+The principle: code existing is not the same as code being correct, validated, or
+aligned to an approved spec — none of which can be known from the code alone. The
+integration path makes that gap explicit instead of marking a working-but-unproven
+app "done."
+
 ## Invariants the whole system upholds
 
 - **Gates are human.** Agents never self-approve spec/guide/wireframes/deploy.
@@ -92,8 +120,12 @@ cards and the log.
 - **Validators judge, they don't fix.** Separation keeps the gates honest; the
   orchestrator turns findings into failing tests + fixes.
 - **One safe step per autopilot run.** Bounded, resumable, reviewable.
-- **Branches + green suite at every stop.** Nothing marked done with red tests
-  or open findings; work lands on branches for human merge.
+- **Green suite at every stop; push straight to the working branch.** Nothing
+  marked done with red tests or open findings. To keep iteration fast the dev
+  stage commits and pushes to one working branch — no per-step branches, no PR
+  pile-up. Green suite is the gate, not a human merge. Interactive runs use the
+  current branch; a cron names the branch explicitly. Use a dedicated iteration
+  branch (e.g. `staging`/`autopilot`), not a protected default.
 - **Security & privacy beat convenience**, most of all in auth.
 
 See `docs/SCHEDULING.md` for running the dev stage unattended.
