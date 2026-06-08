@@ -62,7 +62,7 @@ Equivalent raw call (the `/schedule` skill wraps this `RemoteTrigger` create):
 {
   "name": "devbyalex-autopilot:<app>",
   "schedule": "17 */3 * * 1-5",          // off-minute on purpose; weekdays, every 3h
-  "prompt": "cd /home/alex/dev/Startups/<app> && /dev-autopilot . --branch autopilot — advance one step, commit, push straight to the autopilot branch (no PR), and reply with a one-paragraph summary + the pushed commit + any blockers.",
+  "prompt": "cd /home/alex/dev/Startups/<app> && /dev-autopilot . --branch autopilot — do one bounded run (fix every open bug in docs/BUGS.md if any, else advance one build step), commit, push straight to the autopilot branch (no PR), and reply with a one-paragraph summary + the pushed commit + any blockers.",
   "repo": "AGY-LLC/<app>"
 }
 ```
@@ -84,7 +84,7 @@ auto-expire after 7 days** (re-create weekly).
   "cron": "23 */4 * * *",                 // every 4h, off-minute
   "recurring": true,
   "durable": true,
-  "prompt": "/dev-autopilot /home/alex/dev/Startups/<app> --branch autopilot — one step, commit, push straight to the autopilot branch (no PR), summarize + surface blockers."
+  "prompt": "/dev-autopilot /home/alex/dev/Startups/<app> --branch autopilot — one bounded run (drain docs/BUGS.md if it has open bugs, else one build step), commit, push straight to the autopilot branch (no PR), summarize + surface blockers."
 }
 ```
 
@@ -127,7 +127,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           npx -y @anthropic-ai/claude-code -p \
-            "/dev-autopilot . --branch $WORKING_BRANCH — advance exactly one step, commit, and stop. Do not open a PR." \
+            "/dev-autopilot . --branch $WORKING_BRANCH — do one bounded run (fix every open bug in docs/BUGS.md if any, else advance one build step), commit, and stop. Do not open a PR." \
             --permission-mode acceptEdits
       - name: Push the step straight to the working branch
         run: git push origin "HEAD:$WORKING_BRANCH"
