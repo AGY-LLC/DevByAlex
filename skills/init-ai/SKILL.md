@@ -123,6 +123,7 @@ in the summary (offer to merge, don't overwrite silently):
 | Template | Destination | Notes |
 |----------|-------------|-------|
 | `STATUS.md` | `docs/STATUS.md` | the control file the autopilot reads |
+| `BUGS.md` | `docs/BUGS.md` | the bug log the autopilot drains before each build step |
 | `AI_WORKFLOW.md` | `docs/AI_WORKFLOW.md` | per-repo pointer to the process |
 | `SPEC.md` | `docs/SPEC.md` | stub if blank; keep if it exists |
 | `IMPLEMENTATION_GUIDE.md` | `docs/IMPLEMENTATION_GUIDE.md` | stub if blank |
@@ -144,9 +145,12 @@ as found:
   absent; if present, leave them.
 - `docs/STATUS.md` — the two hard gates (`Legal & compliance passed`,
   `Accessibility (WCAG 2.2 AA) passed`), the `Brand foundation (docs/BRAND.md)`
-  plan row, and the four launch rows (legal/compliance, accessibility, SEO,
-  prose). Add any that are missing **unchecked**; never alter the state of a box
-  that's already there.
+  plan row, the `No open bugs in docs/BUGS.md` launch row, and the four launch
+  rows (legal/compliance, accessibility, SEO, prose). Add any that are missing
+  **unchecked**; never alter the state of a box that's already there.
+- `docs/BUGS.md` — if the repo predates the bug log, copy the template in (it's
+  an additive new file, so the "don't clobber" rule means: create it only if
+  absent, never overwrite an existing one).
 Note every backfilled item in the summary so the user can fill the new spec
 stubs. If unsure whether a section is "really" present (e.g. worded differently),
 flag it for the user rather than appending a duplicate.

@@ -1,6 +1,6 @@
 ---
 name: launch-compliance
-description: "Launch-readiness stage of the DevByAlex workflow — the 'don't get sued' gate. Runs the legal, accessibility, SEO, and prose scans against the built app, then reconciles the results into docs/STATUS.md and surfaces a fix queue. Legal scan: confirms Terms of Service and a Privacy Policy exist, are linked, and the privacy policy is accurate to the app's real data flows; confirms a cookie consent banner is present on web and actually gates non-essential cookies/analytics until consent; confirms an account-deletion / data-export path where GDPR/CCPA applies (runs launch-readiness for the policy/disclosure/GDPR-CCPA audit). Accessibility: runs accessibility-critique against WCAG 2.2 AA and emits an A11Y-xxx queue. SEO: runs seo-audit (needs docs/BRAND.md). Prose: runs prose-check over user-facing strings. Legal and accessibility are HARD launch gates that block ship-ready; SEO and prose are advisory. Read-only — produces findings and routes remediation to fix-errors; it is not legal counsel. Use once features are built and staged, when the user says 'run the compliance scan', 'legal/privacy/accessibility check before launch', 'are we going to get sued', or 'launch compliance'."
+description: "Launch-readiness stage of the DevByAlex workflow — the 'don't get sued' gate. Runs the legal, accessibility, SEO, and prose scans against the built app, then reconciles the results into docs/STATUS.md and surfaces a fix queue. Legal scan: confirms Terms of Service and a Privacy Policy exist, are linked, and the privacy policy is accurate to the app's real data flows; confirms a cookie consent banner is present on web and actually gates non-essential cookies/analytics until consent; confirms an account-deletion / data-export path where GDPR/CCPA applies; for apps with subscriptions or free trials, confirms auto-renewal compliance (pre-charge trial reminders, recurring-charge disclosure on the paywall itself, and a straightforward in-app cancel path per FTC ROSCA / click-to-cancel) (runs launch-readiness for the policy/disclosure/GDPR-CCPA audit). Accessibility: runs accessibility-critique against WCAG 2.2 AA and emits an A11Y-xxx queue. SEO: runs seo-audit (needs docs/BRAND.md). Prose: runs prose-check over user-facing strings. Legal and accessibility are HARD launch gates that block ship-ready; SEO and prose are advisory. Read-only — produces findings and routes remediation to fix-errors; it is not legal counsel. Use once features are built and staged, when the user says 'run the compliance scan', 'legal/privacy/accessibility check before launch', 'are we going to get sued', or 'launch compliance'."
 argument-hint: "[optional: scope — legal | a11y | seo | prose; defaults to all]"
 license: MIT
 metadata:
@@ -48,8 +48,39 @@ this explicit checklist against the code:
   cookies/analytics/trackers until consent — a banner that sets trackers before
   consent (or has no reject path) is a finding.
 - **Account deletion / data-export** path exists where GDPR/CCPA applies.
+
+**Subscriptions & auto-renewal** — run this block **only if the app charges a
+recurring fee or offers a free trial that converts to paid** (detect from the
+code: Stripe/RevenueCat/`Subscription` models, trial logic, IAP). These are
+legally required by auto-renewal laws (US FTC ROSCA + the "click-to-cancel" rule,
+California ARL, EU consumer-rights rules) — not just nice-to-haves. Skip the block
+entirely for one-time-purchase or free apps, and say you skipped it and why.
+
+- **Pre-charge trial reminders.** A free trial that auto-converts to a paid
+  charge must **notify the user before the charge lands** — and you want **more
+  than one** (e.g. trial-start confirmation, a reminder a few days out, and a
+  last reminder ~24h before the charge). Verify the code actually schedules/sends
+  these (email/push/in-app), tied to the real trial-end date. A trial that
+  silently bills with no advance reminder is a finding; a single buried reminder
+  is a weak finding — recommend a multi-touch sequence.
+- **Recurring-charge disclosure at the point of sale.** The **paywall / checkout
+  screen itself** must clearly state, before the user commits: the price, the
+  billing interval, that it **auto-renews**, when the first charge hits (incl. the
+  trial→paid transition and amount), and how to cancel. Burying these only in the
+  Terms or Privacy Policy is **not sufficient** and is a finding — the disclosure
+  must be on the purchase surface, adjacent to the confirm/subscribe button.
+- **Straightforward cancellation.** There must be a **clear, easy in-app path to
+  cancel** that is no harder than signing up was (FTC's "click-to-cancel"
+  symmetry). Verify a discoverable Manage-subscription / Cancel control exists and
+  the cancel flow doesn't dark-pattern the user (no forced phone calls, no hidden
+  steps, no endless retention gauntlet). For native IAP, a store-appropriate
+  "Manage subscription" deep link counts; for web billing, an in-app cancel or
+  billing-portal link counts. A subscription with no self-serve cancel is a
+  finding.
+
 Each gap becomes a finding in the fix queue. Flag this is a code-level check, not
-legal counsel — recommend a human/lawyer review of the actual ToS/policy text.
+legal counsel — recommend a human/lawyer review of the actual ToS/policy text and
+the auto-renewal disclosures.
 
 ### Step 3 — Accessibility audit (hard gate)
 Run `accessibility-critique` against **WCAG 2.2 AA** (the workflow's floor). It

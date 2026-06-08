@@ -24,8 +24,9 @@ is the live control file every skill reads and writes.
                          │                                    │ 3. integration-validator (loop on ✗)│ │
                          │   driven unattended by             │ 4. align to guide+wireframes, STATUS│ │
                          │   /dev-autopilot (1 step/run) ◄────┴─────────────────────────────────────┘ │
+                         │   ▲ each run first DRAINS docs/BUGS.md (human-logged bugs) before building │
                          └───────────────────────────────┬───────────────────────────────────────────┘
-                                          all features done
+                                  all features done  AND  docs/BUGS.md has no open bugs
                                                           │
                          ┌──────────────────────────── LAUNCH READINESS ────────────────────────────┐
                          │  (manual staging deploy) ─► /launch-acceptance ─► /launch-compliance ─►     │
@@ -96,6 +97,16 @@ approval gates (Alex-only), the plan/dev/launch checkboxes, the **feature table*
 keys off, the blockers list, and a log. Keep it short; detail lives in feature
 cards and the log.
 
+## The bug log: `docs/BUGS.md`
+
+The human-written counterpart to STATUS. You drop bugs you hit into its `## Open`
+section; `dev-autopilot` drains it **before any build step** — fixing every open
+bug through its verify loop, moving each to `## Fixed`, and stopping the run there
+(a bug-fix run does nothing else). Open bugs are also a **soft launch gate**: the
+autopilot won't enter `/launch-acceptance` while any remain. This is the one place
+the "one step per run" rule bends — the whole log drains in a single run, because
+known-broken code is never a base for new work.
+
 ## Integrating an existing (not-yet-launch-ready) repo
 
 `init-ai` works on a half-built repo, not just a blank one — but "finish my app"
@@ -130,7 +141,10 @@ app "done."
   blind, so tests verify behavior, not whatever the code happens to do.
 - **Validators judge, they don't fix.** Separation keeps the gates honest; the
   orchestrator turns findings into failing tests + fixes.
-- **One safe step per autopilot run.** Bounded, resumable, reviewable.
+- **One safe step per autopilot run.** Bounded, resumable, reviewable — except a
+  bug-fix run, which drains all of `docs/BUGS.md` before any build step resumes.
+- **Bugs before building.** Open bugs in `docs/BUGS.md` preempt scaffold/auth/
+  feature work and block entry to the launch stage until fixed.
 - **Green suite at every stop; push straight to the working branch.** Nothing
   marked done with red tests or open findings. To keep iteration fast the dev
   stage commits and pushes to one working branch — no per-step branches, no PR

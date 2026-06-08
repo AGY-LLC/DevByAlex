@@ -34,6 +34,8 @@ you can run by hand to bootstrap a brand-new app before `init-ai` is loaded.
 /dev-scaffold     # one-time baseline
 /dev-auth         # authentication first
 /dev-autopilot .  # advance the build one safe step (run repeatedly / on a schedule)
+#    Hit a bug? Jot it in docs/BUGS.md — each autopilot run drains the bug log
+#    (fixing + verifying every open bug) BEFORE it touches any feature work.
 
 # 4. Launch readiness (staging deploy is manual):
 /launch-acceptance
@@ -51,7 +53,7 @@ and wires the runner's BuildsByAlex MCP token in as a secret. See
 install.sh                   provision skills+agents+templates (+ vendored reused skills) into <app>/.claude
 skills/                      the 10 stage/ops skills (init-ai, plan-*, dev-*, dev-schedule, launch-*)
 agents/                      the 5 specialist agents the feature loop deploys
-templates/                   the docs/ files init-ai stamps into a target repo
+templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, SPEC, …)
 docs/WORKFLOW.md             the full architecture and invariants
 docs/SCHEDULING.md           how to run the loop unattended (ready-to-run recipes)
 IMPLEMENT.md                 the original brief this implements

@@ -46,6 +46,13 @@
   age-gating, sector rules (HIPAA, PCI). Mark "none — internal tool" if truly N/A._
 - **User-rights obligations:** _Account deletion, data export/access — required
   where GDPR/CCPA applies._
+- **Subscriptions & auto-renewal (if recurring billing or free trials):**
+  _Required by FTC ROSCA / click-to-cancel, California ARL, EU rules. Commit to:
+  (1) **multiple pre-charge trial reminders** before any free trial converts to a
+  paid charge; (2) **recurring-charge disclosure on the paywall itself** (price,
+  interval, auto-renews, first-charge date/amount) — not buried in ToS/policy;
+  (3) a **straightforward in-app cancel** path, no harder than signing up. Mark
+  "N/A — no recurring billing" if truly free / one-time._
 - **Accessibility target:** _Default **WCAG 2.2 AA** (ADA / Section 508 / EAA
   exposure). Note any AAA goals or platform-native a11y requirements._
 

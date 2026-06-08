@@ -4,6 +4,10 @@
 > file to decide what to do next; every stage/feature skill updates it. Keep it
 > short and current — push detail into feature cards and the log. Use absolute
 > dates. Tag anything inferred (not observed) `(needs review)`.
+>
+> **Bugs you hit go in [`docs/BUGS.md`](./BUGS.md), not here.** The autopilot
+> drains that log **before any build step** and won't enter the launch stage
+> while it has open bugs.
 
 **Stage:** plan <!-- plan | dev | launch -->
 **Updated:** {{DATE}} <!-- date · commit · branch -->
@@ -41,6 +45,7 @@ Status: `todo` → `in-progress` → `blocked` → `done`.
 
 ## Launch
 
+- [ ] No open bugs in `docs/BUGS.md`   ← soft gate: autopilot won't enter launch while bugs are open
 - [ ] Acceptance tests written (`docs/ACCEPTANCE_TESTS.md`)
 - [ ] Staging smoke test passed
 - [ ] Launch-readiness audit passed
