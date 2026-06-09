@@ -30,6 +30,11 @@ is the live control file; this file is the map.
    - Staging deploy — **manual** (Alex).
    - `/launch-acceptance` → `docs/ACCEPTANCE_TESTS.md` — a computer-use-runnable
      pass over critical flows against staging.
+   - `/launch-verify` — **runs** that acceptance test against staging with a
+     computer-use browser (Chrome DevTools MCP), evaluates the live UI against a
+     front-end design floor (`web-interface-guidelines` + `frontend-design`), and
+     drives a test→fix→re-test loop (UI fixes pull `shadcn` MCP components;
+     functional breakages land in `docs/BUGS.md`).
    - `/launch-compliance` — legal scan (ToS, privacy policy, cookie consent),
      `accessibility-critique` (WCAG 2.2 AA), `seo-audit`, and `prose-check`;
      reconciles a fix queue and the two **hard gates** (Legal & compliance,

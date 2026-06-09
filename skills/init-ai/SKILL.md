@@ -226,7 +226,7 @@ anything that needs a human. The routing rules:
 | scaffolded, no auth at all | `/dev-auth` (build) |
 | scaffolded, **auth present but unvalidated** | `/dev-auth validate` — audit + harden the existing auth |
 | auth validated, features remain | `/dev-autopilot` (or `/feature-loop <feature>`) — validate/harden existing features first, then build missing ones |
-| all features built + validated | `/launch-acceptance`, then `/launch-compliance` (legal/a11y/SEO/prose — drives the hard gates) + `/launch-readiness` |
+| all features built + validated | `/launch-acceptance` → `/launch-verify` (computer-use run of the acceptance test + front-end design pass + fix loop) → `/launch-compliance` (legal/a11y/SEO/prose — drives the hard gates) + `/launch-readiness` |
 
 If integrating a code-first repo with no spec, recommend backfilling the spec
 and guide **from the code** before any further building, so the autopilot has a

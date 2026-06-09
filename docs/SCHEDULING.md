@@ -166,5 +166,7 @@ runner still needs the **BuildsByAlex MCP token** as a secret and
    BuildsByAlex MCP token in as a secret.
 5. Skim the commits the run pushes to the working branch; clear any blocker it
    logs in STATUS.
-6. When STATUS reaches the launch stage, deploy staging (manual) and run
-   `/launch-acceptance`.
+6. When STATUS reaches the launch stage, deploy staging (manual), run
+   `/launch-acceptance` to write the test, then `/launch-verify` to run it against
+   staging in a computer-use test→fix loop (needs the Chrome DevTools MCP + shadcn
+   MCP), and `/launch-compliance` for the hard gates.

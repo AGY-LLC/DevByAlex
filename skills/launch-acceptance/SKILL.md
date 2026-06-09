@@ -1,6 +1,6 @@
 ---
 name: launch-acceptance
-description: "Launch-readiness stage of the DevByAlex workflow — write an acceptance test that describes a manual pass through all critical features of the app, structured so a computer-use-capable agent can execute it against the staging environment to sanity-check that everything works as expected. Inspects the implementation guide, feature cards, and STATUS to enumerate the critical flows, then writes docs/ACCEPTANCE_TESTS.md as precise, ordered, agent-runnable steps with explicit expected results and setup/teardown. Pairs with the launch-readiness and staging-smoke-test skills. Use once features are built and the app is staged, when the user says 'write the acceptance tests', 'create the staging acceptance pass', or 'prep launch verification'."
+description: "Launch-readiness stage of the DevByAlex workflow — write an acceptance test that describes a manual pass through all critical features of the app, structured so a computer-use-capable agent can execute it against the staging environment to sanity-check that everything works as expected. Inspects the implementation guide, feature cards, and STATUS to enumerate the critical flows, then writes docs/ACCEPTANCE_TESTS.md as precise, ordered, agent-runnable steps with explicit expected results and setup/teardown. The companion launch-verify skill then RUNS this test against staging with a computer-use browser and drives the fix loop; pairs with launch-readiness and staging-smoke-test too. Use once features are built and the app is staged, when the user says 'write the acceptance tests', 'create the staging acceptance pass', or 'prep launch verification'."
 argument-hint: "[optional: staging URL or flows to focus on]"
 license: MIT
 metadata:
@@ -50,11 +50,15 @@ Flag any done feature with no acceptance coverage.
 
 ### Step 4 — Update STATUS and route
 - Check **Launch → Acceptance tests written**.
+- **Route to `/launch-verify`** — this skill only *writes* the test; `launch-verify`
+  *runs* it against staging with a computer-use browser and drives the
+  test → fix → re-test loop. With staging deployed, that's the next action.
 - Recommend the companion skills: `staging-smoke-test` (human-walkable
   config/integration check), `launch-readiness` (codebase go/no-go audit), and
   `launch-compliance` (the legal / accessibility / SEO / prose scan that drives
   the two hard launch gates) before promoting to production.
-- Add a log line; set `## Next action` accordingly.
+- Add a log line; set `## Next action` accordingly (`/launch-verify` once staging
+  is deployed).
 
 ## Rules
 

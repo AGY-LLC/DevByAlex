@@ -38,7 +38,9 @@ you can run by hand to bootstrap a brand-new app before `init-ai` is loaded.
 #    (fixing + verifying every open bug) BEFORE it touches any feature work.
 
 # 4. Launch readiness (staging deploy is manual):
-/launch-acceptance
+/launch-acceptance   # write the computer-use acceptance test
+/launch-verify       # RUN it against staging (Chrome DevTools MCP) + design pass, then fix-loop
+/launch-compliance   # legal · a11y · SEO · prose gates
 ```
 
 To run the dev stage unattended, use **`/dev-schedule`** — it preflights, picks a
@@ -51,7 +53,7 @@ and wires the runner's BuildsByAlex MCP token in as a secret. See
 ```
 .claude-plugin/plugin.json   plugin manifest
 install.sh                   provision skills+agents+templates (+ vendored reused skills) into <app>/.claude
-skills/                      the 10 stage/ops skills (init-ai, plan-*, dev-*, dev-schedule, launch-*)
+skills/                      the 12 stage/ops skills (init-ai, plan-*, dev-*, dev-schedule, launch-*)
 agents/                      the 5 specialist agents the feature loop deploys
 templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, SPEC, …)
 docs/WORKFLOW.md             the full architecture and invariants
@@ -85,8 +87,16 @@ agent, the existing skills it reuses, and the invariants that make autonomy safe
   then `/plugin` → OAuth). Read-only "design → code" servers can't create frames;
   write-to-canvas needs a Full seat (or a Dev seat writing into a draft file).
   `/plan-wireframes` stops and points you to setup if none is connected.
+- For the **launch-verify** computer-use loop: the **Chrome DevTools MCP** (the
+  browser it drives against staging to run the acceptance test — e.g.
+  `claude mcp add chrome-devtools npx chrome-devtools-mcp@latest`) and, for the
+  UI-fix side, the **shadcn MCP** (on-spec components during remediation).
+  `/launch-verify` stops and points you to setup if the Chrome DevTools MCP or a
+  staging URL is missing.
 - The reused skills — `test-suite-developer`, `scout`, `issue-checker`,
-  `fix-errors`, `staging-smoke-test`, `launch-readiness`. On your machine they
+  `fix-errors`, `staging-smoke-test`, `launch-readiness`, plus the front-end
+  design floor `launch-verify` uses (`web-interface-guidelines`, `frontend-design`).
+  On your machine they
   live in `~/.claude/skills`; `install.sh` / `init-ai` now **vendor them into the
   target app's `.claude/skills`**, so a committed checkout carries them to any
   cloud/CI runner. The one runner dependency that doesn't cover is the

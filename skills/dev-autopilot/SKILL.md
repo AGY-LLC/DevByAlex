@@ -88,11 +88,13 @@ In priority order, choose the first that isn't done:
    `docs/BUGS.md` has no open bugs.** Open bugs are a soft launch gate: do **not**
    advance into `/launch-acceptance` while any remain (a clear log is guaranteed
    here because Step 2.5 runs first, but re-check in case one was just logged).
-   With the log clear, set next action to `/launch-acceptance` (then
-   `/launch-compliance`) and stop. Staging deploy is manual, and the **Legal &
-   compliance** + **Accessibility (WCAG 2.2 AA)** hard gates must be clean and
-   signed off before ship — treat them like the approval gates: never self-check,
-   never cross.
+   With the log clear, set next action to `/launch-acceptance` (write the tests),
+   then `/launch-verify` (run them against staging in a computer-use test→fix
+   loop), then `/launch-compliance`, and stop. Staging deploy is manual, and the
+   **Legal & compliance** + **Accessibility (WCAG 2.2 AA)** hard gates must be
+   clean and signed off before ship — treat them like the approval gates: never
+   self-check, never cross. (`/launch-verify`'s functional failures land back in
+   `docs/BUGS.md`, so a later autopilot run drains them before launch proceeds.)
 
 Honor dependencies: don't start a feature whose prerequisites aren't done.
 

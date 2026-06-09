@@ -47,6 +47,8 @@ Status: `todo` → `in-progress` → `blocked` → `done`.
 
 - [ ] No open bugs in `docs/BUGS.md`   ← soft gate: autopilot won't enter launch while bugs are open
 - [ ] Acceptance tests written (`docs/ACCEPTANCE_TESTS.md`)
+- [ ] Acceptance pass run on staging (computer-use) — `/launch-verify`
+- [ ] Front-end design review passed (`/launch-verify`)
 - [ ] Staging smoke test passed
 - [ ] Launch-readiness audit passed
 - [ ] Legal/compliance scan passed — ToS, privacy policy, cookie consent (`/launch-compliance`)

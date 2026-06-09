@@ -29,9 +29,11 @@ is the live control file every skill reads and writes.
                                   all features done  AND  docs/BUGS.md has no open bugs
                                                           │
                          ┌──────────────────────────── LAUNCH READINESS ────────────────────────────┐
-                         │  (manual staging deploy) ─► /launch-acceptance ─► /launch-compliance ─►     │
-                         │   ACCEPTANCE_TESTS.md   legal·a11y·SEO·prose   + /staging-smoke-test        │
-                         │   + /launch-readiness   ⮡ Legal & Accessibility = HARD gates (block ship)   │
+                         │  (manual staging deploy) ─► /launch-acceptance ─► /launch-verify ─►         │
+                         │   ACCEPTANCE_TESTS.md   (write the test)   (computer-use RUN + fix loop:     │
+                         │   ─► /launch-compliance ─► + /staging-smoke-test + /launch-readiness         │
+                         │   legal·a11y·SEO·prose   Chrome DevTools MCP · shadcn MCP · design skills)   │
+                         │   ⮡ Legal & Accessibility = HARD gates (block ship)                          │
                          └──────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -51,6 +53,7 @@ is the live control file every skill reads and writes.
 | `dev-autopilot` | dev | Advances the build one safe step per run (what a schedule calls). |
 | `dev-schedule` | dev/ops | Sets up the unattended schedule that calls `dev-autopilot` off an explicitly named working branch; wires the cloud runner's BBA token as a secret. |
 | `launch-acceptance` | launch | Writes the computer-use-runnable staging acceptance test. |
+| `launch-verify` | launch | RUNS that acceptance test against staging with a computer-use browser (Chrome DevTools MCP), evaluates the live UI against a front-end design floor (Vercel `web-interface-guidelines` + `frontend-design` skills), and drives a test→fix→re-test loop — functional breakages to `docs/BUGS.md`, design polish through `fix-errors` with `shadcn` MCP components. |
 | `launch-compliance` | launch | Legal (ToS / privacy policy / cookie consent), accessibility (WCAG 2.2 AA), SEO, and prose scans; drives the two hard launch gates + a fix queue. Reuses `launch-readiness`, `accessibility-critique`, `seo-audit`, `prose-check`. |
 
 ### Agents (the specialists the feature loop deploys)
@@ -78,6 +81,10 @@ and so any runner has them, `install.sh` **vendors these into each app's
 - `prose-check` — strips AI tells from copy (plan wireframes + launch prose pass).
 - `seo-audit` — code-level SEO audit at launch (needs `docs/BRAND.md`).
 - `accessibility-critique` — WCAG 2.2 AA audit at launch → `A11Y-xxx` fix queue.
+- `web-interface-guidelines` — Vercel's web interface guidelines; the design floor
+  `launch-verify` judges the live UI against.
+- `frontend-design` — front-end design critique `launch-verify` runs over the
+  rendered screens (paired with the guidelines + the `shadcn` MCP on the fix side).
 - `marketer-brand-generation` — writes `docs/BRAND.md` in the plan stage (seeds
   SEO + voice; required by `seo-audit`).
 - `marketer-copywriting` — on-brand copy when wireframe/launch prose needs more
