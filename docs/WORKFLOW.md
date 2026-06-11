@@ -31,6 +31,7 @@ is the live control file every skill reads and writes.
                          ┌──────────────────────────── LAUNCH READINESS ────────────────────────────┐
                          │  (manual staging deploy) ─► /launch-acceptance ─► /launch-compliance ─►     │
                          │   ACCEPTANCE_TESTS.md   legal·a11y·SEO·prose   + /staging-smoke-test        │
+                         │   + Playwright (web) & Maestro (iOS/Android) acceptance suites               │
                          │   + /launch-readiness   ⮡ Legal & Accessibility = HARD gates (block ship)   │
                          └──────────────────────────────────────────────────────────────────────────┘
 ```
@@ -50,7 +51,7 @@ is the live control file every skill reads and writes.
 | `feature-loop` | dev | The per-feature 4-step build/validate engine. |
 | `dev-autopilot` | dev | Advances the build one safe step per run (what a schedule calls). |
 | `dev-schedule` | dev/ops | Sets up the unattended schedule that calls `dev-autopilot` off an explicitly named working branch; wires the cloud runner's BBA token as a secret. |
-| `launch-acceptance` | launch | Writes the computer-use-runnable staging acceptance test. |
+| `launch-acceptance` | launch | Writes the staging acceptance pass as runnable suites — Playwright (web) + Maestro (iOS/Android) — generated from a scenario doc. |
 | `launch-compliance` | launch | Legal (ToS / privacy policy / cookie consent), accessibility (WCAG 2.2 AA), SEO, and prose scans; drives the two hard launch gates + a fix queue. Reuses `launch-readiness`, `accessibility-critique`, `seo-audit`, `prose-check`. |
 
 ### Agents (the specialists the feature loop deploys)

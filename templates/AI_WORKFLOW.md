@@ -28,8 +28,9 @@ is the live control file; this file is the map.
 
 3. **Launch readiness**
    - Staging deploy — **manual** (Alex).
-   - `/launch-acceptance` → `docs/ACCEPTANCE_TESTS.md` — a computer-use-runnable
-     pass over critical flows against staging.
+   - `/launch-acceptance` → `docs/ACCEPTANCE_TESTS.md` (scenario spec) plus the
+     runnable suites that execute it against staging: Playwright specs for web,
+     Maestro flows for iOS/Android.
    - `/launch-compliance` — legal scan (ToS, privacy policy, cookie consent),
      `accessibility-critique` (WCAG 2.2 AA), `seo-audit`, and `prose-check`;
      reconciles a fix queue and the two **hard gates** (Legal & compliance,

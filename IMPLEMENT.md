@@ -39,4 +39,4 @@ here are the steps:
 ### staging deploy
 this is manually done by my
 ### write acceptance tests
-you will write out an acceptance test that explains a manual pass through all critical features of the app. this will be ingested by a computer use capable agent to run and sanity check the app to make sure it is working as expected in the staging environment.
+you will write out an acceptance test that explains a manual pass through all critical features of the app. from that document you will generate runnable test suites — playwright for the web surfaces and maestro for ios/android — that run against the staging environment to sanity check the app is working as expected.
