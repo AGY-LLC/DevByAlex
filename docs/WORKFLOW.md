@@ -12,7 +12,7 @@ is the live control file every skill reads and writes.
                          ┌──────────────────────────── PLAN (human-gated) ───────────────────────────┐
   /init-ai  ──────────►  │  /plan-spec ──► /plan-guide ──► /plan-wireframes                            │
   (bootstrap STATUS)     │   SPEC.md        GUIDE.md +      Figma frames +                             │
-                         │   (+legal+SEO)   feature cards   wireframes/README · copy prose-checked     │
+                         │   (+legal+SEO)   feature cards   wireframes/README + design/RESOURCES.md     │
                          │   └► /marketer-brand-generation → BRAND.md (if public-facing, before guide)  │
                          └───────────────────────────────┬───────────────────────────────────────────┘
                                       Alex approves spec + guide + wireframes  (3 gates)
@@ -29,10 +29,12 @@ is the live control file every skill reads and writes.
                                   all features done  AND  docs/BUGS.md has no open bugs
                                                           │
                          ┌──────────────────────────── LAUNCH READINESS ────────────────────────────┐
-                         │  (manual staging deploy) ─► /launch-acceptance ─► /launch-compliance ─►     │
-                         │   ACCEPTANCE_TESTS.md   legal·a11y·SEO·prose   + /staging-smoke-test        │
-                         │   + Playwright (web) & Maestro (iOS/Android) acceptance suites               │
-                         │   + /launch-readiness   ⮡ Legal & Accessibility = HARD gates (block ship)   │
+                         │  (manual staging deploy) ─► /launch-acceptance ─► /launch-visual-qa ─►      │
+                         │   ACCEPTANCE_TESTS.md   Playwright(web)+Maestro(iOS/Android)  screenshot     │
+                         │   ─► /launch-compliance ─► /staging-smoke-test ─► /launch-readiness          │
+                         │   ⮡ Legal & Accessibility = HARD gates (block ship)                          │
+                         │   ─► /launch-store-assets (App Store + Play) ─► /launch-submit ⮕ TestFlight  │
+                         │      + Play internal  (HUMAN-TRIGGERED publish; never auto/cron)             │
                          └──────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -53,6 +55,9 @@ is the live control file every skill reads and writes.
 | `dev-schedule` | dev/ops | Sets up the unattended schedule that calls `dev-autopilot` off an explicitly named working branch; wires the cloud runner's BBA token as a secret. |
 | `launch-acceptance` | launch | Writes the staging acceptance pass as runnable suites — Playwright (web) + Maestro (iOS/Android) — generated from a scenario doc. |
 | `launch-compliance` | launch | Legal (ToS / privacy policy / cookie consent), accessibility (WCAG 2.2 AA), SEO, and prose scans; drives the two hard launch gates + a fix queue. Reuses `launch-readiness`, `accessibility-critique`, `seo-audit`, `prose-check`. |
+| `launch-visual-qa` | launch | The cross-platform screenshot loop (build → boot → screenshot → critique → fix): boots iOS sim + Android emulator, drives the Maestro flows to capture every key screen/state, a vision critic emits a `VIS-xxx` queue → `fix-errors`, re-screenshots to confirm. Reuses the `launch-acceptance` Maestro flows + `fix-errors`. |
+| `launch-store-assets` | launch | The "App Store tab," doubled: icon, device-framed screenshots (iOS sizes + Android phone/tablet), Play feature graphic, and per-field listing copy for **both** App Store Connect and Play Console, from the real running app. Reuses `create-demo`, `marketer-copywriting`, `ios-audit`. |
+| `launch-submit` | launch | Dual-store delivery lane — detects Expo→EAS / bare→Fastlane, builds, and submits to **TestFlight + Play internal testing**. Gated on readiness/compliance/hard-gates; **human-triggered only**, never auto-promotes to production. Reuses `launch-readiness`, `ios-audit`. |
 
 ### Agents (the specialists the feature loop deploys)
 
@@ -82,7 +87,11 @@ and so any runner has them, `install.sh` **vendors these into each app's
 - `marketer-brand-generation` — writes `docs/BRAND.md` in the plan stage (seeds
   SEO + voice; required by `seo-audit`).
 - `marketer-copywriting` — on-brand copy when wireframe/launch prose needs more
-  than a cleanup pass.
+  than a cleanup pass; also writes the store listing copy in `launch-store-assets`.
+- `ios-audit` — App Store Review / Play policy audit; used by `launch-submit`
+  (rejection preflight) and `launch-store-assets` (metadata/age-rating compliance).
+- `create-demo` — Maestro-driven capture of the real running app; `launch-store-assets`
+  reuses it to pull real screenshots for the store listing.
 - `uiux-init` / `uiux-audit` — optional design-doc + UI alignment alongside
   wireframes.
 

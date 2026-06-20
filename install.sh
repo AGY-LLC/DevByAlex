@@ -108,7 +108,7 @@ done
 # app's project scope too so any runner carries the full toolset. Override the
 # source with DEVBYALEX_REUSED_SKILLS_DIR; pass --no-reused to skip.
 REUSED_SRC="${DEVBYALEX_REUSED_SKILLS_DIR:-$HOME/.claude/skills}"
-REUSED_SKILLS="test-suite-developer scout issue-checker fix-errors staging-smoke-test launch-readiness prose-check seo-audit accessibility-critique marketer-brand-generation marketer-copywriting"
+REUSED_SKILLS="test-suite-developer scout issue-checker fix-errors staging-smoke-test launch-readiness prose-check seo-audit accessibility-critique marketer-brand-generation marketer-copywriting ios-audit create-demo"
 if [ "$MODE" = "uninstall" ]; then
   for name in $REUSED_SKILLS; do place_one "$REUSED_SRC/$name" "$SKILLS_DST"; done
 elif [ "$REUSED" = "yes" ]; then

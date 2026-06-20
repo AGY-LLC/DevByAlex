@@ -43,6 +43,11 @@
 - **SEO (public surfaces):** _semantic HTML, framework metadata (titles/
   descriptions/OpenGraph), sitemap + robots, JSON-LD, canonical/hreflang.
   Verified by `seo-audit` at launch (needs `docs/BRAND.md`)._
+- **Design resources (app-wide):** _per `docs/design/RESOURCES.md` — the custom
+  **app loader** (built in scaffold), the **marketing load-in** on public
+  landing pages, and the Stripe-style dynamic **OG preview image**. All honor
+  `prefers-reduced-motion`; the marketing load-in must not block LCP or shift
+  layout. OG image verified to resolve at launch._
 - **Legal / consent:** _Terms of Service + Privacy Policy routes; cookie consent
   banner (web) that gates non-essential cookies/analytics until consent; account
   deletion / data-export path where GDPR/CCPA applies. Verified by

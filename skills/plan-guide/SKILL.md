@@ -80,7 +80,9 @@ Use `../../templates/IMPLEMENTATION_GUIDE.md`. It links to each feature card,
 states the build order with rationale, lists cross-cutting concerns (auth model,
 error handling, logging, env/config, testing strategy, **accessibility** (WCAG
 2.2 AA baseline), **SEO** (semantic HTML, framework metadata, sitemap/robots,
-JSON-LD), **legal/consent** (ToS + privacy routes, cookie-consent + analytics
+JSON-LD), **design resources** (the app loader, marketing load-in, and OG preview
+image specced in `docs/design/RESOURCES.md` — loader + OG image built in scaffold),
+**legal/consent** (ToS + privacy routes, cookie-consent + analytics
 gating), CI), and the stack decisions (default to Alex's: TypeScript strict, Zod
 at boundaries, thin route handlers + services, Prisma with reviewed migrations,
 Jest + Playwright).

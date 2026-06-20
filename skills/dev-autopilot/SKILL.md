@@ -89,10 +89,13 @@ In priority order, choose the first that isn't done:
    advance into `/launch-acceptance` while any remain (a clear log is guaranteed
    here because Step 2.5 runs first, but re-check in case one was just logged).
    With the log clear, set next action to `/launch-acceptance` (then
-   `/launch-compliance`) and stop. Staging deploy is manual, and the **Legal &
-   compliance** + **Accessibility (WCAG 2.2 AA)** hard gates must be clean and
-   signed off before ship — treat them like the approval gates: never self-check,
-   never cross.
+   `/launch-visual-qa`, `/launch-compliance`, and `/launch-store-assets`) and stop.
+   Staging deploy is manual, and the **Legal & compliance** + **Accessibility (WCAG
+   2.2 AA)** hard gates must be clean and signed off before ship — treat them like
+   the approval gates: never self-check, never cross. **Never run `/launch-submit`
+   from autopilot** — submitting to the stores is an outward-facing publish that
+   only a human triggers; the most this run does is *suggest* it as the next action
+   once every gate is green.
 
 Honor dependencies: don't start a feature whose prerequisites aren't done.
 

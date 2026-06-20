@@ -114,6 +114,31 @@ where labels/landmarks/focus belong, and the primary keyboard path — so the bu
 inherits a11y intent, not just layout (it's verified later by
 `accessibility-critique` against the WCAG 2.2 AA hard gate).
 
+### Step 3b — Spec the app-wide design resources
+Some visual assets aren't tied to a single screen — they belong to the whole app.
+Write `docs/design/RESOURCES.md` from `../../templates/design-resources.md`,
+driven by the spec's Design & UX + SEO answers and the brand (`docs/BRAND.md` /
+`docs/DESIGN.md` if present). Spec three things so `/dev-scaffold` can build them
+and `/launch-compliance` can verify them:
+
+- **App loading animation** — the custom in-app loader, inspired by the theme.
+  Record the chosen approach (logo-based animation of the logo SVG / theme-derived
+  abstract loader / generated Lottie or video loop), the technique/format, timing,
+  where it shows, and the `prefers-reduced-motion` fallback. Pick logo-based when a
+  clean logo SVG exists; theme-derived when it doesn't or a richer feel is wanted.
+- **Marketing load-in (public surfaces only)** — the separate one-time hero
+  entrance: a staggered fade-up (`translateY` + `opacity` only, ~300–600ms,
+  ease-out, ~60–120ms stagger, first content <~1s) and, optionally, a Stripe-style
+  animated WebGL mesh-gradient background (~10kb, pause off-screen, 60fps mobile).
+  Must not block LCP or shift layout, and must honor `prefers-reduced-motion`. Omit
+  this entirely if the app has no public marketing page.
+- **Social preview (OG) image** — the Stripe-style 1200×630 link-share card:
+  default to dynamic generation from brand tokens (`@vercel/og` / Satori
+  `opengraph-image.tsx`) using the app name, tagline, logo, and colors; note the
+  per-route title strategy and that a hand-designed override is allowed.
+
+This doc is part of the same approval gate as the wireframes.
+
 ### Step 4 — Index in docs/wireframes/README.md
 Write `docs/wireframes/README.md` from `../../templates/wireframes-README.md`:
 - **GENERATE:** the Figma file/project link.
@@ -148,4 +173,6 @@ Write `docs/wireframes/README.md` from `../../templates/wireframes-README.md`:
 
 The wireframe artifact for every feature — Figma frames (GENERATE) or a
 documented screen inventory (CAPTURE) — `docs/wireframes/README.md` indexing them,
-STATUS advanced, and a request for Alex's approval of the guide + wireframes.
+`docs/design/RESOURCES.md` speccing the app-wide design resources (loader,
+marketing load-in, OG preview image), STATUS advanced, and a request for Alex's
+approval of the guide + wireframes.

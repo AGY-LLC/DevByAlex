@@ -28,10 +28,12 @@
 - [ ] Brand foundation (`docs/BRAND.md`) — if public-facing (`/marketer-brand-generation`)
 - [ ] `docs/IMPLEMENTATION_GUIDE.md` written
 - [ ] Wireframes created (`docs/wireframes/`)
+- [ ] Design resources specced (`docs/design/RESOURCES.md`) — loader · marketing load-in · OG preview image
 
 ## Dev
 
 - [ ] Scaffold (one-time baseline)
+- [ ] Custom app loader (built per `docs/design/RESOURCES.md`, or override recorded with a reason — never silently skipped)
 - [ ] Authentication (built + validated)
 
 ### Features
@@ -47,12 +49,15 @@ Status: `todo` → `in-progress` → `blocked` → `done`.
 
 - [ ] No open bugs in `docs/BUGS.md`   ← soft gate: autopilot won't enter launch while bugs are open
 - [ ] Acceptance tests written (`docs/ACCEPTANCE_TESTS.md`)
+- [ ] Visual QA passed — iOS + Android screenshots reviewed (`/launch-visual-qa`)
 - [ ] Staging smoke test passed
 - [ ] Launch-readiness audit passed
 - [ ] Legal/compliance scan passed — ToS, privacy policy, cookie consent (`/launch-compliance`)
 - [ ] Accessibility audit passed (WCAG 2.2 AA)
 - [ ] SEO audit passed
 - [ ] Prose pass done
+- [ ] Store listing assets generated — App Store + Play (`/launch-store-assets`)
+- [ ] Submitted to TestFlight + Play internal (manual) — `/launch-submit`, human-triggered only
 
 ## Next action
 

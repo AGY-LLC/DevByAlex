@@ -38,7 +38,11 @@ you can run by hand to bootstrap a brand-new app before `init-ai` is loaded.
 #    (fixing + verifying every open bug) BEFORE it touches any feature work.
 
 # 4. Launch readiness (staging deploy is manual):
-/launch-acceptance
+/launch-acceptance     # Playwright (web) + Maestro (iOS/Android) acceptance suites
+/launch-visual-qa      # boot iOS + Android, screenshot every screen, critique → fix
+/launch-compliance     # legal / a11y / SEO / prose gates
+/launch-store-assets   # App Store + Play icon, screenshots, listing copy
+/launch-submit         # YOU run this — build + ship to TestFlight + Play internal
 ```
 
 To run the dev stage unattended, use **`/dev-schedule`** — it preflights, picks a
@@ -51,7 +55,7 @@ and wires the runner's BuildsByAlex MCP token in as a secret. See
 ```
 .claude-plugin/plugin.json   plugin manifest
 install.sh                   provision skills+agents+templates (+ vendored reused skills) into <app>/.claude
-skills/                      the 10 stage/ops skills (init-ai, plan-*, dev-*, dev-schedule, launch-*)
+skills/                      the 13 stage/ops skills (init-ai, plan-*, dev-*, dev-schedule, launch-*)
 agents/                      the 5 specialist agents the feature loop deploys
 templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, SPEC, …)
 docs/WORKFLOW.md             the full architecture and invariants
@@ -86,7 +90,8 @@ agent, the existing skills it reuses, and the invariants that make autonomy safe
   write-to-canvas needs a Full seat (or a Dev seat writing into a draft file).
   `/plan-wireframes` stops and points you to setup if none is connected.
 - The reused skills — `test-suite-developer`, `scout`, `issue-checker`,
-  `fix-errors`, `staging-smoke-test`, `launch-readiness`. On your machine they
+  `fix-errors`, `staging-smoke-test`, `launch-readiness`, `ios-audit`,
+  `create-demo`. On your machine they
   live in `~/.claude/skills`; `install.sh` / `init-ai` now **vendor them into the
   target app's `.claude/skills`**, so a committed checkout carries them to any
   cloud/CI runner. The one runner dependency that doesn't cover is the

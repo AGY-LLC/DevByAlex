@@ -72,7 +72,14 @@
   (dashboard, finance)._
 - **Key screens & their states:** _list screens; for each note empty / loading /
   error / onboarding / upgrade as relevant._
-- **Brand assets:** _logo, colors, type, existing URLs._
+- **Brand assets:** _logo (is an **SVG** available?), colors, type, existing URLs._
+- **App loading animation:** _every app gets a custom loader that draws on the
+  theme. Which approach — **logo-based** (animate the logo SVG),
+  **theme-derived** (abstract loader from brand color/shape), or a **generated**
+  Lottie/video loop? Decided per project; specced in `docs/design/RESOURCES.md`._
+- **Marketing load-in (public landing/marketing pages only):** _a separate,
+  one-time hero entrance animation (staggered fade-up; optional Stripe-style
+  animated mesh-gradient background). N/A if there's no public marketing page._
 - **References loved / hated:** _…_
 - **Anti-patterns to avoid:** _…_
 
@@ -86,6 +93,11 @@
 - **Public / marketing surfaces:** _Landing, marketing pages, blog, public
   content — or is this a private/internal app where SEO is N/A?_
 - **Target audience & key terms:** _Who's searching, and for what?_
+- **Social preview (OG) image:** _every web app gets a link-share card
+  (1200×630). Default is **Stripe-style, dynamically generated** from brand
+  tokens (app name + tagline + logo + colors) — you provide the logo only. A
+  hand-designed override may be supplied. Specced in `docs/design/RESOURCES.md`,
+  verified to resolve at launch._
 - **Locales / i18n:** _Languages/regions to target (drives hreflang)._
 - **Brand foundation:** _`docs/BRAND.md` exists? If not and the app is
   public-facing, run `/marketer-brand-generation` before the guide._

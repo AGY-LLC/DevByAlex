@@ -54,6 +54,19 @@ Stand up, in dependency order:
 7. A basic CI workflow (`.github/workflows/ci.yml`) running install → lint →
    typecheck → test → build.
 8. A minimal app entry/home route that boots, plus a healthcheck.
+9. **App-wide design resources** (per `docs/design/RESOURCES.md`):
+   - The custom **app loader** — **required**, wired to initial load / route
+     transitions / Suspense — built to the chosen approach (logo-based /
+     theme-derived / generated), using brand tokens from `docs/BRAND.md`. Honor
+     `prefers-reduced-motion` (static fallback). This is a tracked checklist item:
+     build it, **or** confirm an override is recorded in `RESOURCES.md` and note
+     it — never leave it silently skipped. Then check the **Custom app loader** row
+     in STATUS.
+   - The Stripe-style **OG preview image** — default to dynamic generation from
+     brand tokens (`opengraph-image.tsx` via `@vercel/og` / Satori, 1200×630) and
+     wire `og:image` + `twitter:image` (absolute URL) into the base metadata.
+   - (The **marketing load-in** is built with the landing page in its feature, not
+     here — it's not baseline.)
 
 ### Step 4 — Verify
 Run install, lint, typecheck, test, and build. They must all pass. Fix until
@@ -75,5 +88,6 @@ green — a scaffold that doesn't boot is not done.
 
 ## Output
 
-A runnable, linted, tested skeleton pushed to the working branch, STATUS scaffold
-checked, next action `/dev-auth`.
+A runnable, linted, tested skeleton — including the custom app loader (or a
+recorded override) and the OG preview image — pushed to the working branch,
+STATUS scaffold + loader rows checked, next action `/dev-auth`.

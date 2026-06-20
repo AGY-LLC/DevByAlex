@@ -85,12 +85,21 @@ the auto-renewal disclosures.
 ### Step 3 — Accessibility audit (hard gate)
 Run `accessibility-critique` against **WCAG 2.2 AA** (the workflow's floor). It
 emits a prioritized `A11Y-xxx` queue with file:line evidence. Add those to the
-fix queue.
+fix queue. Make sure it covers the **app loader** and the **marketing load-in**
+(per `docs/design/RESOURCES.md`): both must honor `prefers-reduced-motion`
+(static/no-motion fallback), and the marketing load-in must not trap content
+behind motion or cause layout shift — flag any that don't. Also confirm the
+**custom app loader is actually present** (or an override is recorded in
+`RESOURCES.md` with a reason) — a missing loader with no recorded override is a
+finding, since it's a tracked checklist item that must never be silently skipped.
 
 ### Step 4 — SEO audit (advisory)
 Run `seo-audit`. It **requires `docs/BRAND.md`** — if it's missing and the app is
 public-facing, stop this step and route the user to `/marketer-brand-generation`
-first (note it in blockers), then re-run. Add its findings to the fix queue.
+first (note it in blockers), then re-run. Add its findings to the fix queue. Also
+confirm the **social preview (OG) image** specced in `docs/design/RESOURCES.md` is
+wired (`og:image` + `twitter:image`, absolute URL, 1200×630) and **actually
+resolves** — a referenced image that 404s or is the wrong size is a finding.
 
 ### Step 5 — Prose pass (advisory)
 Run `prose-check` over user-facing strings (UI labels, empty states, errors,

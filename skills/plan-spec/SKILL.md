@@ -53,9 +53,16 @@ answers. Work backwards from the user. Cover at minimum:
 8. **Launch success** — what "it works and we can ship" looks like.
 9. **Design/UX questions the wireframes need** — primary screen and user goal,
    emotional tone (2–3 adjectives), interaction density, key screens and their
-   states (empty/loading/error/onboarding/upgrade), brand assets, references
-   loved/hated, anti-patterns to avoid. **These must be answered here** because
-   `plan-wireframes` depends on them.
+   states (empty/loading/error/onboarding/upgrade), brand assets (incl. **is a
+   logo SVG available?**), references loved/hated, anti-patterns to avoid.
+   **Also ask the two animation questions** every app gets a decision on:
+   (a) the **app loading animation** — every app gets a custom loader inspired by
+   the theme; which approach fits this project (logo-based animation of the logo
+   SVG / a theme-derived abstract loader / a generated Lottie or video loop)?;
+   and (b) **only if there's a public landing/marketing page**, the separate
+   **marketing load-in** — a one-time hero entrance animation (staggered fade-up,
+   optional Stripe-style animated mesh-gradient background). **These must be
+   answered here** because `plan-wireframes` turns them into `docs/design/RESOURCES.md`.
 10. **Integrations & constraints** — third parties, compliance, deadlines,
     non-negotiables.
 11. **Legal, privacy & compliance** (the "don't get sued" set) — what personal
@@ -66,9 +73,12 @@ answers. Work backwards from the user. Cover at minimum:
     deletion/data-export obligations; and the **accessibility target** (default
     **WCAG 2.2 AA**). These become a build feature and the launch hard gates.
 12. **SEO & discoverability** — is the app public-facing (landing/marketing/blog)
-    or private? target audience & key terms; locales/i18n; and whether a brand
-    foundation (`docs/BRAND.md`) exists. If public-facing and none exists, plan to
-    run `/marketer-brand-generation` before the guide.
+    or private? target audience & key terms; locales/i18n; the **social preview
+    (OG) image** (every web app gets one — default is a Stripe-style card
+    dynamically generated from brand tokens, with the logo provided by the user
+    and an optional hand-designed override); and whether a brand foundation
+    (`docs/BRAND.md`) exists. If public-facing and none exists, plan to run
+    `/marketer-brand-generation` before the guide.
 
 After each batch, reflect back what you heard and list what's still open. Keep
 going until nothing important is open.

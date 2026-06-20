@@ -87,10 +87,13 @@ explicit `[manual]` marker. Flag any done feature with no acceptance coverage.
 
 ### Step 5 — Update STATUS and route
 - Check **Launch → Acceptance tests written**.
-- Recommend the companion skills: `staging-smoke-test` (human-walkable
-  config/integration check), `launch-readiness` (codebase go/no-go audit), and
-  `launch-compliance` (the legal / accessibility / SEO / prose scan that drives
-  the two hard launch gates) before promoting to production.
+- Recommend the companion skills: `launch-visual-qa` (boots iOS + Android and
+  screenshot-reviews these same flows — it reuses the Maestro flows written here),
+  `staging-smoke-test` (human-walkable config/integration check), `launch-readiness`
+  (codebase go/no-go audit), and `launch-compliance` (the legal / accessibility /
+  SEO / prose scan that drives the two hard launch gates) before promoting to
+  production. Once the app is clean, `launch-store-assets` generates the store
+  listings and `launch-submit` (human-triggered) ships to TestFlight + Play internal.
 - Add a log line; set `## Next action` accordingly.
 
 ## Rules
