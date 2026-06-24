@@ -71,9 +71,23 @@ is the live control file every skill reads and writes.
 
 ### Existing skills it reuses (not reinvented)
 
-The workflow leans on skills that already exist rather than duplicating them —
-and so any runner has them, `install.sh` **vendors these into each app's
-`.claude/skills`** at provision time (sourced from `~/.claude/skills`):
+The workflow leans on skills that already exist rather than duplicating them.
+So any runner has them, `install.sh` provisions them into each app's
+`.claude/skills` in **two tiers** (see [live-stubs/README.md](../live-stubs/README.md)):
+
+- **Live** — skills the **BuildsByAlex MCP brain** serves are installed as a
+  thin *stub* that loads the canonical body live from the brain on every run.
+  Improve the skill on the brain and every onboarded repo is current on its next
+  run, with **no re-vendoring**. (`test-suite-developer`, `scout`,
+  `issue-checker`, `fix-errors`, `staging-smoke-test`, `launch-readiness`,
+  `prose-check`, `seo-audit`, `accessibility-critique`, `ios-audit`,
+  `create-demo`.)
+- **Vendored** — skills not yet on the brain are copied from `~/.claude/skills`
+  as before (`marketer-brand-generation`, `marketer-copywriting`).
+
+Run `./install.sh <app> --migrate` to convert an already-onboarded repo from the
+old all-copies layout to live stubs (touches only the live tier; native skills,
+vendored skills, and `docs/` are left alone). The reused skills:
 
 - `test-suite-developer` — the test-author's engine.
 - `scout` — the validators' adversarial review (feature-scoped and whole-repo).
