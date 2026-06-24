@@ -61,6 +61,7 @@ live-stubs/                  thin pointers to reused skills served LIVE by the B
 sync/gen-live-stubs.sh       regenerates live-stubs/ from the live-skill registry
 templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, SPEC, …)
 docs/WORKFLOW.md             the full architecture and invariants
+docs/LIVE-SYNC.md            how the live model works + the plan to host DBA's own skills in BBA
 docs/SCHEDULING.md           how to run the loop unattended (ready-to-run recipes)
 IMPLEMENT.md                 the original brief this implements
 ```
