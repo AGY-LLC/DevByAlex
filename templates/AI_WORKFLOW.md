@@ -18,7 +18,10 @@ is the live control file; this file is the map.
      until the three gates in `docs/STATUS.md` are checked.
 
 2. **Dev** (autonomous once gates are met)
-   - `/dev-scaffold` — one-time baseline (skeleton, tooling, tests, CI).
+   - `/dev-scaffold` — one-time baseline: monorepo topology (`marketing/` apex +
+     `web/` full-stack app on app.domain + optional `app/` mobile), branch model
+     (protected `main` = production, `staging` = working line), skeleton, tooling,
+     tests, and CI + deploy via Pipeline by Alex (`pba.yml` + thin caller).
    - `/dev-auth` — authentication first; security & privacy prioritized.
    - `/feature-loop <id>` — per feature: parallel tests + implementation →
      feature validation → integration validation → align to guide/wireframes →
@@ -27,10 +30,11 @@ is the live control file; this file is the map.
      schedule calls.
 
 3. **Launch readiness**
-   - Staging deploy — **manual** (Alex).
+   - Staging deploys automatically via Pipeline by Alex on push to `staging`; the
+     human gate is the `staging → main` production promotion (`main` is protected).
    - `/launch-acceptance` → `docs/ACCEPTANCE_TESTS.md` (scenario spec) plus the
-     runnable suites that execute it against staging: Playwright specs for web,
-     Maestro flows for iOS/Android.
+     runnable suites that execute it against staging: Playwright specs for every
+     web surface (`marketing/` + `web/`), Maestro flows for iOS/Android.
    - `/launch-compliance` — legal scan (ToS, privacy policy, cookie consent),
      `accessibility-critique` (WCAG 2.2 AA), `seo-audit`, and `prose-check`;
      reconciles a fix queue and the two **hard gates** (Legal & compliance,

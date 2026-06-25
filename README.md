@@ -37,7 +37,7 @@ you can run by hand to bootstrap a brand-new app before `init-ai` is loaded.
 #    Hit a bug? Jot it in docs/BUGS.md — each autopilot run drains the bug log
 #    (fixing + verifying every open bug) BEFORE it touches any feature work.
 
-# 4. Launch readiness (staging deploy is manual):
+# 4. Launch readiness (staging deploys via Pipeline by Alex on push to staging):
 /launch-acceptance     # Playwright (web) + Maestro (iOS/Android) acceptance suites
 /launch-visual-qa      # boot iOS + Android, screenshot every screen, critique → fix
 /launch-compliance     # legal / a11y / SEO / prose gates
@@ -54,14 +54,14 @@ and wires the runner's BuildsByAlex MCP token in as a secret. See
 
 ```
 .claude-plugin/plugin.json   plugin manifest
-install.sh                   provision skills+agents+templates into <app>/.claude (live stubs + vendored reused; --migrate to update existing repos)
-skills/                      the 14 stage/ops skills (init-ai, plan-*, dev-*, dev-schedule, launch-*)
+install.sh                   provision skills+agents+templates into <app>/.claude; --update / --update-all re-vendor an onboarded app to the latest (version-stamped); --migrate converts old reused-skill copies to live stubs
+skills/                      the 15 stage/ops skills (init-ai, plan-*, dev-*, dev-update, dev-schedule, launch-*)
 agents/                      the 5 specialist agents the feature loop deploys
 live-stubs/                  thin pointers to reused skills served LIVE by the BuildsByAlex MCP (no re-vendoring on change)
 sync/gen-live-stubs.sh       regenerates live-stubs/ from the live-skill registry
 templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, SPEC, …)
 docs/WORKFLOW.md             the full architecture and invariants
-docs/LIVE-SYNC.md            how the live model works + the plan to host DBA's own skills in BBA
+docs/LIVE-SYNC.md            the two-tier skill model (reused = live stubs, native = local copies) + why native stays local + the --update pipeline
 docs/SCHEDULING.md           how to run the loop unattended (ready-to-run recipes)
 IMPLEMENT.md                 the original brief this implements
 ```
@@ -71,8 +71,9 @@ agent, the existing skills it reuses, and the invariants that make autonomy safe
 
 ## How it stays safe to automate
 
-- **Human gates** between plan and dev (spec/guide/wireframes approval) and a
-  manual staging deploy — agents never self-approve.
+- **Human gates** between plan and dev (spec/guide/wireframes approval) and
+  before the `staging → main` promotion to production — agents never self-approve.
+  Staging itself deploys automatically via Pipeline by Alex on push to `staging`.
 - **One safe step per autopilot run**, all state in the repo, so the loop is
   bounded, resumable, and reviewable (one commit per step).
 - **Push straight to the working branch** — no per-step branches, no PR pile-up

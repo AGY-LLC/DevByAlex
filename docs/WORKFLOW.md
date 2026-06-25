@@ -2,7 +2,9 @@
 
 An autonomous, stage-gated pipeline that takes an app from a one-line idea to
 launch-ready. Three macro stages — **plan**, **dev**, **launch** — with human
-approval gates between plan and dev, and a manual staging deploy before launch.
+approval gates between plan and dev, and before the `staging → main` promotion to
+production. Staging itself deploys automatically via Pipeline by Alex on push to
+`staging` (`main` = protected production).
 `init-ai` brings any repo (blank or existing) under the workflow; `docs/STATUS.md`
 is the live control file every skill reads and writes.
 
@@ -29,7 +31,7 @@ is the live control file every skill reads and writes.
                                   all features done  AND  docs/BUGS.md has no open bugs
                                                           │
                          ┌──────────────────────────── LAUNCH READINESS ────────────────────────────┐
-                         │  (manual staging deploy) ─► /launch-acceptance ─► /launch-visual-qa ─►      │
+                         │  (staging deploys via PBA) ─► /launch-acceptance ─► /launch-visual-qa ─►     │
                          │   ACCEPTANCE_TESTS.md   Playwright(web)+Maestro(iOS/Android)  screenshot     │
                          │   ─► /launch-compliance ─► /staging-smoke-test ─► /launch-readiness          │
                          │   ⮡ Legal & Accessibility = HARD gates (block ship)                          │
@@ -48,10 +50,11 @@ is the live control file every skill reads and writes.
 | `plan-spec` | plan | Interviews to a complete spec; `reverse` mode backfills from code. |
 | `plan-guide` | plan | Expands the spec into a granular, ordered guide + feature cards. |
 | `plan-wireframes` | plan | Wireframe each feature — GENERATE via Figma MCP (greenfield) or CAPTURE existing screens from code (existing app, no Figma). |
-| `dev-scaffold` | dev | One-time baseline: skeleton, tooling, tests, CI. |
+| `dev-scaffold` | dev | One-time baseline: monorepo topology (`marketing/` apex + `web/` full-stack app on app.domain + optional `app/` mobile), branch model (protected `main` = production, `staging` = working line), skeleton, tooling, tests, and CI + deploy via Pipeline by Alex (`pba.yml` + thin caller). |
 | `dev-auth` | dev | Authentication first, security & privacy prioritized. Validate-existing mode audits + hardens auth an existing repo already has. |
 | `feature-loop` | dev | The per-feature 4-step build/validate engine. |
 | `dev-autopilot` | dev | Advances the build one safe step per run (what a schedule calls). |
+| `dev-update` | dev/ops | Re-vendors the latest DevByAlex skills/agents/templates into the current app (`install.sh --update`); the manual update path that keeps the local committed copies current. |
 | `dev-schedule` | dev/ops | Sets up the unattended schedule that calls `dev-autopilot` off an explicitly named working branch; wires the cloud runner's BBA token as a secret. |
 | `launch-acceptance` | launch | Writes the staging acceptance pass as runnable suites — Playwright (web) + Maestro (iOS/Android) — generated from a scenario doc. |
 | `launch-compliance` | launch | Legal (ToS / privacy policy / cookie consent), accessibility (WCAG 2.2 AA), SEO, and prose scans; drives the two hard launch gates + a fix queue. Reuses `launch-readiness`, `accessibility-critique`, `seo-audit`, `prose-check`. |

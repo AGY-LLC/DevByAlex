@@ -33,14 +33,15 @@ otherwise the stub would point at a `skill_<slug>` tool that does not exist.
 `staging-smoke-test`, `launch-readiness`, `prose-check`, `seo-audit`,
 `accessibility-critique`, `ios-audit`, `create-demo`
 
-### Still vendored (brain does not serve them yet)
+### Vendored as copies (not stubs)
 
 - `marketer-brand-generation`, `marketer-copywriting` — reused skills not yet on
-  the brain.
+  the brain, so copied from the operator's user scope.
 - The **native** workflow skills (`init-ai`, `plan-*`, `dev-*`, `launch-*`) and
-  the 5 agents — these are edited *here* and are not on the brain. To make them
-  live too, publish them to the brain, then move their names into the live
-  registry below (the stub mechanism is identical).
+  the 5 agents — edited *here* and kept local **by design**, not served live.
+  They ship as committed copies so an app carries its exact workflow; updates are
+  the manual `install.sh --update` / `/dev-update` path, not a live stub. See
+  [../docs/LIVE-SYNC.md](../docs/LIVE-SYNC.md) for why.
 
 ## Editing
 

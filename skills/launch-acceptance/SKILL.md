@@ -10,11 +10,12 @@ metadata:
 
 # launch-acceptance — Write the staging acceptance suites
 
-The launch-readiness stage. Staging is deployed by Alex manually; this skill
-produces the automated acceptance pass that runs against that staging
-environment to confirm every critical flow actually works before promoting to
-production: **Playwright** specs for web surfaces, **Maestro** flows for iOS
-and Android, both generated from a single scenario document.
+The launch-readiness stage. Staging deploys automatically via Pipeline by Alex
+on push to `staging`; this skill produces the automated acceptance pass that runs
+against that staging environment to confirm every critical flow actually works
+before promoting to production: **Playwright** specs for every web surface
+(`marketing/` and `web/`), **Maestro** flows for iOS and Android, both generated
+from a single scenario document.
 
 ## When to activate
 

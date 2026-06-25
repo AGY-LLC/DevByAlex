@@ -90,7 +90,8 @@ In priority order, choose the first that isn't done:
    here because Step 2.5 runs first, but re-check in case one was just logged).
    With the log clear, set next action to `/launch-acceptance` (then
    `/launch-visual-qa`, `/launch-compliance`, and `/launch-store-assets`) and stop.
-   Staging deploy is manual, and the **Legal & compliance** + **Accessibility (WCAG
+   Staging deploys automatically via Pipeline by Alex on push to `staging` (CI
+   owns the gated deploy), and the **Legal & compliance** + **Accessibility (WCAG
    2.2 AA)** hard gates must be clean and signed off before ship — treat them like
    the approval gates: never self-check, never cross. **Never run `/launch-submit`
    from autopilot** — submitting to the stores is an outward-facing publish that

@@ -18,7 +18,8 @@
 - [ ] Spec approved
 - [ ] Implementation guide approved
 - [ ] Wireframes approved   ← the **dev stage is blocked** until these three are checked
-- [ ] Staging deployed (manual)
+- [ ] Staging deployed   ← auto via Pipeline by Alex on push to `staging`
+- [ ] `staging → main` production promotion approved   ← Alex's call; `main` is protected production
 - [ ] Legal & compliance passed   ← **hard gate**: not ship-ready until the `/launch-compliance` scan is clean
 - [ ] Accessibility (WCAG 2.2 AA) passed   ← **hard gate**: not ship-ready until the a11y audit is clean
 

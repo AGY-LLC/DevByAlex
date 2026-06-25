@@ -49,7 +49,12 @@ answers. Work backwards from the user. Cover at minimum:
 5. **Auth & access** — who logs in, how, what they can see/do, multi-tenant?
    (Security/privacy is the top priority later — get the requirements now.)
 6. **Money** — free / paid / subscription / one-time? (seed `payments`).
-7. **Platform** — web, mobile web, native, desktop, multi.
+7. **Platform & topology** — web, mobile web, native, desktop, multi. For a
+   **user-facing product**, record that it splits into separate surfaces (drives
+   the scaffold's monorepo): a **marketing site** on the apex domain and the
+   **web app** on `app.<domain>` (full-stack Next.js — UI + API), plus a **mobile
+   app** only if native is in scope. Capture the **domain** (apex + `app.`
+   subdomain). Non-user-facing tools skip the marketing surface.
 8. **Launch success** — what "it works and we can ship" looks like.
 9. **Design/UX questions the wireframes need** — primary screen and user goal,
    emotional tone (2–3 adjectives), interaction density, key screens and their

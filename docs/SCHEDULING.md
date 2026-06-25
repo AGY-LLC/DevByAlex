@@ -144,7 +144,7 @@ runner still needs the **BuildsByAlex MCP token** as a secret and
   meaningful step, not a poll. Don't go sub-hourly; there's nothing to gain and
   it just stacks commits faster than you can skim.
 - **Approaching launch:** drop to once or twice a day; most remaining work is
-  human (staging deploy, approvals, acceptance runs).
+  human (the `staging → main` production promotion, approvals, acceptance runs).
 - **Review on your cadence, not per-step.** Each run pushes a green commit to the
   working branch, so you read the branch history when you choose instead of
   clearing a PR queue. When you want a merge gate back (e.g. promoting the
@@ -166,5 +166,5 @@ runner still needs the **BuildsByAlex MCP token** as a secret and
    BuildsByAlex MCP token in as a secret.
 5. Skim the commits the run pushes to the working branch; clear any blocker it
    logs in STATUS.
-6. When STATUS reaches the launch stage, deploy staging (manual) and run
-   `/launch-acceptance`.
+6. When STATUS reaches the launch stage, staging is already deployed by Pipeline
+   by Alex (CI, on push to `staging`); run `/launch-acceptance` against it.

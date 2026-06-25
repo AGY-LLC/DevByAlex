@@ -1,0 +1,3 @@
+# Local operator state — the list of apps this checkout has onboarded,
+# used by `./install.sh --update-all`. Machine-specific, not repo state.
+.onboarded-apps
