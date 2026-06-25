@@ -54,11 +54,14 @@ and wires the runner's BuildsByAlex MCP token in as a secret. See
 
 ```
 .claude-plugin/plugin.json   plugin manifest
-install.sh                   provision skills+agents+templates (+ vendored reused skills) into <app>/.claude
-skills/                      the 13 stage/ops skills (init-ai, plan-*, dev-*, dev-schedule, launch-*)
+install.sh                   provision skills+agents+templates into <app>/.claude (live stubs + vendored reused; --migrate to update existing repos)
+skills/                      the 14 stage/ops skills (init-ai, plan-*, dev-*, dev-schedule, launch-*)
 agents/                      the 5 specialist agents the feature loop deploys
+live-stubs/                  thin pointers to reused skills served LIVE by the BuildsByAlex MCP (no re-vendoring on change)
+sync/gen-live-stubs.sh       regenerates live-stubs/ from the live-skill registry
 templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, SPEC, …)
 docs/WORKFLOW.md             the full architecture and invariants
+docs/LIVE-SYNC.md            how the live model works + the plan to host DBA's own skills in BBA
 docs/SCHEDULING.md           how to run the loop unattended (ready-to-run recipes)
 IMPLEMENT.md                 the original brief this implements
 ```
@@ -89,11 +92,19 @@ agent, the existing skills it reuses, and the invariants that make autonomy safe
   then `/plugin` → OAuth). Read-only "design → code" servers can't create frames;
   write-to-canvas needs a Full seat (or a Dev seat writing into a draft file).
   `/plan-wireframes` stops and points you to setup if none is connected.
-- The reused skills — `test-suite-developer`, `scout`, `issue-checker`,
-  `fix-errors`, `staging-smoke-test`, `launch-readiness`, `ios-audit`,
-  `create-demo`. On your machine they
-  live in `~/.claude/skills`; `install.sh` / `init-ai` now **vendor them into the
-  target app's `.claude/skills`**, so a committed checkout carries them to any
-  cloud/CI runner. The one runner dependency that doesn't cover is the
-  **BuildsByAlex MCP token** — `/dev-schedule` wires that in. See
-  `docs/SCHEDULING.md`.
+- The reused skills, provisioned in two tiers (see
+  [live-stubs/README.md](live-stubs/README.md)):
+  - **Live** — the 11 skills the **BuildsByAlex MCP brain** serves
+    (`test-suite-developer`, `scout`, `issue-checker`, `fix-errors`,
+    `staging-smoke-test`, `launch-readiness`, `prose-check`, `seo-audit`,
+    `accessibility-critique`, `ios-audit`, `create-demo`) install as thin stubs
+    that load the canonical body **live** from the brain. Improve a skill on the
+    brain and every onboarded repo is current on its next run — no re-vendoring.
+  - **Vendored** — `marketer-brand-generation`, `marketer-copywriting` (not on
+    the brain yet) are copied from `~/.claude/skills`, so a committed checkout
+    still carries them.
+
+  Both tiers need the **BuildsByAlex MCP token** on the runner (live stubs to
+  load their body; vendored skills already pull Alex's conventions from it) —
+  `/dev-schedule` wires that in. See `docs/SCHEDULING.md`. To bring an
+  already-onboarded repo onto the live model: `./install.sh <app> --migrate`.
