@@ -1,7 +1,7 @@
 ---
 name: seo-audit
 description: >-
-  Audit a repo's SEO surface from the code, not from a live crawl — semantic HTML, framework metadata (Next.js Metadata API / Astro `<head>` / Remix meta export / Nuxt `useHead`), JSON-LD structured data, canonical and hreflang implementation, `robots.txt` and sitemap generation, image alt attributes, heading hierarchy, viewport and mobile config, internal linking patterns, and i18n routing. Treats SEO as a coding workflow concern, not a marketing audit — fires on commits that touch routes, layouts, `<head>` config, `sitemap.ts`, `robots.ts`, JSON-LD components, `next-sitemap` config, `app/(marketing)`, `metadata` exports, OpenGraph tags, or i18n config. **Hard requirement: refuses to run if `docs/BRAND.md` does not exist; routes the user to `/marketer-brand-generation` first** (brand drives correct page titles, descriptions, locale targeting, schema `Organization`/`Brand` fields). Use when the user says "SEO audit," "technical SEO," "check my meta tags," "review my structured data," "are my schemas right," "audit my sitemap," "is my hreflang correct," "core web vitals from the code," "metadata review," "head tag audit," "SEO before merge," "pre-launch SEO check," "AI search / AEO / GEO visibility," or "my SEO is bad." Not for keyword research, competitor analysis, or off-page link building — those are out of scope.
+  Audit the SEO and AEO/GEO (AI-search) surface of a repo's **public-facing marketing and content pages** — landing pages, the marketing site, blog/docs, pricing, product, and other indexable routes — from the code, not from a live crawl. Out of scope are authenticated app screens, dashboards, and other surfaces behind a login that are not meant to rank or be cited. Covers semantic HTML, framework metadata (Next.js Metadata API / Astro `<head>` / Remix meta export / Nuxt `useHead`), JSON-LD structured data, canonical and hreflang implementation, `robots.txt` and sitemap generation, image alt attributes, heading hierarchy, viewport and mobile config, internal linking patterns, i18n routing, and AI-search/AEO/GEO citability of those same marketing pages. Treats SEO as a coding workflow concern, not a marketing audit — fires on commits that touch marketing routes, layouts, `<head>` config, `sitemap.ts`, `robots.ts`, JSON-LD components, `next-sitemap` config, `app/(marketing)`, `metadata` exports, OpenGraph tags, or i18n config. **Hard requirement: refuses to run if `docs/BRAND.md` does not exist; routes the user to `/marketer-brand-generation` first** (brand drives correct page titles, descriptions, locale targeting, schema `Organization`/`Brand` fields). Use when the user says "SEO audit," "technical SEO," "check my meta tags," "review my structured data," "are my schemas right," "audit my sitemap," "is my hreflang correct," "core web vitals from the code," "metadata review," "head tag audit," "SEO before merge," "pre-launch SEO check," "AI search / AEO / GEO visibility," or "my SEO is bad." Not for keyword research, competitor analysis, or off-page link building — those are out of scope.
 metadata:
   version: 3.1.0
 ---
@@ -28,6 +28,8 @@ Do not proceed past this gate without `docs/BRAND.md`. Do not fall back to `.age
 
 ## Scope (and Non-Scope)
 
+**Page focus — public-facing marketing and content pages.** This audit targets routes meant to rank in search and be cited by AI: the landing/marketing site, blog and docs, pricing, product, and other publicly indexable pages. Authenticated app screens, dashboards, and anything behind a login are out of scope — they aren't meant to be indexed or cited, so don't flag missing meta/schema/canonical on them. When a repo mixes both (e.g. `app/(marketing)` vs `app/(app)`), scope the audit to the marketing/content surface.
+
 **In scope — anything inspectable in the code:**
 - Framework metadata API output (Next.js `metadata` / `generateMetadata`, Astro `<head>`, Remix `meta`, Nuxt `useHead`, SvelteKit `<svelte:head>`, plain HTML `<head>`)
 - OpenGraph, Twitter Card, and `og:image` generation (including dynamic OG via `opengraph-image.tsx` or similar)
@@ -48,24 +50,18 @@ Do not proceed past this gate without `docs/BRAND.md`. Do not fall back to `.age
 - Search Console crawl reports / impressions / clicks (the user can read those themselves)
 - Subjective content "quality" or word count targets disconnected from code
 - Live performance numbers (LCP/INP/CLS measured against staging) — only the code patterns that produce them
+- Authenticated app screens, dashboards, and login-gated surfaces — SEO/AEO only applies to publicly indexable marketing/content pages
 
 If the user asks for any out-of-scope item, name it as out-of-scope and continue with the code audit.
 
-### Which pages to audit — public marketing surface, not the authenticated app
+### Partitioning routes, and the one app-side exception
 
-SEO/AEO only pays off where a crawler or AI assistant can actually reach the page. Scope the audit to the **public marketing surface** and explicitly leave the authenticated app out:
+Building on the page focus above: at the **start** of the audit, partition the routes into (a) public marketing/content, (b) public app-generated, (c) authenticated app — and report which routes landed in each bucket. If a route's intended audience is ambiguous (could be public or gated), ask rather than assume.
 
-**Audit these (the marketing surface):**
-- Landing / home, pricing, features, about, contact
-- Blog, docs, changelog, glossary, help center
-- Any other route reachable without logging in that the brand wants discovered
-- `app/(marketing)`, marketing layouts, the public root layout
+- **(c) authenticated app** — dashboards, settings, account, in-product workspaces: out of scope. A missing title tag or absent JSON-LD here is **correct**, not a finding. Their semantic-HTML, alt-text, and heading hygiene still matter — but as an **accessibility** concern; route that to `/accessibility-critique`, not here.
+- **(b) public, app-generated pages** — the one exception that pulls app routes *back into* scope: pages the app produces that are meant to be shared and indexed (public user profiles, public posts, marketplace listings, share links, public-by-default content) genuinely need metadata + structured data even though they live in the app. Audit those; skip the rest of the authenticated surface.
 
-**Do NOT audit the authenticated app** — dashboards, settings, account, in-product workspaces. These sit behind a login wall, so crawlers can't index them anyway, and they're usually *intentionally* `noindex`'d. Treat a missing title tag or absent JSON-LD on an app route as **correct**, not a finding. (Their semantic-HTML, alt-text, and heading hygiene still matter — but as an **accessibility** concern; route that to `/accessibility-critique`, not here.)
-
-**The one exception — public, app-generated pages.** If the app produces pages meant to be shared and indexed (public user profiles, public posts, marketplace listings, share links, public-by-default content), those ARE in scope and genuinely need metadata + structured data even though they live in the app. Audit those; skip the rest of the authenticated surface.
-
-**At the start of the audit, partition the routes** into (a) public marketing, (b) public app-generated, (c) authenticated app — and report which routes you put in each bucket. If a route's intended audience is ambiguous (could be public or gated), ask rather than assume. A practical correctness check that spans buckets: authenticated/app routes *should* carry `noindex` (or sit behind auth middleware) and *should not* appear in the sitemap — flag it as a finding when an app route is indexable or a marketing route is accidentally `noindex`'d.
+**Cross-bucket correctness check:** authenticated/app routes *should* carry `noindex` (or sit behind auth middleware) and *should not* appear in the sitemap — flag it as a finding when an app route is indexable, or when a marketing route is accidentally `noindex`'d.
 
 ---
 
