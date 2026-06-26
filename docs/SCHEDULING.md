@@ -3,9 +3,12 @@
 This is the answer to "what's the best way to implement the scheduled actions so
 the app is constantly improving and working toward launch-ready." Everything
 here is **ready to run** — but nothing is scheduled until you choose to flip it
-on. **`/dev-schedule` automates all of this** — it preflights, picks a tier,
-takes the explicit working branch, and (for cloud) wires the runner's BuildsByAlex
-MCP token in as a secret; read on for what it sets up under the hood.
+on. **`/dev-schedule` automates all of this** — it preflights, picks a tier, and
+takes the explicit working branch; read on for what it sets up under the hood. The
+whole workflow (native skills, reused library skills, and the best-practice
+`knowledge/`) is vendored into the app's committed `.claude/` by `install.sh`, so
+a runner needs no MCP token or network brain — a committed checkout is fully
+self-sufficient.
 
 ## The idea in one paragraph
 
@@ -133,10 +136,11 @@ jobs:
         run: git push origin "HEAD:$WORKING_BRANCH"
 ```
 
-(The DevByAlex skills **and** the reused skills now travel in the app's committed
-`.claude/` — `install.sh` vendors the reused skills — so a checkout has them. The
-runner still needs the **BuildsByAlex MCP token** as a secret and
-`ANTHROPIC_API_KEY` as a repo secret; `/dev-schedule` wires the BBA token in.)
+(The DevByAlex skills, the reused skills, **and** the best-practice `knowledge/`
+all travel in the app's committed `.claude/` — `install.sh` vendors every one —
+so a checkout is fully self-sufficient and reads nothing over the network. The
+**only** secret this runner needs is `ANTHROPIC_API_KEY` (it authenticates Claude
+Code itself; it is not project-specific). No MCP token, no brain.)
 
 ## Cadence & cost guidance
 
@@ -161,9 +165,10 @@ runner still needs the **BuildsByAlex MCP token** as a secret and
    otherwise).
 3. Pick the **working branch** (a dedicated iteration branch like `autopilot` or
    `staging`) and make sure it exists and isn't a protected default.
-4. Run **`/dev-schedule`** to create it — it preflights, picks a tier, names that
-   branch explicitly (`--branch <name>`) for the cron, and (for cloud) wires the
-   BuildsByAlex MCP token in as a secret.
+4. Run **`/dev-schedule`** to create it — it preflights, picks a tier, and names
+   that branch explicitly (`--branch <name>`) for the cron. The committed
+   `.claude/` is self-sufficient, so the runner needs nothing extra: cloud needs
+   no secret at all, and a GitHub-Actions runner needs only `ANTHROPIC_API_KEY`.
 5. Skim the commits the run pushes to the working branch; clear any blocker it
    logs in STATUS.
 6. When STATUS reaches the launch stage, staging is already deployed by Pipeline

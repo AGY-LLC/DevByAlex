@@ -1,6 +1,6 @@
 ---
 name: dev-update
-description: "DevByAlex ops skill — pull the latest DevByAlex workflow into the CURRENT app's project scope. The native skills, agents, and templates are vendored (copied) into each app's .claude/ on purpose, so they survive clone/CI and stay 'part of the project'; the trade-off is that improving a skill doesn't reach an already-onboarded app until it's re-vendored. This skill does that re-vendor for the current app: it reads the .claude/.devbyalex.json stamp to find the DevByAlex checkout, optionally refreshes it, and runs install.sh --update so the app's managed files match the latest version. Does NOT touch docs/STATUS.md or any non-managed .claude entry. Use when the user says 'update the workflow', 'pull the latest DevByAlex skills', 'refresh the skills', or after DevByAlex itself has been improved and an onboarded app is stale."
+description: "DevByAlex ops skill — pull the latest DevByAlex workflow into the CURRENT app's project scope. The whole workflow — native skills, reused library skills, agents, templates, and the best-practice knowledge/ — is vendored (copied) into each app's .claude/ on purpose, so it survives clone/CI and stays 'part of the project' with no external brain or MCP; the trade-off is that improving a skill doesn't reach an already-onboarded app until it's re-vendored. This skill does that re-vendor for the current app: it reads the .claude/.devbyalex.json stamp to find the DevByAlex checkout, optionally refreshes it, and runs install.sh --update so the app's managed files match the latest version. Does NOT touch docs/STATUS.md or any non-managed .claude entry. Use when the user says 'update the workflow', 'pull the latest DevByAlex skills', 'refresh the skills', or after DevByAlex itself has been improved and an onboarded app is stale."
 argument-hint: "[optional: path to the DevByAlex checkout, if the stamp is missing]"
 license: MIT
 metadata:
@@ -10,10 +10,11 @@ metadata:
 
 # dev-update — Re-vendor the latest DevByAlex into this app
 
-DevByAlex skills/agents/templates are **committed copies** in each app's
-`.claude/`, not served live. That keeps them portable (a clone or CI checkout
-carries them) but means an improvement upstream doesn't reach this app until it's
-re-vendored. This skill performs that re-vendor for the **current app** — a
+DevByAlex skills (native + reused), agents, templates, and `knowledge/` are
+**committed copies** in each app's `.claude/` — fully self-contained, with no
+external brain or MCP. That keeps them portable (a clone or CI checkout carries
+the whole workflow) but means an improvement upstream doesn't reach this app until
+it's re-vendored. This skill performs that re-vendor for the **current app** — a
 manual, explicit update, never automatic.
 
 ## When to activate
@@ -65,5 +66,6 @@ flag it so the user knows behavior may shift on the next run.
 
 ## Output
 
-The current app's `.claude/` skills, agents, and templates re-vendored to the
-latest DevByAlex, the stamp rewritten, and a one-line old → new version report.
+The current app's `.claude/` skills, agents, templates, and knowledge re-vendored
+to the latest DevByAlex, the stamp rewritten, and a one-line old → new version
+report.

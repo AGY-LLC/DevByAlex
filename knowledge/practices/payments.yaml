@@ -1,0 +1,80 @@
+_meta:
+  id: practice-payments
+  type: doc
+  title: "Best practice — Payments"
+  summary: How to plan, build, and review Stripe-based payments and subscriptions — tier model, webhook-driven state, idempotency, and the failure modes to check on any billing diff.
+  sensitivity: internal
+  read_scope: brain.read
+  tags: [practice, engineering, payments, stripe, billing, init, feature, review]
+  updated: 2026-05-30
+
+practice:
+  id: payments
+  title: Payments & subscriptions
+  domain: engineering
+  activities: [init, feature, review]
+  matched_skills:
+    - /code-review
+  use_when: >-
+    You're adding billing, building a subscription/paywall, or reviewing a diff
+    that touches Stripe, webhooks, entitlements, or plan state.
+
+  inputs_to_gather_first:
+    - The pricing model — one-time, subscription tiers, metered usage, trial? What are the tiers and what gates each?
+    - Platforms — web only, or also iOS/Play (which forces RevenueCat / StoreKit, not raw Stripe)?
+    - What entitlement each plan unlocks in the app (the thing the paywall actually gates).
+
+  methodology:
+    - Subscription state is owned by webhooks, not by the post-checkout redirect. The redirect is a UX convenience; the source of truth is the webhook event.
+    - Make every webhook handler idempotent and verify the signature using the raw request body (not the parsed JSON).
+    - Store the minimum on your side — customer id, subscription id, plan, status enum, current-period-end — and treat Stripe as the source of truth for the rest.
+    - On mobile (iOS/Play) you cannot use raw Stripe for in-app purchases; route through RevenueCat → StoreKit/Play Billing and reconcile entitlements server-side.
+    - Gate features off the stored `status`/plan, refreshed by webhooks, never off a client claim.
+
+  questions:
+    - id: model
+      prompt: "What's the pricing model — one-time, subscription tiers, metered, trial? Name the tiers."
+      why: Determines Stripe products/prices, the data model, and the paywall logic.
+    - id: entitlements
+      prompt: "What does each plan unlock in the app — the concrete thing the paywall gates?"
+      why: The entitlement map is what the rest of the app checks; vague tiers produce vague code.
+    - id: platforms
+      prompt: "Web only, or also iOS/Android in-app purchase?"
+      why: App-store IAP forces RevenueCat/StoreKit; raw Stripe is web-only.
+    - id: lifecycle
+      prompt: "How are upgrades, downgrades, cancellations, failed payments, and refunds handled?"
+      why: These are the webhook events you must handle idempotently; missing them strands users in wrong states.
+
+  review_checklist:
+    - Webhook signature verified against the RAW body; handler is idempotent (safe to receive the same event twice).
+    - Subscription/entitlement state derives from webhook events, not the checkout redirect.
+    - Plan/status stored as an explicit enum; feature gates read it server-side, never trust the client.
+    - Card data is never stored or logged — tokenized via the processor SDK only.
+    - Failed-payment, cancellation, and refund events update state correctly (no zombie access or premature lockout).
+    - Idempotency key used on charge/subscription creation to avoid double-charging on retry.
+    - Amounts handled in integer minor units; no float money math.
+
+  references:
+    - ../../knowledge/checklists/payments-setup.md
+    - ../../knowledge/stack/stripe.md
+
+  output:
+    destination: "<repo>/docs/billing-spec.md (or a section of architecture-spec.md)"
+    format: markdown
+    template: |
+      # <Product> — Billing
+
+      ## Plans & entitlements
+      <Tiers, prices, and exactly what each unlocks.>
+
+      ## Source-of-truth decisions
+      <Stripe owns X; local DB stores Y (customerId, subscriptionId, plan, status enum, period end).>
+
+      ## Webhook events handled
+      <List each event and the state transition it drives. All idempotent.>
+
+      ## Failure & lifecycle flows
+      <Upgrade, downgrade, cancel, failed payment, refund.>
+
+      ## Review checklist
+      <The review_checklist items, confirmed.>

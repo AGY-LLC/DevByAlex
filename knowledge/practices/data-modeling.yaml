@@ -1,0 +1,86 @@
+_meta:
+  id: practice-data-modeling
+  type: doc
+  title: "Best practice — Data modeling"
+  summary: How to design and review a Postgres/Prisma schema — model before API, audit/lifecycle fields on everything, index for the queries you're about to write, and the migration-safety checks.
+  sensitivity: internal
+  read_scope: brain.read
+  tags: [practice, engineering, data-modeling, database, prisma, init, feature, review]
+  updated: 2026-05-30
+
+practice:
+  id: data-modeling
+  title: Data modeling
+  domain: engineering
+  activities: [init, feature, review]
+  use_when: >-
+    You're designing a schema for a new feature or project, or reviewing a diff
+    that adds/changes Prisma models, migrations, indexes, or relationships.
+
+  inputs_to_gather_first:
+    - The feature spec — the entities and their lifecycles fall out of it.
+    - The queries you're about to write (they decide the indexes).
+    - Whether this is greenfield (schema can churn) or has real user data (migrations must be non-destructive).
+
+  methodology:
+    - Design the model before the API or UI; sketch it from the spec first (AI draft, then revise). Retrofitting under business logic is the expensive change.
+    - Put `createdAt`/`updatedAt` on every model; a real user model with `id` + `email` + `providerUid`; explicit `status`/`state` enums for anything with a lifecycle, with named legal transitions.
+    - Decide indexes, many-to-many shape, and soft-delete policy BEFORE the first migration — all three are expensive to retrofit.
+    - Read the generated SQL before applying any migration; Prisma can silently pick a destructive path.
+    - Stabilize migration history before production; schema churn (reset history, db push) is fine only while there's no real data.
+
+  questions:
+    - id: entities
+      prompt: "What are the core entities and how do they relate?"
+      why: The model skeleton; surfaces the many-to-many vs one-to-many decisions early.
+    - id: lifecycles
+      prompt: "Which entities have a lifecycle (states + transitions), e.g. draft→reviewed→published or uploaded→processing→ready→failed?"
+      why: Lifecycles become status enums, not booleans; naming the transitions prevents invalid states.
+    - id: queries
+      prompt: "What are the hot queries — what will you filter, sort, and join on?"
+      why: Those columns need indexes from the start.
+    - id: deletion
+      prompt: "Soft delete or hard delete, per model?"
+      why: Adding soft-delete later means auditing every query for the filter.
+
+  review_checklist:
+    - Every model has createdAt/updatedAt; user model has id + email (+ providerUid for external auth).
+    - Lifecycle state is an explicit enum with defined transitions, not a pile of booleans.
+    - Foreign keys and hot-path filter/sort columns are indexed.
+    - Unique constraints and FK relations are in the schema, not only enforced in app code.
+    - Money is integer minor units; timestamps are UTC.
+    - The migration is additive, or has a backfill plan for destructive changes; the generated SQL was read.
+    - No N+1 introduced (relations loaded with include/select, not per-row queries).
+
+  references:
+    - ../../knowledge/checklists/data-modeling.md
+    - ../../knowledge/stack/prisma.md
+    - ../../knowledge/checklists/how-i-start-projects.md
+
+  output:
+    destination: "<repo>/docs/data-model.md"
+    format: markdown
+    template: |
+      # <Product> — Data Model
+
+      > Canonical reference for the Postgres/Prisma schema. This doc is the contract.
+
+      ## Conventions
+      <ID format, timestamps, enum defaults, money/time units, raw-SQL inventory.>
+
+      ## Models at a glance
+      | Model | Purpose | Key relations |
+      |-------|---------|---------------|
+
+      ## Enums
+      <List each enum and its values + the legal transitions.>
+
+      ## Invariants & notes
+      ### <Model>
+      <What must always be true; indexes; soft-delete policy.>
+
+      ## Migration backfills
+      <Any one-time backfills needed.>
+
+      ## Deliberately absent
+      <Tables/relations intentionally not modeled.>

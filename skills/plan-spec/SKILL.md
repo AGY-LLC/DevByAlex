@@ -15,9 +15,9 @@ questions that make you fully confident you could build the whole app, then
 write `docs/SPEC.md`. **You are not ready to proceed while any important
 question is unanswered** — getting an answer from the user beats guessing.
 
-> Load `mcp__buildsbyalex__get_best_practice("project-kickoff")` first and
-> follow it — it is Alex's canonical kickoff playbook. This skill is the
-> operational wrapper around it.
+> Read `../../knowledge/practices/project-kickoff.yaml` first and follow it —
+> it is Alex's canonical kickoff playbook. This skill is the operational
+> wrapper around it.
 
 ## When to activate
 
@@ -31,10 +31,9 @@ question is unanswered** — getting an answer from the user beats guessing.
 ### Step 1 — Orient
 - Read `docs/STATUS.md` if present. If a `docs/SPEC.md` already exists, ask
   whether to refine or replace.
-- If the project is one of Alex's, pull `get_projects` / `get_project_context`
-  from the BuildsByAlex MCP for existing intent.
-- Load the `project-kickoff` best practice and use its question set as the
-  backbone.
+- Read the `project-kickoff` playbook at
+  `../../knowledge/practices/project-kickoff.yaml` and use its question set as
+  the backbone.
 
 ### Step 2 — Interview (the core of this skill)
 Ask questions in **batches** (grouped, not one-at-a-time), and wait for

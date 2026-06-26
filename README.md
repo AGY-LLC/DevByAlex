@@ -46,22 +46,22 @@ you can run by hand to bootstrap a brand-new app before `init-ai` is loaded.
 ```
 
 To run the dev stage unattended, use **`/dev-schedule`** — it preflights, picks a
-tier, takes the explicit working branch (e.g. `staging`, never assumed `main`),
-and wires the runner's BuildsByAlex MCP token in as a secret. See
-**[docs/SCHEDULING.md](docs/SCHEDULING.md)** for the underlying recipes.
+tier, and takes the explicit working branch (e.g. `staging`, never assumed
+`main`). The committed `.claude/` is fully self-contained, so a runner needs no
+MCP token or network brain. See **[docs/SCHEDULING.md](docs/SCHEDULING.md)** for
+the underlying recipes.
 
 ## What's in here
 
 ```
 .claude-plugin/plugin.json   plugin manifest
-install.sh                   provision skills+agents+templates into <app>/.claude; --update / --update-all re-vendor an onboarded app to the latest (version-stamped); --migrate converts old reused-skill copies to live stubs
-skills/                      the 15 stage/ops skills (init-ai, plan-*, dev-*, dev-update, dev-schedule, launch-*)
+install.sh                   provision skills+agents+templates+knowledge into <app>/.claude; --update / --update-all re-vendor an onboarded app to the latest (version-stamped)
+skills/                      all 28 skills — the workflow stages (init-ai, plan-*, dev-*, launch-*) and the supporting skills they call (scout, fix-errors, seo-audit, marketer-*, …) — full committed copies, no external brain
 agents/                      the 5 specialist agents the feature loop deploys
-live-stubs/                  thin pointers to reused skills served LIVE by the BuildsByAlex MCP (no re-vendoring on change)
-sync/gen-live-stubs.sh       regenerates live-stubs/ from the live-skill registry
-templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, SPEC, …)
+knowledge/                   the vendored best-practice brain the skills read (practices/*.yaml, stack/*.md, checklists/*.md)
+templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, SPEC, DECISIONS, …)
 docs/WORKFLOW.md             the full architecture and invariants
-docs/LIVE-SYNC.md            the two-tier skill model (reused = live stubs, native = local copies) + why native stays local + the --update pipeline
+docs/LIVE-SYNC.md            the fully-vendored skill model (everything committed, nothing served live) + the --update pipeline
 docs/SCHEDULING.md           how to run the loop unattended (ready-to-run recipes)
 IMPLEMENT.md                 the original brief this implements
 ```
@@ -86,26 +86,25 @@ agent, the existing skills it reuses, and the invariants that make autonomy safe
 
 ## Requirements
 
-- Claude Code with the **BuildsByAlex MCP** connected (supplies Alex's encoded
-  best-practice playbooks and stack conventions).
+- **Claude Code.** That's it for the dev loop — DevByAlex is fully self-contained.
+  Every skill and the best-practice `knowledge/` are vendored into the app's
+  committed `.claude/`, so there's no external brain, MCP, or token to connect for
+  the build to run (locally or on a CI/cloud runner).
 - A **write-capable Figma MCP** for the wireframing stage — the official remote
   server with **write-to-canvas** (`claude plugin install figma@claude-plugins-official`,
   then `/plugin` → OAuth). Read-only "design → code" servers can't create frames;
   write-to-canvas needs a Full seat (or a Dev seat writing into a draft file).
-  `/plan-wireframes` stops and points you to setup if none is connected.
-- The reused skills, provisioned in two tiers (see
-  [live-stubs/README.md](live-stubs/README.md)):
-  - **Live** — the 11 skills the **BuildsByAlex MCP brain** serves
-    (`test-suite-developer`, `scout`, `issue-checker`, `fix-errors`,
-    `staging-smoke-test`, `launch-readiness`, `prose-check`, `seo-audit`,
-    `accessibility-critique`, `ios-audit`, `create-demo`) install as thin stubs
-    that load the canonical body **live** from the brain. Improve a skill on the
-    brain and every onboarded repo is current on its next run — no re-vendoring.
-  - **Vendored** — `marketer-brand-generation`, `marketer-copywriting` (not on
-    the brain yet) are copied from `~/.claude/skills`, so a committed checkout
-    still carries them.
-
-  Both tiers need the **BuildsByAlex MCP token** on the runner (live stubs to
-  load their body; vendored skills already pull Alex's conventions from it) —
-  `/dev-schedule` wires that in. See `docs/SCHEDULING.md`. To bring an
-  already-onboarded repo onto the live model: `./install.sh <app> --migrate`.
+  `/plan-wireframes` stops and points you to setup if none is connected. This is
+  the one optional MCP, and it's plan-time and human-run — not part of the
+  unattended loop.
+- The **supporting skills** the workflow calls (`test-suite-developer`, `scout`,
+  `issue-checker`, `fix-errors`, `staging-smoke-test`, `launch-readiness`,
+  `prose-check`, `seo-audit`, `accessibility-critique`, `ios-audit`,
+  `create-demo`, `marketer-brand-generation`, `marketer-copywriting`) live in
+  `skills/` alongside the stage skills and install into `<app>/.claude/skills/` the
+  same way. A committed checkout carries them — nothing is loaded over the network.
+  See [docs/LIVE-SYNC.md](docs/LIVE-SYNC.md) for the vendored model and the
+  `--update` pipeline.
+- For a **GitHub-Actions** runner, the only secret needed is `ANTHROPIC_API_KEY`
+  (authenticates Claude Code itself; not project-specific). `/dev-schedule` covers
+  it. See `docs/SCHEDULING.md`.

@@ -28,9 +28,9 @@ dev stage builds against and validates against, so it must be concrete.
 
 ### Step 1 — Load context
 - Read `docs/SPEC.md` and `docs/STATUS.md`.
-- Pull the relevant BuildsByAlex practices for the domains the spec implies:
-  `data-modeling` always, plus `auth`, `payments`, `testing`, `uiux` as
-  applicable (`mcp__buildsbyalex__get_best_practice`).
+- Read the relevant playbooks for the domains the spec implies from
+  `../../knowledge/practices/`: `data-modeling.yaml` always, plus `auth.yaml`,
+  `payments.yaml`, `testing.yaml`, `uiux.yaml` as applicable.
 
 ### Step 2 — Decompose into features
 Break the app into discrete, independently buildable **features** (each becomes

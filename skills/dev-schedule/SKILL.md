@@ -1,6 +1,6 @@
 ---
 name: dev-schedule
-description: "DevByAlex ops skill — set up (or tear down) the unattended schedule that drives /dev-autopilot so an app keeps progressing toward launch-ready on a cadence. Preflights the gates and the explicit working branch the build runs off of (e.g. staging, never assumed main — a cron has no current-branch intent) and provisioning, picks a tier (cloud remote routine, local durable cron, or in-session loop), and for cloud/CI runs wires the one external dependency the runner needs: the BuildsByAlex MCP token (https://buildsbyalex.com/mcp + Authorization header) supplied as a SECRET, never committed. The reused skills now travel inside the app's .claude (install.sh vendors them), so the BBA token is the only secret left to provision. Use when the user says 'schedule the autopilot', 'set up the scheduled task', 'run the build unattended', 'create the cron/routine', or 'put in the BBA token for the runner'."
+description: "DevByAlex ops skill — set up (or tear down) the unattended schedule that drives /dev-autopilot so an app keeps progressing toward launch-ready on a cadence. Preflights the gates and the explicit working branch the build runs off of (e.g. staging, never assumed main — a cron has no current-branch intent) and provisioning, then picks a tier (cloud remote routine, local durable cron, or in-session loop) and creates the schedule. The whole workflow — native skills, reused library skills, and the best-practice knowledge/ — is vendored into the app's committed .claude by install.sh, so a runner needs no MCP token or network brain; a committed checkout is fully self-sufficient. Use when the user says 'schedule the autopilot', 'set up the scheduled task', 'run the build unattended', or 'create the cron/routine'."
 argument-hint: "[app path] [--branch <name>] [tier: cloud | local | loop]"
 license: MIT
 metadata:
@@ -12,9 +12,10 @@ metadata:
 
 Sets up the schedule that calls `/dev-autopilot` on a cadence so the dev stage
 advances unattended — one bounded, reviewable step per run — until it reaches the
-manual launch gate. This skill owns the DevByAlex-specific **preflight** and the
-runner's **secret/dependency wiring**; it delegates the actual routine/cron
-creation to the host (`/schedule` for cloud, `CronCreate` / `/loop` locally).
+manual launch gate. This skill owns the DevByAlex-specific **preflight**; it
+delegates the actual routine/cron creation to the host (`/schedule` for cloud,
+`CronCreate` / `/loop` locally). The committed `.claude/` is fully self-contained,
+so there is no secret or MCP dependency to wire onto the runner.
 
 It **never schedules without the user's explicit go-ahead** — scheduling is an
 outward, recurring action — and it **never crosses an approval gate**.
@@ -25,7 +26,6 @@ outward, recurring action — and it **never crosses an approval gate**.
   build unattended," or "create the cron/routine."
 - The plan stage is done, all three gates are approved, and the user wants the
   dev stage to progress on its own.
-- The user wants to supply the BuildsByAlex MCP token to a cloud/CI runner.
 
 ## Step 1 — Preflight (refuse to schedule if any check fails)
 
@@ -42,11 +42,13 @@ Read `docs/STATUS.md` and the repo, and confirm:
   branch (`staging`, `autopilot`, …), never a protected default. Detect the repo's
   default branch only as a *suggestion*; have the user confirm the branch
   explicitly — getting it wrong points the whole loop at the wrong branch.
-- **Provisioned and committed.** `<app>/.claude/{skills,agents,templates}` exist
-  **and are committed**, so a remote checkout carries them. Confirm the vendored
-  reused skills are present (`scout`, `fix-errors`, `test-suite-developer`,
-  `issue-checker`, `staging-smoke-test`, `launch-readiness`) — `install.sh` copies
-  them into project scope; if any are missing, re-run the provisioner.
+- **Provisioned and committed.** `<app>/.claude/{skills,agents,templates,knowledge}`
+  exist **and are committed**, so a remote checkout carries the whole workflow.
+  Confirm the vendored reused skills are present (`scout`, `fix-errors`,
+  `test-suite-developer`, `issue-checker`, `staging-smoke-test`,
+  `launch-readiness`) and that `.claude/knowledge/practices/` is there — these are
+  what make a fresh checkout self-sufficient. If any are missing, re-run the
+  provisioner (`install.sh <app>`).
 - **A connected repo** (cloud only): a GitHub remote the routine can run against.
 
 ## Step 2 — Pick a tier
@@ -54,42 +56,30 @@ Read `docs/STATUS.md` and the repo, and confirm:
 See `docs/SCHEDULING.md` for the full rationale. Default by intent:
 
 - **cloud** (Tier 1, ⭐ hands-off): a claude.ai remote routine via the built-in
-  `/schedule`. Runs in the cloud on a cron even when your machine is off. Needs
-  the runner dependency wiring in Step 3.
+  `/schedule`. Runs in the cloud on a cron even when your machine is off. Works
+  off the committed `.claude/` — see the runner note in Step 3.
 - **local** (Tier 2): a `CronCreate` durable cron in a running session on this
-  machine. Uses your `~/.claude` (skills + BBA MCP already present), so **no token
-  wiring is needed**. Auto-expires after 7 days; re-create weekly.
+  machine. Auto-expires after 7 days; re-create weekly.
 - **loop** (Tier 3): `/loop <interval> /dev-autopilot <app>` in the current
-  session — good for an active push at the desk. **No token wiring needed.**
+  session — good for an active push at the desk.
 
-If the user is just trying it out, recommend **local** or **loop** first
-(everything they need is already on the machine); graduate to **cloud** once they
-want progress while the machine is off.
+If the user is just trying it out, recommend **local** or **loop** first;
+graduate to **cloud** once they want progress while the machine is off. Every
+tier reads the same committed workflow, so none of them needs a token.
 
-## Step 3 — Cloud only: wire the runner's one external dependency
+## Step 3 — Cloud only: confirm the runner has the committed workflow
 
-A cloud/CI runner is a fresh checkout — it has the committed `.claude/` (workflow
-skills **+ the vendored reused skills**) but **not** your user-scope MCP. So the
-only external dependency left to supply is the **BuildsByAlex MCP**:
+There is **no external dependency to wire** — the whole workflow (native skills,
+reused library skills, and the best-practice `knowledge/`) is vendored into the
+committed `.claude/`, so a fresh cloud/CI checkout already carries everything the
+run needs. Just confirm:
 
-- It's an HTTP MCP: `type: http`, `url: https://buildsbyalex.com/mcp`, with a
-  bearer token in the `Authorization` header. Read the current value from
-  `~/.claude.json` (`mcpServers.buildsbyalex.headers.Authorization`), or ask the
-  user to paste it.
-- **Treat the token as a secret.** Put it in the scheduler's secret store and
-  reference it from the routine's MCP config — never write it into the repo,
-  `docs/STATUS.md`, the routine prompt, or any committed/logged file. **Confirm
-  with the user before transmitting it** to the cloud service (it leaves the
-  machine).
-- Register the `buildsbyalex` MCP in the routine's environment using that secret,
-  so the dev/plan skills can reach Alex's encoded conventions during the run.
-- **GitHub-Actions runner instead (Tier 4):** add `ANTHROPIC_API_KEY` and the BBA
-  token as **repo secrets**, and reference the MCP config + secrets from the
-  workflow file — not inline.
-
-If the user can't or won't put the BBA token in the cloud, say plainly that the
-run will lack Alex's conventions (most visibly in `dev-auth`) and recommend the
-local tier instead.
+- `<app>/.claude/` (with `skills/`, `agents/`, `templates/`, `knowledge/`) is
+  **committed** to the branch the routine checks out — not gitignored. A cloud
+  runner only sees what's in the repo.
+- **GitHub-Actions runner (Tier 4):** add `ANTHROPIC_API_KEY` as a **repo secret**
+  and reference it from the workflow file. That key authenticates Claude Code
+  itself — it is the only secret a CI run needs, and it is not project-specific.
 
 ## Step 4 — Create the schedule (only after explicit go-ahead)
 
@@ -118,10 +108,11 @@ it toward `main`); the loop doesn't stack a PR per step.
 ## Step 5 — Record and report
 
 - Add a `docs/STATUS.md` log line noting a schedule was set up (tier, cadence,
-  working branch) — **but never the token**.
-- Report: the tier, cadence, **working branch**, **where the BBA secret lives (by
-  reference, not value)**, the notify target, and how to pause/remove it
-  (`/schedule` manage, `CronDelete`, or stop the loop).
+  working branch).
+- Report: the tier, cadence, **working branch**, the notify target, and how to
+  pause/remove it (`/schedule` manage, `CronDelete`, or stop the loop). For a
+  GitHub-Actions runner, note that `ANTHROPIC_API_KEY` lives in repo secrets (by
+  reference, not value).
 
 ## Rules
 
@@ -129,8 +120,8 @@ it toward `main`); the loop doesn't stack a PR per step.
   action.
 - **Never cross a gate.** Only schedule once the three gates are approved; the
   loop runs `dev-autopilot`, which self-limits and stops at the launch gate.
-- **Secrets never touch the repo.** The BBA token goes to the scheduler's secret
-  store only; confirm before it leaves the machine; never commit, log, or echo it.
+- **Secrets never touch the repo.** A CI run's only secret is `ANTHROPIC_API_KEY`
+  — it goes to the runner's secret store; never commit, log, or echo it.
 - **Protected branches stay protected.** Name a dedicated working branch
   explicitly (`staging` / `autopilot` / release — never assumed `main`); the loop
   pushes straight to it, so it must not be a protected default.
@@ -144,5 +135,5 @@ it toward `main`); the loop doesn't stack a PR per step.
 ## Output
 
 A live (or ready-to-confirm) schedule driving `/dev-autopilot` on the chosen
-tier, the BBA token wired as a secret for cloud runs (never committed), a STATUS
-log line, and clear instructions to pause or remove it.
+tier, off the self-contained committed `.claude/` (no token or MCP to wire), a
+STATUS log line, and clear instructions to pause or remove it.

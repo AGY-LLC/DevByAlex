@@ -1,0 +1,99 @@
+_meta:
+  id: practice-uiux
+  type: doc
+  title: "Best practice — UI/UX"
+  summary: Build and review UI with intent — avoid the generic-AI-UI tells, pin the design-system dimensions, and hold the WCAG 2.2 AA accessibility floor. Outputs a docs/DESIGN.md like nisatsu's.
+  sensitivity: internal
+  read_scope: brain.read
+  tags: [practice, engineering, uiux, design, accessibility, feature, review]
+  updated: 2026-05-30
+
+practice:
+  id: uiux
+  title: UI/UX
+  domain: engineering
+  activities: [feature, review]
+  matched_skills:
+    - /uiux-init
+    - /uiux-audit
+    - /accessibility-critique
+  use_when: >-
+    You're building new UI, polishing a surface, setting up a design system, or
+    reviewing screens for visual quality and accessibility. For a brand-new
+    project, run the direction interview first and write docs/DESIGN.md.
+
+  inputs_to_gather_first:
+    - The product category, audience, and emotional tone — and any existing brand assets or docs/DESIGN.md.
+    - Interaction density (low consumer / medium productivity / high dashboard) and platform priority.
+    - References the user loves and hates, plus explicit anti-patterns to avoid.
+
+  methodology:
+    - Pick a visual direction with intent and commit to it; do not default to the generic "modern SaaS" look (gradient hero, bento grid, sparkle icons, templated copy) — that's the #1 tell of AI-generated UI.
+    - Pin the design-system dimensions as intent-based tokens — color (+ contrast), typography ramp, spacing scale, radius/shadow, motion (with a reduced-motion policy), iconography, and every interactive state (default/hover/focus/active/disabled/loading/error/empty).
+    - Hold the accessibility floor (WCAG 2.2 AA) on every customer-facing surface — focus visible, keyboard operable, contrast, hit targets, semantic structure, labels + error association, alternatives, reduced motion, zoom/reflow.
+    - Don't skip empty, loading, and error states — they're where AI UI is laziest.
+    - For a new project, run the /uiux-init interview and write docs/DESIGN.md before building; audit against it with /uiux-audit.
+
+  questions:
+    - id: product
+      prompt: "What does this product do, who's the user, and what's the one emotional tone (2–3 adjectives) you want?"
+      why: Direction follows from category + audience + tone; without it you get generic defaults.
+    - id: density
+      prompt: "Interaction density — low (consumer), medium (productivity), or high (dashboard/IDE)? And platform priority?"
+      why: Density and platform drive type scale, spacing, and component choices.
+    - id: references
+      prompt: "References you love and hate, and any hard anti-patterns ('no gradient hero', 'no sparkle icons')?"
+      why: Triangulates the look and sets the no-fly list.
+
+  review_checklist:
+    - Focus visible on every focusable control (2.4.7); keyboard-operable, Tab order matches visual order, no traps (2.1.1).
+    - Contrast — body ≥ 4.5:1, large ≥ 3:1, controls/state ≥ 3:1 against the actual background (1.4.3, 1.4.11).
+    - Hit targets ≥ 24px (44px mobile) (2.5.8).
+    - Semantic structure — one H1, no skipped levels, landmarks, real list markup, DOM order = visual order (1.3.1).
+    - Inputs have visible labels; errors programmatically associated and tell the user how to fix (3.3.1, 3.3.3).
+    - Meaningful images have alt text; decorative hidden; video captioned (1.1.1).
+    - Animations honor prefers-reduced-motion; no flashing > 3×/sec (2.3.3).
+    - Survives 200% zoom; no two-dimensional scroll at 400% except tables/maps (1.4.4, 1.4.10).
+    - Color isn't the only signal (icon + text alongside).
+    - Every component's states are visually distinct; empty/loading/error states exist.
+    - No generic-AI-UI tells (gradient-hero default, sparkle icons, templated corporate copy, unmodified component library).
+
+  references:
+    - ../../knowledge/stack/uiux.md
+    - ../../knowledge/stack/tailwind.md
+
+  output:
+    destination: "<repo>/docs/DESIGN.md"
+    format: markdown
+    template: |
+      # Design system
+
+      > Read before designing. Per-project tokens and component rules.
+
+      ## Brand brief
+      <Who it's for, the feeling, the direction chosen.>
+
+      ## Anti-patterns — do not introduce
+      ### Visual
+      ### Structural
+      ### Copy
+      ### Motion
+
+      ## Tokens
+      ### Color (+ contrast must hit AA)
+      ### Typography
+      ### Spacing
+      ### Radius
+      ### Shadow
+      ### Motion (incl. reduced-motion policy)
+
+      ## Iconography
+
+      ## Component patterns
+      <States: default/hover/focus/active/disabled/loading/error/empty.>
+
+      ## Accessibility floor
+      <The WCAG 2.2 AA checklist, committed for this project.>
+
+      ## Decision log
+      <**YYYY-MM-DD** — decision. **Reason:** …>

@@ -56,5 +56,4 @@
 
 ## Notes / decisions
 
-- _Material decisions and their rationale (also record via
-  `mcp__buildsbyalex__record_decision` for tracked projects)._
+- _Material decisions and their rationale (also append to `docs/DECISIONS.md`)._

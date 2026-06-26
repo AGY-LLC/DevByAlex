@@ -111,8 +111,8 @@ own verification — don't second-guess its per-step checks.
   (Step 2.5), the log entry names the bug IDs cleared and `docs/BUGS.md` has them
   moved to `## Fixed`.
 - Commit and **push to the working branch** (`git push origin HEAD:<branch>`)
-  once the suite is green — no PR. If the project is tracked, append an agent-log
-  entry and any decision records via the BuildsByAlex MCP.
+  once the suite is green — no PR. Append any material decision to
+  `docs/DECISIONS.md`.
 - **Stop.** Report what was advanced, the branch + commit pushed, and what the
   next run will pick up.
 

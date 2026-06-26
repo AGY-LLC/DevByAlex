@@ -103,8 +103,7 @@ report the error — do not attempt to submit a failed or stale artifact.
 - State clearly **what remains a human action**: accepting export-compliance,
   inviting testers, promoting from internal → production, and submitting for App
   Review when ready. This skill stops at internal/TestFlight on purpose.
-- If the project is tracked, append an agent-log/decision entry via the
-  BuildsByAlex MCP.
+- Append any material decision to `docs/DECISIONS.md`.
 
 ## Rules
 

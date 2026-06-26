@@ -55,7 +55,7 @@ is the live control file every skill reads and writes.
 | `feature-loop` | dev | The per-feature 4-step build/validate engine. |
 | `dev-autopilot` | dev | Advances the build one safe step per run (what a schedule calls). |
 | `dev-update` | dev/ops | Re-vendors the latest DevByAlex skills/agents/templates into the current app (`install.sh --update`); the manual update path that keeps the local committed copies current. |
-| `dev-schedule` | dev/ops | Sets up the unattended schedule that calls `dev-autopilot` off an explicitly named working branch; wires the cloud runner's BBA token as a secret. |
+| `dev-schedule` | dev/ops | Sets up the unattended schedule that calls `dev-autopilot` off an explicitly named working branch; the committed `.claude/` is self-sufficient, so the runner needs nothing extra (a GitHub-Actions runner needs only `ANTHROPIC_API_KEY`). |
 | `launch-acceptance` | launch | Writes the staging acceptance pass as runnable suites — Playwright (web) + Maestro (iOS/Android) — generated from a scenario doc. |
 | `launch-compliance` | launch | Legal (ToS / privacy policy / cookie consent), accessibility (WCAG 2.2 AA), SEO, and prose scans; drives the two hard launch gates + a fix queue. Reuses `launch-readiness`, `accessibility-critique`, `seo-audit`, `prose-check`. |
 | `launch-visual-qa` | launch | The cross-platform screenshot loop (build → boot → screenshot → critique → fix): boots iOS sim + Android emulator, drives the Maestro flows to capture every key screen/state, a vision critic emits a `VIS-xxx` queue → `fix-errors`, re-screenshots to confirm. Reuses the `launch-acceptance` Maestro flows + `fix-errors`. |
@@ -75,22 +75,16 @@ is the live control file every skill reads and writes.
 ### Existing skills it reuses (not reinvented)
 
 The workflow leans on skills that already exist rather than duplicating them.
-So any runner has them, `install.sh` provisions them into each app's
-`.claude/skills` in **two tiers** (see [live-stubs/README.md](../live-stubs/README.md)):
-
-- **Live** — skills the **BuildsByAlex MCP brain** serves are installed as a
-  thin *stub* that loads the canonical body live from the brain on every run.
-  Improve the skill on the brain and every onboarded repo is current on its next
-  run, with **no re-vendoring**. (`test-suite-developer`, `scout`,
-  `issue-checker`, `fix-errors`, `staging-smoke-test`, `launch-readiness`,
-  `prose-check`, `seo-audit`, `accessibility-critique`, `ios-audit`,
-  `create-demo`.)
-- **Vendored** — skills not yet on the brain are copied from `~/.claude/skills`
-  as before (`marketer-brand-generation`, `marketer-copywriting`).
-
-Run `./install.sh <app> --migrate` to convert an already-onboarded repo from the
-old all-copies layout to live stubs (touches only the live tier; native skills,
-vendored skills, and `docs/` are left alone). The reused skills:
+These supporting skills live in `skills/` alongside the workflow stages — they're
+all native to this repo now — and `install.sh` **vendors** the whole `skills/`
+folder into each app's `.claude/skills` so any runner has them. Every skill is a
+full copy committed into the repo — there are no live-served skills and nothing is
+loaded over the network at run time. Improve one and re-vendor with
+`./install.sh <app> --update` (or `/dev-update`) to refresh the committed copies.
+The supporting skills (`scout`, `fix-errors`, `issue-checker`,
+`test-suite-developer`, `staging-smoke-test`, `launch-readiness`, `prose-check`,
+`seo-audit`, `accessibility-critique`, `ios-audit`, `create-demo`,
+`marketer-brand-generation`, `marketer-copywriting`):
 
 - `test-suite-developer` — the test-author's engine.
 - `scout` — the validators' adversarial review (feature-scoped and whole-repo).
@@ -112,9 +106,15 @@ vendored skills, and `docs/` are left alone). The reused skills:
 - `uiux-init` / `uiux-audit` — optional design-doc + UI alignment alongside
   wireframes.
 
-And it pulls Alex's encoded conventions from the **BuildsByAlex MCP**:
-`project-kickoff` (spec), `auth`, `data-modeling`, `payments`, `testing`,
-`code-review`, `launch-readiness` best practices, plus his stack/profile rules.
+And it reads Alex's encoded conventions from the **vendored `knowledge/`**
+(copied into `<app>/.claude/knowledge/` by `install.sh`; skills read it directly
+at `../../knowledge/...`, the same idiom as `../../templates/`):
+`knowledge/practices/<key>.yaml` — `project-kickoff` (spec), `auth`,
+`data-modeling`, `payments`, `testing`, `code-review`, `launch-readiness`,
+`uiux` — plus `knowledge/stack/*.md` and `knowledge/checklists/*.md`. Best
+practices are read from these files, not fetched from a brain; decisions are
+recorded by appending to `docs/DECISIONS.md`. A committed checkout is fully
+self-sufficient — no MCP token or network brain.
 
 ## The control file: `docs/STATUS.md`
 

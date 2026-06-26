@@ -45,11 +45,13 @@ into the dev stage on your own.
   has already provisioned (`<app>/.claude/skills/init-ai` →
   `<app>/.claude/templates/`). Read them from there; copy, don't symlink.
 - The **provisioner** is `install.sh` at the source repo root. It copies this
-  repo's `skills/`, `agents/`, and `templates/` into `<app>/.claude/`. Resolve
-  the repo root from this skill's real location (`../../` from the skill dir).
-- If the project is one of Alex's tracked projects, pull context from the
-  BuildsByAlex MCP (`mcp__buildsbyalex__start_here`, `get_projects`,
-  `get_project_context`) to seed the spec and stack assumptions.
+  repo's `skills/`, `agents/`, `templates/`, and `knowledge/` into
+  `<app>/.claude/`. Resolve the repo root from this skill's real location
+  (`../../` from the skill dir).
+- The vendored **best-practice playbooks** live at `../../knowledge/` (same
+  dual-path resolution as `../../templates/`): `knowledge/practices/<key>.yaml`,
+  `knowledge/stack/*.md`, `knowledge/checklists/*.md`. The later stages read these
+  directly — there is no external brain to call.
 
 ## Workflow
 
@@ -67,22 +69,23 @@ app and a cron there is self-sufficient. Run the source repo's provisioner:
 <repo-root>/install.sh <target-app> --symlink # only for dogfooding on this machine
 ```
 
-This copies `skills/`, `agents/`, and `templates/` into `<app>/.claude/`. Default
-to **copy** — a copied app survives clone/CI and can commit its workflow; symlink
-only when the user explicitly wants a live link back to the source repo on this
-machine. It only touches the DevByAlex-managed names, so the app's own unrelated
-`.claude` skills are left alone. If a target app already has these (re-run /
-integration), this is idempotent — re-copy to update, don't duplicate.
+This copies `skills/`, `agents/`, `templates/`, and `knowledge/` into
+`<app>/.claude/`. Default to **copy** — a copied app survives clone/CI and can
+commit its workflow; symlink only when the user explicitly wants a live link back
+to the source repo on this machine. It only touches the DevByAlex-managed names,
+so the app's own unrelated `.claude` skills are left alone. If a target app
+already has these (re-run / integration), this is idempotent — re-copy to update,
+don't duplicate.
 
-**External dependency a self-sufficient cloud/CI run still needs:** the
-**BuildsByAlex MCP** (`https://buildsbyalex.com/mcp` + an `Authorization` token).
-The reused skills (`scout`, `fix-errors`, `issue-checker`, `test-suite-developer`,
+**No external dependency for a cloud/CI run.** Everything the workflow needs is
+vendored into the committed `<app>/.claude/`: the native stage skills, the reused
+library skills (`scout`, `fix-errors`, `issue-checker`, `test-suite-developer`,
 `staging-smoke-test`, `launch-readiness`, `prose-check`, `seo-audit`,
-`accessibility-critique`, `marketer-brand-generation`, `marketer-copywriting`) are
-now **vendored into `<app>/.claude` by the provisioner**, so a committed checkout
-carries them — but the BBA MCP is not in the repo. A local cron sees it via `~/.claude`; a cloud/CI runner does
-**not**. Note this in the summary so the user wires the BBA token into the runner
-before scheduling there — `/dev-schedule` does this (see `docs/SCHEDULING.md`).
+`accessibility-critique`, `marketer-brand-generation`, `marketer-copywriting`),
+and the best-practice `knowledge/`. A committed checkout is fully self-sufficient —
+a scheduled run on any runner needs no MCP token or network brain. (The wireframe
+stage still wants a write-capable Figma MCP, but that's plan-time and human-run,
+not part of the unattended dev loop.)
 
 ### Step 2 — Detect repo state (read-only pass)
 Inventory the target without changing anything. Capture:
@@ -124,6 +127,7 @@ in the summary (offer to merge, don't overwrite silently):
 |----------|-------------|-------|
 | `STATUS.md` | `docs/STATUS.md` | the control file the autopilot reads |
 | `BUGS.md` | `docs/BUGS.md` | the bug log the autopilot drains before each build step |
+| `DECISIONS.md` | `docs/DECISIONS.md` | the local decision log stages append to (replaces the old brain write-back) |
 | `AI_WORKFLOW.md` | `docs/AI_WORKFLOW.md` | per-repo pointer to the process |
 | `SPEC.md` | `docs/SPEC.md` | stub if blank; keep if it exists |
 | `IMPLEMENTATION_GUIDE.md` | `docs/IMPLEMENTATION_GUIDE.md` | stub if blank |
@@ -244,14 +248,14 @@ The skills are already provisioned into `<app>/.claude/` (Step 1.5), so they loa
 when the app is opened in Claude Code. To finish wiring it in:
 - Offer to add a short `## DevByAlex workflow` section to the repo's
   `CLAUDE.md` pointing at `docs/AI_WORKFLOW.md` and `docs/STATUS.md`.
-- Decide whether `<app>/.claude/{skills,agents,templates}` should be committed
-  (so clones and CI carry the workflow) or gitignored (machine-local only).
-  Recommend committing for any repo you'll run unattended on a remote/CI.
+- Decide whether `<app>/.claude/{skills,agents,templates,knowledge}` should be
+  committed (so clones and CI carry the workflow) or gitignored (machine-local
+  only). Recommend committing for any repo you'll run unattended on a remote/CI.
 - If they want unattended runs, route them to **`/dev-schedule`** (and
-  `docs/SCHEDULING.md`), and remind them a cloud/CI runner still needs the
-  **BuildsByAlex MCP token** wired in as a secret — the vendored reused skills
-  already travel in the committed `.claude/`. Do **not** create cron jobs from
-  here; `/dev-schedule` is the dedicated place.
+  `docs/SCHEDULING.md`). The committed `.claude/` is fully self-contained — skills
+  and best-practice `knowledge/` all travel with it — so a runner needs no MCP
+  token or network brain. Do **not** create cron jobs from here; `/dev-schedule`
+  is the dedicated place.
 
 ### Step 8 — Report
 Print a tight summary:

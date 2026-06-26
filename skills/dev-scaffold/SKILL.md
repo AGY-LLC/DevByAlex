@@ -30,8 +30,9 @@ foundations instead of bootstrapping structure mid-feature.
 ### Step 1 — Read the plan; decide topology and stack
 Read `docs/IMPLEMENTATION_GUIDE.md` (stack decisions, cross-cutting concerns),
 `docs/SPEC.md` (is this user-facing? is there a mobile client?), and
-`docs/STATUS.md`. Pull `mcp__buildsbyalex__get_best_practice("data-modeling")`
-and the kickoff/testing practices.
+`docs/STATUS.md`. Read `../../knowledge/practices/data-modeling.yaml` plus
+`../../knowledge/practices/project-kickoff.yaml` and
+`../../knowledge/practices/testing.yaml`.
 
 Decide the **repo topology** from the spec:
 

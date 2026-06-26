@@ -1,6 +1,6 @@
 ---
 name: dev-auth
-description: "The most important dev stage of the DevByAlex workflow — build authentication first, with security and privacy prioritized above everything else, so the rest of the app has a solid foundation. Chooses/implements the auth approach from the spec (provider or self-rolled), sign-up/login/logout, session handling, password/credential security, access control and route protection, and the user/session data model. Then runs the build through the same validate loop every feature uses (feature + integration validation) before marking it done. Also runs in validate-existing mode: when an app already has auth (common in integrated/existing repos), it does NOT re-implement — it audits, security-validates, and hardens the existing auth before marking it done, because existing auth that was never put through the security loop is the highest-risk code in a not-launch-ready repo. Leans on the BuildsByAlex auth best practice. Use after scaffold, when the user says 'build auth', 'add login', 'set up authentication', 'validate the existing auth', or the autopilot reaches a scaffolded repo without validated auth."
+description: "The most important dev stage of the DevByAlex workflow — build authentication first, with security and privacy prioritized above everything else, so the rest of the app has a solid foundation. Chooses/implements the auth approach from the spec (provider or self-rolled), sign-up/login/logout, session handling, password/credential security, access control and route protection, and the user/session data model. Then runs the build through the same validate loop every feature uses (feature + integration validation) before marking it done. Also runs in validate-existing mode: when an app already has auth (common in integrated/existing repos), it does NOT re-implement — it audits, security-validates, and hardens the existing auth before marking it done, because existing auth that was never put through the security loop is the highest-risk code in a not-launch-ready repo. Leans on the vendored auth best-practice playbook. Use after scaffold, when the user says 'build auth', 'add login', 'set up authentication', 'validate the existing auth', or the autopilot reaches a scaffolded repo without validated auth."
 argument-hint: "[optional: auth provider/constraints, or 'validate' to audit+harden existing auth]"
 license: MIT
 metadata:
@@ -43,7 +43,7 @@ Detect which one you're in before Step 3:
 ## Workflow
 
 ### Step 1 — Load the auth playbook and requirements
-Load `mcp__buildsbyalex__get_best_practice("auth")` and read the auth/privacy
+Read the auth playbook at `../../knowledge/practices/auth.yaml` and read the auth/privacy
 requirements captured in `docs/SPEC.md` (who logs in, how, what they can access,
 multi-tenant, compliance) and any auth feature card. Follow the playbook's
 build face.
@@ -58,8 +58,8 @@ build face.
   feature card. Note any approach you'd flag as risky, but don't rewrite it
   wholesale unless validation proves it unsafe.
 
-Write the decision/map into the auth feature card and record it via
-`mcp__buildsbyalex__record_decision` if it's a tracked project.
+Write the decision/map into the auth feature card and append the decision to
+`docs/DECISIONS.md`.
 
 ### Step 3 — Implement or harden (security-first)
 On the working branch (the one you're on, or the one `dev-autopilot` passed down

@@ -1,62 +1,66 @@
 # How DevByAlex skills stay current
 
-> Answers the recurring question: *should DevByAlex's own skills live inside the
-> BuildsByAlex brain so they update live?* **Decision: no — native skills stay
-> local and committed; only the reused skills are served live.** This records the
-> two-tier model and why the split is where it is.
+> DevByAlex is **fully self-contained**. Every skill and every best-practice
+> playbook is a committed copy in the repo — nothing is served live from an
+> external brain. This records what ships, where it comes from, and how an edit
+> propagates to onboarded apps.
 
 DBA = **DevByAlex** (this repo, `AGY-LLC/DevByAlex`).
-BBA = **BuildsByAlex** (`AGY-LLC/BuildsByAlex`), Alex's personal-brain MCP server.
+
+This used to be a two-tier model where the reused skills were served *live* from
+the BuildsByAlex (BBA) MCP brain via thin stubs. **That brain is decommissioned.**
+There are no live stubs and no runtime dependency on any MCP — everything is
+vendored. The old `live-stubs/` directory and `sync/gen-live-stubs.sh` are gone.
 
 ---
 
-## The two tiers
+## What ships (all vendored, all committed)
 
-| Tier | What | Source of truth | In an onboarded app | Updates |
-|---|---|---|---|---|
-| **Reused skills** (11) | scout, fix-errors, launch-readiness, … — shared across the brain, not DBA-specific | the skills source BBA indexes (`skill_<slug>` tools) | a **thin stub** in `live-stubs/` | **live** — edit on the brain, every repo current next run, zero re-vendoring |
-| **Native workflow skills** (15) + agents (5) | `init-ai`, `plan-*`, `dev-*`, `launch-*` — the DevByAlex workflow itself | **this repo** (`skills/`, `agents/`) | a **committed copy** | **manual** — re-vendor with `install.sh --update` / `/dev-update` |
+| What | Lives in this repo as | Installed into an app as | Updates |
+|---|---|---|---|
+| **All skills** — the workflow stages (`init-ai`, `plan-*`, `dev-*`, `launch-*`) and the supporting skills they call (`scout`, `fix-errors`, `issue-checker`, `test-suite-developer`, `staging-smoke-test`, `launch-readiness`, `prose-check`, `seo-audit`, `accessibility-critique`, `ios-audit`, `create-demo`, `marketer-brand-generation`, `marketer-copywriting`) — plus agents | `skills/`, `agents/` | a committed copy in `<app>/.claude/` | manual re-vendor |
+| **Best-practice knowledge** (playbooks, stack notes, checklists) | `knowledge/` | a committed copy in `<app>/.claude/knowledge/` | manual re-vendor |
+| **Doc templates** (`STATUS`, `SPEC`, `DECISIONS`, …) | `templates/` | stamped into `<app>/docs/` by `init-ai` | per-project, not shared |
+| **Project state** (`docs/STATUS.md`, …) | — | local to the app | per-project, never shared |
 
-The reused skills were already on BBA (they're general-purpose), so stubbing them
-was a free win — the stub just points at a `skill_<slug>` the brain already
-serves. See [live-stubs/README.md](../live-stubs/README.md).
+`install.sh` copies `skills/`, `agents/`, `templates/`, and `knowledge/` into
+`<app>/.claude/`. A clone or CI checkout of an onboarded app therefore carries the
+**entire** workflow with no network dependency — no MCP, no token, no brain.
 
-## Why native skills stay local (not hosted in BBA)
-
-Hosting the native bodies in BBA would make them live too, but it was a
-deliberate **no**:
+## Why everything is committed (not served live)
 
 - **"Part of the project" beats "served live."** A committed copy travels with the
-  repo — a clone or CI checkout carries the exact workflow it was built against,
-  with no runtime dependency on the brain being reachable to even load a stage.
-- **Reproducibility.** A mid-build skill change served live could shift an app's
-  behavior non-reproducibly between runs. Local copies pin the workflow to a
-  known version (stamped in `.claude/.devbyalex.json`).
-- **The update cost is small and now one command.** The only downside of copies —
-  propagating an edit — is handled by `install.sh --update` (one app) /
-  `--update-all` (every onboarded app) / the `/dev-update` skill. Updates are
-  deliberate, never automatic, so a scheduled build can't shift underfoot.
+  repo, so a clone or unattended CI run carries the exact workflow it was built
+  against and can load every stage without anything being reachable.
+- **Reproducibility.** A skill change served live could shift an app's behavior
+  non-reproducibly between runs. Local copies pin the workflow to a known version
+  (stamped in `.claude/.devbyalex.json`).
+- **Resilience.** When the upstream brain went away, nothing in an onboarded app
+  broke — because nothing depended on it at run time. That is the whole point.
 
-`brain/` stays methodology-only; the skills source stays the home for the
-*reused* executable skills. DBA's own skills are the repo's job.
+The trade-off of copies is that an upstream improvement doesn't reach an app until
+it's re-vendored. That cost is one command (below), and the propagation is
+**deliberate, never automatic**, so a scheduled build can't shift underfoot.
 
-## The update pipeline (native skills)
+## The update pipeline
 
 ```
-  edit a skill in this repo ─► commit ─► (per app)  install.sh <app> --update
-                                         (all apps)  install.sh --update-all
-        each app's .claude/ skills+agents+templates re-vendored to the new
-        version; .claude/.devbyalex.json restamped; docs/STATUS untouched
+  edit a skill / playbook in this repo ─► commit ─► (per app)  install.sh <app> --update
+                                                    (all apps)  install.sh --update-all
+        each app's .claude/ skills+agents+templates+knowledge re-vendored to the
+        new version; .claude/.devbyalex.json restamped; docs/STATUS untouched
 ```
 
 The stamp records the version + git ref each app was vendored from, so an update
-reports `old_ref -> new_ref` and `--update-all` can find every onboarded app via
-the local `.onboarded-apps` registry.
+reports `old_ref -> new_ref`, and `--update-all` finds every onboarded app via the
+local `.onboarded-apps` registry. `/dev-update` is the in-app skill that runs the
+same re-vendor for the current app.
 
-## If this ever needs to change
+## Updating the borrowed skills / knowledge themselves
 
-Should a native skill genuinely need live serving (e.g. an urgent fix across many
-live apps), the reused-skill mechanism is identical: publish that one skill to the
-skills source BBA indexes and flip its name to a stub. That's the lever ADR-0007
-used in reverse when it *removed* `marketer-*` from BBA — membership in the skills
-source is the on/off switch for "served live." Default stays local.
+Some skills (`scout`, `seo-audit`, `marketer-*`, …) and the `knowledge/` were
+originally sourced from the broader skill library and the BBA brain repo; they're
+now native copies in this repo. To refresh them, copy the newer bodies into
+`skills/` / `knowledge/`, commit, then push to apps with the update pipeline
+above. There is no generator step and no live tier to keep in
+sync — what's in the repo is the source of truth.

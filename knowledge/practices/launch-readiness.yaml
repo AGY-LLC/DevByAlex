@@ -1,0 +1,82 @@
+_meta:
+  id: practice-launch-readiness
+  type: doc
+  title: "Best practice — Launch readiness"
+  summary: The pre-launch gate — produce the three launch artifacts (readiness checklist, staging smoke test, launch playbook) and audit legal/data-protection/security/performance/copy before shipping to real users.
+  sensitivity: internal
+  read_scope: brain.read
+  tags: [practice, engineering, launch, launch-readiness, review]
+  updated: 2026-05-30
+
+practice:
+  id: launch-readiness
+  title: Launch readiness
+  domain: engineering
+  activities: [review]
+  matched_skills:
+    - /launch-readiness
+    - /staging-smoke-test
+  use_when: >-
+    A project is approaching launch and you need to assess whether it's ready to
+    ship to real users — a pre-launch audit, a go/no-go review, or the
+    artifacts (readiness checklist, staging smoke test, launch playbook) that
+    drive it.
+
+  inputs_to_gather_first:
+    - What the product is and who its users are (drives which compliance regimes apply — GDPR/CCPA/COPPA/PCI).
+    - The deploy target and third-party integrations (auth, payments, email, storage, analytics, webhooks, cron).
+    - Whether staging exists and mirrors production config.
+
+  methodology:
+    - Produce the three launch artifacts the launch-readiness workflow calls for — a readiness checklist (go/no-go gates), a staging smoke test (manual end-to-end), and a launch playbook (dependency-ordered deploy steps).
+    - Set up a staging environment that mirrors prod and walk the smoke test there before promoting — most launch breakage is misconfigured env vars, wrong credentials, or unpromoted migrations.
+    - Audit across the categories — legal/policy, data-protection law, security, performance/reliability, and user-facing copy — and treat the scope as codebase readiness (data migration and env-var setup are separate ops tasks).
+    - Gate the launch on the readiness checklist being green; separate true blockers from polish.
+
+  questions:
+    - id: audience
+      prompt: "Who are the users and where are they (EU/UK, California, under-13, health/payment data)?"
+      why: Decides which of GDPR/CCPA/COPPA/PCI apply — each adds required flows.
+    - id: integrations
+      prompt: "What third-party integrations are wired (auth, payments, email, storage, analytics, webhooks, cron)?"
+      why: Each integration is a smoke-test block and a config-dependent failure point.
+    - id: staging
+      prompt: "Is there a staging environment that mirrors production, and has the smoke test been run there?"
+      why: Testing against prod-like staging catches the misconfig class of bugs before users do.
+
+  review_checklist:
+    - Legal/policy — privacy policy + ToS exist, are linked, and match actual behavior; consent for trackers is in code; marketing claims are truthful.
+    - Data-protection — the applicable regimes (GDPR data-subject rights + consent; CCPA do-not-sell; COPPA age gate; PCI tokenization) are implemented, not just promised.
+    - Security — auth hardening (hashing, throttling, secure cookies, token expiry), authz on sensitive routes (no IDOR), parameterized queries, no secrets in repo/logs, HTTPS+HSTS, security headers, CSRF, rate limits on auth/expensive endpoints, verified webhooks.
+    - Performance/reliability — no N+1 or full-table scans on hot routes, timeouts on every outbound call, bounded retries + idempotent handlers, resource cleanup on error paths, structured error reporting.
+    - Copy — no spelling/grammar errors, broken interpolation, or placeholder leakage (TODO, Lorem ipsum, dummy emails) in user-facing strings, emails, or legal docs.
+    - App-specific — payments idempotency, AI cost guards + prompt-injection handling, UGC moderation, multi-tenant isolation, etc., as applicable.
+
+  references:
+    - ../../knowledge/checklists/before-launch.md
+    - ../../knowledge/checklists/production-readiness.md
+    - ../../knowledge/checklists/preparing-for-launch.md
+
+  output:
+    destination: "<repo>/docs/launch-playbook.md + docs/staging-smoke-test.md + a readiness gate."
+    format: markdown
+    template: |
+      # <Product> — Launch readiness
+
+      ## Launch readiness gate
+      <Grouped checkboxes that must be green: Environment & boot · Auth · Core flows · Billing · Legal/compliance · Data integrity · Deployment & monitoring · Product QA · Support.>
+
+      ## Staging smoke test
+      > Run metadata: operator, date, staging commit SHA.
+      - [ ] <Action.> → Expected: <outcome.>
+      <One block per surface and per integration; nested checkboxes.>
+
+      ## Launch playbook
+      <Dependency-ordered deploy steps (§0 prereqs → provision → configure callbacks → env vars → migrations → deploy → smoke → monitoring → go live). Each step lists its prerequisites.>
+
+      ## If something goes wrong
+      | Symptom | First check |
+      |---------|-------------|
+
+      ## Ship decision
+      - [ ] GO  - [ ] GO WITH FOLLOW-UPS  - [ ] NO-GO
