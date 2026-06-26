@@ -76,10 +76,12 @@ faking coverage. Where an API equivalent exists (e.g. verify via `GET` instead
 of a DB query), automate that instead.
 
 **Verify the suites are runnable**: `npx playwright test --list` (specs
-compile and are discovered) and a Maestro syntax check on each flow. Actually
-executing against staging happens when staging is up — wire the run commands
-into package.json scripts (e.g. `test:acceptance:web`,
-`test:acceptance:mobile`) and document them in the doc's Preconditions.
+compile and are discovered) and a Maestro syntax check on each flow. Wire the
+run commands into package.json scripts (e.g. `test:acceptance:web`,
+`test:acceptance:mobile`) and document them in the doc's Preconditions. Actually
+**executing** them against staging is the companion `launch-verify` skill's job —
+this skill authors and compile-checks the suites; `launch-verify` runs them
+against the live staging environment and drives failures to green.
 
 ### Step 4 — Cross-check coverage
 Every critical feature in STATUS marked done must have at least one scenario,
@@ -88,6 +90,10 @@ explicit `[manual]` marker. Flag any done feature with no acceptance coverage.
 
 ### Step 5 — Update STATUS and route
 - Check **Launch → Acceptance tests written**.
+- **Next step is `launch-verify`** — it runs these suites against the live
+  staging environment and drives failures to green, checking the **Acceptance
+  suite passed against staging** row that `launch-submit` gates on. A written
+  suite that's never run proves nothing; set `## Next action` to `/launch-verify`.
 - Recommend the companion skills: `launch-visual-qa` (boots iOS + Android and
   screenshot-reviews these same flows — it reuses the Maestro flows written here),
   `staging-smoke-test` (human-walkable config/integration check), `launch-readiness`

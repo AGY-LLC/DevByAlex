@@ -112,7 +112,8 @@ it — but don't invent issues; a screen that matches its wireframe is a pass.
   (or remaining items are explicitly deferred with reasons).
 - If invoked per-feature in the dev loop, note the visual pass in that feature's
   row/notes rather than the launch row.
-- Recommend the companions: `launch-acceptance` (flow correctness),
+- Recommend the companions: `launch-acceptance` (writes the flow suites) +
+  `launch-verify` (runs them against staging — flow correctness),
   `launch-compliance` (legal/a11y), and — for deep design-system conformance —
   `uiux-audit`.
 - Add a log line; set `## Next action` (typically `/fix-errors` if findings

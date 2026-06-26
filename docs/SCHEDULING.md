@@ -172,4 +172,5 @@ Code itself; it is not project-specific). No MCP token, no brain.)
 5. Skim the commits the run pushes to the working branch; clear any blocker it
    logs in STATUS.
 6. When STATUS reaches the launch stage, staging is already deployed by Pipeline
-   by Alex (CI, on push to `staging`); run `/launch-acceptance` against it.
+   by Alex (CI, on push to `staging`); run `/launch-acceptance` to write the
+   suites, then `/launch-verify` to run them against it and drive them green.

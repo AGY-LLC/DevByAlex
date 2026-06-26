@@ -50,6 +50,7 @@ Status: `todo` → `in-progress` → `blocked` → `done`.
 
 - [ ] No open bugs in `docs/BUGS.md`   ← soft gate: autopilot won't enter launch while bugs are open
 - [ ] Acceptance tests written (`docs/ACCEPTANCE_TESTS.md`)
+- [ ] Acceptance suite passed against staging (`/launch-verify`)   ← gate `/launch-submit` reads as "acceptance suite green"
 - [ ] Visual QA passed — iOS + Android screenshots reviewed (`/launch-visual-qa`)
 - [ ] Staging smoke test passed
 - [ ] Launch-readiness audit passed

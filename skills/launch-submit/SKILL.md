@@ -57,8 +57,11 @@ Confirm, and **abort with a clear report if any fails**:
   policy rejections (privacy manifest, required-reason APIs, account deletion,
   IAP disclosure, ATT, UGC moderation, age rating, Play Data safety). Run
   `ios-audit` if its result is stale.
-- **Acceptance suite green** — the `launch-acceptance` Playwright/Maestro suite
-  passes against staging (or note explicitly which surfaces are `[manual]`).
+- **Acceptance suite green** — `launch-verify` has run the `launch-acceptance`
+  Playwright/Maestro suite against staging and the **Acceptance suite passed
+  against staging** STATUS row is checked (or note explicitly which surfaces are
+  `[manual]`/`[skipped]`). A suite that was written but never run does not satisfy
+  this gate — run `/launch-verify` if its result is missing or stale.
 - **Store assets present** — `store/ios/` + `store/android/` from
   `launch-store-assets` exist for the target(s); metadata.json is complete.
 - **Version & build numbers** — the marketing version and build/version-code are
