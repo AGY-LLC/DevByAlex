@@ -51,6 +51,22 @@ Do not proceed past this gate without `docs/BRAND.md`. Do not fall back to `.age
 
 If the user asks for any out-of-scope item, name it as out-of-scope and continue with the code audit.
 
+### Which pages to audit — public marketing surface, not the authenticated app
+
+SEO/AEO only pays off where a crawler or AI assistant can actually reach the page. Scope the audit to the **public marketing surface** and explicitly leave the authenticated app out:
+
+**Audit these (the marketing surface):**
+- Landing / home, pricing, features, about, contact
+- Blog, docs, changelog, glossary, help center
+- Any other route reachable without logging in that the brand wants discovered
+- `app/(marketing)`, marketing layouts, the public root layout
+
+**Do NOT audit the authenticated app** — dashboards, settings, account, in-product workspaces. These sit behind a login wall, so crawlers can't index them anyway, and they're usually *intentionally* `noindex`'d. Treat a missing title tag or absent JSON-LD on an app route as **correct**, not a finding. (Their semantic-HTML, alt-text, and heading hygiene still matter — but as an **accessibility** concern; route that to `/accessibility-critique`, not here.)
+
+**The one exception — public, app-generated pages.** If the app produces pages meant to be shared and indexed (public user profiles, public posts, marketplace listings, share links, public-by-default content), those ARE in scope and genuinely need metadata + structured data even though they live in the app. Audit those; skip the rest of the authenticated surface.
+
+**At the start of the audit, partition the routes** into (a) public marketing, (b) public app-generated, (c) authenticated app — and report which routes you put in each bucket. If a route's intended audience is ambiguous (could be public or gated), ask rather than assume. A practical correctness check that spans buckets: authenticated/app routes *should* carry `noindex` (or sit behind auth middleware) and *should not* appear in the sitemap — flag it as a finding when an app route is indexable or a marketing route is accidentally `noindex`'d.
+
 ---
 
 ## Schema Markup Detection — From Code, Not from `web_fetch`
