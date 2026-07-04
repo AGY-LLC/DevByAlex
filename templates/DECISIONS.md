@@ -8,6 +8,10 @@ Append an entry whenever a stage makes a choice worth remembering: an auth
 provider, a data-model tradeoff, a scaffolding/topology call, a launch decision.
 Keep each entry short — the rationale matters more than the prose.
 
+This log records *what happened when*. The **governing** record of what holds
+now lives per feature in `docs/adr/` — a feature-scoped decision goes in that
+feature's ADR (the log entry can just point at it, e.g. `→ adr/03-billing.md#D2`).
+
 ## Format
 
 ```

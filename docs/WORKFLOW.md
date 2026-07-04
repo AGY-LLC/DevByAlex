@@ -14,7 +14,7 @@ is the live control file every skill reads and writes.
                          ┌──────────────────────────── PLAN (human-gated) ───────────────────────────┐
   /init-ai  ──────────►  │  /plan-spec ──► /plan-guide ──► /plan-wireframes                            │
   (bootstrap STATUS)     │   SPEC.md        GUIDE.md +      Figma frames +                             │
-                         │   (+legal+SEO)   feature cards   wireframes/README + design/RESOURCES.md     │
+                         │   (+legal+SEO)   cards + ADRs    wireframes/README + design/RESOURCES.md     │
                          │   └► /marketer-brand-generation → BRAND.md (if public-facing, before guide)  │
                          └───────────────────────────────┬───────────────────────────────────────────┘
                                       Alex approves spec + guide + wireframes  (3 gates)
@@ -49,7 +49,7 @@ is the live control file every skill reads and writes.
 |-------|-------|------|
 | `init-ai` | entry | Bootstraps/integrates the workflow into a repo; reconciles STATUS from what's already done. |
 | `plan-spec` | plan | Interviews to a complete spec; `reverse` mode backfills from code. |
-| `plan-guide` | plan | Expands the spec into a granular, ordered guide + feature cards. |
+| `plan-guide` | plan | Expands the spec into a granular, ordered guide + feature cards + per-feature ADRs (`adr-backfill` mode writes the missing ADRs for an existing repo's features). |
 | `plan-wireframes` | plan | Wireframe each feature — GENERATE via Figma MCP (greenfield) or CAPTURE existing screens from code (existing app, no Figma). |
 | `dev-scaffold` | dev | One-time baseline: monorepo topology (`marketing/` apex + `web/` full-stack app on app.domain + optional `app/` mobile), branch model (protected `main` = production, `staging` = working line), skeleton, tooling, tests, and CI + deploy via Pipeline by Alex (`pba.yml` + thin caller). |
 | `dev-auth` | dev | Authentication first, security & privacy prioritized. Validate-existing mode audits + hardens auth an existing repo already has. |
@@ -115,8 +115,10 @@ at `../../knowledge/...`, the same idiom as `../../templates/`):
 `data-modeling`, `payments`, `testing`, `code-review`, `launch-readiness`,
 `uiux` — plus `knowledge/stack/*.md` and `knowledge/checklists/*.md`. Best
 practices are read from these files, not fetched from a brain; decisions are
-recorded by appending to `docs/DECISIONS.md`. A committed checkout is fully
-self-sufficient — no MCP token or network brain.
+recorded in the repo — feature-scoped ones in `docs/adr/` (the governing
+per-feature records), cross-cutting ones appended to `docs/DECISIONS.md` (the
+chronological log). A committed checkout is fully self-sufficient — no MCP
+token or network brain.
 
 ## The control file: `docs/STATUS.md`
 
@@ -136,6 +138,35 @@ autopilot won't enter `/launch-acceptance` while any remain. This is the one pla
 the "one step per run" rule bends — the whole log drains in a single run, because
 known-broken code is never a base for new work.
 
+## The decision records: `docs/adr/`
+
+One ADR file per feature (mirroring `docs/features/<NN>-<slug>.md`, plus
+`scaffold.md` and `auth.md` for the cross-cutting stages), holding the decisions
+that govern it — what it has, what it deliberately does **not** have, and why.
+`docs/DECISIONS.md` stays the chronological log of *what happened when*; the ADR
+is the per-feature record of *what holds now*. The contract (spelled out in the
+stamped `docs/adr/README.md`):
+
+- **Consult before change.** Every skill/agent that touches a feature reads its
+  ADR first — builds, bug fixes, and validation loops alike.
+- **Breaking an `active` decision requires explicit human confirmation.** The
+  loop/autopilot stops and surfaces the conflict (citing the entry); on
+  confirmation the old entry is marked superseded and the new decision recorded.
+  Never a silent divergence.
+- **Documented deliberate omissions are not findings.** The validators, `scout`,
+  and `launch-readiness` cite the ADR entry instead of filing — so an automated
+  review can't flag what was consciously chosen. Security/legal/accessibility
+  issues still get reported (tagged `ADR-conflict`), and the two hard launch
+  gates are never overridable by an ADR.
+- **Drift is a finding.** Code contradicting an `active` decision with no
+  recorded supersession is architecture drift — the record wins until a human
+  retires it.
+- **Seeded at plan time, kept current by the loop.** `/plan-guide` writes each
+  feature's ADR with its card; `feature-loop` step 4 records what the build
+  decided. On an existing repo, `/plan-guide adr-backfill` must write an ADR for
+  **every** feature — consolidating any scattered feature docs into them (or
+  removing the irrelevant ones) — before feature work proceeds.
+
 ## Integrating an existing (not-yet-launch-ready) repo
 
 `init-ai` works on a half-built repo, not just a blank one — but "finish my app"
@@ -146,6 +177,11 @@ rest**:
    `/plan-spec reverse` (infer the spec from code, tag inferences) → `/plan-guide`.
    The wireframe gate is satisfied by `/plan-wireframes capture` — an inventory of
    the screens already in the code, **no Figma needed** — since the UI exists.
+   The backfill includes the **ADRs**: every identified feature gets its
+   `docs/adr/` record (inferred decisions + deliberate omissions, tagged
+   `(needs review)`), with any scattered feature docs consolidated into them or
+   removed — **before any feature work**, so the validators can tell a gap from
+   a choice.
 2. **Alex approves the three gates.** Dev stays blocked until then; an existing
    codebase doesn't bypass approval.
 3. **Validate before building.** `init-ai` does **not** check off existing work as
@@ -170,6 +206,11 @@ app "done."
   blind, so tests verify behavior, not whatever the code happens to do.
 - **Validators judge, they don't fix.** Separation keeps the gates honest; the
   orchestrator turns findings into failing tests + fixes.
+- **ADRs govern change.** Every feature has a decision record in `docs/adr/`
+  before the loop touches it; breaking an `active` decision needs explicit human
+  confirmation + a recorded supersession, and documented deliberate omissions
+  are never review findings (security/legal/a11y excepted — and the hard launch
+  gates are never ADR-overridable).
 - **One safe step per autopilot run.** Bounded, resumable, reviewable — except a
   bug-fix run, which drains all of `docs/BUGS.md` before any build step resumes.
 - **Bugs before building.** Open bugs in `docs/BUGS.md` preempt scaffold/auth/

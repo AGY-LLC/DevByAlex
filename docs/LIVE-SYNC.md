@@ -20,7 +20,7 @@ vendored. The old `live-stubs/` directory and `sync/gen-live-stubs.sh` are gone.
 |---|---|---|---|
 | **All skills** — the workflow stages (`init-ai`, `plan-*`, `dev-*`, `launch-*`) and the supporting skills they call (`scout`, `fix-errors`, `issue-checker`, `test-suite-developer`, `staging-smoke-test`, `launch-readiness`, `prose-check`, `seo-audit`, `accessibility-critique`, `ios-audit`, `create-demo`, `marketer-brand-generation`, `marketer-copywriting`) — plus agents | `skills/`, `agents/` | a committed copy in `<app>/.claude/` | manual re-vendor |
 | **Best-practice knowledge** (playbooks, stack notes, checklists) | `knowledge/` | a committed copy in `<app>/.claude/knowledge/` | manual re-vendor |
-| **Doc templates** (`STATUS`, `SPEC`, `DECISIONS`, …) | `templates/` | stamped into `<app>/docs/` by `init-ai` | per-project, not shared |
+| **Doc templates** (`STATUS`, `SPEC`, `DECISIONS`, `adr/`, …) | `templates/` | stamped into `<app>/docs/` by `init-ai` | per-project, not shared |
 | **Project state** (`docs/STATUS.md`, …) | — | local to the app | per-project, never shared |
 
 `install.sh` copies `skills/`, `agents/`, `templates/`, and `knowledge/` into

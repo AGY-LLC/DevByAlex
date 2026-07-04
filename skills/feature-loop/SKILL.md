@@ -39,11 +39,23 @@ The agents and the skills they lean on:
 ## Workflow
 
 ### Step 0 — Load the feature
-Read the feature card `docs/features/<id>.md`, its acceptance criteria, the
-relevant section of `docs/IMPLEMENTATION_GUIDE.md`, the wireframe screens for
-this feature, and `docs/STATUS.md`. Build on the **working branch** — the branch
-you're on, or the one `dev-autopilot` passed down; **don't create a per-feature
-branch.** Mark the feature row **in-progress** in STATUS.
+Read the feature card `docs/features/<id>.md`, its acceptance criteria, **its
+ADR `docs/adr/<id>.md`** (plus `docs/adr/scaffold.md` / `docs/adr/auth.md` if
+the feature touches those seams), the relevant section of
+`docs/IMPLEMENTATION_GUIDE.md`, the wireframe screens for this feature, and
+`docs/STATUS.md`. Build on the **working branch** — the branch you're on, or
+the one `dev-autopilot` passed down; **don't create a per-feature branch.**
+Mark the feature row **in-progress** in STATUS.
+
+**The ADR is a gate on the work itself.** If the feature has no ADR, stop and
+route to `/plan-guide adr-backfill` — never build a feature with no decision
+record. If anything this loop is about to do would contradict an `active`
+decision or omission in the ADR, **stop and surface the conflict** (cite the
+entry, explain what the change needs and why) — breaking an architecture
+decision is Alex's call, never the loop's. On explicit confirmation, record it
+before building: mark the old entry superseded, add the new decision with its
+why. Pass the ADR to every subagent brief alongside the card so none of them
+re-litigates a settled decision.
 
 First decide whether this feature is **greenfield** (no real implementation yet)
 or **existing** (already built — common when `init-ai` integrated an existing
@@ -100,6 +112,11 @@ With the feature fully built and both validations clean:
   for this feature — behavior, screens, and states all match. If something
   drifted, fix it (or, if the drift is intentional and better, note it and flag
   the guide/wireframe for Alex to update — don't silently diverge).
+- **Bring the ADR current.** Record any material decision the build made that
+  the plan didn't (an approach chosen over a real alternative, a capability
+  consciously deferred → a new `O`-entry), and any confirmed supersessions from
+  Step 0. The ADR must leave this loop describing the feature as it now stands —
+  it's what the next change and the next automated review are checked against.
 - Mark every step for this feature ✅ and the row **done** in
   `docs/STATUS.md`; add a log line (branch, commit, what shipped).
 - Commit and **push to the working branch** (`git push origin HEAD:<branch>`) —
@@ -113,6 +130,11 @@ With the feature fully built and both validations clean:
   Tests trace to the spec; never weaken a test to make code pass.
 - A failing validation is a loop-back, not a stop: capture it as a test, fix,
   re-validate. Don't mark done with red tests or open findings.
+- **The ADR governs.** Never contradict an `active` ADR entry without explicit
+  human confirmation + a recorded supersession; never mark done with the ADR
+  stale. A validator finding that just re-litigates a documented deliberate
+  decision is rejected with a citation, not fixed (security/legal/a11y
+  excepted — those go to Alex).
 - Don't expand scope beyond the feature card; surface new ideas as proposals.
 - Keep STATUS the live source of truth — update it as you move through steps.
 - **Existing code is hardened, not rebuilt.** On a feature that's already built

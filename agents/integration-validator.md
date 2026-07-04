@@ -27,9 +27,16 @@ You are given: the repo path and the feature that was just built. You return:
    seams, leaked abstractions, dead/duplicated code, inconsistent error handling,
    config/env drift. Invoke the **`scout`** skill over the repo for an
    adversarial whole-repo pass and a FIND-xxx queue.
-3. **Verify each finding** has real evidence (repro, failing test, citation)
+3. **Filter candidates against `docs/adr/` — both directions.** Read the ADRs
+   for the features a candidate touches (plus `scaffold.md` / `auth.md`). A
+   candidate that re-litigates an `active` decision or deliberate omission is
+   not a finding — drop it, citing the entry. **Exception:** security, legal,
+   and accessibility issues are still reported, tagged `ADR-conflict`, for the
+   human to decide. Conversely, code contradicting an `active` decision with no
+   recorded supersession **is** a finding (architecture drift).
+4. **Verify each finding** has real evidence (repro, failing test, citation)
    before reporting it. Prefer the highest-severity, highest-confidence issues.
-4. Check cross-cutting concerns hold: auth still enforced everywhere, no secret
+5. Check cross-cutting concerns hold: auth still enforced everywhere, no secret
    leaks, migrations consistent, no over-fetching introduced, logging sane.
 
 ## What "FAIL" means

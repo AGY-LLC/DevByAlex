@@ -59,7 +59,7 @@ install.sh                   provision skills+agents+templates+knowledge into <a
 skills/                      all 28 skills — the workflow stages (init-ai, plan-*, dev-*, launch-*) and the supporting skills they call (scout, fix-errors, seo-audit, marketer-*, …) — full committed copies, no external brain
 agents/                      the 5 specialist agents the feature loop deploys
 knowledge/                   the vendored best-practice brain the skills read (practices/*.yaml, stack/*.md, checklists/*.md)
-templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, SPEC, DECISIONS, …)
+templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, SPEC, DECISIONS, adr/, …)
 docs/WORKFLOW.md             the full architecture and invariants
 docs/LIVE-SYNC.md            the fully-vendored skill model (everything committed, nothing served live) + the --update pipeline
 docs/SCHEDULING.md           how to run the loop unattended (ready-to-run recipes)
@@ -82,6 +82,10 @@ agent, the existing skills it reuses, and the invariants that make autonomy safe
   `main`). Green suite is the gate.
 - **Tests trace to the spec** (test-author and implementer run blind, in
   parallel); **validators judge but don't fix**; **green suite** at every stop.
+- **ADRs govern change** — every feature carries a decision record in
+  `docs/adr/` (what it has, what it deliberately doesn't, and why). Automated
+  reviews can't flag a documented conscious choice, and breaking an active
+  decision needs explicit human confirmation, never a silent divergence.
 - **Security & privacy first**, most of all in auth.
 
 ## Requirements

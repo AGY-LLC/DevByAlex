@@ -56,4 +56,6 @@
 
 ## Notes / decisions
 
-- _Material decisions and their rationale (also append to `docs/DECISIONS.md`)._
+- _Material decisions and their rationale. Feature-scoped decisions go in that
+  feature's `docs/adr/<NN>-<slug>.md` (the governing record); cross-cutting ones
+  here and appended to `docs/DECISIONS.md`._

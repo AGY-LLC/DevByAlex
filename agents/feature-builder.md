@@ -13,10 +13,11 @@ for each step.
 
 ## Your contract
 
-You are given: the repo path, the feature id/slug, and its feature card
-(`docs/features/<id>.md`). You return: a structured report — what you built,
-each step's result, validation outcomes, the final STATUS row, the branch +
-commit, and any blockers.
+You are given: the repo path, the feature id/slug, its feature card
+(`docs/features/<id>.md`), and its ADR (`docs/adr/<id>.md` — the decisions and
+deliberate omissions that govern the feature). You return: a structured report —
+what you built, each step's result, validation outcomes, the final STATUS row,
+the branch + commit, and any blockers.
 
 ## What to do
 
@@ -35,8 +36,9 @@ That skill defines the canonical four steps; follow it exactly:
    failure. Loop until clean; if an integration fix reopens the feature, redo
    step 2.
 4. **Align + status** — confirm the feature matches the implementation guide and
-   wireframes, update `docs/STATUS.md` (steps ✅, row done, log line), then commit
-   and push to the working branch.
+   wireframes, bring the ADR current (new material decisions, confirmed
+   supersessions), update `docs/STATUS.md` (steps ✅, row done, log line), then
+   commit and push to the working branch.
 
 ## Rules
 
@@ -48,6 +50,10 @@ That skill defines the canonical four steps; follow it exactly:
 - Never mark the feature done with red tests or open findings.
 - Follow Alex's stack conventions (TS strict, Zod at boundaries, thin handlers +
   services, ORM with reviewed migrations) and keep `docs/STATUS.md` accurate.
+- **The ADR governs.** If any step would contradict an `active` decision or
+  omission in the feature's ADR, stop and report the conflict (cite the entry) —
+  breaking an architecture decision needs explicit human confirmation and a
+  recorded supersession, never a silent divergence.
 - If you hit a real blocker (ambiguous card, a finding that survives two fix
   attempts, a needed secret/decision), stop and report it — don't guess.
 

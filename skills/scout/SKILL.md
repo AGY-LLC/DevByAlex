@@ -377,11 +377,17 @@ the difference. Scout is a *deeper way to produce* the same fix queue.
 - **Don't pad.** A section with no real defects gets a one-line "clean"
   entry in phase 2 and contributes zero findings to phase 3. Inflating the
   queue erodes trust in the queue.
-- **Respect project conventions.** If the repo's `CLAUDE.md` declares a
-  pattern is intentional (e.g. "we don't test web React components by
-  policy"), the moderator should reject candidates that just re-litigate
-  that decision. The debate log records the rejection so future runs see
-  the precedent.
+- **Respect project conventions and decision records.** If the repo's
+  `CLAUDE.md` declares a pattern is intentional (e.g. "we don't test web
+  React components by policy"), or a `docs/adr/` file records an `active`
+  decision or deliberate omission covering the candidate, the moderator
+  should reject candidates that just re-litigate that decision — citing the
+  ADR entry (e.g. `covered by adr/03-billing.md#O1`). The debate log records
+  the rejection so future runs see the precedent. Two exceptions: security/
+  legal/accessibility candidates survive an ADR (report them tagged
+  `ADR-conflict` for the human), and code that *contradicts* an `active` ADR
+  decision with no recorded supersession is itself a finding (drift from
+  decided architecture).
 - **One section, one debate.** Don't merge debates across sections — the
   whole point of partitioning is that each section fits in a subagent's
   context with headroom. Compilation in phase 3 handles cross-section

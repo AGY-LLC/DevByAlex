@@ -66,6 +66,12 @@ has any entries, **this run fixes all of them and nothing else:**
 - Fix each through its own verify loop — hand the entry to `fix-errors` (or
   `issue-checker` first if the bug needs reproducing) so the fix is proven, not
   assumed. The whole test suite must be green before a bug counts as fixed.
+- **Check the feature's ADR before fixing.** Read `docs/adr/<feature>.md` for
+  whatever the bug touches: if the "bug" is actually a documented deliberate
+  decision (an `active` `O`-entry), it's not a bug — punt it to `## Blockers /
+  open questions` citing the entry, for Alex to either withdraw the bug or
+  supersede the decision. If the *fix* would contradict an `active` decision,
+  same thing: blocker, not a silent break.
 - For each fixed bug, **move** its entry from `## Open` to `## Fixed` with a
   one-line fix summary (branch · commit · date). Don't just delete it.
 - If a bug **can't be reproduced** or is too ambiguous to fix safely, leave it in
@@ -82,9 +88,13 @@ Only when `docs/BUGS.md` has no open bugs does the run proceed to Step 3.
 In priority order, choose the first that isn't done:
 1. **Scaffold** not done → run `/dev-scaffold`.
 2. **Authentication** not done → run `/dev-auth`.
-3. A **feature** not done → pick the highest-priority not-done feature from the
+3. **Any feature missing its ADR** (`docs/adr/<NN>-<slug>.md`) → run
+   `/plan-guide adr-backfill` as this run's one step. Feature work stays blocked
+   until every feature has its decision record — common right after the ADR
+   system lands on an existing repo.
+4. A **feature** not done → pick the highest-priority not-done feature from the
    table (respect build order / dependencies) and run `/feature-loop <id>`.
-4. **All features done** → the launch stage begins — **but first confirm
+5. **All features done** → the launch stage begins — **but first confirm
    `docs/BUGS.md` has no open bugs.** Open bugs are a soft launch gate: do **not**
    advance into `/launch-acceptance` while any remain (a clear log is guaranteed
    here because Step 2.5 runs first, but re-check in case one was just logged).
@@ -112,7 +122,8 @@ own verification — don't second-guess its per-step checks.
   (Step 2.5), the log entry names the bug IDs cleared and `docs/BUGS.md` has them
   moved to `## Fixed`.
 - Commit and **push to the working branch** (`git push origin HEAD:<branch>`)
-  once the suite is green — no PR. Append any material decision to
+  once the suite is green — no PR. Record any material decision: feature-scoped
+  → that feature's `docs/adr/<id>.md`; cross-cutting → append to
   `docs/DECISIONS.md`.
 - **Stop.** Report what was advanced, the branch + commit pushed, and what the
   next run will pick up.
@@ -122,6 +133,9 @@ own verification — don't second-guess its per-step checks.
 Stop the run and surface the situation — do not guess — when:
 - An approval gate is unmet (Step 2).
 - A feature card / acceptance criteria is ambiguous about *what* to build.
+- **A step would contradict an `active` decision in `docs/adr/`.** Breaking an
+  architecture decision needs Alex's explicit confirmation — cite the entry,
+  say what the change needs, and stop. Never silently supersede an ADR.
 - The same validation finding survives two fix attempts (hand to a human).
 - A step needs a secret, external service, manual deploy, or a decision only
   Alex can make.

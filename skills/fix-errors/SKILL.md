@@ -159,6 +159,12 @@ Omit optional keys when empty.
 ### Rules
 
 - **Location** must be specific enough to open the right place in an editor.
+- **Respect the decision records.** If the repo has `docs/adr/`, check the ADR
+  covering the code a fix touches. A fix that would contradict an `active`
+  decision or deliberate omission is not applied — record the item `Deferred`
+  citing the ADR entry, for the human to either withdraw the item or supersede
+  the decision. An item that merely re-litigates a documented omission is
+  closed as invalid with the citation.
 - **Verify** must name a real check—same spirit as code-review’s **Verify** field — and must have actually been run, with its actual exit status cited.
 - Do not mark an item complete until **Verify** passes for that step.
 - Distinguish **hypothesis** fixes (unclear root cause) in **Notes**—confirm before moving on.

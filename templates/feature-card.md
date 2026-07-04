@@ -7,6 +7,7 @@
 **Status:** todo <!-- todo | in-progress | blocked | done -->
 **Depends on:** _scaffold, auth, feature NN…_
 **Wireframes:** _link(s) to the screens in `docs/wireframes/`_
+**ADR:** `docs/adr/{{NN}}-{{SLUG}}.md` — consult before changing this feature; breaking an active decision needs explicit confirmation
 
 ## Purpose
 
@@ -50,4 +51,5 @@ _One paragraph. Traceable to a spec core-job._
 
 ## Out of scope
 
-- _What this feature explicitly does not do._
+- _What this feature explicitly does not do. Mirror each entry into the ADR's
+  **Deliberate omissions** so automated reviews don't flag it later._

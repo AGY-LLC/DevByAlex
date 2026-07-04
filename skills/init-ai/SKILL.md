@@ -106,9 +106,14 @@ Inventory the target without changing anything. Capture:
 - **Existing tests**: unit/integration/e2e, and whether they pass if cheap to
   check. Note that passing tests don't tell you whether they trace to the spec.
 - **Existing DevByAlex docs**: `docs/STATUS.md`, `docs/SPEC.md`,
-  `docs/IMPLEMENTATION_GUIDE.md`, `docs/features/`, `docs/wireframes/`,
-  `docs/ACCEPTANCE_TESTS.md`. If present, you are **integrating**, not
-  bootstrapping — read them and preserve their content.
+  `docs/IMPLEMENTATION_GUIDE.md`, `docs/features/`, `docs/adr/`,
+  `docs/wireframes/`, `docs/ACCEPTANCE_TESTS.md`. If present, you are
+  **integrating**, not bootstrapping — read them and preserve their content.
+- **Scattered feature docs**: any pre-existing ad-hoc docs about features or
+  decisions that live outside the workflow files — `NOTES.md`, `docs/design-*.md`,
+  `ARCHITECTURE.md`, decision writeups in the README, comments-as-docs folders.
+  Inventory them; they'll be consolidated into `docs/adr/` (or removed if
+  irrelevant) during the ADR backfill, so the repo keeps one source of truth.
 - A `CLAUDE.md` / `README.md` — read for declared conventions and intent.
 
 ### Step 3 — Classify maturity
@@ -132,6 +137,8 @@ in the summary (offer to merge, don't overwrite silently):
 | `SPEC.md` | `docs/SPEC.md` | stub if blank; keep if it exists |
 | `IMPLEMENTATION_GUIDE.md` | `docs/IMPLEMENTATION_GUIDE.md` | stub if blank |
 | `feature-card.md` | `docs/features/_TEMPLATE.md` | copied per-feature later |
+| `adr-README.md` | `docs/adr/README.md` | the ADR contract — consult before change, confirm before breaking a decision |
+| `adr-feature.md` | `docs/adr/_TEMPLATE.md` | copied per-feature by `/plan-guide` (and during backfill) |
 | `wireframes-README.md` | `docs/wireframes/README.md` | screen index (Figma frames or captured-from-code) |
 | `ACCEPTANCE_TESTS.md` | `docs/ACCEPTANCE_TESTS.md` | stub if blank |
 
@@ -149,12 +156,17 @@ as found:
   absent; if present, leave them.
 - `docs/STATUS.md` — the two hard gates (`Legal & compliance passed`,
   `Accessibility (WCAG 2.2 AA) passed`), the `Brand foundation (docs/BRAND.md)`
-  plan row, the `No open bugs in docs/BUGS.md` launch row, and the four launch
-  rows (legal/compliance, accessibility, SEO, prose). Add any that are missing
-  **unchecked**; never alter the state of a box that's already there.
+  plan row, the `Feature ADRs seeded (docs/adr/)` plan row, the `No open bugs in
+  docs/BUGS.md` launch row, and the four launch rows (legal/compliance,
+  accessibility, SEO, prose). Add any that are missing **unchecked**; never
+  alter the state of a box that's already there.
 - `docs/BUGS.md` — if the repo predates the bug log, copy the template in (it's
   an additive new file, so the "don't clobber" rule means: create it only if
   absent, never overwrite an existing one).
+- `docs/adr/` — if the repo predates the ADR folder, stamp `README.md` +
+  `_TEMPLATE.md` in. The per-feature ADR files themselves are **backfilled, not
+  stamped** — that's real analysis work (see Step 6): every feature in the table
+  needs its ADR written before feature work proceeds.
 Note every backfilled item in the summary so the user can fill the new spec
 stubs. If unsure whether a section is "really" present (e.g. worded differently),
 flag it for the user rather than appending a duplicate.
@@ -229,12 +241,25 @@ anything that needs a human. The routing rules:
 | gates approved, no scaffold | `/dev-scaffold` |
 | scaffolded, no auth at all | `/dev-auth` (build) |
 | scaffolded, **auth present but unvalidated** | `/dev-auth validate` — audit + harden the existing auth |
-| auth validated, features remain | `/dev-autopilot` (or `/feature-loop <feature>`) — validate/harden existing features first, then build missing ones |
+| features identified, **any feature missing its ADR** | `/plan-guide adr-backfill` — write `docs/adr/<NN>-<slug>.md` for **every** feature (and consolidate scattered feature docs) before any feature work |
+| auth validated, ADRs complete, features remain | `/dev-autopilot` (or `/feature-loop <feature>`) — validate/harden existing features first, then build missing ones |
 | all features built + validated | `/launch-acceptance` → `/launch-verify` (run the suite against staging), then `/launch-compliance` (legal/a11y/SEO/prose — drives the hard gates) + `/launch-readiness` |
 
 If integrating a code-first repo with no spec, recommend backfilling the spec
 and guide **from the code** before any further building, so the autopilot has a
 target to validate against.
+
+**The ADR backfill is a hard prerequisite for feature work on an existing repo.**
+Bringing the ADR system to a repo with existing features means **every feature
+in the table gets its `docs/adr/<NN>-<slug>.md` before the loop touches any of
+them** — otherwise the validators have no record of what's intentional and will
+flag conscious choices as gaps. The backfill (owned by `/plan-guide
+adr-backfill`) infers each feature's decisions and deliberate omissions from
+the code and any existing docs, tags every inferred entry `(needs review)`, and
+**consolidates scattered feature docs** (design notes, ad-hoc decision writeups)
+into the ADRs — deleting the originals once absorbed, or removing them outright
+if irrelevant. Note in the summary that the `(needs review)` entries want Alex's
+eyes; an unreviewed backfilled ADR still beats no record.
 
 **Pick a working branch for the dev stage.** The dev skills push straight to the
 working branch (no PRs). For an existing repo with a real `main`, tell the user
@@ -265,6 +290,8 @@ Print a tight summary:
 - For an existing repo: **what's present but unvalidated** — auth, and the count
   of features that are impl-present/validation-pending — and the explicit note
   that autopilot's first phase is validate-and-harden, not new building.
+- The **ADR ledger**: which features have an ADR vs. need backfill, and any
+  scattered feature docs slated for consolidation into `docs/adr/` or removal.
 - The working branch to use for the dev stage (and a flag if none exists yet).
 - Any blockers/open questions and anything marked `(needs review)`.
 

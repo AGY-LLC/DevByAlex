@@ -28,6 +28,7 @@
 - [ ] `docs/SPEC.md` written
 - [ ] Brand foundation (`docs/BRAND.md`) — if public-facing (`/marketer-brand-generation`)
 - [ ] `docs/IMPLEMENTATION_GUIDE.md` written
+- [ ] Feature ADRs seeded (`docs/adr/` — one per feature; existing repos: **backfilled before any feature work**)
 - [ ] Wireframes created (`docs/wireframes/`)
 - [ ] Design resources specced (`docs/design/RESOURCES.md`) — loader · marketing load-in · OG preview image
 

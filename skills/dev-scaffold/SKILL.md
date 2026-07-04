@@ -138,6 +138,12 @@ all pass. Validate `pba.yml` if the interpreter's check is available
 ### Step 6 — Update STATUS and route
 - Check **Dev → Scaffold**; add a log line with branch + commit and the topology
   chosen (workspaces created).
+- Record the scaffold decisions in `docs/adr/scaffold.md` (from
+  `docs/adr/_TEMPLATE.md`): topology choice and what it ruled out (e.g. no
+  separate `server/` workspace and why), branch model, stack picks that diverged
+  from the defaults — `D`-entries — plus anything consciously skipped as
+  `O`-entries. This is the governing record later structural changes are
+  checked against; append a one-line pointer to `docs/DECISIONS.md`.
 - Set `## Next action` to `/dev-auth`.
 - Commit and **push to `staging`** (`git push -u origin staging`); ensure `main`
   exists on the remote too. No PR — `staging → main` happens at production-ready.

@@ -22,16 +22,26 @@ files the implementer/test-author touched. You return:
 
 ## What to do
 
-1. **Run the tests** relevant to this feature (and a quick full run if cheap).
+1. **Read the feature's ADR** (`docs/adr/<id>.md`) before judging anything —
+   it records the decisions and deliberate omissions that govern this feature.
+2. **Run the tests** relevant to this feature (and a quick full run if cheap).
    Capture real output; don't claim green you didn't see.
-2. **Review the feature-scoped code** for quality, security, logic errors, and
+3. **Review the feature-scoped code** for quality, security, logic errors, and
    best-practice violations. Invoke the **`scout`** skill scoped to this
    feature's files to get an adversarial pass and a FIND-xxx queue.
-3. **Verify each candidate finding** with the **`issue-checker`** skill (or a
+4. **Filter candidates against the ADR — both directions.** A candidate that
+   just re-litigates an `active` decision or deliberate omission is **not a
+   finding**: drop it and cite the entry (e.g. `covered by adr/03-billing.md#O1`)
+   so the record shows it was considered. **Exception:** security, legal, and
+   accessibility issues are still reported even when an ADR claims them —
+   tagged `ADR-conflict` so the human decides. Conversely, code that
+   contradicts an `active` decision with no recorded supersession **is** a
+   finding (architecture drift) — cite the entry it breaks.
+5. **Verify each remaining finding** with the **`issue-checker`** skill (or a
    direct repro) so you only report issues that are actually PRESENT — back each
    with evidence (code citation, command output, or failing test). Drop
    anything INCONCLUSIVE-to-not-present.
-4. Check the feature against its **acceptance criteria**: every criterion should
+6. Check the feature against its **acceptance criteria**: every criterion should
    be exercised by a passing test. A criterion with no test is itself a finding.
 
 ## What "FAIL" means

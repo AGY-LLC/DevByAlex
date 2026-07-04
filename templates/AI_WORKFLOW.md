@@ -10,8 +10,9 @@ is the live control file; this file is the map.
      (incl. legal/privacy/compliance + SEO posture).
    - `/marketer-brand-generation` → `docs/BRAND.md` — brand foundation, **if the
      app is public-facing** (seeds SEO titles/locale + prose voice).
-   - `/plan-guide` → `docs/IMPLEMENTATION_GUIDE.md` + `docs/features/*` — granular,
-     ordered build plan (incl. a compliance/legal feature + a11y/SEO cross-cutting).
+   - `/plan-guide` → `docs/IMPLEMENTATION_GUIDE.md` + `docs/features/*` +
+     `docs/adr/*` — granular, ordered build plan (incl. a compliance/legal
+     feature + a11y/SEO cross-cutting) plus one decision record per feature.
    - `/plan-wireframes` → `docs/wireframes/` — Figma frames per feature (needs a
      Figma MCP); copy is `prose-check`ed.
    - **Alex approves** the spec, guide, and wireframes. The dev stage is blocked
@@ -49,6 +50,10 @@ is the live control file; this file is the map.
   protected default.
 - Agents never self-approve a gate; approvals are Alex's.
 - `docs/STATUS.md` stays accurate and the test suite stays green at every stop.
+- **ADRs govern change.** Every feature has a decision record in `docs/adr/`;
+  consult it before touching the feature. Breaking an active decision needs
+  explicit human confirmation + a recorded supersession; documented deliberate
+  omissions are not review findings (security/legal/a11y excepted).
 - Tests trace to the spec; never weakened just to make code pass.
 - Security and privacy beat convenience — most of all in auth.
 

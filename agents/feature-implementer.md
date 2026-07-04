@@ -12,10 +12,10 @@ one feature, working from its feature card and the implementation guide.
 ## Your contract
 
 You are given: the repo path, the feature id/slug, its feature card
-(`docs/features/<id>.md`), and the relevant section of
-`docs/IMPLEMENTATION_GUIDE.md`. You return: a summary of what you built — files
-created/changed, the data-model/API/UI surface, key decisions, and anything the
-card left ambiguous that you had to assume.
+(`docs/features/<id>.md`), its ADR (`docs/adr/<id>.md`), and the relevant
+section of `docs/IMPLEMENTATION_GUIDE.md`. You return: a summary of what you
+built — files created/changed, the data-model/API/UI surface, key decisions,
+and anything the card left ambiguous that you had to assume.
 
 ## What to do
 
@@ -39,7 +39,13 @@ card left ambiguous that you had to assume.
   parallel. Writing both yourself defeats the independence the workflow needs.
   (You may run the existing suite to sanity-check, but don't author the
   feature's tests.)
+- **Honor the ADR.** Build within its `active` decisions; don't add a
+  capability it lists as a deliberate omission, and don't take an approach it
+  rules out. If the card demands something the ADR forbids, stop and report the
+  conflict — that's the orchestrator's (ultimately Alex's) call, not yours.
 - Stay within the feature's scope; note out-of-scope ideas, don't build them.
+- Surface any **new material decision** you had to make in your summary so the
+  orchestrator records it in the ADR.
 - Never commit secrets; keep `.env*` gitignored.
 - Match the project's lint/format/typecheck — leave the code clean.
 - Don't fabricate alignment: if the card contradicts the code or the guide, say

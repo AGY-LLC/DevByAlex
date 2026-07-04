@@ -58,8 +58,11 @@ build face.
   feature card. Note any approach you'd flag as risky, but don't rewrite it
   wholesale unless validation proves it unsafe.
 
-Write the decision/map into the auth feature card and append the decision to
-`docs/DECISIONS.md`.
+Write the decision/map into the auth feature card, record it in
+`docs/adr/auth.md` (from `docs/adr/_TEMPLATE.md` — provider/session/threat-model
+choices as `D`-entries, anything consciously not built as `O`-entries; this is
+the governing record future auth changes are checked against), and append a
+one-line pointer to `docs/DECISIONS.md`.
 
 ### Step 3 — Implement or harden (security-first)
 On the working branch (the one you're on, or the one `dev-autopilot` passed down
