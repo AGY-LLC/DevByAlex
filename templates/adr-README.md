@@ -61,3 +61,10 @@ A decision that **constrains future change**: an approach chosen over a real
 alternative, a capability consciously omitted, a tradeoff someone would
 otherwise "fix." Not implementation trivia — if reversing it wouldn't need a
 conversation, it doesn't need an entry.
+
+**The why is not optional.** Every entry carries its rationale — what the
+choice buys, what it rules out, why the alternative lost. A decision recorded
+without its why can't be re-evaluated later, only obeyed or ignored; the
+rationale is what lets a future change (or Alex) judge whether the decision
+still holds. If the why is unknown (backfilled from code), say so explicitly
+and tag the entry `(needs review)` rather than inventing one.
