@@ -134,7 +134,9 @@ With the feature fully built and both validations clean:
   human confirmation + a recorded supersession; never mark done with the ADR
   stale. A validator finding that just re-litigates a documented deliberate
   decision is rejected with a citation, not fixed (security/legal/a11y
-  excepted — those go to Alex).
+  excepted — those go to Alex, as does any `ADR-challenge`: concrete evidence
+  a decision is causing real harm gets surfaced, never silently fixed or
+  silently dropped).
 - Don't expand scope beyond the feature card; surface new ideas as proposals.
 - Keep STATUS the live source of truth — update it as you move through steps.
 - **Existing code is hardened, not rebuilt.** On a feature that's already built

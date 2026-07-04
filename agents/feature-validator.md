@@ -32,9 +32,13 @@ files the implementer/test-author touched. You return:
 4. **Filter candidates against the ADR — both directions.** A candidate that
    just re-litigates an `active` decision or deliberate omission is **not a
    finding**: drop it and cite the entry (e.g. `covered by adr/03-billing.md#O1`)
-   so the record shows it was considered. **Exception:** security, legal, and
+   so the record shows it was considered. **Exceptions:** security, legal, and
    accessibility issues are still reported even when an ADR claims them —
-   tagged `ADR-conflict` so the human decides. Conversely, code that
+   tagged `ADR-conflict` so the human decides — and if you have **concrete
+   evidence an active decision is itself causing real harm** (a bug, user
+   damage, measurable cost — not preference), report that too, tagged
+   `ADR-challenge` with the entry + evidence, for the human only (never the fix
+   queue). The ADR blocks blind change, not criticism. Conversely, code that
    contradicts an `active` decision with no recorded supersession **is** a
    finding (architecture drift) — cite the entry it breaks.
 5. **Verify each remaining finding** with the **`issue-checker`** skill (or a

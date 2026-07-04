@@ -158,6 +158,10 @@ stamped `docs/adr/README.md`):
   review can't flag what was consciously chosen. Security/legal/accessibility
   issues still get reported (tagged `ADR-conflict`), and the two hard launch
   gates are never overridable by an ADR.
+- **But the ADR blocks blind change, not criticism.** Concrete evidence that an
+  `active` decision is itself causing real harm is reported as an
+  `ADR-challenge` (entry + evidence, routed to the human, never the fix
+  queue). Agents may argue with a decision; only Alex may change it.
 - **Drift is a finding.** Code contradicting an `active` decision with no
   recorded supersession is architecture drift — the record wins until a human
   retires it.

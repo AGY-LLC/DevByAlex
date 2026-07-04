@@ -485,8 +485,11 @@ item that is *technically true but changes nothing that matters*:
   `active` decision or deliberate omission covers the item, it's settled — cite
   the entry instead of filing. Exceptions: legal/privacy/security/accessibility
   items are still filed (tagged `ADR-conflict` — the two hard launch gates are
-  never overridable by an ADR), and code that *contradicts* an `active` ADR
-  entry with no recorded supersession is a real finding (architecture drift).
+  never overridable by an ADR); concrete evidence the decision itself causes
+  real harm is filed tagged `ADR-challenge` (entry + evidence, human-only —
+  the ADR blocks blind change, not criticism); and code that *contradicts* an
+  `active` ADR entry with no recorded supersession is a real finding
+  (architecture drift).
 - Any item whose own fix note has to argue the impact is negligible — if
   you cannot state a concrete consequence, it does not earn a queue slot.
 

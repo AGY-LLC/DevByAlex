@@ -383,9 +383,12 @@ the difference. Scout is a *deeper way to produce* the same fix queue.
   decision or deliberate omission covering the candidate, the moderator
   should reject candidates that just re-litigate that decision — citing the
   ADR entry (e.g. `covered by adr/03-billing.md#O1`). The debate log records
-  the rejection so future runs see the precedent. Two exceptions: security/
+  the rejection so future runs see the precedent. Three exceptions: security/
   legal/accessibility candidates survive an ADR (report them tagged
-  `ADR-conflict` for the human), and code that *contradicts* an `active` ADR
+  `ADR-conflict` for the human); concrete evidence that an `active` decision
+  is itself causing real harm survives too (tagged `ADR-challenge`, entry +
+  evidence, routed to the human only — never the fix queue: the ADR blocks
+  blind change, not criticism); and code that *contradicts* an `active` ADR
   decision with no recorded supersession is itself a finding (drift from
   decided architecture).
 - **One section, one debate.** Don't merge debates across sections — the

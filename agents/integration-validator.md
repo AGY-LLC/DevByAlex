@@ -30,9 +30,12 @@ You are given: the repo path and the feature that was just built. You return:
 3. **Filter candidates against `docs/adr/` — both directions.** Read the ADRs
    for the features a candidate touches (plus `scaffold.md` / `auth.md`). A
    candidate that re-litigates an `active` decision or deliberate omission is
-   not a finding — drop it, citing the entry. **Exception:** security, legal,
+   not a finding — drop it, citing the entry. **Exceptions:** security, legal,
    and accessibility issues are still reported, tagged `ADR-conflict`, for the
-   human to decide. Conversely, code contradicting an `active` decision with no
+   human to decide — and concrete evidence that an active decision is itself
+   causing real harm is reported tagged `ADR-challenge` (entry + evidence, for
+   the human only, never the fix queue). The ADR blocks blind change, not
+   criticism. Conversely, code contradicting an `active` decision with no
    recorded supersession **is** a finding (architecture drift).
 4. **Verify each finding** has real evidence (repro, failing test, citation)
    before reporting it. Prefer the highest-severity, highest-confidence issues.

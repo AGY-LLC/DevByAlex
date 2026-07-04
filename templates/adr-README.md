@@ -46,6 +46,13 @@ of intent survives.
    (Legal & compliance, Accessibility) are **never** overridable by an ADR.
 4. **Drift is a finding.** Code that contradicts an `active` decision without a
    recorded supersession is a defect — the record wins until a human retires it.
+4b. **The ADR blocks blind change, not criticism.** A reviewer that finds
+   concrete evidence an `active` decision is causing real harm (bugs, user
+   damage, measurable cost — not stylistic preference) files an
+   **ADR-challenge**: the finding is reported citing the entry and the
+   evidence, routed to the human. It never enters the fix queue and code is
+   never changed ahead of the human's call. Re-litigating a decision with no
+   new evidence is still dropped.
 5. **Every feature has an ADR before dev work proceeds.** Greenfield: seeded by
    `/plan-guide` with each card. Existing repo brought under the workflow:
    **backfill an ADR for every identified feature before any feature work** —

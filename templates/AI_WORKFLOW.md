@@ -53,7 +53,9 @@ is the live control file; this file is the map.
 - **ADRs govern change.** Every feature has a decision record in `docs/adr/`;
   consult it before touching the feature. Breaking an active decision needs
   explicit human confirmation + a recorded supersession; documented deliberate
-  omissions are not review findings (security/legal/a11y excepted).
+  omissions are not review findings (security/legal/a11y excepted). The ADR
+  blocks blind change, not criticism — evidence a decision causes real harm is
+  surfaced as an `ADR-challenge` for Alex, never silently fixed or dropped.
 - Tests trace to the spec; never weakened just to make code pass.
 - Security and privacy beat convenience — most of all in auth.
 
