@@ -50,7 +50,8 @@ is the live control file every skill reads and writes.
 | `init-ai` | entry | Bootstraps/integrates the workflow into a repo; reconciles STATUS from what's already done. |
 | `plan-spec` | plan | Interviews to a complete spec; `reverse` mode backfills from code. |
 | `plan-guide` | plan | Expands the spec into a granular, ordered guide + feature cards + per-feature ADRs (`adr-backfill` mode writes the missing ADRs for an existing repo's features). |
-| `plan-design` | plan | Picks the app's named visual style — PRIMARY (structure, 1 of 12 product directions) × SECONDARY (feeling, 1 of 50 named styles from `knowledge/design/design-styles.md`) — and records it + the reason in `docs/DESIGN.md` before wireframes. `restyle` mode re-picks for an existing app, records the supersession, and hands off to `/uiux-redesign` to apply it. |
+| `plan-design` | plan | Picks the app's named visual style — PRIMARY (structure, 1 of 12 product directions) × SECONDARY (feeling, 1 of 50 named styles from `knowledge/design/design-styles.md`) — and records it + the reason in `docs/DESIGN.md` before wireframes. `restyle` mode re-picks for an existing app, records the supersession, and hands off to `uiux-redesign` to apply it. |
+| `uiux-redesign` | plan/dev | The application half of a `restyle` — sweeps a confirmed new style across an existing app's every customer-facing screen: rewrites the `docs/DESIGN.md` token system, then conforms the diverging surfaces (web + mobile) via token/shared-component changes, **leaving already-aligned surfaces alone** (change is justified by divergence, not by the sweep). Runs as code change through the validate loop, re-verifies WCAG 2.2 AA, and routes regressions to an `RSTY-xxx` queue → `fix-errors`. Owns the rollout, not the taste call. |
 | `plan-wireframes` | plan | Wireframe each feature — GENERATE via Figma MCP (greenfield) or CAPTURE existing screens from code (existing app, no Figma). Reads the committed style from `docs/DESIGN.md`. |
 | `dev-scaffold` | dev | One-time baseline: monorepo topology (`marketing/` apex + `web/` full-stack app on app.domain + optional `app/` mobile), branch model (protected `main` = production, `staging` = working line), skeleton, tooling, tests, and CI + deploy via Pipeline by Alex (`pba.yml` + thin caller). |
 | `dev-auth` | dev | Authentication first, security & privacy prioritized. Validate-existing mode audits + hardens auth an existing repo already has. |
@@ -106,13 +107,14 @@ The supporting skills (`scout`, `fix-errors`, `issue-checker`,
   (rejection preflight) and `launch-store-assets` (metadata/age-rating compliance).
 - `create-demo` — Maestro-driven capture of the real running app; `launch-store-assets`
   reuses it to pull real screenshots for the store listing.
-- `uiux-init` / `uiux-audit` / `uiux-redesign` — optional design-doc + UI
-  alignment alongside wireframes. The native `plan-design` owns the **style
-  decision** (the named PRIMARY × SECONDARY pick, recorded in `docs/DESIGN.md`);
-  these external skills own the **application** — `uiux-init` expands the pick
-  into the full token system + component rules, `uiux-audit` aligns screens to
-  it, and `uiux-redesign` sweeps every screen when `plan-design restyle` rolls a
-  new style onto an existing app.
+- `uiux-init` / `uiux-audit` — optional external design-doc + UI alignment
+  alongside wireframes: `uiux-init` expands a fresh pick into the full token
+  system + component rules, and `uiux-audit` aligns screens to `docs/DESIGN.md`.
+  The native `plan-design` owns the **style decision** (the named PRIMARY ×
+  SECONDARY pick), and the native `uiux-redesign` owns the **rollout** — sweeping
+  a confirmed new style across an existing app's screens when `plan-design
+  restyle` re-picks. (`uiux-audit` is the fallback for the screen sweep if
+  `uiux-redesign` isn't present.)
 
 And it reads Alex's encoded conventions from the **vendored `knowledge/`**
 (copied into `<app>/.claude/knowledge/` by `install.sh`; skills read it directly
