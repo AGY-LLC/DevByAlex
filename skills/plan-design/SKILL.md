@@ -131,13 +131,15 @@ one applied across its screens.
    (and the relevant `docs/adr/` entry), dated, with the reason, per the ADR
    contract in `docs/adr/README.md` — breaking an active decision needs explicit
    human confirmation. Write the new "Style choice" as in `select` Step 5.
-4. **Hand off the application.** Applying the new style across screens is
-   `/uiux-redesign`'s job (it rewrites `docs/DESIGN.md` tokens and sweeps every
-   customer-facing screen). Invoke it with the confirmed `[PRIMARY] × [SECONDARY]`
-   and the recorded rationale, or — if that skill isn't available in the app —
-   route the screen-by-screen work through `/uiux-audit` against the updated
-   `docs/DESIGN.md`. This skill owns the **decision**; those skills own the
-   **application**.
+4. **Hand off the application.** Applying the new style across screens is the
+   native `/uiux-redesign`'s job — it rewrites the `docs/DESIGN.md` token system
+   and sweeps every customer-facing screen (fully where they diverge, leaving
+   already-aligned surfaces alone), running the sweep through the normal validate
+   loop. Invoke it with the confirmed `[PRIMARY] × [SECONDARY]` and the recorded
+   rationale. (If for some reason `/uiux-redesign` isn't present in the app, route
+   the screen-by-screen work through `/uiux-audit` against the updated
+   `docs/DESIGN.md` instead.) This skill owns the **decision**; `/uiux-redesign`
+   owns the **application**.
 5. **Guardrails.** A redesign is code change: it goes through the normal loop
    (green suite at every stop, the accessibility floor re-verified, push to the
    working branch — not a protected default). The style shift never overrides the
@@ -146,7 +148,8 @@ one applied across its screens.
 ## What this skill does NOT do
 
 - It doesn't write the full token system or component rules — that's `/uiux-init`.
-- It doesn't sweep screens — that's `/uiux-redesign` / `/uiux-audit`.
+- It doesn't sweep screens across an existing app — that's the native
+  `/uiux-redesign` (with `/uiux-audit` as the fallback).
 - It doesn't approve itself — the pick is Alex's to confirm.
 
 It owns exactly one thing: **choosing and recording the named visual style**, so
