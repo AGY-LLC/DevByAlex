@@ -184,7 +184,10 @@ defaults:
   (WCAG 2.2 AA) passed`) also stay **unchecked** — they need a clean
   `/launch-compliance` scan plus Alex's sign-off, neither knowable from code.
 - **Plan rows**: check `SPEC.md` / `IMPLEMENTATION_GUIDE.md` / wireframes only
-  if those docs exist with real content.
+  if those docs exist with real content. Check **Design style chosen** only if
+  `docs/DESIGN.md` records a committed "Style choice"; for an existing app with
+  UI, note the de-facto style as `(needs review)` rather than checking it —
+  changing the look is a `/plan-design restyle`, not an integration checkbox.
 - **Dev rows**: check **Scaffold** if tooling/skeleton/CI exist. For
   **Authentication**, the box means *built **and** validated* — so **leave it
   unchecked when auth code exists but has not been through the security loop.**
@@ -235,8 +238,9 @@ anything that needs a human. The routing rules:
 | existing code, no spec | backfill: `/plan-spec reverse` (infer spec from code), then `/plan-guide`, then re-reconcile |
 | has spec, **public-facing, no `docs/BRAND.md`** | `/marketer-brand-generation` — brand foundation (seeds SEO + voice), then `/plan-guide` |
 | has spec (+ brand if public-facing), no guide | `/plan-guide` — expand the approved spec |
-| has guide, no wireframes, **no UI yet** | `/plan-wireframes` — generate (needs Figma MCP) |
-| has guide, no wireframes, **UI already exists** | `/plan-wireframes capture` — inventory existing screens (no Figma needed) |
+| has guide, **no UI yet, no design style** | `/plan-design` — pick the named style (PRIMARY × SECONDARY) → `docs/DESIGN.md`, then wireframes |
+| has guide + style, no wireframes, **no UI yet** | `/plan-wireframes` — generate (needs Figma MCP), drawn to the chosen style |
+| has guide, no wireframes, **UI already exists** | `/plan-wireframes capture` — inventory existing screens (no Figma needed); `/plan-design restyle` only if changing the look |
 | guide + wireframes done, **gates unchecked** | Tell Alex to review & approve — dev is blocked |
 | gates approved, no scaffold | `/dev-scaffold` |
 | scaffolded, no auth at all | `/dev-auth` (build) |

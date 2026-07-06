@@ -27,7 +27,8 @@ you can run by hand to bootstrap a brand-new app before `init-ai` is loaded.
 # 2. Plan it (human-gated):
 /plan-spec        # interview → docs/SPEC.md
 /plan-guide       # → docs/IMPLEMENTATION_GUIDE.md + docs/features/*
-/plan-wireframes  # → Figma frames (needs a write-capable Figma MCP)
+/plan-design      # → docs/DESIGN.md — pick the named style (PRIMARY × SECONDARY)
+/plan-wireframes  # → Figma frames (needs a write-capable Figma MCP), drawn to that style
 #    …then YOU approve the spec, guide, and wireframes in docs/STATUS.md
 
 # 3. Build it (autonomous once gates are approved):
@@ -56,9 +57,9 @@ the underlying recipes.
 ```
 .claude-plugin/plugin.json   plugin manifest
 install.sh                   provision skills+agents+templates+knowledge into <app>/.claude; --update / --update-all re-vendor an onboarded app to the latest (version-stamped)
-skills/                      all 28 skills — the workflow stages (init-ai, plan-*, dev-*, launch-*) and the supporting skills they call (scout, fix-errors, seo-audit, marketer-*, …) — full committed copies, no external brain
+skills/                      all 30 skills — the workflow stages (init-ai, plan-*, dev-*, launch-*) and the supporting skills they call (scout, fix-errors, seo-audit, marketer-*, …) — full committed copies, no external brain
 agents/                      the 5 specialist agents the feature loop deploys
-knowledge/                   the vendored best-practice brain the skills read (practices/*.yaml, stack/*.md, checklists/*.md)
+knowledge/                   the vendored best-practice brain the skills read (practices/*.yaml, stack/*.md, checklists/*.md, design/design-styles.md — the 50-style vocabulary /plan-design picks from)
 templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, SPEC, DECISIONS, adr/, …)
 docs/WORKFLOW.md             the full architecture and invariants
 docs/LIVE-SYNC.md            the fully-vendored skill model (everything committed, nothing served live) + the --update pipeline

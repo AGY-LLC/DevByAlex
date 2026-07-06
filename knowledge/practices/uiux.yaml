@@ -14,13 +14,15 @@ practice:
   domain: engineering
   activities: [feature, review]
   matched_skills:
+    - /plan-design
     - /uiux-init
     - /uiux-audit
+    - /uiux-redesign
     - /accessibility-critique
   use_when: >-
     You're building new UI, polishing a surface, setting up a design system, or
     reviewing screens for visual quality and accessibility. For a brand-new
-    project, run the direction interview first and write docs/DESIGN.md.
+    project, pick the named style first (/plan-design), then write docs/DESIGN.md.
 
   inputs_to_gather_first:
     - The product category, audience, and emotional tone — and any existing brand assets or docs/DESIGN.md.
@@ -29,6 +31,7 @@ practice:
 
   methodology:
     - Pick a visual direction with intent and commit to it; do not default to the generic "modern SaaS" look (gradient hero, bento grid, sparkle icons, templated copy) — that's the #1 tell of AI-generated UI.
+    - Name the style as PRIMARY × SECONDARY — PRIMARY is the structure/layout (one of the 12 product directions, fixed by category + density; wins every conflict and governs usability), SECONDARY is the feeling/decoration (one of the 50 named styles, chosen from the tone adjectives). Use the catalog, pairing map, and decision procedure in knowledge/design/design-styles.md; /plan-design runs this and records the pick + reason in docs/DESIGN.md before wireframes.
     - Pin the design-system dimensions as intent-based tokens — color (+ contrast), typography ramp, spacing scale, radius/shadow, motion (with a reduced-motion policy), iconography, and every interactive state (default/hover/focus/active/disabled/loading/error/empty).
     - Hold the accessibility floor (WCAG 2.2 AA) on every customer-facing surface — focus visible, keyboard operable, contrast, hit targets, semantic structure, labels + error association, alternatives, reduced motion, zoom/reflow.
     - Don't skip empty, loading, and error states — they're where AI UI is laziest.
@@ -59,6 +62,7 @@ practice:
     - No generic-AI-UI tells (gradient-hero default, sparkle icons, templated corporate copy, unmodified component library).
 
   references:
+    - ../../knowledge/design/design-styles.md
     - ../../knowledge/stack/uiux.md
     - ../../knowledge/stack/tailwind.md
 
@@ -72,6 +76,13 @@ practice:
 
       ## Brand brief
       <Who it's for, the feeling, the direction chosen.>
+
+      ## Style choice
+      <**Direction:** PRIMARY × SECONDARY (e.g. finance dashboard × Bento UI),
+      chosen by /plan-design from knowledge/design/design-styles.md. **Why:** the
+      reason tied to category/audience/tone. Alternatives considered. Starting
+      tokens (palette temperament, type register, texture/motif, radius/shadow
+      feel, motion personality) — the sections below expand these.>
 
       ## Anti-patterns — do not introduce
       ### Visual

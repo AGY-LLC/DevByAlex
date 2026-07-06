@@ -95,9 +95,11 @@ lives at the root and each workspace extends it.
    - **App-wide design resources** (per `docs/design/RESOURCES.md`): the custom
      **app loader** — **required**, wired to initial load / route transitions /
      Suspense, built to the chosen approach (logo-based / theme-derived /
-     generated) from `docs/BRAND.md`, honoring `prefers-reduced-motion` (static
-     fallback). Build it **or** record an override in `RESOURCES.md` — never skip
-     silently. Then check the **Custom app loader** row in STATUS.
+     generated) from `docs/BRAND.md` and the committed style in `docs/DESIGN.md`
+     (the loader's motion + shape language should read as the picked
+     PRIMARY × SECONDARY, not a generic spinner), honoring `prefers-reduced-motion`
+     (static fallback). Build it **or** record an override in `RESOURCES.md` —
+     never skip silently. Then check the **Custom app loader** row in STATUS.
 3. **`marketing/`** (if user-facing): a minimal Next.js site that boots — a home
    route, brand tokens from `docs/BRAND.md`, and a link/CTA to `app.{{domain}}`.
    Keep it light; landing-page content is built later in its feature, not here.

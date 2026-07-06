@@ -13,8 +13,12 @@ is the live control file; this file is the map.
    - `/plan-guide` → `docs/IMPLEMENTATION_GUIDE.md` + `docs/features/*` +
      `docs/adr/*` — granular, ordered build plan (incl. a compliance/legal
      feature + a11y/SEO cross-cutting) plus one decision record per feature.
+   - `/plan-design` → `docs/DESIGN.md` — pick the named visual style, PRIMARY
+     (structure) × SECONDARY (feeling), with the reason recorded, so wireframes
+     and scaffold build against a committed look. `restyle` mode re-picks for an
+     existing app and hands off to `/uiux-redesign`.
    - `/plan-wireframes` → `docs/wireframes/` — Figma frames per feature (needs a
-     Figma MCP); copy is `prose-check`ed.
+     Figma MCP), designed against the chosen style; copy is `prose-check`ed.
    - **Alex approves** the spec, guide, and wireframes. The dev stage is blocked
      until the three gates in `docs/STATUS.md` are checked.
 

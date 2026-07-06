@@ -103,9 +103,9 @@ Jest + Playwright).
   in build order, all steps `⬜`.
 - Check **Plan → IMPLEMENTATION_GUIDE.md written** and **Plan → Feature ADRs
   seeded** (only if every feature got its `docs/adr/` file).
-- Set `## Next action` to `/plan-wireframes`.
+- Set `## Next action` to `/plan-design`.
 - Tell the user the guide needs **their approval** (a gate) before dev, and the
-  next step is `/plan-wireframes`.
+  next step is `/plan-design` (pick the visual style) → then `/plan-wireframes`.
 
 ## Mode: `adr-backfill` — write the missing ADRs for an existing repo
 

@@ -18,7 +18,7 @@ The biggest tell of AI-generated UI is defaulting to one "modern SaaS" aesthetic
 - **Copy** — corporate/templated phrasing ("streamline your workflow", "unlock your potential"); neutral-to-inert voice with no personality.
 - **Motion** — animation that feels automated rather than designed; motion on everything; center `transform-origin` on popovers; `transition: all`; durations over ~300ms on interruptible UI.
 
-Pick a direction with intent (premium editorial, calm, playful consumer, technical devtool, etc.) and commit to it.
+Pick a direction with intent (premium editorial, calm, playful consumer, technical devtool, etc.) and commit to it. Name it as **PRIMARY × SECONDARY** — structure (one of the 12 product directions) × feeling (one of the 50 named styles) — using the catalog, pairing map, and decision procedure in [`../design/design-styles.md`](../design/design-styles.md). `/plan-design` makes and records that pick in `docs/DESIGN.md` before wireframes; the primary always wins conflicts and governs usability.
 
 ## Design-system dimensions
 

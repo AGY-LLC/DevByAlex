@@ -75,7 +75,10 @@ in so later stages can reference them.
   exist — if missing, send the user back to `/plan-spec` rather than inventing
   tone/density.
 - `docs/IMPLEMENTATION_GUIDE.md` + feature cards exist (both modes).
-- If `docs/DESIGN.md` exists (from `/uiux-init`), honor its tokens.
+- **Read the committed style.** `docs/DESIGN.md` should carry a **Style choice**
+  (PRIMARY × SECONDARY) from `/plan-design` — design the frames to that style, and
+  honor any tokens `/uiux-init` has expanded. If no style is recorded yet, run
+  `/plan-design` first rather than defaulting to a generic look.
 
 ### Step 2 — Build the screen list
 - **GENERATE:** from the feature cards, enumerate every key screen and the states
