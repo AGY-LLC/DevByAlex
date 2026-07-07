@@ -1,6 +1,6 @@
 ---
 name: feature-loop
-description: "The DevByAlex per-feature build engine — takes one feature from its card to done by running the four-step loop the workflow defines: (1) write tests and implement the feature IN PARALLEL via two separate subagents (test-author works from the spec, feature-implementer writes the code — kept apart so tests aren't written just to match the implementation); (2) a feature-validator agent runs the tests and reviews the feature's code for quality/security/logic/best-practices, looping back to write a failing test + fix on any issue; (3) an integration-validator agent runs the full suite and reviews the whole codebase, looping back the same way; (4) confirm the finished feature aligns with the implementation guide and wireframes, then update docs/STATUS.md. Use to build one specific feature, or as the unit of work the autopilot calls per feature."
+description: "The DevByAlex per-feature build engine — takes one feature from its card to done by running the four-step loop the workflow defines: (1) write tests and implement the feature IN PARALLEL via two separate subagents (test-author works from the spec, feature-implementer writes the code — kept apart so tests aren't written just to match the implementation); (2) a feature-validator agent runs the tests and reviews the feature's code for quality/security/logic/best-practices, looping back to write a failing test + fix on any issue; (3) an integration-validator agent runs the full suite and reviews the whole codebase, looping back the same way; (4) confirm the finished feature aligns with the implementation guide and wireframes — and, for any customer-facing UI, capture screenshots of the running screens and have the design-critic agent vet them (looping on its findings) before the feature may be marked done — then update docs/STATUS.md. Use to build one specific feature, or as the unit of work the autopilot calls per feature."
 argument-hint: "[feature id or slug from docs/features/ — e.g. 03-billing]"
 license: MIT
 metadata:
@@ -35,6 +35,7 @@ The agents and the skills they lean on:
 | 1b code | `feature-implementer` | the feature card + guide |
 | 2 feature validation | `feature-validator` | `scout` (feature-scoped), `issue-checker`, `fix-errors` |
 | 3 integration validation | `integration-validator` | `scout` (whole repo), `fix-errors` |
+| 4 design vetting (UI features) | `design-critic` | screenshots vs. `docs/DESIGN.md` + wireframes + universal rules |
 
 ## Workflow
 
@@ -112,6 +113,18 @@ With the feature fully built and both validations clean:
   for this feature — behavior, screens, and states all match. If something
   drifted, fix it (or, if the drift is intentional and better, note it and flag
   the guide/wireframe for Alex to update — don't silently diverge).
+- **Screenshot + critic gate (any feature with customer-facing UI) — required.**
+  Run the app and capture screenshots of the feature's screens in their key
+  states (populated, empty, loading, error; light + dark where supported) —
+  web via Playwright, native via the simulator/Maestro capture flow from
+  `/launch-visual-qa` — saved under `docs/visual-qa/<run-date>/`. Spawn the
+  **`design-critic`** agent with the screenshot paths, `docs/DESIGN.md` (style
+  choice + tokens + real-world references), the feature's wireframes, and the
+  universal design rules (`knowledge/design/universal-design-rules.md`). Route
+  its `CRIT-xxx` findings to `fix-errors`, re-capture, and re-submit — **the
+  feature's design work is not done until the critic passes.** A feature with
+  no customer-facing UI records `design vetting: n/a` instead; never silently
+  skip the gate.
 - **Bring the ADR current.** Record any material decision the build made that
   the plan didn't (an approach chosen over a real alternative, a capability
   consciously deferred → a new `O`-entry), and any confirmed supersessions from
@@ -130,6 +143,10 @@ With the feature fully built and both validations clean:
   Tests trace to the spec; never weaken a test to make code pass.
 - A failing validation is a loop-back, not a stop: capture it as a test, fix,
   re-validate. Don't mark done with red tests or open findings.
+- **UI isn't done until it's been seen.** A feature with customer-facing
+  screens requires the screenshot + `design-critic` pass in Step 4; the builder
+  never vets its own screenshots, and a failed critique loops back like any
+  failed validation.
 - **The ADR governs.** Never contradict an `active` ADR entry without explicit
   human confirmation + a recorded supersession; never mark done with the ADR
   stale. A validator finding that just re-litigates a documented deliberate

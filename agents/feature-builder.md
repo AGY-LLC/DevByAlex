@@ -36,9 +36,15 @@ That skill defines the canonical four steps; follow it exactly:
    failure. Loop until clean; if an integration fix reopens the feature, redo
    step 2.
 4. **Align + status** — confirm the feature matches the implementation guide and
-   wireframes, bring the ADR current (new material decisions, confirmed
-   supersessions), update `docs/STATUS.md` (steps ✅, row done, log line), then
-   commit and push to the working branch.
+   wireframes. **If the feature has customer-facing UI:** capture screenshots of
+   its screens in their key states (running app — Playwright for web, the
+   simulator/Maestro flow for native) and spawn the **`design-critic`** agent to
+   vet them against `docs/DESIGN.md`, the wireframes, and the universal design
+   rules; route its `CRIT-xxx` findings to `fix-errors`, re-capture, and loop
+   until it passes — the feature is not done on an unvetted or failed critique.
+   Then bring the ADR current (new material decisions, confirmed supersessions),
+   update `docs/STATUS.md` (steps ✅, row done, log line), and commit and push to
+   the working branch.
 
 ## Rules
 
@@ -47,7 +53,9 @@ That skill defines the canonical four steps; follow it exactly:
   Leave the suite green before pushing.
 - Stay within the feature's scope; surface new ideas as proposals, don't build
   them.
-- Never mark the feature done with red tests or open findings.
+- Never mark the feature done with red tests, open findings, or — for UI
+  features — without a passing `design-critic` screenshot verdict. You never
+  vet your own screenshots.
 - Follow Alex's stack conventions (TS strict, Zod at boundaries, thin handlers +
   services, ORM with reviewed migrations) and keep `docs/STATUS.md` accurate.
 - **The ADR governs.** If any step would contradict an `active` decision or

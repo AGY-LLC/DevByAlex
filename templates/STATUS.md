@@ -29,7 +29,7 @@
 - [ ] Brand foundation (`docs/BRAND.md`) — if public-facing (`/marketer-brand-generation`)
 - [ ] `docs/IMPLEMENTATION_GUIDE.md` written
 - [ ] Feature ADRs seeded (`docs/adr/` — one per feature; existing repos: **backfilled before any feature work**)
-- [ ] Design style chosen (`docs/DESIGN.md`) — PRIMARY × SECONDARY via `/plan-design` (rides under the wireframes gate)
+- [ ] Design style chosen (`docs/DESIGN.md`) — PRIMARY × SECONDARY via `/plan-design`, with web-searched real-world references recorded (rides under the wireframes gate)
 - [ ] Wireframes created (`docs/wireframes/`)
 - [ ] Design resources specced (`docs/design/RESOURCES.md`) — loader · marketing load-in · OG preview image
 

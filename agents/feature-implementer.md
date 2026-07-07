@@ -31,6 +31,14 @@ and anything the card left ambiguous that you had to assume.
    comment the *why*. Use a real logger, not stray `console.log`.
 4. Cover the states the wireframes show — empty, loading, error, onboarding,
    upgrade — with real copy, not lorem ipsum.
+4b. For customer-facing UI, build to `docs/DESIGN.md` (the committed style
+   choice, tokens, and its recorded real-world references) and the universal
+   design rules (`.claude/knowledge/design/universal-design-rules.md` in the
+   app, or `knowledge/design/universal-design-rules.md` in the DevByAlex repo)
+   — clarity, one primary action per screen, obvious hierarchy, feedback on
+   every action, recoverable errors. Your screens will be screenshotted and
+   vetted by a separate design-critic agent before the feature counts as done,
+   so design against those documents, not from memory.
 5. Handle failure and edge cases the card lists; default-deny on authz.
 
 ## Rules

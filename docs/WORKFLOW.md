@@ -24,7 +24,9 @@ is the live control file every skill reads and writes.
                          │   (once)            (security      │ 1. test-author ∥ feature-implementer│ │
                          │                      first)        │ 2. feature-validator   (loop on ✗)  │ │
                          │                                    │ 3. integration-validator (loop on ✗)│ │
-                         │   driven unattended by             │ 4. align to guide+wireframes, STATUS│ │
+                         │   driven unattended by             │ 4. align to guide+wireframes;       │ │
+                         │                                    │    UI ⇒ screenshots + design-critic │ │
+                         │                                    │    pass (loop on ✗); STATUS         │ │
                          │   /dev-autopilot (1 step/run) ◄────┴─────────────────────────────────────┘ │
                          │   ▲ each run first DRAINS docs/BUGS.md (human-logged bugs) before building │
                          └───────────────────────────────┬───────────────────────────────────────────┘
@@ -50,7 +52,7 @@ is the live control file every skill reads and writes.
 | `init-ai` | entry | Bootstraps/integrates the workflow into a repo; reconciles STATUS from what's already done. |
 | `plan-spec` | plan | Interviews to a complete spec; `reverse` mode backfills from code. |
 | `plan-guide` | plan | Expands the spec into a granular, ordered guide + feature cards + per-feature ADRs (`adr-backfill` mode writes the missing ADRs for an existing repo's features). |
-| `plan-design` | plan | Picks the app's named visual style — PRIMARY (structure, 1 of 12 product directions) × SECONDARY (feeling, 1 of 50 named styles from `knowledge/design/design-styles.md`) — and records it + the reason in `docs/DESIGN.md` before wireframes. `restyle` mode re-picks for an existing app, records the supersession, and hands off to `uiux-redesign` to apply it. |
+| `plan-design` | plan | Picks the app's named visual style — PRIMARY (structure, 1 of 12 product directions) × SECONDARY (feeling, 1 of 50 named styles from `knowledge/design/design-styles.md`) — then **web-searches 3–5 real-world references** of the confirmed style (live products/galleries) to seed the tokens, and records pick + references + reason in `docs/DESIGN.md` before wireframes. `restyle` mode re-picks for an existing app, records the supersession, and hands off to `uiux-redesign` to apply it. |
 | `uiux-redesign` | plan/dev | The application half of a `restyle` — sweeps a confirmed new style across an existing app's every customer-facing screen: rewrites the `docs/DESIGN.md` token system, then conforms the diverging surfaces (web + mobile) via token/shared-component changes, **leaving already-aligned surfaces alone** (change is justified by divergence, not by the sweep). Runs as code change through the validate loop, re-verifies WCAG 2.2 AA, and routes regressions to an `RSTY-xxx` queue → `fix-errors`. Owns the rollout, not the taste call. |
 | `plan-wireframes` | plan | Wireframe each feature — GENERATE via Figma MCP (greenfield) or CAPTURE existing screens from code (existing app, no Figma). Reads the committed style from `docs/DESIGN.md`. |
 | `dev-scaffold` | dev | One-time baseline: monorepo topology (`marketing/` apex + `web/` full-stack app on app.domain + optional `app/` mobile), branch model (protected `main` = production, `staging` = working line), skeleton, tooling, tests, and CI + deploy via Pipeline by Alex (`pba.yml` + thin caller). |
@@ -62,7 +64,7 @@ is the live control file every skill reads and writes.
 | `launch-acceptance` | launch | Writes the staging acceptance pass as runnable suites — Playwright (web) + Maestro (iOS/Android) — generated from a scenario doc. |
 | `launch-verify` | launch | Runs the `launch-acceptance` suites against the live staging environment, triages failures into an `ACC-xxx` queue → `fix-errors`, re-runs to green, and checks the "acceptance suite passed against staging" gate `launch-submit` reads. The runner half of the author/run split. |
 | `launch-compliance` | launch | Legal (ToS / privacy policy / cookie consent), accessibility (WCAG 2.2 AA), SEO, and prose scans; drives the two hard launch gates + a fix queue. Reuses `launch-readiness`, `accessibility-critique`, `seo-audit`, `prose-check`. |
-| `launch-visual-qa` | launch | The cross-platform screenshot loop (build → boot → screenshot → critique → fix): boots iOS sim + Android emulator, drives the Maestro flows to capture every key screen/state, a vision critic emits a `VIS-xxx` queue → `fix-errors`, re-screenshots to confirm. Reuses the `launch-acceptance` Maestro flows + `fix-errors`. |
+| `launch-visual-qa` | launch | The cross-platform screenshot loop (build → boot → screenshot → critique → fix): boots iOS sim + Android emulator, drives the Maestro flows to capture every key screen/state, the `design-critic` agent vets them (against wireframes, `docs/DESIGN.md`, and the universal design rules) and emits a `VIS-xxx` queue → `fix-errors`, re-screenshots to confirm. Reuses the `launch-acceptance` Maestro flows + `fix-errors`. |
 | `launch-store-assets` | launch | The "App Store tab," doubled: icon, device-framed screenshots (iOS sizes + Android phone/tablet), Play feature graphic, and per-field listing copy for **both** App Store Connect and Play Console, from the real running app. Reuses `create-demo`, `marketer-copywriting`, `ios-audit`. |
 | `launch-submit` | launch | Dual-store delivery lane — detects Expo→EAS / bare→Fastlane, builds, and submits to **TestFlight + Play internal testing**. Gated on readiness/compliance/hard-gates; **human-triggered only**, never auto-promotes to production. Reuses `launch-readiness`, `ios-audit`. |
 
@@ -75,6 +77,7 @@ is the live control file every skill reads and writes.
 | `test-author` | Writes tests from the spec, blind to the code. |
 | `feature-validator` | Runs tests + reviews feature code; reports, doesn't fix. |
 | `integration-validator` | Runs full suite + reviews whole repo; reports, doesn't fix. |
+| `design-critic` | Vets screenshots of design changes against `docs/DESIGN.md` (style + references), the wireframes, and the universal design rules; emits a `CRIT-xxx` queue. Design work isn't done until it passes; judges, doesn't fix. |
 
 ### Existing skills it reuses (not reinvented)
 

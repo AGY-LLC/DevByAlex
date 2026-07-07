@@ -1,6 +1,6 @@
 ---
 name: uiux-redesign
-description: "The application/rollout half of a restyle — sweeps a confirmed new style across an EXISTING app's every customer-facing screen. Runs after `/plan-design restyle` has re-picked the PRIMARY × SECONDARY and recorded the supersession in docs/DESIGN.md: this skill rewrites the docs/DESIGN.md token system (color, type, spacing, radius, shadow, motion, iconography, component states) to the new style, then sweeps every customer-facing surface (web + mobile app/ if present) to consume it — preferring token-level and shared-component changes that ripple over per-screen edits. It assesses each screen's alignment BEFORE touching it and deliberately leaves already-aligned surfaces unchanged (change is justified by divergence from the new tokens, never by the sweep advising it). It runs as code change through the normal validate loop — green suite at every stop, WCAG 2.2 AA floor re-verified on every changed surface — and routes any regression or leftover divergence to fix-errors as an IDed RSTY-xxx queue. PRIMARY still wins every conflict, so structure/usability and the forms checklist are untouched; a restyle changes feeling, not the spine. Does NOT pick the style (that's /plan-design restyle) and does NOT self-approve. Use after a restyle decision is recorded, or when the user says 'roll out the new style', 'apply the redesign', 'sweep the screens', 'restyle every screen', or 'uiux-redesign'."
+description: "The application/rollout half of a restyle — sweeps a confirmed new style across an EXISTING app's every customer-facing screen. Runs after `/plan-design restyle` has re-picked the PRIMARY × SECONDARY and recorded the supersession in docs/DESIGN.md: this skill rewrites the docs/DESIGN.md token system (color, type, spacing, radius, shadow, motion, iconography, component states) to the new style, then sweeps every customer-facing surface (web + mobile app/ if present) to consume it — preferring token-level and shared-component changes that ripple over per-screen edits. It assesses each screen's alignment BEFORE touching it and deliberately leaves already-aligned surfaces unchanged (change is justified by divergence from the new tokens, never by the sweep advising it). It runs as code change through the normal validate loop — green suite at every stop, WCAG 2.2 AA floor re-verified on every changed surface — routes any regression or leftover divergence to fix-errors as an IDed RSTY-xxx queue, and MUST end with the screenshot gate: every swept surface screenshotted and vetted by the design-critic agent, looping on its CRIT-xxx findings until the critic passes before the restyle may be marked done. PRIMARY still wins every conflict, so structure/usability and the forms checklist are untouched; a restyle changes feeling, not the spine. Does NOT pick the style (that's /plan-design restyle) and does NOT self-approve. Use after a restyle decision is recorded, or when the user says 'roll out the new style', 'apply the redesign', 'sweep the screens', 'restyle every screen', or 'uiux-redesign'."
 argument-hint: "[optional: scope — a screen/area to limit the sweep to, or a platform: web | mobile | both (default both)]"
 license: MIT
 metadata:
@@ -56,7 +56,12 @@ Read `docs/DESIGN.md` (both the **new** Style choice and the **superseded** one)
 (`docs/wireframes/README.md`) for the screen→feature map, and `docs/STATUS.md`.
 Read the style vocabulary
 [`../../knowledge/design/design-styles.md`](../../knowledge/design/design-styles.md)
-for what **both** `PRIMARY × SECONDARY` pairings *mean* visually, and the UI/UX
+for what **both** `PRIMARY × SECONDARY` pairings *mean* visually, the
+**real-world references** recorded in the new Style choice (open them — the
+sweep conforms screens toward those actual instances of the style, not toward
+a style name), the universal design rules
+[`../../knowledge/design/universal-design-rules.md`](../../knowledge/design/universal-design-rules.md)
+(style-independent; the restyle never trades them away), and the UI/UX
 baseline [`../../knowledge/stack/uiux.md`](../../knowledge/stack/uiux.md) +
 practice [`../../knowledge/practices/uiux.yaml`](../../knowledge/practices/uiux.yaml)
 for the design-system dimensions and the accessibility floor. You need the
@@ -118,9 +123,18 @@ not get a pass because it's "just visual":
 - Route every regression, leftover divergence, or AA miss to **`fix-errors`** as
   an IDed **`RSTY-xxx`** queue (one ID per issue, with file + the dimension that's
   off), and drive it to zero.
-- Optionally confirm it *looks* right with **`/launch-visual-qa`** (screenshot the
-  swept screens and critique them against the new `docs/DESIGN.md`) — the restyle
-  analogue of the build→boot→screenshot→critique loop.
+- **Screenshot + critic gate — MANDATORY.** The sweep is not done because the
+  code changed; it's done when the screens *look* right, and that is vetted, not
+  self-declared. Capture screenshots of **every swept surface** in its key states
+  (populated, empty, loading, error; light + dark where supported) — web via
+  Playwright against the running app, native via the simulator/Maestro capture
+  flow from `/launch-visual-qa` — save them under `docs/visual-qa/<run-date>/`,
+  and spawn the **`design-critic`** agent (this plugin's `agents/design-critic.md`;
+  fall back to `general-purpose` with that brief) with the screenshot paths, the
+  new `docs/DESIGN.md` (tokens + real-world references), the wireframes, and the
+  universal design rules. Route its `CRIT-xxx` queue to `fix-errors`, re-capture
+  the affected screens, and re-submit — **loop until the critic passes.** No
+  clean critic verdict → the restyle stays in-progress.
 
 ### Step 7 — Record, update STATUS, push
 - Note in `docs/DESIGN.md` (Decision log) that the new Style choice was **rolled
@@ -142,6 +156,9 @@ not get a pass because it's "just visual":
   customer-facing surface; contrast is re-checked, not assumed.
 - **It routes, it doesn't rubber-stamp its own fixes.** Regressions go to
   `fix-errors` as an `RSTY-xxx` queue and are driven to zero.
+- **No done without the critic.** Every swept surface is screenshotted and
+  vetted by the `design-critic` agent; the restyle is only marked done on a
+  clean pass. The sweeper never critiques its own screenshots.
 - **Working branch only**, and the two hard launch gates are never overridden.
 
 ## What this skill does NOT do

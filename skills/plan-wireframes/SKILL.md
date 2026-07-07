@@ -76,9 +76,16 @@ in so later stages can reference them.
   tone/density.
 - `docs/IMPLEMENTATION_GUIDE.md` + feature cards exist (both modes).
 - **Read the committed style.** `docs/DESIGN.md` should carry a **Style choice**
-  (PRIMARY × SECONDARY) from `/plan-design` — design the frames to that style, and
-  honor any tokens `/uiux-init` has expanded. If no style is recorded yet, run
-  `/plan-design` first rather than defaulting to a generic look.
+  (PRIMARY × SECONDARY) from `/plan-design` — design the frames to that style,
+  consult its recorded **real-world references** (open them — the frames should
+  belong to the same world), and honor any tokens `/uiux-init` has expanded. If
+  no style is recorded yet, run `/plan-design` first rather than defaulting to a
+  generic look.
+- **Read the universal design rules**
+  ([`../../knowledge/design/universal-design-rules.md`](../../knowledge/design/universal-design-rules.md))
+  — every frame answers them structurally: one clear primary action per screen,
+  obvious hierarchy, predictable navigation, recognition over memory,
+  progressive disclosure, and empty states that teach.
 
 ### Step 2 — Build the screen list
 - **GENERATE:** from the feature cards, enumerate every key screen and the states

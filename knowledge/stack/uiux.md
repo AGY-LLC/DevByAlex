@@ -9,6 +9,8 @@ updated: 2026-05-30
 
 How I want UI built and reviewed. Per-project specifics live in that project's `docs/DESIGN.md` (see nisatsu for the canonical example); this is the cross-project baseline the `/uiux-init`, `/uiux-audit`, and `/accessibility-critique` skills operate against.
 
+Underneath everything here sit the **[universal design rules](../design/universal-design-rules.md)** — 30 style-independent principles (clarity above everything, one primary action, obvious hierarchy, immediate feedback, error prevention + recovery, …) plus the pre-ship Universal Checklist the `design-critic` agent runs over every screenshot. Every screen holds them regardless of the style chosen below.
+
 ## Anti-patterns — the generic-AI-UI no-fly list
 
 The biggest tell of AI-generated UI is defaulting to one "modern SaaS" aesthetic with no intent behind it. Do not introduce:

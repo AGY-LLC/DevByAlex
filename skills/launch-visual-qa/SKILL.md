@@ -68,9 +68,15 @@ Never use real user data or real secrets — drive from seed/test accounts and
 document them.
 
 ### Step 3 — Critique the screenshots (vision pass)
-Review every captured screenshot **against the intent**, not in a vacuum — the
-wireframe for that screen, `docs/DESIGN.md` rules, and the spec's described
-behavior. Flag, per screenshot:
+Spawn the **`design-critic`** agent (this plugin's `agents/design-critic.md`;
+fall back to `general-purpose` with that brief) to review every captured
+screenshot — the critic must be a separate context from whoever built or swept
+the screens, so the verdict is vetted, not self-declared. It judges **against
+the intent**, not in a vacuum — the wireframe for that screen, `docs/DESIGN.md`
+rules (style choice + tokens + real-world references), the universal design
+rules ([`../../knowledge/design/universal-design-rules.md`](../../knowledge/design/universal-design-rules.md)
+— every screenshot is walked through its Universal Checklist), and the spec's
+described behavior. Flag, per screenshot:
 - **Layout breakage** — clipped/overflowing/overlapping content, text truncation,
   content under the notch/home-indicator/status bar, broken scroll/keyboard
   avoidance, mis-aligned or zero-size elements.

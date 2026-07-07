@@ -1,6 +1,6 @@
 ---
 name: plan-design
-description: "Design-selection stage of the DevByAlex plan phase — pick the app's visual style with intent before wireframing. Reads docs/SPEC.md (category, audience, tone, density, platform), docs/BRAND.md if present, and any references/anti-patterns, then recommends a named style as PRIMARY (structure — one of the 12 product directions) × SECONDARY (feeling — one of the 50 named styles in knowledge/design/design-styles.md), with a rationale and two alternatives. Alex confirms; the pick + starting tokens are written to docs/DESIGN.md and recorded as a decision, so /plan-wireframes and /dev-scaffold build against a committed style. The 'restyle' mode drives the rollout to an existing app: pick a new style, record the supersession, and hand off to /uiux-redesign to apply it across screens. Use after the implementation guide exists, when the user says 'pick a design style', 'choose the look', 'what style should this app be', 'set the visual direction', or 'restyle this app'."
+description: "Design-selection stage of the DevByAlex plan phase — pick the app's visual style with intent before wireframing. Reads docs/SPEC.md (category, audience, tone, density, platform), docs/BRAND.md if present, and any references/anti-patterns, then recommends a named style as PRIMARY (structure — one of the 12 product directions) × SECONDARY (feeling — one of the 50 named styles in knowledge/design/design-styles.md), with a rationale and two alternatives. Alex confirms; then a REQUIRED web search pulls 3–5 real-world references of the confirmed style (live products/sites, gallery entries — actual instances of the style, not descriptions) whose concrete treatments seed the starting tokens; the pick + references + starting tokens are written to docs/DESIGN.md and recorded as a decision, so /plan-wireframes and /dev-scaffold build against a committed style. The 'restyle' mode drives the rollout to an existing app: pick a new style, record the supersession, and hand off to /uiux-redesign to apply it across screens. Use after the implementation guide exists, when the user says 'pick a design style', 'choose the look', 'what style should this app be', 'set the visual direction', or 'restyle this app'."
 argument-hint: "[optional: a style/direction to steer toward; or 'restyle' to re-pick + roll out to an existing app]"
 license: MIT
 metadata:
@@ -51,8 +51,11 @@ first — it's the catalog, the pairing map, and the decision procedure. In shor
   audience, the 2–3 tone adjectives, interaction density, platform priority),
   and `docs/BRAND.md` if present (voice + visual-vocabulary direction + palette
   hints). Read the vendored UI/UX practice
-  [`../../knowledge/practices/uiux.yaml`](../../knowledge/practices/uiux.yaml)
-  and baseline [`../../knowledge/stack/uiux.md`](../../knowledge/stack/uiux.md).
+  [`../../knowledge/practices/uiux.yaml`](../../knowledge/practices/uiux.yaml),
+  baseline [`../../knowledge/stack/uiux.md`](../../knowledge/stack/uiux.md), and
+  the universal design rules
+  [`../../knowledge/design/universal-design-rules.md`](../../knowledge/design/universal-design-rules.md)
+  — the style is chosen *on top of* those rules; no pick may trade them away.
 - If the spec is missing the tone/density/references inputs, ask the three
   direction questions from `uiux.yaml` before recommending — don't guess a style
   off a category alone.
@@ -69,14 +72,42 @@ the inputs, and a line on what it makes the app *feel* like. Honor any style the
 user steered toward (the argument) and any anti-patterns they named. Present them
 and **let Alex confirm or override** — this is where the taste call lives.
 
-### Step 4 — Translate the pick into starting tokens
-Once confirmed, derive the style's implications: palette temperament, type
-register (serif/sans/mono/display), texture/motif set, radius/shadow feel, and a
-2–3 word motion personality. These seed the design system — the full token table
-and component rules are expanded by `/uiux-init` (or the vendored uiux practice)
-from this choice, not invented separately.
+### Step 4 — Pull real-world references (REQUIRED web search)
+Once Alex confirms the pairing, ground it in reality before deriving tokens.
+**Run actual web searches** (WebSearch / WebFetch) for real, existing instances
+of the confirmed style — this step is mandatory, not optional polish:
 
-### Step 5 — Write it to docs/DESIGN.md
+- Search the style by name and its canonical products (the catalog rows in
+  `design-styles.md` name several): e.g. `"<SECONDARY style> website examples"`,
+  `"<style> UI design"`, plus curated galleries — Awwwards, siteinspire,
+  Godly, Land-book, Mobbin (mobile), httpster — filtered to the style.
+- Collect **3–5 real references**: live product sites/apps first, gallery
+  entries second, Dribbble/Behance mockups only as a last resort (mockups lie
+  about density and states). At least one reference should share the app's
+  PRIMARY direction (same product category/density), so structure is
+  represented, not just decoration.
+- For each reference record: **name, URL, and one line on what specifically to
+  borrow** — palette treatment, type pairing, texture/motif, spacing rhythm,
+  radius/shadow feel, motion. Note an anti-reference too if the search surfaced
+  a version of the style done badly.
+- If web access is unavailable in this session, **stop and say so** — record the
+  gap as a STATUS blocker rather than inventing references from memory. The
+  references must be pulled, not recalled.
+
+These references are recorded in `docs/DESIGN.md` (Step 6) and are the
+inspiration set every downstream stage designs against — `/uiux-init` expands
+tokens toward them, `/plan-wireframes` frames against them, and the design
+critic judges swept screens with them in hand.
+
+### Step 5 — Translate the pick into starting tokens
+Once confirmed, derive the style's implications **from the references, not from
+memory**: palette temperament, type register (serif/sans/mono/display),
+texture/motif set, radius/shadow feel, and a 2–3 word motion personality — each
+traceable to something observed in the pulled references. These seed the design
+system — the full token table and component rules are expanded by `/uiux-init`
+(or the vendored uiux practice) from this choice, not invented separately.
+
+### Step 6 — Write it to docs/DESIGN.md
 Create or update `docs/DESIGN.md`. If the file doesn't exist, start it from the
 `uiux.yaml` output template and fill the **Style choice** section; if it exists
 (e.g. `/uiux-init` already ran), update that section and reconcile — the named
@@ -92,6 +123,13 @@ pick governs. Record:
 adjectives — the reason is mandatory, like every DevByAlex decision.>
 
 **Alternatives considered:** <the two runners-up, one line each, and why not.>
+
+**Real-world references (pulled by web search — mandatory):**
+- <Name> — <URL> — <what to borrow: palette / type / texture / spacing / motion>
+- <Name> — <URL> — <…>
+- <Name> — <URL> — <…>
+<!-- 3–5 real instances of the style; live products first. Anti-reference
+     optional. Downstream stages design toward these, not toward memory. -->
 
 **Starting tokens (seed — /uiux-init expands):**
 - Palette temperament: …
@@ -109,7 +147,7 @@ Then append the decision to `docs/DECISIONS.md` (cross-cutting — the whole app
 look), dated, with the **Why**. If a scaffold/design ADR exists
 (`docs/adr/scaffold.md`), note the style there too as a `D`-entry.
 
-### Step 6 — Update STATUS and route
+### Step 7 — Update STATUS and route
 - Check the **Design style chosen** plan item in `docs/STATUS.md`.
 - Set `## Next action` to `/plan-wireframes` (it reads the committed style and
   designs frames against it).
@@ -124,13 +162,15 @@ one applied across its screens.
 
 1. **Read the current style.** The existing `docs/DESIGN.md` "Style choice" (or
    infer the de-facto style from the code if none is recorded), plus SPEC/BRAND.
-2. **Re-run selection (Steps 2–4).** Recommend a new PRIMARY × SECONDARY for the
-   new intent; present alternatives; **Alex confirms.**
+2. **Re-run selection (Steps 2–5).** Recommend a new PRIMARY × SECONDARY for the
+   new intent; present alternatives; **Alex confirms.** Then pull the real-world
+   references for the new style via web search (Step 4) — a restyle needs the
+   inspiration set just as much as a fresh pick.
 3. **Record the supersession — don't silently diverge.** The old style is an
    `active` decision. Mark it superseded in `docs/DESIGN.md` and `docs/DECISIONS.md`
    (and the relevant `docs/adr/` entry), dated, with the reason, per the ADR
    contract in `docs/adr/README.md` — breaking an active decision needs explicit
-   human confirmation. Write the new "Style choice" as in `select` Step 5.
+   human confirmation. Write the new "Style choice" (including the pulled references) as in `select` Step 6.
 4. **Hand off the application.** Applying the new style across screens is the
    native `/uiux-redesign`'s job — it rewrites the `docs/DESIGN.md` token system
    and sweeps every customer-facing screen (fully where they diverge, leaving

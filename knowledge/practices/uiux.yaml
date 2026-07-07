@@ -30,8 +30,11 @@ practice:
     - References the user loves and hates, plus explicit anti-patterns to avoid.
 
   methodology:
+    - Hold the universal design rules (knowledge/design/universal-design-rules.md) on every screen — clarity above everything, one primary action, obvious hierarchy, feedback on every action, error prevention + recovery, predictable navigation. They are style-independent; a style choice never trades them away.
     - Pick a visual direction with intent and commit to it; do not default to the generic "modern SaaS" look (gradient hero, bento grid, sparkle icons, templated copy) — that's the #1 tell of AI-generated UI.
     - Name the style as PRIMARY × SECONDARY — PRIMARY is the structure/layout (one of the 12 product directions, fixed by category + density; wins every conflict and governs usability), SECONDARY is the feeling/decoration (one of the 50 named styles, chosen from the tone adjectives). Use the catalog, pairing map, and decision procedure in knowledge/design/design-styles.md; /plan-design runs this and records the pick + reason in docs/DESIGN.md before wireframes.
+    - Ground the pick in reality — /plan-design must pull 3–5 real-world references of the confirmed style via web search (live products/sites, gallery entries) and record them in docs/DESIGN.md; tokens are derived from those references, not from memory of the style name.
+    - Validate design changes by looking, not by declaring — screenshot the running screens (key states, light + dark) and have the separate design-critic agent vet them against docs/DESIGN.md, the wireframes, and the universal rules; a design change is done only on a clean critic pass.
     - Pin the design-system dimensions as intent-based tokens — color (+ contrast), typography ramp, spacing scale, radius/shadow, motion (with a reduced-motion policy), iconography, and every interactive state (default/hover/focus/active/disabled/loading/error/empty).
     - Hold the accessibility floor (WCAG 2.2 AA) on every customer-facing surface — focus visible, keyboard operable, contrast, hit targets, semantic structure, labels + error association, alternatives, reduced motion, zoom/reflow.
     - Don't skip empty, loading, and error states — they're where AI UI is laziest.
@@ -49,6 +52,7 @@ practice:
       why: Triangulates the look and sets the no-fly list.
 
   review_checklist:
+    - The Universal Checklist from knowledge/design/universal-design-rules.md — purpose obvious, one primary action, obvious hierarchy, feedback everywhere, mistakes prevented + recoverable, predictable navigation, readable type, intentional spacing, motion that clarifies, color that communicates, first-time-user clarity.
     - Focus visible on every focusable control (2.4.7); keyboard-operable, Tab order matches visual order, no traps (2.1.1).
     - Contrast — body ≥ 4.5:1, large ≥ 3:1, controls/state ≥ 3:1 against the actual background (1.4.3, 1.4.11).
     - Hit targets ≥ 24px (44px mobile) (2.5.8).
@@ -62,6 +66,7 @@ practice:
     - No generic-AI-UI tells (gradient-hero default, sparkle icons, templated corporate copy, unmodified component library).
 
   references:
+    - ../../knowledge/design/universal-design-rules.md
     - ../../knowledge/design/design-styles.md
     - ../../knowledge/stack/uiux.md
     - ../../knowledge/stack/tailwind.md
@@ -80,9 +85,12 @@ practice:
       ## Style choice
       <**Direction:** PRIMARY × SECONDARY (e.g. finance dashboard × Bento UI),
       chosen by /plan-design from knowledge/design/design-styles.md. **Why:** the
-      reason tied to category/audience/tone. Alternatives considered. Starting
-      tokens (palette temperament, type register, texture/motif, radius/shadow
-      feel, motion personality) — the sections below expand these.>
+      reason tied to category/audience/tone. Alternatives considered.
+      **Real-world references** — 3–5 web-searched real instances of the style
+      (name + URL + what to borrow), pulled by /plan-design; downstream stages
+      design toward these. Starting tokens (palette temperament, type register,
+      texture/motif, radius/shadow feel, motion personality) — the sections
+      below expand these.>
 
       ## Anti-patterns — do not introduce
       ### Visual
