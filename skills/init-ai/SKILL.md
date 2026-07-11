@@ -103,6 +103,11 @@ Inventory the target without changing anything. Capture:
 - **Existing UI / screens**: enumerate the screens that already exist (pages,
   routes, top-level views). If there's real UI, the wireframe artifact should
   later be **captured** from it, not generated from scratch (drives Step 6).
+  While enumerating, also scan the UI copy for **decision leakage** (universal
+  rule 31, show-don't-tell): descriptive paragraphs under section headers, spec/
+  ADR rationale typed into screens, headings phrased like internal docs, empty
+  states or settings that read like documentation. List each offending
+  screen — this seeds the show-don't-tell sweep in Step 6.
 - **Existing tests**: unit/integration/e2e, and whether they pass if cheap to
   check. Note that passing tests don't tell you whether they trace to the spec.
 - **Existing DevByAlex docs**: `docs/STATUS.md`, `docs/SPEC.md`,
@@ -252,6 +257,19 @@ anything that needs a human. The routing rules:
 If integrating a code-first repo with no spec, recommend backfilling the spec
 and guide **from the code** before any further building, so the autopilot has a
 target to validate against.
+
+**Queue the show-don't-tell sweep if Step 2 found decision leakage.** For each
+screen flagged in Step 2 (explanatory paragraphs, spec/ADR text in the UI), log
+an entry in `docs/BUGS.md` — one per screen, tagged `[show-dont-tell]`, naming
+the offending copy and file. The autopilot drains these before building
+anything new; the fix standard is **restructure the section so layout,
+hierarchy, and labels carry the meaning — don't just shorten the paragraph** —
+and the reworked screens must pass the design-critic screenshot gate like any
+design change. If the leakage is pervasive (most screens read like
+documentation), note in the summary that the repo needs a show-don't-tell
+redesign pass across its surfaces (`/uiux-audit` if available, else a scoped
+sweep through `fix-errors` + design-critic) rather than screen-by-screen bug
+fixes.
 
 **The ADR backfill is a hard prerequisite for feature work on an existing repo.**
 Bringing the ADR system to a repo with existing features means **every feature

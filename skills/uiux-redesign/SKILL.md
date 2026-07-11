@@ -111,6 +111,15 @@ treatment behind. Keep the PRIMARY's structure: **do not** move to a different
 layout, navigation model, or relax the forms checklist — you are re-skinning the
 existing spine.
 
+While on a surface, also clear any **decision leakage** it carries (universal
+rule 31, show-don't-tell): descriptive paragraphs under section headers,
+spec/ADR rationale typed into the screen, settings or empty states that read
+like documentation. The fix is restructuring — let layout, hierarchy, and
+labels carry the meaning — not shortening the paragraph. This doesn't widen the
+anti-churn rule: leakage on an otherwise-aligned surface still counts as real
+divergence (the design-critic will fail it anyway), but don't restyle a surface
+that only needed its copy fixed.
+
 ### Step 6 — Validate as code change
 A restyle is code change and goes through the **normal validate loop** — it does
 not get a pass because it's "just visual":

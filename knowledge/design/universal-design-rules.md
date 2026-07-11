@@ -1,9 +1,9 @@
 ---
 id: design-universal-rules
 title: "Universal UI/UX Design Rules"
-summary: "Timeless design principles that apply regardless of visual style, branding, platform, or theme — 30 rules plus the pre-ship Universal Checklist. Every design decision, sweep, and critique in the workflow holds these; the named style (PRIMARY × SECONDARY) colors them, never overrides them."
+summary: "Timeless design principles that apply regardless of visual style, branding, platform, or theme — 31 rules plus the pre-ship Universal Checklist. Every design decision, sweep, and critique in the workflow holds these; the named style (PRIMARY × SECONDARY) colors them, never overrides them."
 tags: ["design", "uiux", "principles", "checklist", "universal"]
-updated: 2026-07-07
+updated: 2026-07-11
 ---
 # Universal UI/UX Design Rules
 
@@ -355,6 +355,26 @@ The highest compliment: "I didn't have to think."
 
 Users notice bad interfaces. Great interfaces disappear.
 
+## 31. Show, Don't Tell — the UI Is Not the Decision Log
+
+Specs, ADRs, and design decisions guide what gets built. They are **never
+pasted into the product**. Users should understand what a section is for from
+its layout, hierarchy, labels, and content — not from a paragraph explaining
+it.
+
+Tells that internal thinking leaked into the UI:
+
+- a descriptive sentence or paragraph under every section header
+- copy that explains *why* the product works the way it does, unprompted
+- headings that name a feature the way the spec does, not the way the user
+  thinks about their task
+- onboarding, empty states, or settings that read like documentation
+
+If a section needs a preamble to be understood, redesign the section (Rule 1),
+don't annotate it. Helper text is reserved for the few places users genuinely
+need it — a teaching empty state (Rule 26), a consequential setting — and even
+there it's one short sentence, not an explanation of the design.
+
 ## Universal Checklist
 
 Before shipping a screen — and this is the checklist the **design-critic**
@@ -374,6 +394,7 @@ agent runs over every screenshot — ask:
 - [ ] Is spacing intentional?
 - [ ] Does motion clarify?
 - [ ] Does color communicate meaning?
+- [ ] Is it free of internal-decision text — no explanatory paragraph doing work the layout should do?
 - [ ] Would a first-time user understand it?
 
 If the answer to all of these is yes, the design is likely strong regardless of

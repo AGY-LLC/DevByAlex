@@ -9,7 +9,7 @@ updated: 2026-05-30
 
 How I want UI built and reviewed. Per-project specifics live in that project's `docs/DESIGN.md` (see nisatsu for the canonical example); this is the cross-project baseline the `/uiux-init`, `/uiux-audit`, and `/accessibility-critique` skills operate against.
 
-Underneath everything here sit the **[universal design rules](../design/universal-design-rules.md)** — 30 style-independent principles (clarity above everything, one primary action, obvious hierarchy, immediate feedback, error prevention + recovery, …) plus the pre-ship Universal Checklist the `design-critic` agent runs over every screenshot. Every screen holds them regardless of the style chosen below.
+Underneath everything here sit the **[universal design rules](../design/universal-design-rules.md)** — 31 style-independent principles (clarity above everything, one primary action, obvious hierarchy, immediate feedback, error prevention + recovery, show-don't-tell, …) plus the pre-ship Universal Checklist the `design-critic` agent runs over every screenshot. Every screen holds them regardless of the style chosen below.
 
 ## Anti-patterns — the generic-AI-UI no-fly list
 
@@ -17,7 +17,7 @@ The biggest tell of AI-generated UI is defaulting to one "modern SaaS" aesthetic
 
 - **Visual** — the default gradient hero, bento grid, and sparkle/star iconography; a palette that's safe-and-trendy but untied to the brand; uniform, featureless hierarchy; lazy whitespace (too much) or cramped layouts (too little); stock illustrations.
 - **Structural** — over-reliance on an unmodified component library; everything the same elevation; no considered focal point.
-- **Copy** — corporate/templated phrasing ("streamline your workflow", "unlock your potential"); neutral-to-inert voice with no personality.
+- **Copy** — corporate/templated phrasing ("streamline your workflow", "unlock your potential"); neutral-to-inert voice with no personality; **internal-decision leakage** — spec/ADR rationale or design reasoning typed into the product, a descriptive paragraph under every section header. Show, don't tell: layout, hierarchy, and labels explain a section; if it needs a preamble, restructure it.
 - **Motion** — animation that feels automated rather than designed; motion on everything; center `transform-origin` on popovers; `transition: all`; durations over ~300ms on interruptible UI.
 
 Pick a direction with intent (premium editorial, calm, playful consumer, technical devtool, etc.) and commit to it. Name it as **PRIMARY × SECONDARY** — structure (one of the 12 product directions) × feeling (one of the 50 named styles) — using the catalog, pairing map, and decision procedure in [`../design/design-styles.md`](../design/design-styles.md). `/plan-design` makes and records that pick in `docs/DESIGN.md` before wireframes; the primary always wins conflicts and governs usability.

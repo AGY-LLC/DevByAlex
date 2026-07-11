@@ -108,6 +108,12 @@ Group screens by feature and by the end-to-end flow a user walks.
   hierarchy, key copy, primary CTA, relevant states). Keep it lo-fi — structure
   and flow, not pixel polish. Lay frames out per feature with flow arrows between
   screens. Use concrete placeholder copy (Alex prefers it over lorem ipsum).
+  **Show, don't tell:** never give sections a descriptive subtitle or paragraph
+  explaining what they're for, and never let spec/decision rationale appear as
+  UI copy — layout, hierarchy, and labels carry that meaning (universal rule
+  31). A frame whose sections need explanation gets restructured, not
+  annotated. Whatever explanatory text the wireframe shows is what gets built,
+  so leave it out here.
 - **CAPTURE:** do **not** open Figma. Write a per-screen description from the code
   — purpose, key elements, primary action, states present, and the file it lives
   in — plus the navigation flow between screens. This documented inventory **is**

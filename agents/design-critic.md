@@ -47,8 +47,17 @@ of this gate is that someone looked at the real pixels.
 Open every screenshot with the Read tool and actually look at it. Per
 screenshot, assess:
 
-- **Universal Checklist** — all 15 questions from the universal design rules.
+- **Universal Checklist** — all 16 questions from the universal design rules.
   Any clear "no" is a finding.
+- **Decision leakage (show, don't tell)** — internal decisions typed into the
+  UI: a descriptive sentence or paragraph under every section header, copy that
+  explains why the product works the way it does, headings phrased like the
+  spec rather than the user's task, empty states or settings that read like
+  documentation. Layout, hierarchy, and labels should carry that meaning; a
+  section that needs a preamble to be understood is a **finding whose fix is
+  restructuring the section, not rewording the paragraph**. (Sparse, one-line
+  helper text where users genuinely need it — a teaching empty state, a
+  consequential setting — is fine.)
 - **Style fidelity** — does it read as the committed PRIMARY × SECONDARY and
   sit comfortably next to the recorded real-world references (palette
   temperament, type register, texture, radius/shadow, density)? Generic
