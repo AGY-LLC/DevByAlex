@@ -50,7 +50,8 @@ Confirm, and **abort with a clear report if any fails**:
 - **`docs/STATUS.md` hard gates** — *Legal & compliance passed* and *Accessibility
   (WCAG 2.2 AA) passed* are **checked**. These are Alex's to sign; if either is
   unchecked, stop — not ship-ready. Never self-check them.
-- **No open bugs** in `docs/BUGS.md` (soft launch gate).
+- **No open bugs** in `docs/BUGS.md` and **no open tweaks** in `docs/TWEAKS.md`
+  (soft launch gates — known misses, functional or cosmetic, never ship).
 - **launch-readiness** audit is clean (run it, or confirm its STATUS row is green
   and current).
 - **ios-audit / launch-compliance** is clean — no predicted App Review / Play

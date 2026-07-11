@@ -7,7 +7,8 @@ is the live control file; this file is the map.
 
 1. **Plan** (human-gated)
    - `/plan-spec` → `docs/SPEC.md` — interview until the spec is complete
-     (incl. legal/privacy/compliance + SEO posture).
+     (incl. legal/privacy/compliance + SEO posture). Screenshots of apps you
+     like go into `docs/design/references/` — first-class design inputs.
    - `/marketer-brand-generation` → `docs/BRAND.md` — brand foundation, **if the
      app is public-facing** (seeds SEO titles/locale + prose voice).
    - `/plan-guide` → `docs/IMPLEMENTATION_GUIDE.md` + `docs/features/*` +
@@ -31,12 +32,19 @@ is the live control file; this file is the map.
    - `/feature-loop <id>` — per feature: parallel tests + implementation →
      feature validation → integration validation → align to guide/wireframes →
      update STATUS.
+   - `/dev-tweak` — the cosmetic light lane: drains `docs/TWEAKS.md` (copy,
+     tokens, spacing) behind a hard qualification test + a proportional gate,
+     without paying the full feature loop.
    - `/dev-autopilot` — advances the build one safe step per run; this is what a
-     schedule calls.
+     schedule calls. Drains `docs/BUGS.md`, then `docs/TWEAKS.md`, before any
+     build step; every UI-changing run leaves a **visual pulse** (staging URL +
+     screenshots) in the STATUS log.
 
 3. **Launch readiness**
    - Staging deploys automatically via Pipeline by Alex on push to `staging`; the
      human gate is the `staging → main` production promotion (`main` is protected).
+   - `/launch-observability` — error monitoring (PII-scrubbed) + consent-gated
+     analytics + uptime/alerting, each signal proven end-to-end on staging.
    - `/launch-acceptance` → `docs/ACCEPTANCE_TESTS.md` (scenario spec) plus the
      runnable suites that execute it against staging: Playwright specs for every
      web surface (`marketing/` + `web/`), Maestro flows for iOS/Android.
@@ -45,6 +53,15 @@ is the live control file; this file is the map.
      reconciles a fix queue and the two **hard gates** (Legal & compliance,
      Accessibility) that block ship-ready in `docs/STATUS.md`.
    - Companions: `/staging-smoke-test`, `/launch-readiness`.
+
+4. **Live (post-launch)**
+   - Raw production signal — user emails, reviews, error-tracker exports — goes
+     into `docs/FEEDBACK.md`.
+   - `/live-triage` (manual or scheduled) routes each item: functional problem →
+     `docs/BUGS.md` tagged `[prod]`, cosmetic miss → `docs/TWEAKS.md`, feature
+     request → a STATUS blocker for Alex. Triage routes, never fixes — the
+     autopilot drains those logs through the same verified loop that built the
+     app.
 
 ## Rules of the road
 

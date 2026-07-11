@@ -59,6 +59,14 @@ answers. Work backwards from the user. Cover at minimum:
    emotional tone (2–3 adjectives), interaction density, key screens and their
    states (empty/loading/error/onboarding/upgrade), brand assets (incl. **is a
    logo SVG available?**), references loved/hated, anti-patterns to avoid.
+   **Ask for visual references as images, not just names:** screenshots of apps
+   or screens the user likes (or a Figma export) go into
+   `docs/design/references/` (create the folder; any pasted image gets saved
+   there with a descriptive filename). For each, capture **one line on what
+   specifically they like about it** — the palette, the density, the type, the
+   mood — an image with no "why" is half a reference. These are first-class
+   inputs to `/plan-design`: a picture of the look they want beats three
+   adjectives describing it.
    **Also ask the two animation questions** every app gets a decision on:
    (a) the **app loading animation** — every app gets a custom loader inspired by
    the theme; which approach fits this project (logo-based animation of the logo
@@ -101,7 +109,9 @@ Use `../../templates/SPEC.md` as the structure. Capture problem, users, core
 jobs, out-of-scope, data-model sketch, auth/privacy requirements, the
 **legal/privacy/compliance** section (data/PII, ToS, privacy policy, cookie
 consent, regimes, user-rights, accessibility target), monetization, platform,
-the design/UX answers (verbatim enough for wireframing), the **SEO &
+the design/UX answers (verbatim enough for wireframing — including the
+`docs/design/references/` image paths with the user's one-line "what I like
+about it" per image), the **SEO &
 discoverability** section, integrations, constraints, and the success definition.
 Convert relative dates to absolute.
 

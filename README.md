@@ -5,7 +5,9 @@ launch-ready — packaged as a Claude Code plugin (skills + specialist agents).
 
 **Plan** it (spec → implementation guide → wireframes, human-approved), **build**
 it (scaffold → auth → a per-feature build/validate loop that runs unattended on
-a schedule), then **verify** it for launch. State lives in each target repo's
+a schedule), **verify** it for launch, then keep it improving **live** (production
+errors and user feedback triaged back into the same build loop). State lives in
+each target repo's
 `docs/STATUS.md`; one command — `init-ai` — brings any repo, blank or existing,
 under the workflow.
 
@@ -25,7 +27,8 @@ you can run by hand to bootstrap a brand-new app before `init-ai` is loaded.
 #    then open that app and run: /init-ai .
 
 # 2. Plan it (human-gated):
-/plan-spec        # interview → docs/SPEC.md
+/plan-spec        # interview → docs/SPEC.md — drop screenshots of apps you like
+                  #   into docs/design/references/; a picture beats adjectives
 /plan-guide       # → docs/IMPLEMENTATION_GUIDE.md + docs/features/*
 /plan-design      # → docs/DESIGN.md — pick the named style (PRIMARY × SECONDARY) + web-search real references of it
 /plan-wireframes  # → Figma frames (needs a write-capable Figma MCP), drawn to that style
@@ -37,13 +40,23 @@ you can run by hand to bootstrap a brand-new app before `init-ai` is loaded.
 /dev-autopilot .  # advance the build one safe step (run repeatedly / on a schedule)
 #    Hit a bug? Jot it in docs/BUGS.md — each autopilot run drains the bug log
 #    (fixing + verifying every open bug) BEFORE it touches any feature work.
+#    Small cosmetic change (copy, spacing, a color)? Jot it in docs/TWEAKS.md —
+#    the light lane (/dev-tweak) drains it right after bugs, without paying the
+#    full feature loop. Every UI-changing run leaves a visual pulse in STATUS
+#    (staging URL + screenshots), so you can judge unattended runs at a glance.
 
 # 4. Launch readiness (staging deploys via Pipeline by Alex on push to staging):
+/launch-observability  # error monitoring + consent-gated analytics + uptime, proven on staging
 /launch-acceptance     # Playwright (web) + Maestro (iOS/Android) acceptance suites
 /launch-visual-qa      # boot iOS + Android, screenshot every screen, critique → fix
 /launch-compliance     # legal / a11y / SEO / prose gates
 /launch-store-assets   # App Store + Play icon, screenshots, listing copy
 /launch-submit         # YOU run this — build + ship to TestFlight + Play internal
+
+# 5. Live (post-launch — the loop keeps running):
+#    Paste user feedback / error reports into docs/FEEDBACK.md, then:
+/live-triage           # routes each item → BUGS.md [prod] / TWEAKS.md / a question
+                       #   for you — and the autopilot drains those as usual
 ```
 
 To run the dev stage unattended, use **`/dev-schedule`** — it preflights, picks a
@@ -57,10 +70,10 @@ the underlying recipes.
 ```
 .claude-plugin/plugin.json   plugin manifest
 install.sh                   provision skills+agents+templates+knowledge into <app>/.claude; --update / --update-all re-vendor an onboarded app to the latest (version-stamped)
-skills/                      all 30 skills — the workflow stages (init-ai, plan-*, dev-*, launch-*) and the supporting skills they call (scout, fix-errors, seo-audit, marketer-*, …) — full committed copies, no external brain
+skills/                      all 34 skills — the workflow stages (init-ai, plan-*, dev-*, launch-*, live-*) and the supporting skills they call (scout, fix-errors, seo-audit, marketer-*, …) — full committed copies, no external brain
 agents/                      the 6 specialist agents the feature loop deploys (incl. design-critic — vets screenshots of every design change before it counts as done)
 knowledge/                   the vendored best-practice brain the skills read (practices/*.yaml, stack/*.md, checklists/*.md, design/design-styles.md — the 50-style vocabulary /plan-design picks from — and design/universal-design-rules.md — the 31 style-independent rules every screen holds)
-templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, SPEC, DECISIONS, adr/, …)
+templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, TWEAKS, FEEDBACK, SPEC, DECISIONS, adr/, …)
 docs/WORKFLOW.md             the full architecture and invariants
 docs/LIVE-SYNC.md            the fully-vendored skill model (everything committed, nothing served live) + the --update pipeline
 docs/SCHEDULING.md           how to run the loop unattended (ready-to-run recipes)

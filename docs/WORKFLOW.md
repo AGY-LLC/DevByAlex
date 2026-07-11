@@ -1,7 +1,8 @@
 # DevByAlex — the workflow
 
 An autonomous, stage-gated pipeline that takes an app from a one-line idea to
-launch-ready. Three macro stages — **plan**, **dev**, **launch** — with human
+launch-ready — and keeps improving it after. Four macro stages — **plan**,
+**dev**, **launch**, **live** — with human
 approval gates between plan and dev, and before the `staging → main` promotion to
 production. Staging itself deploys automatically via Pipeline by Alex on push to
 `staging` (`main` = protected production).
@@ -28,18 +29,30 @@ is the live control file every skill reads and writes.
                          │                                    │    UI ⇒ screenshots + design-critic │ │
                          │                                    │    pass (loop on ✗); STATUS         │ │
                          │   /dev-autopilot (1 step/run) ◄────┴─────────────────────────────────────┘ │
-                         │   ▲ each run first DRAINS docs/BUGS.md (human-logged bugs) before building │
+                         │   ▲ each run first DRAINS docs/BUGS.md (human-logged bugs), then          │
+                         │     docs/TWEAKS.md via /dev-tweak (the cosmetic light lane), before        │
+                         │     building — and every UI-changing run leaves a visual pulse (staging   │
+                         │     URL + screenshots) in the STATUS log                                   │
                          └───────────────────────────────┬───────────────────────────────────────────┘
-                                  all features done  AND  docs/BUGS.md has no open bugs
+                             all features done  AND  BUGS.md + TWEAKS.md have no open entries
                                                           │
                          ┌──────────────────────────── LAUNCH READINESS ────────────────────────────┐
-                         │  (staging deploys via PBA) ─► /launch-acceptance ─► /launch-verify ─►        │
+                         │  (staging deploys via PBA) ─► /launch-observability (errors · consent-gated │
+                         │   analytics · uptime — proven on staging) ─► /launch-acceptance ─►           │
+                         │   /launch-verify ─►                                                          │
                          │   ACCEPTANCE_TESTS.md   Playwright(web)+Maestro(iOS/Android)  RUN vs staging │
                          │   ─► /launch-visual-qa (screenshot) ─► /launch-compliance ─►                 │
                          │   /staging-smoke-test ─► /launch-readiness                                   │
                          │   ⮡ Legal & Accessibility = HARD gates (block ship)                          │
                          │   ─► /launch-store-assets (App Store + Play) ─► /launch-submit ⮕ TestFlight  │
                          │      + Play internal  (HUMAN-TRIGGERED publish; never auto/cron)             │
+                         └──────────────────────────────┬───────────────────────────────────────────┘
+                                                        │  shipped — real users
+                         ┌───────────────────────────── LIVE (post-launch) ─────────────────────────┐
+                         │  production errors + user feedback ─► docs/FEEDBACK.md ─► /live-triage ─►   │
+                         │  BUGS.md [prod] / TWEAKS.md / STATUS blockers (feature requests → Alex)     │
+                         │  …which the next /dev-autopilot run drains — the same verified build loop,  │
+                         │  now running on production signal (cron-safe; triage routes, never fixes)   │
                          └──────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -50,7 +63,7 @@ is the live control file every skill reads and writes.
 | Skill | Stage | Does |
 |-------|-------|------|
 | `init-ai` | entry | Bootstraps/integrates the workflow into a repo; reconciles STATUS from what's already done. |
-| `plan-spec` | plan | Interviews to a complete spec; `reverse` mode backfills from code. |
+| `plan-spec` | plan | Interviews to a complete spec; collects **visual references as images** (screenshots of apps the user likes → `docs/design/references/`, each with a "what I like about it" line) as first-class design inputs; `reverse` mode backfills from code. |
 | `plan-guide` | plan | Expands the spec into a granular, ordered guide + feature cards + per-feature ADRs (`adr-backfill` mode writes the missing ADRs for an existing repo's features). |
 | `plan-design` | plan | Picks the app's named visual style — PRIMARY (structure, 1 of 12 product directions) × SECONDARY (feeling, 1 of 50 named styles from `knowledge/design/design-styles.md`) — then **web-searches 3–5 real-world references** of the confirmed style (live products/galleries) to seed the tokens, and records pick + references + reason in `docs/DESIGN.md` before wireframes. `restyle` mode re-picks for an existing app, records the supersession, and hands off to `uiux-redesign` to apply it. |
 | `uiux-redesign` | plan/dev | The application half of a `restyle` — sweeps a confirmed new style across an existing app's every customer-facing screen: rewrites the `docs/DESIGN.md` token system, then conforms the diverging surfaces (web + mobile) via token/shared-component changes, **leaving already-aligned surfaces alone** (change is justified by divergence, not by the sweep). Runs as code change through the validate loop, re-verifies WCAG 2.2 AA, and routes regressions to an `RSTY-xxx` queue → `fix-errors`. Owns the rollout, not the taste call. |
@@ -58,15 +71,18 @@ is the live control file every skill reads and writes.
 | `dev-scaffold` | dev | One-time baseline: monorepo topology (`marketing/` apex + `web/` full-stack app on app.domain + optional `app/` mobile), branch model (protected `main` = production, `staging` = working line), skeleton, tooling, tests, and CI + deploy via Pipeline by Alex (`pba.yml` + thin caller). |
 | `dev-auth` | dev | Authentication first, security & privacy prioritized. Validate-existing mode audits + hardens auth an existing repo already has. |
 | `feature-loop` | dev | The per-feature 4-step build/validate engine. |
-| `dev-autopilot` | dev | Advances the build one safe step per run (what a schedule calls). |
+| `dev-tweak` | dev | The cosmetic light lane — drains `docs/TWEAKS.md` (copy, tokens, spacing, asset swaps) behind a hard qualification test (no logic/data/API/auth/dependency/test changes — heavier entries get reclassified, never forced through) and a proportional gate: suite green, prose pass on copy, screenshot + design-critic pass on anything visual. ADRs still govern. |
+| `dev-autopilot` | dev | Advances the build one safe step per run (what a schedule calls) — after draining bugs, then tweaks. Every UI-changing run ends its STATUS log entry with a **visual pulse** (staging URL + screenshots of the affected screens, reusing the step's own captures) so an unattended run can be judged at a glance. |
 | `dev-update` | dev/ops | Re-vendors the latest DevByAlex skills/agents/templates into the current app (`install.sh --update`); the manual update path that keeps the local committed copies current. |
 | `dev-schedule` | dev/ops | Sets up the unattended schedule that calls `dev-autopilot` off an explicitly named working branch; the committed `.claude/` is self-sufficient, so the runner needs nothing extra (a GitHub-Actions runner needs only `ANTHROPIC_API_KEY`). |
+| `launch-observability` | launch | Wires the app so production can be heard: error monitoring (client + server, PII scrubbed from events), consent-gated product analytics (never fired before cookie consent — same posture `/launch-compliance` audits), a health endpoint + uptime ping, and alert routing — each signal **proven end-to-end on staging** before its box is checked. The prerequisite for `/live-triage`. |
 | `launch-acceptance` | launch | Writes the staging acceptance pass as runnable suites — Playwright (web) + Maestro (iOS/Android) — generated from a scenario doc. |
 | `launch-verify` | launch | Runs the `launch-acceptance` suites against the live staging environment, triages failures into an `ACC-xxx` queue → `fix-errors`, re-runs to green, and checks the "acceptance suite passed against staging" gate `launch-submit` reads. The runner half of the author/run split. |
 | `launch-compliance` | launch | Legal (ToS / privacy policy / cookie consent), accessibility (WCAG 2.2 AA), SEO, and prose scans; drives the two hard launch gates + a fix queue. Reuses `launch-readiness`, `accessibility-critique`, `seo-audit`, `prose-check`. |
 | `launch-visual-qa` | launch | The cross-platform screenshot loop (build → boot → screenshot → critique → fix): boots iOS sim + Android emulator, drives the Maestro flows to capture every key screen/state, the `design-critic` agent vets them (against wireframes, `docs/DESIGN.md`, and the universal design rules) and emits a `VIS-xxx` queue → `fix-errors`, re-screenshots to confirm. Reuses the `launch-acceptance` Maestro flows + `fix-errors`. |
 | `launch-store-assets` | launch | The "App Store tab," doubled: icon, device-framed screenshots (iOS sizes + Android phone/tablet), Play feature graphic, and per-field listing copy for **both** App Store Connect and Play Console, from the real running app. Reuses `create-demo`, `marketer-copywriting`, `ios-audit`. |
 | `launch-submit` | launch | Dual-store delivery lane — detects Expo→EAS / bare→Fastlane, builds, and submits to **TestFlight + Play internal testing**. Gated on readiness/compliance/hard-gates; **human-triggered only**, never auto-promotes to production. Reuses `launch-readiness`, `ios-audit`. |
+| `live-triage` | live | The post-launch loop — converts the `docs/FEEDBACK.md` inbox (user emails, reviews, error-tracker signal) into workflow state: functional problems → `docs/BUGS.md` tagged `[prod]`, cosmetic misses → `docs/TWEAKS.md`, feature requests → STATUS blockers for Alex (scope stays human). **Routes, never fixes** — the autopilot's drain loops do the fixing, so production feedback flows through the same verified pipeline that built the app. Cron-safe. |
 
 ### Agents (the specialists the feature loop deploys)
 
@@ -145,9 +161,34 @@ The human-written counterpart to STATUS. You drop bugs you hit into its `## Open
 section; `dev-autopilot` drains it **before any build step** — fixing every open
 bug through its verify loop, moving each to `## Fixed`, and stopping the run there
 (a bug-fix run does nothing else). Open bugs are also a **soft launch gate**: the
-autopilot won't enter `/launch-acceptance` while any remain. This is the one place
-the "one step per run" rule bends — the whole log drains in a single run, because
-known-broken code is never a base for new work.
+autopilot won't enter `/launch-acceptance` while any remain. This is one of the
+two places the "one step per run" rule bends — the whole log drains in a single
+run, because known-broken code is never a base for new work.
+
+## The tweak lane: `docs/TWEAKS.md`
+
+The light lane — because changing a button label shouldn't cost what building a
+feature costs. Small cosmetic changes (copy, tokens, spacing, asset swaps) go
+here; `dev-autopilot` drains it via `/dev-tweak` **after bugs, before any build
+step**, the whole lane in one run. What keeps the lane honest is the **hard
+qualification test**: a tweak may touch only copy/tokens/styles/assets/ordering
+and none of logic, data model, API, auth, dependencies, or tests — anything
+heavier is **reclassified** to `docs/BUGS.md` or a feature proposal, never
+squeezed through. The gate is proportional but real: suite green, prose pass on
+changed copy, and the same screenshot + design-critic pass every design change
+gets. Open tweaks soft-block launch just like open bugs.
+
+## The feedback inbox: `docs/FEEDBACK.md`
+
+The post-launch counterpart to BUGS. Raw production signal — user emails, store
+reviews, error-tracker exports — lands in its `## Inbox`; `/live-triage`
+(manual or scheduled) converts each item into workflow state: functional
+problems → `docs/BUGS.md` tagged `[prod]`, cosmetic misses → `docs/TWEAKS.md`,
+feature requests → STATUS blockers for Alex, duplicates/noise → triaged with a
+reason. **Triage routes; it never fixes** — the autopilot's existing drain
+loops do the fixing, so a live app keeps improving through the same verified
+pipeline that built it. `/launch-observability` wires the error/analytics
+signal this loop feeds on.
 
 ## The decision records: `docs/adr/`
 
@@ -226,10 +267,20 @@ app "done."
   confirmation + a recorded supersession, and documented deliberate omissions
   are never review findings (security/legal/a11y excepted — and the hard launch
   gates are never ADR-overridable).
-- **One safe step per autopilot run.** Bounded, resumable, reviewable — except a
-  bug-fix run, which drains all of `docs/BUGS.md` before any build step resumes.
-- **Bugs before building.** Open bugs in `docs/BUGS.md` preempt scaffold/auth/
-  feature work and block entry to the launch stage until fixed.
+- **One safe step per autopilot run.** Bounded, resumable, reviewable — except
+  the drain runs: a bug-fix run drains all of `docs/BUGS.md`, and a tweak run
+  drains all of `docs/TWEAKS.md`, before any build step resumes.
+- **Bugs, then tweaks, before building.** Open entries in `docs/BUGS.md` or
+  `docs/TWEAKS.md` preempt scaffold/auth/feature work and block entry to the
+  launch stage until drained. The tweak lane's qualification test is what keeps
+  it from becoming a back door around the feature loop.
+- **Every UI-changing autopilot run leaves a visual pulse** — staging URL +
+  screenshots in the STATUS log, reusing the step's own captures — so an
+  unattended build can be judged at a glance, not only by reading diffs.
+- **Production feedback flows through the same pipeline.** Post-launch signal is
+  triaged (`/live-triage`) into the bug/tweak logs and drained by the autopilot
+  with full verification — triage routes, it never fixes, and feature requests
+  go to Alex, never silently into scope.
 - **Green suite at every stop; push straight to the working branch.** Nothing
   marked done with red tests or open findings. To keep iteration fast the dev
   stage commits and pushes to one working branch — no per-step branches, no PR

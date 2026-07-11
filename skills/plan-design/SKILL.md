@@ -56,9 +56,17 @@ first — it's the catalog, the pairing map, and the decision procedure. In shor
   the universal design rules
   [`../../knowledge/design/universal-design-rules.md`](../../knowledge/design/universal-design-rules.md)
   — the style is chosen *on top of* those rules; no pick may trade them away.
+- **Look at any user-supplied reference images.** If `docs/design/references/`
+  has images (screenshots of apps the user likes, collected by `/plan-spec` —
+  each with a "what I like about it" note in the spec), open and actually view
+  each one. For each image, name what it exhibits in the catalog's vocabulary —
+  the nearest SECONDARY style(s), the palette temperament, type register,
+  density. A picture of the look the user wants is the strongest input this
+  skill gets; it outweighs adjectives when they conflict (say so when it does).
 - If the spec is missing the tone/density/references inputs, ask the three
   direction questions from `uiux.yaml` before recommending — don't guess a style
-  off a category alone.
+  off a category alone. (The user can also answer with images — invite them to
+  drop screenshots into `docs/design/references/`.)
 
 ### Step 2 — Fix the PRIMARY
 From category + density, pick the product direction (Step 2 of the decision
@@ -66,7 +74,9 @@ procedure). Density: low → consumer, medium → productivity, high →
 dashboard/devtool. This is not a taste call — state it and move on.
 
 ### Step 3 — Recommend the SECONDARY (+ alternatives)
-Using the tone adjectives and the primary's row in the pairing map, recommend
+Using the tone adjectives, the primary's row in the pairing map, and **what the
+user-supplied reference images exhibit** (Step 1 — when the user showed you a
+look, recommend the style that look actually is, and cite the image), recommend
 **one pairing + two alternatives**. For each: a one-line rationale tying it to
 the inputs, and a line on what it makes the app *feel* like. Honor any style the
 user steered toward (the argument) and any anti-patterns they named. Present them
@@ -90,6 +100,13 @@ of the confirmed style — this step is mandatory, not optional polish:
   borrow** — palette treatment, type pairing, texture/motif, spacing rhythm,
   radius/shadow feel, motion. Note an anti-reference too if the search surfaced
   a version of the style done badly.
+- **User-supplied images join the set.** Reference images in
+  `docs/design/references/` are recorded alongside the pulled ones, marked
+  `(user-supplied)`, each with its what-to-borrow line (seeded from the user's
+  own "what I like about it" note). They don't replace the web search — pulled
+  references show the style *done well in the wild*; the user's images show
+  *what Alex actually wants* — but a user-supplied image is the first thing the
+  starting tokens should trace to when the two disagree.
 - If web access is unavailable in this session, **stop and say so** — record the
   gap as a STATUS blocker rather than inventing references from memory. The
   references must be pulled, not recalled.
@@ -128,8 +145,12 @@ adjectives — the reason is mandatory, like every DevByAlex decision.>
 - <Name> — <URL> — <what to borrow: palette / type / texture / spacing / motion>
 - <Name> — <URL> — <…>
 - <Name> — <URL> — <…>
-<!-- 3–5 real instances of the style; live products first. Anti-reference
-     optional. Downstream stages design toward these, not toward memory. -->
+- <Name> — `docs/design/references/<file>` `(user-supplied)` — <what to borrow — from the user's own note>
+<!-- 3–5 real instances of the style; live products first. User-supplied images
+     from docs/design/references/ join the list marked (user-supplied) — when
+     they disagree with the pulled references, the user's images win.
+     Anti-reference optional. Downstream stages design toward these, not toward
+     memory. -->
 
 **Starting tokens (seed — /uiux-init expands):**
 - Palette temperament: …

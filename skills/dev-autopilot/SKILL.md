@@ -1,6 +1,6 @@
 ---
 name: dev-autopilot
-description: "The autonomous driver of the DevByAlex dev stage — the skill scheduled actions invoke to push an approved app toward launch-ready without a person in the loop. It reads docs/STATUS.md, confirms the approval gates are met, then — bugs first — drains any open bugs in docs/BUGS.md (fixing every one through its verify loop and marking it fixed) before advancing exactly one build step: scaffold if missing, auth if missing, otherwise the next not-done feature via feature-loop. Open bugs also block the launch stage. It commits and pushes straight to the working branch (the branch you're on, or one passed explicitly for a cron) — no per-step branches, no PR pile-up — updates STATUS, and stops cleanly at a natural boundary (one unit of work per run) or whenever it hits a blocker, ambiguity, or a gate it must not cross — surfacing that for a human instead of guessing. Designed to be safe to run repeatedly on a cron. Use to make unattended forward progress, or run it manually to advance the build by one step."
+description: "The autonomous driver of the DevByAlex dev stage — the skill scheduled actions invoke to push an approved app toward launch-ready without a person in the loop. It reads docs/STATUS.md, confirms the approval gates are met, then — bugs first — drains any open bugs in docs/BUGS.md (fixing every one through its verify loop and marking it fixed), then drains any open cosmetic tweaks in docs/TWEAKS.md via the dev-tweak light lane, before advancing exactly one build step: scaffold if missing, auth if missing, otherwise the next not-done feature via feature-loop. Open bugs and open tweaks also block the launch stage. It commits and pushes straight to the working branch (the branch you're on, or one passed explicitly for a cron) — no per-step branches, no PR pile-up — updates STATUS with a visual pulse (staging URL + screenshots of what changed, so an unattended run can be judged at a glance), and stops cleanly at a natural boundary (one unit of work per run) or whenever it hits a blocker, ambiguity, or a gate it must not cross — surfacing that for a human instead of guessing. Designed to be safe to run repeatedly on a cron. Use to make unattended forward progress, or run it manually to advance the build by one step."
 argument-hint: "[path to the app repo — defaults to cwd] [--branch <name>]"
 license: MIT
 metadata:
@@ -82,7 +82,20 @@ has any entries, **this run fixes all of them and nothing else:**
   blocker), update STATUS + log, commit, push, and **stop** — a drained bug log
   is a complete run. Do not also pick up a build step this run.
 
-Only when `docs/BUGS.md` has no open bugs does the run proceed to Step 3.
+Only when `docs/BUGS.md` has no open bugs does the run proceed to Step 2.6.
+
+### Step 2.6 — Drain the tweak lane (after bugs, before any build step)
+Read `docs/TWEAKS.md`. If it doesn't exist or its **Open** section is empty,
+proceed to Step 3. If it has open entries, **this run is a tweak run**: invoke
+`/dev-tweak` to drain the whole lane — it qualifies each entry (reclassifying
+anything that isn't genuinely cosmetic to `docs/BUGS.md` or a STATUS blocker),
+applies the qualified batch through its light gate (suite green, prose pass on
+copy, screenshot + design-critic pass on anything visual), and moves each entry
+to **Done**. Then update STATUS + log, commit, push, and **stop** — a drained
+tweak lane is a complete run, same as a drained bug log. Tweaks are cheap by
+definition, which is why the lane drains fully rather than counting as ordinary
+build steps. If `/dev-tweak` reclassified anything to `docs/BUGS.md`, note it —
+the **next** run's Step 2.5 picks those up.
 
 ### Step 3 — Pick the next step
 In priority order, choose the first that isn't done:
@@ -95,11 +108,14 @@ In priority order, choose the first that isn't done:
 4. A **feature** not done → pick the highest-priority not-done feature from the
    table (respect build order / dependencies) and run `/feature-loop <id>`.
 5. **All features done** → the launch stage begins — **but first confirm
-   `docs/BUGS.md` has no open bugs.** Open bugs are a soft launch gate: do **not**
-   advance into `/launch-acceptance` while any remain (a clear log is guaranteed
-   here because Step 2.5 runs first, but re-check in case one was just logged).
-   With the log clear, set next action to `/launch-acceptance` (then
-   `/launch-verify`, `/launch-visual-qa`, `/launch-compliance`, and
+   `docs/BUGS.md` has no open bugs and `docs/TWEAKS.md` has no open tweaks.**
+   Both logs are soft launch gates: do **not** advance into `/launch-acceptance`
+   while either has open entries (clear logs are guaranteed here because Steps
+   2.5–2.6 run first, but re-check in case something was just logged — known
+   misses never ship, and both lanes are cheap to drain). With the logs clear,
+   set next action to `/launch-observability` (wire error monitoring +
+   consent-gated analytics so production can be heard), then `/launch-acceptance`
+   (then `/launch-verify`, `/launch-visual-qa`, `/launch-compliance`, and
    `/launch-store-assets`) and stop.
    Staging deploys automatically via Pipeline by Alex on push to `staging` (CI
    owns the gated deploy), and the **Legal & compliance** + **Accessibility (WCAG
@@ -120,7 +136,16 @@ own verification — don't second-guess its per-step checks.
 - Update `docs/STATUS.md`: the step's checkboxes/row, the `## Next action`
   line, and a log entry (branch, commit, what changed, time). For a bug-fix run
   (Step 2.5), the log entry names the bug IDs cleared and `docs/BUGS.md` has them
-  moved to `## Fixed`.
+  moved to `## Fixed`; for a tweak run (Step 2.6), the TWK IDs drained.
+- **Leave a visual pulse.** An unattended run should be judgeable at a glance,
+  not only by reading the diff. If this run changed customer-facing UI, end the
+  log entry with `pulse: <staging URL> · <1–3 screenshot paths>` pointing at
+  screenshots of the affected screens. **Reuse what the step already captured**
+  (the feature loop's design-critic gate and `/dev-tweak` both save under
+  `docs/visual-qa/<run-date>/`) — pick the 1–3 most representative; only
+  capture fresh ones if the step somehow produced none. A run with no UI
+  change logs `pulse: n/a` — never leave the field ambiguous, and never
+  duplicate screenshot assets just for the pulse.
 - **Clean up before stopping.** Remove anything this run orphaned — scratch/
   debug scripts, temp files, dead code, artifacts the step superseded. An
   orphan that is **substantial work** is never silently deleted: log it in
@@ -153,10 +178,12 @@ Write the blocker into `## Blockers / open questions` in STATUS so the next run
 
 ## Rules
 
-- **One step per run** — except draining `docs/BUGS.md`, which fixes every open
-  bug in one run and supersedes all build work until the log is clear.
-- **Bugs before building; open bugs block launch.** Never advance scaffold/auth/
-  features or enter the launch stage while `docs/BUGS.md` has open entries.
+- **One step per run** — except draining `docs/BUGS.md` (every open bug in one
+  run) and `docs/TWEAKS.md` (the whole lane in one run); each drain supersedes
+  all build work until its log is clear.
+- **Bugs, then tweaks, before building; open entries in either block launch.**
+  Never advance scaffold/auth/features or enter the launch stage while
+  `docs/BUGS.md` or `docs/TWEAKS.md` has open entries.
 - **Never silently close a bug.** A bug leaves `## Open` only when its fix is
   verified green, or it's punted to a STATUS blocker for the human.
 - **Never cross a gate** or self-approve.
@@ -172,6 +199,7 @@ Write the blocker into `## Blockers / open questions` in STATUS so the next run
 
 ## Output
 
-One step advanced (or a clearly-reported blocker), STATUS updated, a commit
-pushed to the working branch, and a statement of what the next run will do. See
+One step advanced (or a clearly-reported blocker), STATUS updated — with a
+visual pulse when UI changed — a commit pushed to the working branch, and a
+statement of what the next run will do. See
 `docs/SCHEDULING.md` in the DevByAlex repo for how to run this on a schedule.

@@ -7,11 +7,15 @@
 > drains this log: it fixes **every** open bug — each through its own verify loop
 > via `fix-errors` — moves it to **Fixed** with the fixing commit, and only then
 > moves on. Open bugs also **block the launch stage**: the autopilot will not
-> advance into `/launch-acceptance` while any remain.
+> advance into it while any remain.
 >
 > You only need **Title** + enough **Repro / detail** for the fix to be
 > unambiguous. Leave the rest blank — the autopilot fills the Fixed rows. Keep IDs
 > unique and monotonic (BUG-001, BUG-002, …); never reuse a retired ID.
+>
+> **Purely cosmetic changes** (copy, spacing, colors, asset swaps — nothing
+> behaviorally wrong) belong in [`docs/TWEAKS.md`](./TWEAKS.md), the light lane.
+> Rule of thumb: behavior wrong → bug here; looks/reads wrong → tweak there.
 
 ## Open
 

@@ -169,8 +169,15 @@ Code itself; it is not project-specific). No MCP token, no brain.)
    that branch explicitly (`--branch <name>`) for the cron. The committed
    `.claude/` is self-sufficient, so the runner needs nothing extra: cloud needs
    no secret at all, and a GitHub-Actions runner needs only `ANTHROPIC_API_KEY`.
-5. Skim the commits the run pushes to the working branch; clear any blocker it
-   logs in STATUS.
+5. Skim the commits the run pushes to the working branch — each UI-changing run
+   ends its STATUS log entry with a **visual pulse** (staging URL + screenshots),
+   so a glance tells you what the run did. Clear any blocker it logs in STATUS.
+   Jot bugs in `docs/BUGS.md` and cosmetic tweaks in `docs/TWEAKS.md` as you spot
+   them — the next run drains both before building.
 6. When STATUS reaches the launch stage, staging is already deployed by Pipeline
-   by Alex (CI, on push to `staging`); run `/launch-acceptance` to write the
+   by Alex (CI, on push to `staging`); run `/launch-observability` to wire
+   monitoring/analytics, then `/launch-acceptance` to write the
    suites, then `/launch-verify` to run them against it and drive them green.
+7. Post-launch, `/live-triage` is cron-safe too — schedule it alongside the
+   autopilot (same recipe, its own prompt) so `docs/FEEDBACK.md` keeps draining
+   into the bug/tweak logs.

@@ -144,8 +144,8 @@ With the feature fully built and both validations clean:
   `docs/STATUS.md`; add a log line (branch, commit, what shipped).
 - Commit and **push to the working branch** (`git push origin HEAD:<branch>`) —
   no PR. Leave the suite green before pushing.
-- Set `## Next action` to the next not-done feature (or `/launch-acceptance`
-  if this was the last).
+- Set `## Next action` to the next not-done feature (or `/launch-observability`
+  — the first launch step — if this was the last).
 
 ## Rules
 

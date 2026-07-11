@@ -90,10 +90,11 @@ Confirm the concrete plan with the user, then create it via the host:
   - schedule: an off-minute cron, weekdays, every 3–6h during active dev (drop to
     1–2×/day near launch). e.g. `17 */3 * * 1-5`.
   - prompt: `cd <app> && /dev-autopilot . --branch <branch> — do one bounded run
-    (fix every open bug in docs/BUGS.md if any, else advance one build step),
+    (fix every open bug in docs/BUGS.md if any, else drain docs/TWEAKS.md if it
+    has open entries, else advance one build step),
     commit, push it straight to <branch> (no PR), and reply with a one-paragraph
     summary + the pushed commit + any blockers.` Let the skill decide the unit —
-    don't hard-code "exactly one step," or a bug-fix run stops half-drained.
+    don't hard-code "exactly one step," or a drain run stops half-done.
   - plus the connected repo, the named working branch, and a per-run notification.
 - **local** — `CronCreate` with `durable: true`, an off-minute cron, and the same
   autopilot prompt (keep `--branch <branch>`).

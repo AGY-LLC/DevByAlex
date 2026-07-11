@@ -144,6 +144,8 @@ in the summary (offer to merge, don't overwrite silently):
 |----------|-------------|-------|
 | `STATUS.md` | `docs/STATUS.md` | the control file the autopilot reads |
 | `BUGS.md` | `docs/BUGS.md` | the bug log the autopilot drains before each build step |
+| `TWEAKS.md` | `docs/TWEAKS.md` | the cosmetic light lane (`/dev-tweak`) the autopilot drains after bugs |
+| `FEEDBACK.md` | `docs/FEEDBACK.md` | the post-launch inbox `/live-triage` converts into bug/tweak entries |
 | `DECISIONS.md` | `docs/DECISIONS.md` | the local decision log stages append to (replaces the old brain write-back) |
 | `AI_WORKFLOW.md` | `docs/AI_WORKFLOW.md` | per-repo pointer to the process |
 | `SPEC.md` | `docs/SPEC.md` | stub if blank; keep if it exists |
@@ -168,13 +170,15 @@ as found:
   absent; if present, leave them.
 - `docs/STATUS.md` — the two hard gates (`Legal & compliance passed`,
   `Accessibility (WCAG 2.2 AA) passed`), the `Brand foundation (docs/BRAND.md)`
-  plan row, the `Feature ADRs seeded (docs/adr/)` plan row, the `No open bugs in
-  docs/BUGS.md` launch row, and the four launch rows (legal/compliance,
-  accessibility, SEO, prose). Add any that are missing **unchecked**; never
+  plan row, the `Feature ADRs seeded (docs/adr/)` plan row, the no-open-bugs/
+  tweaks launch row, the `Observability wired` launch row, the four launch rows
+  (legal/compliance, accessibility, SEO, prose), and the `## Live (post-launch)`
+  section. Add any that are missing **unchecked**; never
   alter the state of a box that's already there.
-- `docs/BUGS.md` — if the repo predates the bug log, copy the template in (it's
-  an additive new file, so the "don't clobber" rule means: create it only if
-  absent, never overwrite an existing one).
+- `docs/BUGS.md`, `docs/TWEAKS.md`, `docs/FEEDBACK.md` — if the repo predates
+  any of these logs, copy the template in (additive new files, so the "don't
+  clobber" rule means: create each only if absent, never overwrite an existing
+  one).
 - `docs/adr/` — if the repo predates the ADR folder, stamp `README.md` +
   `_TEMPLATE.md` in. The per-feature ADR files themselves are **backfilled, not
   stamped** — that's real analysis work (see Step 6): every feature in the table
@@ -259,7 +263,8 @@ anything that needs a human. The routing rules:
 | scaffolded, **auth present but unvalidated** | `/dev-auth validate` — audit + harden the existing auth |
 | features identified, **any feature missing its ADR** | `/plan-guide adr-backfill` — write `docs/adr/<NN>-<slug>.md` for **every** feature (and consolidate scattered feature docs) before any feature work |
 | auth validated, ADRs complete, features remain | `/dev-autopilot` (or `/feature-loop <feature>`) — validate/harden existing features first, then build missing ones |
-| all features built + validated | `/launch-acceptance` → `/launch-verify` (run the suite against staging), then `/launch-compliance` (legal/a11y/SEO/prose — drives the hard gates) + `/launch-readiness` |
+| all features built + validated | `/launch-observability` (wire monitoring/analytics) → `/launch-acceptance` → `/launch-verify` (run the suite against staging), then `/launch-compliance` (legal/a11y/SEO/prose — drives the hard gates) + `/launch-readiness` |
+| launched, real users in production | `/live-triage` — drain `docs/FEEDBACK.md` into the bug/tweak logs (manual or scheduled alongside the autopilot) |
 
 If integrating a code-first repo with no spec, recommend backfilling the spec
 and guide **from the code** before any further building, so the autopilot has a
