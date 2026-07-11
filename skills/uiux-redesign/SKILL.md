@@ -120,6 +120,14 @@ anti-churn rule: leakage on an otherwise-aligned surface still counts as real
 divergence (the design-critic will fail it anyway), but don't restyle a surface
 that only needed its copy fixed.
 
+A restyle also *creates* orphans: tokens, shared components, style files,
+fonts, and image assets the new system superseded. When the sweep finishes,
+remove what nothing references anymore — an old token table left in place will
+quietly re-enter screens. The leave-no-orphans carve-outs apply: anything
+recorded as kept in `docs/DESIGN.md`/`docs/DECISIONS.md` stays, and
+substantial superseded work (a whole component library, real content) goes to
+Alex as a keep-or-remove question rather than being silently deleted.
+
 ### Step 6 — Validate as code change
 A restyle is code change and goes through the **normal validate loop** — it does
 not get a pass because it's "just visual":
@@ -165,6 +173,9 @@ not get a pass because it's "just visual":
   customer-facing surface; contrast is re-checked, not assumed.
 - **It routes, it doesn't rubber-stamp its own fixes.** Regressions go to
   `fix-errors` as an `RSTY-xxx` queue and are driven to zero.
+- **No orphans left behind.** Superseded tokens/components/assets are removed
+  with the sweep (substantial ones surfaced to Alex as keep-or-remove), so the
+  old style can't creep back through leftovers.
 - **No done without the critic.** Every swept surface is screenshotted and
   vetted by the `design-critic` agent; the restyle is only marked done on a
   clean pass. The sweeper never critiques its own screenshots.

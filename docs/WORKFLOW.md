@@ -236,6 +236,17 @@ app "done."
   pile-up. Green suite is the gate, not a human merge. Interactive runs use the
   current branch; a cron names the branch explicitly. Use a dedicated iteration
   branch (e.g. `staging`/`autopilot`), not a protected default.
+- **Nothing is left orphaned.** Every run cleans up after itself: artifacts its
+  work superseded or left unreferenced — scratch/debug scripts, temp files,
+  dead code and unused exports/deps, components/assets/tokens nothing renders,
+  stale fixtures, superseded docs — are removed in the same run, not left to
+  rot. Two carve-outs: anything **explicitly recorded as kept** (ADR /
+  `docs/DECISIONS.md`) is not an orphan; and an orphan that is **substantial
+  work** (a part-built feature, a whole module, real content) is never
+  silently deleted — it's surfaced to Alex as a keep-or-remove question, and a
+  "keep" gets recorded so the next sweep doesn't re-flag it. `init-ai`
+  inventories pre-existing orphans on integration and queues them as
+  `[orphan]` bugs.
 - **Security & privacy beat convenience**, most of all in auth.
 - **Legal & accessibility are hard launch gates.** Terms of Service, a privacy
   policy accurate to real data flows, a web cookie-consent banner, and WCAG 2.2 AA

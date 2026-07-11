@@ -25,8 +25,14 @@ You are given: the repo path and the feature that was just built. You return:
 2. **Review the whole codebase** for issues this feature's integration created
    or exposed — regressions, broken contracts between modules, security holes at
    seams, leaked abstractions, dead/duplicated code, inconsistent error handling,
-   config/env drift. Invoke the **`scout`** skill over the repo for an
-   adversarial whole-repo pass and a FIND-xxx queue.
+   config/env drift, and **orphans**: files, exports, dependencies, scratch/debug
+   leftovers, and superseded docs that nothing references anymore (the
+   workflow's leave-no-orphans rule — a build that strands artifacts isn't
+   clean). Report trivial orphans as findings for removal; tag an orphan that
+   is **substantial work** `keep-or-remove` so the orchestrator routes it to
+   Alex instead of a delete queue — and an orphan explicitly recorded as kept
+   (ADR / `docs/DECISIONS.md`) is not a finding at all. Invoke the **`scout`**
+   skill over the repo for an adversarial whole-repo pass and a FIND-xxx queue.
 3. **Filter candidates against `docs/adr/` — both directions.** Read the ADRs
    for the features a candidate touches (plus `scaffold.md` / `auth.md`). A
    candidate that re-litigates an `active` decision or deliberate omission is

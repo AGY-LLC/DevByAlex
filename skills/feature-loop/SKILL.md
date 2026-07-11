@@ -130,6 +130,16 @@ With the feature fully built and both validations clean:
   consciously deferred → a new `O`-entry), and any confirmed supersessions from
   Step 0. The ADR must leave this loop describing the feature as it now stands —
   it's what the next change and the next automated review are checked against.
+- **Leave no orphans.** Sweep for what this feature's work superseded or left
+  dangling: scratch/debug scripts, temp files, dead code and unused
+  imports/exports, components/assets/styles nothing references anymore, stale
+  fixtures, `.bak`/`.old` copies, superseded doc fragments. Remove them in this
+  run — cleanliness is part of done. Two carve-outs: anything **explicitly
+  recorded as kept** (an ADR entry or `docs/DECISIONS.md` line) is not an
+  orphan and stays; and an orphan that is **substantial work** (a part-built
+  module, a whole screen, real content) is never silently deleted — punt it to
+  STATUS › `## Blockers / open questions` as a keep-or-remove question for
+  Alex, and record his "keep" so the next sweep doesn't re-flag it.
 - Mark every step for this feature ✅ and the row **done** in
   `docs/STATUS.md`; add a log line (branch, commit, what shipped).
 - Commit and **push to the working branch** (`git push origin HEAD:<branch>`) —
@@ -154,6 +164,10 @@ With the feature fully built and both validations clean:
   excepted — those go to Alex, as does any `ADR-challenge`: concrete evidence
   a decision is causing real harm gets surfaced, never silently fixed or
   silently dropped).
+- **Leave no orphans.** A feature isn't done while its work's leftovers
+  linger. Trivial orphans are removed in the same run; substantial orphaned
+  work goes to Alex as a keep-or-remove question — never silently deleted,
+  never silently kept.
 - Don't expand scope beyond the feature card; surface new ideas as proposals.
 - Keep STATUS the live source of truth — update it as you move through steps.
 - **Existing code is hardened, not rebuilt.** On a feature that's already built

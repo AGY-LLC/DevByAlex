@@ -121,6 +121,12 @@ own verification — don't second-guess its per-step checks.
   line, and a log entry (branch, commit, what changed, time). For a bug-fix run
   (Step 2.5), the log entry names the bug IDs cleared and `docs/BUGS.md` has them
   moved to `## Fixed`.
+- **Clean up before stopping.** Remove anything this run orphaned — scratch/
+  debug scripts, temp files, dead code, artifacts the step superseded. An
+  orphan that is **substantial work** is never silently deleted: log it in
+  `## Blockers / open questions` as a keep-or-remove question for Alex instead
+  (his "keep" gets recorded in the ADR/`docs/DECISIONS.md` so it isn't
+  re-flagged). A run that leaves droppings isn't a clean stop.
 - Commit and **push to the working branch** (`git push origin HEAD:<branch>`)
   once the suite is green — no PR. Record any material decision: feature-scoped
   → that feature's `docs/adr/<id>.md`; cross-cutting → append to
@@ -156,6 +162,9 @@ Write the blocker into `## Blockers / open questions` in STATUS so the next run
 - **Never cross a gate** or self-approve.
 - Always leave STATUS accurate and the suite green before stopping; if you can't,
   record it as a blocker.
+- **Leave no orphans.** Each run removes what its work left unreferenced;
+  substantial orphans are surfaced to Alex as keep-or-remove blockers, never
+  silently deleted.
 - **Commit and push straight to the working branch — no per-step branches, no
   PRs.** Green suite is the gate, not a human merge. (A cron must name the branch
   explicitly; interactive runs use the current branch.)
