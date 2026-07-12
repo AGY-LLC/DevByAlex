@@ -55,7 +55,7 @@ All subagents are spawned via the Agent tool with
 `subagent_type: general-purpose`. Phase 2 sections may run in parallel
 (see "Parallelism" below); phases 1 and 3 are strictly sequential.
 
-### Phase 1 — Cartography
+### Phase 1: Cartography
 
 Goal: partition the repo into **bounded, feature-coherent sections** small
 enough that a single subagent can hold the section in its context window and
@@ -68,20 +68,20 @@ Steps:
    shape of the codebase: languages, package boundaries, build targets,
    deployment surfaces.
 2. **Identify feature groups, not directory groups.** Sections should follow
-   *what the code does* — auth, billing, story-generation, the SRS engine,
+   *what the code does*: auth, billing, story-generation, the SRS engine,
    the mobile reader, the web paywall, observability glue, the migration
-   pipeline — even when the code lives across multiple directories or
+   pipeline: even when the code lives across multiple directories or
    packages. A single section may span server + client when the feature is
    genuinely cross-cutting (e.g. an API route plus the mobile screen that
    calls it).
 3. **Bound each section.** Target ~300–1500 lines of code or ~5–20 files per
-   section. If a feature is larger than that, split it (e.g. "billing —
-   webhooks", "billing — entitlement", "billing — paywall UI"). Splitting
+   section. If a feature is larger than that, split it (e.g. "billing,
+   webhooks", "billing, entitlement", "billing, paywall UI"). Splitting
    along stable seams (route handler vs. background job, server vs. client)
    beats splitting by line count.
 4. **Cover everything that ships.** Configuration, infrastructure-as-code,
    migrations, CI workflows, scripts, fixtures used by tests, generated code
-   that humans hand-edit — all of it goes into a section. The only things
+   that humans hand-edit: all of it goes into a section. The only things
    that may be excluded are: vendored / generated artifacts the team never
    edits, lockfiles, and dependencies in `node_modules`.
 5. **Record the manifest.** Emit a section manifest before starting phase 2.
@@ -89,7 +89,7 @@ Steps:
 #### Section manifest format
 
 ```markdown
-### SEC-001 — [feature name]
+### SEC-001: [feature name]
 
 | Field | Value |
 | ----- | ----- |
@@ -107,7 +107,7 @@ phase 2 can iterate over it.
 ```yaml
 sections:
   - id: SEC-001
-    name: "auth — server"
+    name: "auth: server"
     files: ["server/src/lib/auth/*.ts", "server/src/app/api/auth/**/*.ts"]
     surfaces: ["api"]
 ```
@@ -117,24 +117,24 @@ ask the user whether to proceed (so they can adjust scope or split / merge
 sections before debate begins). If the user has already approved scout to
 run end-to-end, skip the confirmation and proceed.
 
-### Phase 2 — Per-section debate (bad cop / good cop)
+### Phase 2: Per-section debate (bad cop / good cop)
 
 For each section in the manifest, run a structured adversarial debate. The
 goal is to surface *real* defects with the reasoning behind each verdict on
-the record — not a generic "could be improved" list.
+the record: not a generic "could be improved" list.
 
 Three roles, all played by general-purpose subagents:
 
-- **Bad cop** — assumes the section is broken until evidence otherwise. Hunts
+- **Bad cop**: assumes the section is broken until evidence otherwise. Hunts
   for security flaws, logic bugs, race conditions, missing edge cases, weak
   or absent tests, misleading documentation, brittle abstractions,
   silently-swallowed errors, and gaps between what the code claims and what
   it actually does. Expected to be aggressive and to overreach.
-- **Good cop** — defends the section. Justifies design choices, cites
+- **Good cop**: defends the section. Justifies design choices, cites
   invariants the bad cop missed, points out where a "finding" is actually
   intentional or already mitigated upstream, but **also concedes when bad
   cop is right** and helps tighten the finding so it's actionable.
-- **Moderator** — the parent agent (you). Drives the debate rounds, cuts off
+- **Moderator**: the parent agent (you). Drives the debate rounds, cuts off
   at the right moment, and renders the final verdict on each disputed
   finding.
 
@@ -144,10 +144,10 @@ Run this loop **per section**:
 
 1. **Brief both subagents** with the section's files and the section
    manifest entry. Each subagent reads the section in full inside its own
-   context. Do **not** include findings from other sections — each debate is
+   context. Do **not** include findings from other sections: each debate is
    self-contained.
 
-2. **Round 1 — bad cop opens.** Spawn the bad-cop subagent with a prompt
+2. **Round 1: bad cop opens.** Spawn the bad-cop subagent with a prompt
    that:
    - Names the section and lists its files.
    - Tells it to behave as the adversarial reviewer: assume defects until
@@ -163,7 +163,7 @@ Run this loop **per section**:
      this".
    - Requires every candidate to cite `path:line` or a precise symbol.
 
-3. **Round 2 — good cop rebuts.** Spawn the good-cop subagent with a prompt
+3. **Round 2: good cop rebuts.** Spawn the good-cop subagent with a prompt
    that:
    - Includes the same section files.
    - Includes bad cop's full candidate list verbatim.
@@ -171,37 +171,37 @@ Run this loop **per section**:
      `agree` / `partially-agree` / `disagree` / `out-of-scope` /
      `immaterial`, with a one-paragraph justification citing code or
      upstream invariants. Use `immaterial` when a candidate is *real but
-     changes nothing that matters* — a micro-optimization with no
+     changes nothing that matters*: a micro-optimization with no
      measurable impact, redundant-but-correct work, a pure style refactor,
      or a mitigation that is already adequate (see **Materiality bar** in
      Rules and discipline). `immaterial` is distinct from `disagree`: the
      candidate is true, it just doesn't earn a fix.
    - Permits good cop to **add** findings bad cop missed (rare, but happens
-     — especially around missing tests for behavior bad cop only saw the
+     especially around missing tests for behavior bad cop only saw the
      happy path of, or documentation that's wrong in a way bad cop didn't
      catch). Mark these as `good-cop-add`.
    - Requires the same `path:line` precision.
 
-4. **Round 3 (optional) — bad cop counters.** If good cop disputed a
+4. **Round 3 (optional): bad cop counters.** If good cop disputed a
    meaningful number of bad cop's candidates, spawn bad cop again with both
    prior outputs and let it press the disputed ones once. Skip this round
-   when good cop accepted most candidates — additional rounds become
+   when good cop accepted most candidates: additional rounds become
    noise.
 
 5. **Moderator verdict.** The parent agent reviews both transcripts and
    renders a final verdict per candidate:
-   - **Confirmed** — survives the debate; goes into the section's finding
+   - **Confirmed**: survives the debate; goes into the section's finding
      list with confidence `confirmed` or `likely`.
-   - **Open question** — debate didn't resolve it; goes in with confidence
+   - **Open question**: debate didn't resolve it; goes in with confidence
      `hypothesis` and a `Suggested approach` of "confirm first: …".
-   - **Non-material** — real but fails the **Materiality bar**: no user,
+   - **Non-material**: real but fails the **Materiality bar**: no user,
      security, correctness, cost/reliability, legal, or future-change
      consequence. Keep it out of the FIND queue; if worth recording at all,
      drop it into the run's single **Non-blocking observations** note. Do
-     not let this collapse into `Rejected` — "true but pointless" and
+     not let this collapse into `Rejected`: "true but pointless" and
      "false alarm" are different verdicts, and the debate log should say
      which.
-   - **Rejected** — drop entirely, but record the rejection rationale in
+   - **Rejected**: drop entirely, but record the rejection rationale in
      the section's debate log (so the same false alarm doesn't reappear in
      a future scout run).
 
@@ -214,7 +214,7 @@ Run this loop **per section**:
 #### Parallelism
 
 Sections are independent. You may run up to **3 sections in parallel** by
-spawning their phase-2 debates concurrently — but each section's three
+spawning their phase-2 debates concurrently, but each section's three
 rounds remain sequential within itself (round 2 needs round 1's output,
 etc.). Going wider than 3 risks token-budget thrash and makes the moderator
 phase harder to keep coherent. Smaller repos (<10 sections) often run fine
@@ -224,9 +224,9 @@ fully sequentially.
 
 Cap debate rounds per section at **3** (steps 2–4). If the section is still
 contentious after that, mark unresolved candidates as `hypothesis` and move
-on — scout's job is to surface and triage, not to litigate every edge case.
+on: scout's job is to surface and triage, not to litigate every edge case.
 
-### Phase 3 — Compile
+### Phase 3: Compile
 
 After all sections complete, the parent agent merges per-section findings
 into a single, consistent queue ready for `fix-errors`.
@@ -246,7 +246,7 @@ Steps:
    a missing CSRF check showing up in both "auth" and "API routes"). Keep
    one finding, list both sections in `Also seen in`.
 4. **Sanity-check severity.** A finding marked Critical in one section's
-   debate but only Medium elsewhere should be reconciled — pick the higher
+   debate but only Medium elsewhere should be reconciled: pick the higher
    severity and record why.
 5. **Emit the unified queue.** See Output format below.
 
@@ -264,7 +264,7 @@ Scout emits a single document with three top-level sections:
   (these become `hypothesis` findings).
 - **Non-blocking observations** (if any): real-but-immaterial items the
   debate ruled **Non-material**, listed once without `FIND` IDs and
-  excluded from the finding counts — so they are on the record but never
+  excluded from the finding counts, so they are on the record but never
   compete with the queue.
 - Recommended next step for the user (typically: "hand to `fix-errors`").
 
@@ -273,7 +273,7 @@ Scout emits a single document with three top-level sections:
 For each `SEC-xxx`, a block of:
 
 ```markdown
-## SEC-001 — [feature name]
+## SEC-001: [feature name]
 
 **Files:** …
 
@@ -281,7 +281,7 @@ For each `SEC-xxx`, a block of:
 defended, and where the moderator landed.
 
 **Findings (in fix order):** FIND-xxx, FIND-yyy, …
-(IDs only — full records appear in the unified queue.)
+(IDs only: full records appear in the unified queue.)
 
 **Rejected candidates:** Brief list of bad-cop candidates the moderator
 threw out, with the rationale (one line each). This is the institutional
@@ -295,7 +295,7 @@ Every finding uses the same record template `code-review` emits, so
 `fix-errors` consumes scout output without translation. The template:
 
 ```markdown
-### FIND-XXX — [one-line title]
+### FIND-XXX: [one-line title]
 
 | Field | Value |
 | ----- | ----- |
@@ -304,7 +304,7 @@ Every finding uses the same record template `code-review` emits, so
 | **Confidence** | confirmed \| likely \| hypothesis |
 | **Source section** | SEC-xxx (the section that surfaced it) |
 | **Also seen in** | None \| SEC-yyy, SEC-zzz |
-| **Location** | `path/to/file.ext` — lines or symbol |
+| **Location** | `path/to/file.ext`: lines or symbol |
 | **Symptom** | What is wrong today |
 | **Impact** | What breaks or who is at risk if unfixed |
 | **Fix intent** | One sentence: desired end state or invariant |
@@ -340,8 +340,8 @@ findings:
 | Output cost | Cheaper | More expensive (multiple subagents per section) |
 | When to use | Diff-level review, fast turnaround | Deep audit, pre-launch hardening, second-opinion pass |
 
-The output format is intentionally **identical** to `code-review`'s — same
-`FIND-xxx` template, same severity rubric, same yaml block — so
+The output format is intentionally **identical** to `code-review`'s: same
+`FIND-xxx` template, same severity rubric, same yaml block, so
 `fix-errors`, `technician`, and any other downstream consumer cannot tell
 the difference. Scout is a *deeper way to produce* the same fix queue.
 
@@ -363,16 +363,16 @@ the difference. Scout is a *deeper way to produce* the same fix queue.
   wrong or state/money corrupts, cost or reliability *measurably* degrades
   at realistic load, a law/policy is implicated, or the next change gets
   materially riskier. Items that are *technically true but change nothing
-  that matters* — micro-optimizations with no measurable impact (saving a
+  that matters*: micro-optimizations with no measurable impact (saving a
   cheap cache write, a DB read off a non-hot path, sub-millisecond work),
   redundant-but-correct work, pure style/structure refactors with identical
   behavior, re-litigating an already-adequate mitigation, or hardening
-  against a threat the architecture already precludes — do **not** earn a
+  against a threat the architecture already precludes: do **not** earn a
   FIND. The tell: if a candidate's own fix note has to argue the impact is
   negligible, it fails the bar. Good cop marks these `immaterial`; the
   moderator rules them **Non-material** and (optionally) rolls them into the
   run's single **Non-blocking observations** note. This is impact, not
-  severity — a genuine Low that a user actually feels (a visible copy typo,
+  severity: a genuine Low that a user actually feels (a visible copy typo,
   a real hardening gap) still earns its FIND.
 - **Don't pad.** A section with no real defects gets a one-line "clean"
   entry in phase 2 and contributes zero findings to phase 3. Inflating the
@@ -381,17 +381,17 @@ the difference. Scout is a *deeper way to produce* the same fix queue.
   `CLAUDE.md` declares a pattern is intentional (e.g. "we don't test web
   React components by policy"), or a `docs/adr/` file records an `active`
   decision or deliberate omission covering the candidate, the moderator
-  should reject candidates that just re-litigate that decision — citing the
+  should reject candidates that just re-litigate that decision: citing the
   ADR entry (e.g. `covered by adr/03-billing.md#O1`). The debate log records
   the rejection so future runs see the precedent. Three exceptions: security/
   legal/accessibility candidates survive an ADR (report them tagged
   `ADR-conflict` for the human); concrete evidence that an `active` decision
   is itself causing real harm survives too (tagged `ADR-challenge`, entry +
-  evidence, routed to the human only — never the fix queue: the ADR blocks
+  evidence, routed to the human only: never the fix queue: the ADR blocks
   blind change, not criticism); and code that *contradicts* an `active` ADR
   decision with no recorded supersession is itself a finding (drift from
   decided architecture).
-- **One section, one debate.** Don't merge debates across sections — the
+- **One section, one debate.** Don't merge debates across sections: the
   whole point of partitioning is that each section fits in a subagent's
   context with headroom. Compilation in phase 3 handles cross-section
   concerns.
@@ -400,8 +400,8 @@ the difference. Scout is a *deeper way to produce* the same fix queue.
 
 The unified queue is consumed downstream by:
 
-- `fix-errors` — works through the queue one fix at a time.
-- `technician` — can take scout's output as the initial FIND list and run
+- `fix-errors`: works through the queue one fix at a time.
+- `technician`: can take scout's output as the initial FIND list and run
   the full review-harden-fix loop from there. (Technician's own
   `code-review` step becomes optional in this configuration; the user
   decides whether to re-review after fixes land.)

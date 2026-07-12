@@ -1,8 +1,8 @@
-# DevByAlex — the workflow
+# DevByAlex: the workflow
 
 An autonomous, stage-gated pipeline that takes an app from a one-line idea to
-launch-ready — and keeps improving it after. Four macro stages — **plan**,
-**dev**, **launch**, **live** — with human
+launch-ready and keeps improving it after. It has four macro stages: **plan**,
+**dev**, **launch**, **live**: with human
 approval gates between plan and dev, and before the `staging → main` promotion to
 production. Staging itself deploys automatically via Pipeline by Alex on push to
 `staging` (`main` = protected production).
@@ -31,14 +31,14 @@ is the live control file every skill reads and writes.
                          │   /dev-autopilot (1 step/run) ◄────┴─────────────────────────────────────┘ │
                          │   ▲ each run first DRAINS docs/BUGS.md (human-logged bugs), then          │
                          │     docs/TWEAKS.md via /dev-tweak (the cosmetic light lane), before        │
-                         │     building — and every UI-changing run leaves a visual pulse (staging   │
+                         │     building, and every UI-changing run leaves a visual pulse (staging   │
                          │     URL + screenshots) in the STATUS log                                   │
                          └───────────────────────────────┬───────────────────────────────────────────┘
                              all features done  AND  BUGS.md + TWEAKS.md have no open entries
                                                           │
                          ┌──────────────────────────── LAUNCH READINESS ────────────────────────────┐
                          │  (staging deploys via PBA) ─► /launch-observability (errors · consent-gated │
-                         │   analytics · uptime — proven on staging) ─► /launch-acceptance ─►           │
+                         │   analytics · uptime: proven on staging) ─► /launch-acceptance ─►           │
                          │   /launch-verify ─►                                                          │
                          │   ACCEPTANCE_TESTS.md   Playwright(web)+Maestro(iOS/Android)  RUN vs staging │
                          │   ─► /launch-visual-qa (screenshot) ─► /launch-compliance ─►                 │
@@ -47,11 +47,11 @@ is the live control file every skill reads and writes.
                          │   ─► /launch-store-assets (App Store + Play) ─► /launch-submit ⮕ TestFlight  │
                          │      + Play internal  (HUMAN-TRIGGERED publish; never auto/cron)             │
                          └──────────────────────────────┬───────────────────────────────────────────┘
-                                                        │  shipped — real users
+                                                        │  shipped: real users
                          ┌───────────────────────────── LIVE (post-launch) ─────────────────────────┐
                          │  production errors + user feedback ─► docs/FEEDBACK.md ─► /live-triage ─►   │
                          │  BUGS.md [prod] / TWEAKS.md / STATUS blockers (feature requests → Alex)     │
-                         │  …which the next /dev-autopilot run drains — the same verified build loop,  │
+                         │  …which the next /dev-autopilot run drains: the same verified build loop,  │
                          │  now running on production signal (cron-safe; triage routes, never fixes)   │
                          └──────────────────────────────────────────────────────────────────────────┘
 ```
@@ -65,24 +65,24 @@ is the live control file every skill reads and writes.
 | `init-ai` | entry | Bootstraps/integrates the workflow into a repo; reconciles STATUS from what's already done. |
 | `plan-spec` | plan | Interviews to a complete spec; collects **visual references as images** (screenshots of apps the user likes → `docs/design/references/`, each with a "what I like about it" line) as first-class design inputs; `reverse` mode backfills from code. |
 | `plan-guide` | plan | Expands the spec into a granular, ordered guide + feature cards + per-feature ADRs (`adr-backfill` mode writes the missing ADRs for an existing repo's features). |
-| `plan-design` | plan | Picks the app's named visual style — PRIMARY (structure, 1 of 12 product directions) × SECONDARY (feeling, 1 of 50 named styles from `knowledge/design/design-styles.md`) — then **web-searches 3–5 real-world references** of the confirmed style (live products/galleries) to seed the tokens, and records pick + references + reason in `docs/DESIGN.md` before wireframes. `restyle` mode re-picks for an existing app, records the supersession, and hands off to `uiux-redesign` to apply it. |
-| `uiux-redesign` | plan/dev | The application half of a `restyle` — sweeps a confirmed new style across an existing app's every customer-facing screen: rewrites the `docs/DESIGN.md` token system, then conforms the diverging surfaces (web + mobile) via token/shared-component changes, **leaving already-aligned surfaces alone** (change is justified by divergence, not by the sweep). Runs as code change through the validate loop, re-verifies WCAG 2.2 AA, and routes regressions to an `RSTY-xxx` queue → `fix-errors`. Owns the rollout, not the taste call. |
-| `plan-wireframes` | plan | Wireframe each feature — GENERATE via Figma MCP (greenfield) or CAPTURE existing screens from code (existing app, no Figma). Reads the committed style from `docs/DESIGN.md`. |
+| `plan-design` | plan | Picks the app's named visual style, PRIMARY (structure, 1 of 12 product directions) × SECONDARY (feeling, 1 of 50 named styles from `knowledge/design/design-styles.md`), then **web-searches 3–5 real-world references** of the confirmed style (live products/galleries) to seed the tokens, and records pick + references + reason in `docs/DESIGN.md` before wireframes. `restyle` mode re-picks for an existing app, records the supersession, and hands off to `uiux-redesign` to apply it. |
+| `uiux-redesign` | plan/dev | The application half of a `restyle`: sweeps a confirmed new style across an existing app's every customer-facing screen: rewrites the `docs/DESIGN.md` token system, then conforms the diverging surfaces (web + mobile) via token/shared-component changes, **leaving already-aligned surfaces alone** (change is justified by divergence, not by the sweep). Runs as code change through the validate loop, re-verifies WCAG 2.2 AA, and routes regressions to an `RSTY-xxx` queue → `fix-errors`. Owns the rollout, not the taste call. |
+| `plan-wireframes` | plan | Wireframe each feature: GENERATE via Figma MCP (greenfield) or CAPTURE existing screens from code (existing app, no Figma). Reads the committed style from `docs/DESIGN.md`. |
 | `dev-scaffold` | dev | One-time baseline: monorepo topology (`marketing/` apex + `web/` full-stack app on app.domain + optional `app/` mobile), branch model (protected `main` = production, `staging` = working line), skeleton, tooling, tests, and CI + deploy via Pipeline by Alex (`pba.yml` + thin caller). |
 | `dev-auth` | dev | Authentication first, security & privacy prioritized. Validate-existing mode audits + hardens auth an existing repo already has. |
 | `feature-loop` | dev | The per-feature 4-step build/validate engine. |
-| `dev-tweak` | dev | The cosmetic light lane — drains `docs/TWEAKS.md` (copy, tokens, spacing, asset swaps) behind a hard qualification test (no logic/data/API/auth/dependency/test changes — heavier entries get reclassified, never forced through) and a proportional gate: suite green, prose pass on copy, screenshot + design-critic pass on anything visual. ADRs still govern. |
-| `dev-autopilot` | dev | Advances the build one safe step per run (what a schedule calls) — after draining bugs, then tweaks. Every UI-changing run ends its STATUS log entry with a **visual pulse** (staging URL + screenshots of the affected screens, reusing the step's own captures) so an unattended run can be judged at a glance. |
+| `dev-tweak` | dev | The cosmetic light lane, drains `docs/TWEAKS.md` (copy, tokens, spacing, asset swaps) behind a hard qualification test (no logic/data/API/auth/dependency/test changes, heavier entries get reclassified, never forced through) and a proportional gate: suite green, prose pass on copy, screenshot + design-critic pass on anything visual. ADRs still govern. |
+| `dev-autopilot` | dev | Advances the build one safe step per run (what a schedule calls): after draining bugs, then tweaks. Every UI-changing run ends its STATUS log entry with a **visual pulse** (staging URL + screenshots of the affected screens, reusing the step's own captures) so an unattended run can be judged at a glance. |
 | `dev-update` | dev/ops | Re-vendors the latest DevByAlex skills/agents/templates into the current app (`install.sh --update`); the manual update path that keeps the local committed copies current. |
 | `dev-schedule` | dev/ops | Sets up the unattended schedule that calls `dev-autopilot` off an explicitly named working branch; the committed `.claude/` is self-sufficient, so the runner needs nothing extra (a GitHub-Actions runner needs only `ANTHROPIC_API_KEY`). |
-| `launch-observability` | launch | Wires the app so production can be heard: error monitoring (client + server, PII scrubbed from events), consent-gated product analytics (never fired before cookie consent — same posture `/launch-compliance` audits), a health endpoint + uptime ping, and alert routing — each signal **proven end-to-end on staging** before its box is checked. The prerequisite for `/live-triage`. |
-| `launch-acceptance` | launch | Writes the staging acceptance pass as runnable suites — Playwright (web) + Maestro (iOS/Android) — generated from a scenario doc. |
+| `launch-observability` | launch | Wires the app so production can be heard: error monitoring (client + server, PII scrubbed from events), consent-gated product analytics (never fired before cookie consent, same posture `/launch-compliance` audits), a health endpoint + uptime ping, and alert routing, each signal **proven end-to-end on staging** before its box is checked. The prerequisite for `/live-triage`. |
+| `launch-acceptance` | launch | Writes the staging acceptance pass as runnable suites, Playwright (web) + Maestro (iOS/Android), generated from a scenario doc. |
 | `launch-verify` | launch | Runs the `launch-acceptance` suites against the live staging environment, triages failures into an `ACC-xxx` queue → `fix-errors`, re-runs to green, and checks the "acceptance suite passed against staging" gate `launch-submit` reads. The runner half of the author/run split. |
 | `launch-compliance` | launch | Legal (ToS / privacy policy / cookie consent), accessibility (WCAG 2.2 AA), SEO, and prose scans; drives the two hard launch gates + a fix queue. Reuses `launch-readiness`, `accessibility-critique`, `seo-audit`, `prose-check`. |
 | `launch-visual-qa` | launch | The cross-platform screenshot loop (build → boot → screenshot → critique → fix): boots iOS sim + Android emulator, drives the Maestro flows to capture every key screen/state, the `design-critic` agent vets them (against wireframes, `docs/DESIGN.md`, and the universal design rules) and emits a `VIS-xxx` queue → `fix-errors`, re-screenshots to confirm. Reuses the `launch-acceptance` Maestro flows + `fix-errors`. |
 | `launch-store-assets` | launch | The "App Store tab," doubled: icon, device-framed screenshots (iOS sizes + Android phone/tablet), Play feature graphic, and per-field listing copy for **both** App Store Connect and Play Console, from the real running app. Reuses `create-demo`, `marketer-copywriting`, `ios-audit`. |
-| `launch-submit` | launch | Dual-store delivery lane — detects Expo→EAS / bare→Fastlane, builds, and submits to **TestFlight + Play internal testing**. Gated on readiness/compliance/hard-gates; **human-triggered only**, never auto-promotes to production. Reuses `launch-readiness`, `ios-audit`. |
-| `live-triage` | live | The post-launch loop — converts the `docs/FEEDBACK.md` inbox (user emails, reviews, error-tracker signal) into workflow state: functional problems → `docs/BUGS.md` tagged `[prod]`, cosmetic misses → `docs/TWEAKS.md`, feature requests → STATUS blockers for Alex (scope stays human). **Routes, never fixes** — the autopilot's drain loops do the fixing, so production feedback flows through the same verified pipeline that built the app. Cron-safe. |
+| `launch-submit` | launch | Dual-store delivery lane: detects Expo→EAS / bare→Fastlane, builds, and submits to **TestFlight + Play internal testing**. Gated on readiness/compliance/hard-gates; **human-triggered only**, never auto-promotes to production. Reuses `launch-readiness`, `ios-audit`. |
+| `live-triage` | live | The post-launch loop, converts the `docs/FEEDBACK.md` inbox (user emails, reviews, error-tracker signal) into workflow state: functional problems → `docs/BUGS.md` tagged `[prod]`, cosmetic misses → `docs/TWEAKS.md`, feature requests → STATUS blockers for Alex (scope stays human). **Routes, never fixes**, the autopilot's drain loops do the fixing, so production feedback flows through the same verified pipeline that built the app. Cron-safe. |
 
 ### Agents (the specialists the feature loop deploys)
 
@@ -98,10 +98,10 @@ is the live control file every skill reads and writes.
 ### Existing skills it reuses (not reinvented)
 
 The workflow leans on skills that already exist rather than duplicating them.
-These supporting skills live in `skills/` alongside the workflow stages — they're
-all native to this repo now — and `install.sh` **vendors** the whole `skills/`
+These supporting skills live in `skills/` alongside the workflow stages: they're
+all native to this repo now, and `install.sh` **vendors** the whole `skills/`
 folder into each app's `.claude/skills` so any runner has them. Every skill is a
-full copy committed into the repo — there are no live-served skills and nothing is
+full copy committed into the repo: there are no live-served skills and nothing is
 loaded over the network at run time. Improve one and re-vendor with
 `./install.sh <app> --update` (or `/dev-update`) to refresh the committed copies.
 The supporting skills (`scout`, `fix-errors`, `issue-checker`,
@@ -109,28 +109,28 @@ The supporting skills (`scout`, `fix-errors`, `issue-checker`,
 `seo-audit`, `accessibility-critique`, `ios-audit`, `create-demo`,
 `marketer-brand-generation`, `marketer-copywriting`):
 
-- `test-suite-developer` — the test-author's engine.
-- `scout` — the validators' adversarial review (feature-scoped and whole-repo).
-- `issue-checker` — confirms a finding is real before it's fixed.
-- `fix-errors` — drives a findings queue to zero during the validation loops.
-- `staging-smoke-test` — human-walkable config/integration check at launch.
-- `launch-readiness` — codebase go/no-go audit at launch (incl. legal/policy).
-- `prose-check` — strips AI tells from copy (plan wireframes + launch prose pass).
-- `seo-audit` — code-level SEO audit at launch (needs `docs/BRAND.md`).
-- `accessibility-critique` — WCAG 2.2 AA audit at launch → `A11Y-xxx` fix queue.
-- `marketer-brand-generation` — writes `docs/BRAND.md` in the plan stage (seeds
+- `test-suite-developer`: the test-author's engine.
+- `scout`: the validators' adversarial review (feature-scoped and whole-repo).
+- `issue-checker`: confirms a finding is real before it's fixed.
+- `fix-errors`: drives a findings queue to zero during the validation loops.
+- `staging-smoke-test`: human-walkable config/integration check at launch.
+- `launch-readiness`: codebase go/no-go audit at launch (incl. legal/policy).
+- `prose-check`: strips AI tells from copy (plan wireframes + launch prose pass).
+- `seo-audit`: code-level SEO audit at launch (needs `docs/BRAND.md`).
+- `accessibility-critique`: WCAG 2.2 AA audit at launch → `A11Y-xxx` fix queue.
+- `marketer-brand-generation`: writes `docs/BRAND.md` in the plan stage (seeds
   SEO + voice; required by `seo-audit`).
-- `marketer-copywriting` — on-brand copy when wireframe/launch prose needs more
+- `marketer-copywriting`: on-brand copy when wireframe/launch prose needs more
   than a cleanup pass; also writes the store listing copy in `launch-store-assets`.
-- `ios-audit` — App Store Review / Play policy audit; used by `launch-submit`
+- `ios-audit`: App Store Review / Play policy audit; used by `launch-submit`
   (rejection preflight) and `launch-store-assets` (metadata/age-rating compliance).
-- `create-demo` — Maestro-driven capture of the real running app; `launch-store-assets`
+- `create-demo`: Maestro-driven capture of the real running app; `launch-store-assets`
   reuses it to pull real screenshots for the store listing.
-- `uiux-init` / `uiux-audit` — optional external design-doc + UI alignment
+- `uiux-init` / `uiux-audit`: optional external design-doc + UI alignment
   alongside wireframes: `uiux-init` expands a fresh pick into the full token
   system + component rules, and `uiux-audit` aligns screens to `docs/DESIGN.md`.
   The native `plan-design` owns the **style decision** (the named PRIMARY ×
-  SECONDARY pick), and the native `uiux-redesign` owns the **rollout** — sweeping
+  SECONDARY pick), and the native `uiux-redesign` owns the **rollout**: sweeping
   a confirmed new style across an existing app's screens when `plan-design
   restyle` re-picks. (`uiux-audit` is the fallback for the screen sweep if
   `uiux-redesign` isn't present.)
@@ -138,13 +138,13 @@ The supporting skills (`scout`, `fix-errors`, `issue-checker`,
 And it reads Alex's encoded conventions from the **vendored `knowledge/`**
 (copied into `<app>/.claude/knowledge/` by `install.sh`; skills read it directly
 at `../../knowledge/...`, the same idiom as `../../templates/`):
-`knowledge/practices/<key>.yaml` — `project-kickoff` (spec), `auth`,
+`knowledge/practices/<key>.yaml`: `project-kickoff` (spec), `auth`,
 `data-modeling`, `payments`, `testing`, `code-review`, `launch-readiness`,
-`uiux` — plus `knowledge/stack/*.md` and `knowledge/checklists/*.md`. Best
+`uiux`, plus `knowledge/stack/*.md` and `knowledge/checklists/*.md`. Best
 practices are read from these files, not fetched from a brain; decisions are
-recorded in the repo — feature-scoped ones in `docs/adr/` (the governing
+recorded in the repo: feature-scoped ones in `docs/adr/` (the governing
 per-feature records), cross-cutting ones appended to `docs/DECISIONS.md` (the
-chronological log). A committed checkout is fully self-sufficient — no MCP
+chronological log). A committed checkout is fully self-sufficient: no MCP
 token or network brain.
 
 ## The control file: `docs/STATUS.md`
@@ -158,21 +158,21 @@ cards and the log.
 ## The bug log: `docs/BUGS.md`
 
 The human-written counterpart to STATUS. You drop bugs you hit into its `## Open`
-section; `dev-autopilot` drains it **before any build step** — fixing every open
+section; `dev-autopilot` drains it **before any build step**: fixing every open
 bug through its verify loop, moving each to `## Fixed`, and stopping the run there
 (a bug-fix run does nothing else). Open bugs are also a **soft launch gate**: the
 autopilot won't enter `/launch-acceptance` while any remain. This is one of the
-two places the "one step per run" rule bends — the whole log drains in a single
+two places the "one step per run" rule bends: the whole log drains in a single
 run, because known-broken code is never a base for new work.
 
 ## The tweak lane: `docs/TWEAKS.md`
 
-The light lane — because changing a button label shouldn't cost what building a
+The light lane, because changing a button label shouldn't cost what building a
 feature costs. Small cosmetic changes (copy, tokens, spacing, asset swaps) go
 here; `dev-autopilot` drains it via `/dev-tweak` **after bugs, before any build
 step**, the whole lane in one run. What keeps the lane honest is the **hard
 qualification test**: a tweak may touch only copy/tokens/styles/assets/ordering
-and none of logic, data model, API, auth, dependencies, or tests — anything
+and none of logic, data model, API, auth, dependencies, or tests: anything
 heavier is **reclassified** to `docs/BUGS.md` or a feature proposal, never
 squeezed through. The gate is proportional but real: suite green, prose pass on
 changed copy, and the same screenshot + design-critic pass every design change
@@ -180,12 +180,12 @@ gets. Open tweaks soft-block launch just like open bugs.
 
 ## The feedback inbox: `docs/FEEDBACK.md`
 
-The post-launch counterpart to BUGS. Raw production signal — user emails, store
-reviews, error-tracker exports — lands in its `## Inbox`; `/live-triage`
+The post-launch counterpart to BUGS. Raw production signal: user emails, store
+reviews, error-tracker exports: lands in its `## Inbox`; `/live-triage`
 (manual or scheduled) converts each item into workflow state: functional
 problems → `docs/BUGS.md` tagged `[prod]`, cosmetic misses → `docs/TWEAKS.md`,
 feature requests → STATUS blockers for Alex, duplicates/noise → triaged with a
-reason. **Triage routes; it never fixes** — the autopilot's existing drain
+reason. **Triage routes; it never fixes**: the autopilot's existing drain
 loops do the fixing, so a live app keeps improving through the same verified
 pipeline that built it. `/launch-observability` wires the error/analytics
 signal this loop feeds on.
@@ -194,19 +194,19 @@ signal this loop feeds on.
 
 One ADR file per feature (mirroring `docs/features/<NN>-<slug>.md`, plus
 `scaffold.md` and `auth.md` for the cross-cutting stages), holding the decisions
-that govern it — what it has, what it deliberately does **not** have, and why.
+that govern it: what it has, what it deliberately does **not** have, and why.
 `docs/DECISIONS.md` stays the chronological log of *what happened when*; the ADR
 is the per-feature record of *what holds now*. The contract (spelled out in the
 stamped `docs/adr/README.md`):
 
 - **Consult before change.** Every skill/agent that touches a feature reads its
-  ADR first — builds, bug fixes, and validation loops alike.
+  ADR first: builds, bug fixes, and validation loops alike.
 - **Breaking an `active` decision requires explicit human confirmation.** The
   loop/autopilot stops and surfaces the conflict (citing the entry); on
   confirmation the old entry is marked superseded and the new decision recorded.
   Never a silent divergence.
 - **Documented deliberate omissions are not findings.** The validators, `scout`,
-  and `launch-readiness` cite the ADR entry instead of filing — so an automated
+  and `launch-readiness` cite the ADR entry instead of filing, so an automated
   review can't flag what was consciously chosen. Security/legal/accessibility
   issues still get reported (tagged `ADR-conflict`), and the two hard launch
   gates are never overridable by an ADR.
@@ -215,28 +215,28 @@ stamped `docs/adr/README.md`):
   `ADR-challenge` (entry + evidence, routed to the human, never the fix
   queue). Agents may argue with a decision; only Alex may change it.
 - **Drift is a finding.** Code contradicting an `active` decision with no
-  recorded supersession is architecture drift — the record wins until a human
+  recorded supersession is architecture drift: the record wins until a human
   retires it.
 - **Seeded at plan time, kept current by the loop.** `/plan-guide` writes each
   feature's ADR with its card; `feature-loop` step 4 records what the build
   decided. On an existing repo, `/plan-guide adr-backfill` must write an ADR for
-  **every** feature — consolidating any scattered feature docs into them (or
-  removing the irrelevant ones) — before feature work proceeds.
+  **every** feature: consolidating any scattered feature docs into them (or
+  removing the irrelevant ones): before feature work proceeds.
 
 ## Integrating an existing (not-yet-launch-ready) repo
 
-`init-ai` works on a half-built repo, not just a blank one — but "finish my app"
+`init-ai` works on a half-built repo, not just a blank one, but "finish my app"
 routes through the same gates, so the path is **backfill → validate → build the
 rest**:
 
 1. **Backfill the plan from code.** No spec/guide exist, so `init-ai` routes to
    `/plan-spec reverse` (infer the spec from code, tag inferences) → `/plan-guide`.
-   The wireframe gate is satisfied by `/plan-wireframes capture` — an inventory of
-   the screens already in the code, **no Figma needed** — since the UI exists.
+   The wireframe gate is satisfied by `/plan-wireframes capture`: an inventory of
+   the screens already in the code, **no Figma needed**: since the UI exists.
    The backfill includes the **ADRs**: every identified feature gets its
    `docs/adr/` record (inferred decisions + deliberate omissions, tagged
    `(needs review)`), with any scattered feature docs consolidated into them or
-   removed — **before any feature work**, so the validators can tell a gap from
+   removed: **before any feature work**, so the validators can tell a gap from
    a choice.
 2. **Alex approves the three gates.** Dev stays blocked until then; an existing
    codebase doesn't bypass approval.
@@ -244,13 +244,13 @@ rest**:
    done: auth that exists but was never security-validated stays unchecked
    (`/dev-auth validate` audits + hardens it), and existing features are recorded
    impl-present / validation-pending. So autopilot's **first phase is
-   validate-and-harden** — backfill spec-traced tests, run the validators, fix —
+   validate-and-harden**, backfill spec-traced tests, run the validators, fix,
    re-certifying what's there before adding anything new.
 4. **Then build the rest** via the normal feature loop, pushing to the working
    branch (use a dedicated iteration branch on a repo with a real `main`).
 
 The principle: code existing is not the same as code being correct, validated, or
-aligned to an approved spec — none of which can be known from the code alone. The
+aligned to an approved spec: none of which can be known from the code alone. The
 integration path makes that gap explicit instead of marking a working-but-unproven
 app "done."
 
@@ -265,36 +265,36 @@ app "done."
 - **ADRs govern change.** Every feature has a decision record in `docs/adr/`
   before the loop touches it; breaking an `active` decision needs explicit human
   confirmation + a recorded supersession, and documented deliberate omissions
-  are never review findings (security/legal/a11y excepted — and the hard launch
+  are never review findings (security/legal/a11y excepted, and the hard launch
   gates are never ADR-overridable).
-- **One safe step per autopilot run.** Bounded, resumable, reviewable — except
+- **One safe step per autopilot run.** Bounded, resumable, reviewable: except
   the drain runs: a bug-fix run drains all of `docs/BUGS.md`, and a tweak run
   drains all of `docs/TWEAKS.md`, before any build step resumes.
 - **Bugs, then tweaks, before building.** Open entries in `docs/BUGS.md` or
   `docs/TWEAKS.md` preempt scaffold/auth/feature work and block entry to the
   launch stage until drained. The tweak lane's qualification test is what keeps
   it from becoming a back door around the feature loop.
-- **Every UI-changing autopilot run leaves a visual pulse** — staging URL +
-  screenshots in the STATUS log, reusing the step's own captures — so an
+- **Every UI-changing autopilot run leaves a visual pulse**: staging URL +
+  screenshots in the STATUS log, reusing the step's own captures, so an
   unattended build can be judged at a glance, not only by reading diffs.
 - **Production feedback flows through the same pipeline.** Post-launch signal is
   triaged (`/live-triage`) into the bug/tweak logs and drained by the autopilot
-  with full verification — triage routes, it never fixes, and feature requests
+  with full verification: triage routes, it never fixes, and feature requests
   go to Alex, never silently into scope.
 - **Green suite at every stop; push straight to the working branch.** Nothing
   marked done with red tests or open findings. To keep iteration fast the dev
-  stage commits and pushes to one working branch — no per-step branches, no PR
+  stage commits and pushes to one working branch: no per-step branches, no PR
   pile-up. Green suite is the gate, not a human merge. Interactive runs use the
   current branch; a cron names the branch explicitly. Use a dedicated iteration
   branch (e.g. `staging`/`autopilot`), not a protected default.
 - **Nothing is left orphaned.** Every run cleans up after itself: artifacts its
-  work superseded or left unreferenced — scratch/debug scripts, temp files,
+  work superseded or left unreferenced: scratch/debug scripts, temp files,
   dead code and unused exports/deps, components/assets/tokens nothing renders,
-  stale fixtures, superseded docs — are removed in the same run, not left to
+  stale fixtures, superseded docs: are removed in the same run, not left to
   rot. Two carve-outs: anything **explicitly recorded as kept** (ADR /
   `docs/DECISIONS.md`) is not an orphan; and an orphan that is **substantial
   work** (a part-built feature, a whole module, real content) is never
-  silently deleted — it's surfaced to Alex as a keep-or-remove question, and a
+  silently deleted: it's surfaced to Alex as a keep-or-remove question, and a
   "keep" gets recorded so the next sweep doesn't re-flag it. `init-ai`
   inventories pre-existing orphans on integration and queues them as
   `[orphan]` bugs.
@@ -302,6 +302,6 @@ app "done."
 - **Legal & accessibility are hard launch gates.** Terms of Service, a privacy
   policy accurate to real data flows, a web cookie-consent banner, and WCAG 2.2 AA
   conformance are designed for in the plan and verified by `/launch-compliance`
-  before ship — no launch with either gate open.
+  before ship: no launch with either gate open.
 
 See `docs/SCHEDULING.md` for running the dev stage unattended.

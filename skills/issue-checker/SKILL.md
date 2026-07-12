@@ -5,8 +5,8 @@ description: >-
   use it to validate that a reported bug, finding, or vulnerability actually
   exists before fixing it (avoid wasted work on phantom issues), and to confirm
   that a fix truly resolved an issue afterwards (avoid declaring victory on a
-  fix that didn't land). Each claim gets a verdict — PRESENT, NOT-PRESENT, or
-  INCONCLUSIVE — backed by reproducible evidence (code citations, command
+  fix that didn't land). Each claim gets a verdict: PRESENT, NOT-PRESENT, or
+  INCONCLUSIVE: backed by reproducible evidence (code citations, command
   output, test result), never by "looks fine" or "looks fixed". Use when the
   user asks to verify a bug report, double-check a fix, audit FIND-xxx items
   before remediation, regression-check after a merge, or when they say "is
@@ -16,8 +16,8 @@ description: >-
 
 # Issue checker
 
-A bidirectional verification skill. Treats every claim — both "this is broken"
-and "this is fixed" — as unproven until reproduced or refuted with evidence.
+A bidirectional verification skill. Treats every claim: both "this is broken"
+and "this is fixed": as unproven until reproduced or refuted with evidence.
 
 ## Two modes (always pick one explicitly)
 
@@ -45,15 +45,15 @@ state the chosen mode in the executive summary so the user can correct you.
 - **Distinguish symptom from root cause.** A fix that hides the symptom while
   leaving the root cause is **partially present**, not gone. Note it.
 - **No verdict without evidence.** If you can't reproduce or refute, the
-  verdict is **INCONCLUSIVE** with a list of what's missing — never a guess
+  verdict is **INCONCLUSIVE** with a list of what's missing: never a guess
   dressed up as a confirmation.
-- **Beware of stale state.** Branch, build, DB migration, env vars, cache —
+- **Beware of stale state.** Branch, build, DB migration, env vars, cache,
   any of these can make an issue appear or disappear without the code
   changing. Record the state you checked against.
 
 ## Workflow
 
-Run phases in order. Do not skip phase 1 — half the bad verdicts in this skill
+Run phases in order. Do not skip phase 1: half the bad verdicts in this skill
 come from misunderstanding the claim before checking it.
 
 ### 1. Restate the claim
@@ -77,9 +77,9 @@ Order of preference:
 
 1. **Run an existing test** that exercises the exact behavior, or write a
    minimal new one. A test that fails-then-passes is the strongest evidence.
-2. **Execute the path directly** — `curl`, a script, a CLI invocation, a SQL
+2. **Execute the path directly**: `curl`, a script, a CLI invocation, a SQL
    query, a fixture-driven function call.
-3. **Static evidence** — grep/AST for the exact construct (e.g. missing
+3. **Static evidence**: grep/AST for the exact construct (e.g. missing
    `await`, missing authz check, hard-coded secret) **only** when execution
    is impossible or the issue is a presence/absence claim about source.
 
@@ -94,12 +94,12 @@ Capture, for each check:
   decisive lines).
 - The **state** the check ran against: branch / commit, env vars touched,
   fixtures, DB state, build version.
-- Any **side observations** that change the picture — a different bug
+- Any **side observations** that change the picture: a different bug
   surfaced, a flaky check, an environment mismatch.
 
 ### 4. Render a verdict
 
-Use one of these verdicts. Pick the strongest one the evidence supports — do
+Use one of these verdicts. Pick the strongest one the evidence supports: do
 not upgrade past what you actually proved.
 
 | Verdict | Meaning | Required evidence |
@@ -136,19 +136,19 @@ preserve the source ID in the **Source** field so the chain is auditable.
 ### Verdict record (repeat per claim)
 
 ```markdown
-### CHECK-XXX — [one-line title of the claim]
+### CHECK-XXX: [one-line title of the claim]
 
 | Field | Value |
 | ----- | ----- |
 | **Mode** | validate-claim \| verify-fix |
 | **Source** | Raw claim text or `FIND-YYY` / `FIX-YYY` / issue-tracker URL |
 | **Claim** | The alleged issue, restated as a testable proposition |
-| **Location** | `path/to/file.ext` — line/symbol — narrowest anchor |
+| **Location** | `path/to/file.ext`, line/symbol, narrowest anchor |
 | **State checked** | branch / commit / env / fixtures / DB state |
-| **Method** | test \| executed-repro \| static-check — what kind of evidence was used |
+| **Method** | test \| executed-repro \| static-check: what kind of evidence was used |
 | **Evidence** | Command run + decisive output, or test name + result, or grep + match/non-match |
 | **Verdict** | PRESENT \| NOT-PRESENT \| PARTIALLY-PRESENT \| INCONCLUSIVE \| MISDIAGNOSED |
-| **Confidence** | high \| medium \| low — high requires direct execution; low signals you fell back to reasoning |
+| **Confidence** | high \| medium \| low: high requires direct execution; low signals you fell back to reasoning |
 | **Root cause status** *(verify-fix only)* | addressed \| symptom-only \| unknown |
 | **Recommended next step** | Reopen \| Close \| Re-fix root cause \| Need more info: ... |
 ```
@@ -181,14 +181,14 @@ Omit empty optional keys.
   running fix-errors / scout) must be able to re-run the check from what's in
   the record alone.
 - **Never upgrade a verdict past the evidence.** A passing test on one path
-  is not NOT-PRESENT for the whole feature — scope the verdict to what was
+  is not NOT-PRESENT for the whole feature: scope the verdict to what was
   actually exercised.
 - **Confidence is not a vibe.** Set `high` only when execution produced the
   decisive evidence; `medium` when static analysis was decisive but
   execution wasn't possible; `low` when reasoning had to fill a gap (and
   state the gap).
 - **Don't fix while checking.** If you discover a real issue mid-check, log
-  it and stop — fixing belongs to fix-errors. The exception is a one-line
+  it and stop: fixing belongs to fix-errors. The exception is a one-line
   unblocker (e.g. missing fixture) needed to even run the check; note it in
   the record.
 

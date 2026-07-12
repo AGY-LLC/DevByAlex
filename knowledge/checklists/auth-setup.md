@@ -40,7 +40,7 @@ What I go through every time I set up authentication on a new project. Informed 
 - [ ] Password reset flow configured and tested (if using email/password)
 - [ ] OAuth providers configured in auth service dashboard
 - [ ] Server-side auth middleware / session check in place
-- [ ] **Return-to-origin redirect implemented** — user lands on the page they were trying to reach, not always `/dashboard`
+- [ ] **Return-to-origin redirect implemented**: user lands on the page they were trying to reach, not always `/dashboard`
 - [ ] `return_to` parameter validated to be a relative path (not an external URL) before redirect
 
 ---
@@ -57,8 +57,8 @@ return NextResponse.redirect(new URL(`/auth/login?return_to=${returnTo}`, req.ur
 // After successful auth
 const returnTo = searchParams.get('return_to')
 // Validate it's a relative path before using it
-const destination = returnTo && returnTo.startsWith('/') 
-  ? decodeURIComponent(returnTo) 
+const destination = returnTo && returnTo.startsWith('/')
+  ? decodeURIComponent(returnTo)
   : '/dashboard'
 redirect(destination)
 ```
@@ -72,7 +72,7 @@ If your project has both a web app and a mobile app:
 - [ ] Confirm auth provider supports both web sessions and mobile sessions without completely separate implementations
 - [ ] Test auth flow on both platforms independently
 - [ ] Test that a session on one platform doesn't break auth on the other
-- [ ] Token refresh behavior is handled on both platforms (mobile especially — background token refresh is easy to miss)
+- [ ] Token refresh behavior is handled on both platforms (mobile especially: background token refresh is easy to miss)
 
 ---
 
@@ -81,10 +81,10 @@ If your project has both a web app and a mobile app:
 - [ ] Tokens verified server-side on every protected request
 - [ ] User ID derived from verified token, not from client input
 - [ ] Auth routes rate limited (prevent brute force on login)
-- [ ] Passwords hashed (bcrypt or similar) — if storing them at all
+- [ ] Passwords hashed (bcrypt or similar): if storing them at all
 - [ ] Refresh token rotation configured (if using JWTs with refresh)
 - [ ] Session invalidation works (logout actually logs out)
-- [ ] `return_to` redirect target validated — only allow relative paths
+- [ ] `return_to` redirect target validated: only allow relative paths
 
 ---
 
@@ -122,7 +122,7 @@ If your project has both a web app and a mobile app:
 
 | Mistake | Fix |
 |---------|-----|
-| Skipping return-to-origin | Implement it from the start — retrofitting is painful |
+| Skipping return-to-origin | Implement it from the start: retrofitting is painful |
 | Trusting `return_to` as-is | Validate it's a relative path before redirecting |
 | Not maintaining your own user record | Always write to your DB, don't rely on the auth provider as your user store |
 | Token refresh not handled on mobile | Mobile apps need explicit proactive token refresh before requests |

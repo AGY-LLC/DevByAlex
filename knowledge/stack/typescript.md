@@ -31,12 +31,12 @@ If you want the argument for TypeScript, it's simple: catching a type error in y
 ```
 
 `strict: true` enables a bundle of checks:
-- `strictNullChecks` — the most important one. Variables can't be `null` or `undefined` without explicitly handling it.
-- `noImplicitAny` — no accidental `any` types from untyped parameters
-- `strictFunctionTypes` — better function type checking
+- `strictNullChecks`: the most important one. Variables can't be `null` or `undefined` without explicitly handling it.
+- `noImplicitAny`: no accidental `any` types from untyped parameters
+- `strictFunctionTypes`: better function type checking
 - And others
 
-I don't weaken these. If something doesn't type-check under strict mode, I fix the types — I don't turn off the check.
+I don't weaken these. If something doesn't type-check under strict mode, I fix the types: I don't turn off the check.
 
 ---
 
@@ -76,7 +76,7 @@ const CreateUserSchema = z.object({
 type CreateUserInput = z.infer<typeof CreateUserSchema>
 ```
 
-Same for Prisma — the generated types are good. Don't write parallel interfaces that drift.
+Same for Prisma: the generated types are good. Don't write parallel interfaces that drift.
 
 ---
 
@@ -106,15 +106,15 @@ import { prisma } from '@/lib/prisma'
 
 ---
 
-## Non-null assertion (`!`) — use sparingly
+## Non-null assertion (`!`): use sparingly
 
 The `!` assertion tells TypeScript "this won't be null, trust me." It's a lie you're making to the compiler. Use it only when you genuinely know something is non-null and TypeScript can't infer it:
 
 ```ts
-// Usually fine — env var checked at startup
+// Usually fine: env var checked at startup
 const apiKey = process.env.API_KEY!
 
-// Dangerous — this might actually be null
+// Dangerous: this might actually be null
 const element = document.getElementById('root')!
 ```
 
@@ -147,7 +147,7 @@ if (result.ok) {
 
 ## Type vs interface
 
-I generally use `type` for most things and `interface` for object shapes that need to be extended or implemented. In practice, the distinction rarely matters — pick one and be consistent within a codebase.
+I generally use `type` for most things and `interface` for object shapes that need to be extended or implemented. In practice, the distinction rarely matters: pick one and be consistent within a codebase.
 
 ---
 
@@ -181,7 +181,7 @@ The `create-next-app` tsconfig is fine as a starting point. Things I usually add
 
 - `strict: true` in tsconfig. No weakening.
 - No `any`. Use `unknown` and narrow, or fix the underlying type issue.
-- Types are inferred from Zod schemas and Prisma — don't write duplicate interfaces.
+- Types are inferred from Zod schemas and Prisma: don't write duplicate interfaces.
 - Path aliases over deep relative imports.
 
 ## Preferences
@@ -193,8 +193,8 @@ The `create-next-app` tsconfig is fine as a starting point. Things I usually add
 ## AI notes
 
 AI writes TypeScript well. Common issues:
-- Generates `any` types when it's not sure — always ask for `unknown` and narrowing instead
-- Sometimes generates `interface` vs `type` inconsistently — cosmetic but worth standardizing in a codebase
+- Generates `any` types when it's not sure: always ask for `unknown` and narrowing instead
+- Sometimes generates `interface` vs `type` inconsistently: cosmetic but worth standardizing in a codebase
 - TypeScript generic inference can be tricky; AI sometimes over-annotates where inference would work, or under-annotates where it wouldn't
 
 Useful instruction to add to prompts: *"TypeScript strict mode. No `any`. Use `unknown` if the type is genuinely unknown. Infer types from Zod schemas with `z.infer<>`."*

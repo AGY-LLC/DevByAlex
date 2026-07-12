@@ -23,10 +23,10 @@ My ORM of choice for Node.js projects with a relational database. I've used it w
 ## Cons
 
 - **Migration diffs can be destructive if you're not reading them.** This is the big one. Always read the generated SQL.
-- Bundle size in serverless environments — Prisma Client can be chunky; configure the output path carefully
-- Connection pooling in serverless requires `@prisma/accelerate` or PgBouncer — the naive approach will exhaust your DB connection limit
+- Bundle size in serverless environments: Prisma Client can be chunky; configure the output path carefully
+- Connection pooling in serverless requires `@prisma/accelerate` or PgBouncer: the naive approach will exhaust your DB connection limit
 - Advanced queries (complex aggregations, window functions, recursive CTEs) often require `$queryRaw`
-- Schema changes on large tables can lock in production — Prisma doesn't protect you from that
+- Schema changes on large tables can lock in production: Prisma doesn't protect you from that
 - N+1 query problems are easy to introduce and not always obvious in the generated queries
 
 ## Migration state during rapid development
@@ -55,10 +55,10 @@ The schema gives typed queries and a migration history. Content can be updated d
 
 ## Alternatives
 
-- **Drizzle ORM** — leaner, SQL-first, TypeScript-native. I've been watching it and it looks good for projects where migration flexibility matters.
-- **Kysely** — type-safe query builder without the ORM layer. More control, more verbosity.
-- **TypeORM** — I've used it. I'd rather use Prisma.
-- **Raw `pg`** — sometimes the right answer for specific high-performance queries.
+- **Drizzle ORM**: leaner, SQL-first, TypeScript-native. I've been watching it and it looks good for projects where migration flexibility matters.
+- **Kysely**: type-safe query builder without the ORM layer. More control, more verbosity.
+- **TypeORM**: I've used it. I'd rather use Prisma.
+- **Raw `pg`**: sometimes the right answer for specific high-performance queries.
 
 ## Current stance
 
@@ -76,8 +76,8 @@ The schema gives typed queries and a migration history. Content can be updated d
 
 ## Preferences
 
-- Keep Prisma schema in `prisma/schema.prisma` — don't split it across files unless the schema is genuinely huge
-- Use `select` over `include` when you don't need the full relation — reduces over-fetching
+- Keep Prisma schema in `prisma/schema.prisma`: don't split it across files unless the schema is genuinely huge
+- Use `select` over `include` when you don't need the full relation: reduces over-fetching
 - Put data access logic in repository functions, not scattered through route handlers
 - Use `@map` and `@@map` to keep the Prisma model names JS-friendly while the DB uses snake_case
 

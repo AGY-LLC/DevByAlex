@@ -1,11 +1,11 @@
-# {{APP_NAME}} — Wireframes
+# {{APP_NAME}}: Wireframes
 
 > Written by `/plan-wireframes`, in one of two modes. **GENERATE** (greenfield):
 > low-fidelity Figma frames per feature. **CAPTURE** (existing app): an inventory
-> of the screens already in the code — no Figma. Either way it's the artifact each
+> of the screens already in the code: no Figma. Either way it's the artifact each
 > feature is validated against and **part of Alex's approval gate** with the guide.
 
-**Mode:** GENERATE (Figma) | CAPTURE (from code) — _delete one_
+**Mode:** GENERATE (Figma) | CAPTURE (from code): _delete one_
 **Figma file/project:** _link (GENERATE only)_
 **Updated:** {{DATE}}
 
@@ -28,6 +28,6 @@
 ## Notes
 
 - Low-fidelity: structure and flow, not pixel polish.
-- Non-happy states (empty / loading / error) are included — that's where flows
+- Non-happy states (empty / loading / error) are included, that's where flows
   break.
 - If `docs/DESIGN.md` exists, these honor its tokens.

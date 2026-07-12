@@ -13,7 +13,7 @@ My go-to for standalone API services that don't belong in a Next.js project. Not
 
 ## Pros
 
-- Minimal and flexible — you build exactly what you need
+- Minimal and flexible: you build exactly what you need
 - Massive ecosystem
 - Easy to understand what's happening (no magic)
 - Simple to deploy anywhere: Docker, EC2, Railway, Render
@@ -22,11 +22,11 @@ My go-to for standalone API services that don't belong in a Next.js project. Not
 
 ## Cons
 
-- No opinions means you make all the decisions — project structure, error handling, logging, all of it
+- No opinions means you make all the decisions: project structure, error handling, logging, all of it
 - Middleware stacking is manual and easy to get wrong (especially order of operations for auth + error handlers)
-- Error handling patterns are inconsistent — you have to be deliberate about it
+- Error handling patterns are inconsistent: you have to be deliberate about it
 - Doesn't have the TypeScript-first DX of newer frameworks
-- `async/await` error propagation requires careful handling — uncaught rejections in Express v4 are a footgun
+- `async/await` error propagation requires careful handling: uncaught rejections in Express v4 are a footgun
 
 ## When I'd use it again
 
@@ -44,10 +44,10 @@ My go-to for standalone API services that don't belong in a Next.js project. Not
 
 ## Alternatives
 
-- **Fastify** — faster, better TypeScript support, plugin system is solid. My pick if starting fresh on a Node API.
-- **Hono** — excellent for edge/serverless. Lightweight and fast.
-- **NestJS** — opinionated, enterprise-y. Good if the team likes decorators and you need the structure.
-- **tRPC** — not a framework, but worth considering if you're staying in TypeScript end-to-end.
+- **Fastify**: faster, better TypeScript support, plugin system is solid. My pick if starting fresh on a Node API.
+- **Hono**: excellent for edge/serverless. Lightweight and fast.
+- **NestJS**: opinionated, enterprise-y. Good if the team likes decorators and you need the structure.
+- **tRPC**: not a framework, but worth considering if you're staying in TypeScript end-to-end.
 
 ## Current stance
 
@@ -59,19 +59,19 @@ My go-to for standalone API services that don't belong in a Next.js project. Not
 
 - Always add a global error handler middleware (4-parameter: `(err, req, res, next)`)
 - `async` route handlers need a wrapper or you'll silently swallow errors in Express v4
-- Validate all request inputs — use Zod at the route handler level
+- Validate all request inputs: use Zod at the route handler level
 - Rate limit public endpoints; don't rely on infra alone
 
 ## Preferences
 
 - Structure: `src/routes/`, `src/middleware/`, `src/services/`, `src/lib/`
-- Keep route handlers thin — logic goes in service functions
+- Keep route handlers thin: logic goes in service functions
 - Use `dotenv` + a Zod-validated `env.ts` for environment variables
-- Log with structured JSON (pino or winston) — `console.log` in production is painful
+- Log with structured JSON (pino or winston): `console.log` in production is painful
 
 ## AI notes
 
-AI is very good at Express boilerplate. Watch for missing async error handling — AI often generates `async` route handlers without the error propagation wrapper.
+AI is very good at Express boilerplate. Watch for missing async error handling: AI often generates `async` route handlers without the error propagation wrapper.
 
 Also watch for outdated patterns (Express 4 vs 5, which is now stable).
 

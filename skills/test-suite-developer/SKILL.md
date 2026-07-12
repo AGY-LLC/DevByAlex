@@ -15,7 +15,7 @@ description: >-
 
 ## Mindset
 
-- **Outcomes, not lines.** Start from "what must happen when a user / caller / scheduler does X?" — never from coverage percentages. 100% line coverage with no assertion on the observable outcome is worthless.
+- **Outcomes, not lines.** Start from "what must happen when a user / caller / scheduler does X?": never from coverage percentages. 100% line coverage with no assertion on the observable outcome is worthless.
 - **A test is a claim about behavior.** Every test should correspond to a sentence you could tell a product manager: "when the user does X with state Y, Z happens." If you can't phrase it, don't write it.
 - **Assume the code is wrong.** Write the test from the spec/outcome, not from reading the implementation. If you write tests by mirroring the code, you freeze in its bugs.
 - **Exhaustive on outcomes, minimal on duplication.** Every distinct expected outcome gets a test. But two tests that exercise the same outcome through different inputs are one test with a parametrized table.
@@ -23,7 +23,7 @@ description: >-
 
 ## Workflow
 
-Run these phases in order. Do not skip phase 1 — a test suite without a plan becomes duplicative and gap-ridden.
+Run these phases in order. Do not skip phase 1: a test suite without a plan becomes duplicative and gap-ridden.
 
 ### 1. Map the surface
 
@@ -63,12 +63,12 @@ Before writing any test code, emit a **test plan** the user can review. Use stab
 Use this template per plan entry:
 
 ```markdown
-### TEST-XXX — [one-line title: "route/function: outcome under condition"]
+### TEST-XXX: [one-line title: "route/function: outcome under condition"]
 
 | Field              | Value                                                                                       |
 | ------------------ | ------------------------------------------------------------------------------------------- |
 | **Level**          | unit \| integration \| component \| e2e \| contract \| snapshot                             |
-| **Entry point**    | `path/to/file.ext` — symbol, route, or component                                            |
+| **Entry point**    | `path/to/file.ext`: symbol, route, or component                                            |
 | **Given**          | Preconditions (state, inputs, fixtures)                                                     |
 | **When**           | The action under test (call, request, click, event)                                         |
 | **Then**           | Observable outcome to assert (return value, status + body, DOM state, side effect, log)    |
@@ -94,12 +94,12 @@ plan:
 
 Default rules:
 
-- **Unit** — pure functions, reducers, format/parse helpers, validation schemas. Fast, no I/O, no mocks (or very few).
-- **Integration** — HTTP routes, DB access, service classes that coordinate multiple units. Use the real test DB when the project provides one (respect project rules like "no mocked DB").
-- **Component** — a single UI component's state transitions and rendered output.
-- **E2E** — whole user flows across multiple screens/routes, only for golden paths and the top 2–3 critical failure modes. E2E tests are expensive; don't drown here.
-- **Contract** — API request/response shape, wire format stability.
-- **Snapshot** — only for outputs where the exact shape *is* the contract (serialized payloads, generated code, rendered markdown). Never for arbitrary component markup.
+- **Unit**: pure functions, reducers, format/parse helpers, validation schemas. Fast, no I/O, no mocks (or very few).
+- **Integration**: HTTP routes, DB access, service classes that coordinate multiple units. Use the real test DB when the project provides one (respect project rules like "no mocked DB").
+- **Component**: a single UI component's state transitions and rendered output.
+- **E2E**: whole user flows across multiple screens/routes, only for golden paths and the top 2–3 critical failure modes. E2E tests are expensive; don't drown here.
+- **Contract**: API request/response shape, wire format stability.
+- **Snapshot**: only for outputs where the exact shape *is* the contract (serialized payloads, generated code, rendered markdown). Never for arbitrary component markup.
 
 When two levels could cover an outcome, prefer the **lower** level unless the outcome is specifically about the interaction between layers.
 
@@ -107,19 +107,19 @@ When two levels could cover an outcome, prefer the **lower** level unless the ou
 
 Implement the plan in order. For each test:
 
-1. Follow the project's test conventions (framework, file location, naming) — read a nearby existing test first.
+1. Follow the project's test conventions (framework, file location, naming): read a nearby existing test first.
 2. **Arrange–Act–Assert** structure, one behavior per test. If a test has more than one `expect`/`assert` block asserting unrelated things, split it.
 3. **Name tests by outcome**, not by function name. `"returns 401 when session is expired"` beats `"testGetUser"`.
 4. **Use real dependencies where the project supports it.** Honor rules like stub-mode for AI/3rd-party calls.
-5. **Assert on observable effects**, not on internal implementation details. Don't spy on private helpers to prove a public method works — assert the public outcome.
+5. **Assert on observable effects**, not on internal implementation details. Don't spy on private helpers to prove a public method works: assert the public outcome.
 6. **Parametrize** tables of inputs with distinct expected outputs instead of copy-pasting tests.
 
 ### 6. Run and iterate
 
 After writing each batch (or each file):
 
-1. Run the suite. Every test you wrote must **pass for the right reason** — a passing test that would also pass against a broken implementation is a bad test. Briefly justify why each non-trivial test fails if the behavior regresses.
-2. If a test fails because of a **real bug**, stop and surface it as a finding — do not weaken the test to make it pass.
+1. Run the suite. Every test you wrote must **pass for the right reason**: a passing test that would also pass against a broken implementation is a bad test. Briefly justify why each non-trivial test fails if the behavior regresses.
+2. If a test fails because of a **real bug**, stop and surface it as a finding: do not weaken the test to make it pass.
 3. If a test is flaky, fix the flake (usually: unmocked time, unmocked randomness, unordered async, leaked state between tests). Never retry-loop around flakes.
 4. After the whole plan is implemented, run the full project test suite one more time to catch cross-test interference.
 
@@ -130,7 +130,7 @@ Final report to the user:
 - Counts: planned vs implemented vs skipped, by level.
 - List of **outcomes newly covered**.
 - List of **outcomes still uncovered** and why (hard to test, needs design change, needs fixture/infra work).
-- **Bugs discovered** while writing tests (each one a finding with file:line, symptom, suggested fix — do not silently fix bugs without flagging).
+- **Bugs discovered** while writing tests (each one a finding with file:line, symptom, suggested fix: do not silently fix bugs without flagging).
 - **Testability findings**: modules that resisted testing and the design change that would unblock them.
 
 ## Rules
@@ -155,8 +155,8 @@ originating `FIND-xxx` in the final report.
 
 ### Bug-revealing handoff (between code-review and fix-errors)
 
-When invoked by `technician` in the middle of its loop — after `code-review`
-has produced a `FIND-xxx` queue and before `fix-errors` runs — you have
+When invoked by `technician` in the middle of its loop: after `code-review`
+has produced a `FIND-xxx` queue and before `fix-errors` runs: you have
 **three jobs**, in order:
 
 1. **Write a failing test per bug finding.** For every `FIND-xxx` whose
@@ -167,7 +167,7 @@ has produced a `FIND-xxx` queue and before `fix-errors` runs — you have
    - **Fails on the current code for the right reason** (the observable
      outcome the finding predicts). Run the test to confirm it fails before
      moving on. If the test passes against the buggy code, your test is
-     wrong — the finding is not yet pinned down.
+     wrong: the finding is not yet pinned down.
    - Will pass once the finding's **Fix intent** is implemented. Do not
      overspecify; assert the outcome, not the mechanism.
    - Record the mapping: `TEST-xxx reveals FIND-yyy` in the plan and the

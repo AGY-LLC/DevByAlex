@@ -1,13 +1,13 @@
-# {{APP_NAME}} — DevByAlex Status
+# {{APP_NAME}}: DevByAlex Status
 
 > Single source of truth for the autonomous workflow. `dev-autopilot` reads this
 > file to decide what to do next; every stage/feature skill updates it. Keep it
-> short and current — push detail into feature cards and the log. Use absolute
+> short and current: push detail into feature cards and the log. Use absolute
 > dates. Tag anything inferred (not observed) `(needs review)`.
 >
 > **Bugs you hit go in [`docs/BUGS.md`](./BUGS.md), cosmetic tweaks in
 > [`docs/TWEAKS.md`](./TWEAKS.md), and post-launch user feedback in
-> [`docs/FEEDBACK.md`](./FEEDBACK.md) — not here.** The autopilot drains bugs,
+> [`docs/FEEDBACK.md`](./FEEDBACK.md): not here.** The autopilot drains bugs,
 > then tweaks, **before any build step** and won't enter the launch stage while
 > either log has open entries; `/live-triage` converts feedback into those logs.
 
@@ -15,7 +15,7 @@
 **Updated:** {{DATE}} <!-- date · commit · branch -->
 **Stack:** {{STACK}}
 
-## Gates (Alex approves these — agents must never self-check them)
+## Gates (Alex approves these: agents must never self-check them)
 
 - [ ] Spec approved
 - [ ] Implementation guide approved
@@ -28,17 +28,17 @@
 ## Plan
 
 - [ ] `docs/SPEC.md` written
-- [ ] Brand foundation (`docs/BRAND.md`) — if public-facing (`/marketer-brand-generation`)
+- [ ] Brand foundation (`docs/BRAND.md`): if public-facing (`/marketer-brand-generation`)
 - [ ] `docs/IMPLEMENTATION_GUIDE.md` written
-- [ ] Feature ADRs seeded (`docs/adr/` — one per feature; existing repos: **backfilled before any feature work**)
-- [ ] Design style chosen (`docs/DESIGN.md`) — PRIMARY × SECONDARY via `/plan-design`, with web-searched real-world references recorded (rides under the wireframes gate)
+- [ ] Feature ADRs seeded (`docs/adr/`: one per feature; existing repos: **backfilled before any feature work**)
+- [ ] Design style chosen (`docs/DESIGN.md`): PRIMARY × SECONDARY via `/plan-design`, with web-searched real-world references recorded (rides under the wireframes gate)
 - [ ] Wireframes created (`docs/wireframes/`)
-- [ ] Design resources specced (`docs/design/RESOURCES.md`) — loader · marketing load-in · OG preview image
+- [ ] Design resources specced (`docs/design/RESOURCES.md`): loader · marketing load-in · OG preview image
 
 ## Dev
 
 - [ ] Scaffold (one-time baseline)
-- [ ] Custom app loader (built per `docs/design/RESOURCES.md`, or override recorded with a reason — never silently skipped)
+- [ ] Custom app loader (built per `docs/design/RESOURCES.md`, or override recorded with a reason: never silently skipped)
 - [ ] Authentication (built + validated)
 
 ### Features
@@ -53,23 +53,23 @@ Status: `todo` → `in-progress` → `blocked` → `done`.
 ## Launch
 
 - [ ] No open bugs in `docs/BUGS.md` or open tweaks in `docs/TWEAKS.md`   ← soft gate: autopilot won't enter launch while either log has open entries
-- [ ] Observability wired — error monitoring (PII-scrubbed) + consent-gated analytics + uptime, verified on staging (`/launch-observability`)
+- [ ] Observability wired: error monitoring (PII-scrubbed) + consent-gated analytics + uptime, verified on staging (`/launch-observability`)
 - [ ] Acceptance tests written (`docs/ACCEPTANCE_TESTS.md`)
 - [ ] Acceptance suite passed against staging (`/launch-verify`)   ← gate `/launch-submit` reads as "acceptance suite green"
-- [ ] Visual QA passed — iOS + Android screenshots reviewed (`/launch-visual-qa`)
+- [ ] Visual QA passed: iOS + Android screenshots reviewed (`/launch-visual-qa`)
 - [ ] Staging smoke test passed
 - [ ] Launch-readiness audit passed
-- [ ] Legal/compliance scan passed — ToS, privacy policy, cookie consent (`/launch-compliance`)
+- [ ] Legal/compliance scan passed: ToS, privacy policy, cookie consent (`/launch-compliance`)
 - [ ] Accessibility audit passed (WCAG 2.2 AA)
 - [ ] SEO audit passed
 - [ ] Prose pass done
-- [ ] Store listing assets generated — App Store + Play (`/launch-store-assets`)
-- [ ] Submitted to TestFlight + Play internal (manual) — `/launch-submit`, human-triggered only
+- [ ] Store listing assets generated: App Store + Play (`/launch-store-assets`)
+- [ ] Submitted to TestFlight + Play internal (manual): `/launch-submit`, human-triggered only
 
 ## Live (post-launch)
 
 - [ ] Observability receiving real production events (not just the staging test events)
-- [ ] Feedback triage running — `/live-triage` drains `docs/FEEDBACK.md` into the bug/tweak logs (manual or scheduled)
+- [ ] Feedback triage running: `/live-triage` drains `docs/FEEDBACK.md` into the bug/tweak logs (manual or scheduled)
 
 ## Next action
 
@@ -82,5 +82,5 @@ Status: `todo` → `in-progress` → `blocked` → `done`.
 
 ## Log
 
-<!-- newest first: date — skill — what changed (branch, commit) — pulse: <staging URL> · <screenshot paths> (or pulse: n/a for non-UI runs) -->
-- {{DATE}} — init-ai — workflow bootstrapped.
+<!-- newest first: date, skill, what changed (branch, commit), pulse: <staging URL> · <screenshot paths> (or pulse: n/a for non-UI runs) -->
+- {{DATE}}, init-ai, workflow bootstrapped.

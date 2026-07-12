@@ -15,12 +15,12 @@ My default is GitHub Actions. Simple, well-documented, free for most use cases, 
 
 ## What I want from a CI/CD pipeline
 
-1. **Fast feedback** — if something is broken, I want to know before it reaches main
-2. **Type checking** — TypeScript errors caught automatically
-3. **Linting** — consistent code style without arguing about it in code review
-4. **Tests** — at minimum, a smoke test or unit tests on core logic
-5. **Preview deploys** — Vercel handles this for Next.js projects automatically
-6. **Deployment** — automated deploys on merge to main (not manual)
+1. **Fast feedback**: if something is broken, I want to know before it reaches main
+2. **Type checking**: TypeScript errors caught automatically
+3. **Linting**: consistent code style without arguing about it in code review
+4. **Tests**: at minimum, a smoke test or unit tests on core logic
+5. **Preview deploys**: Vercel handles this for Next.js projects automatically
+6. **Deployment**: automated deploys on merge to main (not manual)
 
 ---
 
@@ -30,7 +30,7 @@ The branch model I use depends on whether the project has real users yet. Two ph
 
 ### Pre-deploy: develop directly on main
 
-Before anyone is using the app, I commit straight to `main`. No feature branches for in-scope work. No PR ceremony when the reviewer is me. The only exception: break off a branch when I'm trying something I might throw away — a "might add" feature I want to explore without committing to the main line yet.
+Before anyone is using the app, I commit straight to `main`. No feature branches for in-scope work. No PR ceremony when the reviewer is me. The only exception: break off a branch when I'm trying something I might throw away: a "might add" feature I want to explore without committing to the main line yet.
 
 What counts as a "might add" branch:
 
@@ -44,17 +44,17 @@ Everything else lands on `main` directly. A dirty `main` that gets cleaned up is
 
 The day the first external user signs up, the calculus changes. A bad commit is now a real outage and a reputational cost. The working branch moves off `main`:
 
-- **`main`** — production. Always deployable. No direct commits; only promotion from `staging` once it's been verified there.
-- **`staging`** — what deploys to the staging environment. Mirrors what's about to go to prod. Runs through the [staging smoke test](../preparing-for-launch.md#the-manual-smoke-test) before promotion.
-- **`dev`** — the working branch. Feature branches merge into `dev`. `dev` promotes to `staging` when a batch of changes is ready for pre-prod verification.
+- **`main`**: production. Always deployable. No direct commits; only promotion from `staging` once it's been verified there.
+- **`staging`**: what deploys to the staging environment. Mirrors what's about to go to prod. Runs through the [staging smoke test](../preparing-for-launch.md#the-manual-smoke-test) before promotion.
+- **`dev`**: the working branch. Feature branches merge into `dev`. `dev` promotes to `staging` when a batch of changes is ready for pre-prod verification.
 
 Flow: `feature/foo → dev → staging → main`.
 
-The promotion direction matters. Changes don't merge up the chain automatically — each promotion is a deliberate call that the work is ready for the next environment.
+The promotion direction matters. Changes don't merge up the chain automatically: each promotion is a deliberate call that the work is ready for the next environment.
 
 ### When to switch
 
-My rule: the first external user is the trigger. Before that, the three-branch model is ritual without purpose — you're doing merge ceremony to yourself. After that, direct commits to `main` are playing with fire.
+My rule: the first external user is the trigger. Before that, the three-branch model is ritual without purpose: you're doing merge ceremony to yourself. After that, direct commits to `main` are playing with fire.
 
 Don't introduce the three-branch model too early, and don't stay on "develop on main" after you've shipped.
 
@@ -167,16 +167,16 @@ For other platforms (Railway, EC2, Docker Hub):
 ## Rules
 
 - CI must pass before merging. Don't bypass it.
-- Secrets live in GitHub Actions secrets — not hardcoded, not in `.env` files committed to the repo
+- Secrets live in GitHub Actions secrets: not hardcoded, not in `.env` files committed to the repo
 - Deployments to production only from main, not feature branches
-- Keep CI fast — if it takes > 5 minutes, something is wrong (or you have a good reason)
-- Match CI branch targets to your actual branch model — don't inherit templates blindly
+- Keep CI fast: if it takes > 5 minutes, something is wrong (or you have a good reason)
+- Match CI branch targets to your actual branch model: don't inherit templates blindly
 - Pre-deploy: develop on `main`, branches only for "might add" experiments. Post-deploy (first real user): switch to `main` / `staging` / `dev` with an explicit promotion flow.
 
 ## Preferences
 
 - Cache `node_modules` or npm cache to speed up runs
-- Fail fast — run type check and lint before tests (faster feedback on common errors)
+- Fail fast: run type check and lint before tests (faster feedback on common errors)
 - Add a status badge to the README once CI is set up
 - Split long workflows into parallel jobs when it makes sense
 - For monorepos: use path filters to avoid running all CI on every change

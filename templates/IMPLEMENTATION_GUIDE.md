@@ -1,4 +1,4 @@
-# {{APP_NAME}} — Implementation Guide
+# {{APP_NAME}}: Implementation Guide
 
 > Written by `/plan-guide` from the approved spec. The dev stage builds and
 > validates against this. **Needs Alex's approval** (gate in `docs/STATUS.md`)
@@ -15,12 +15,12 @@
 
 ## Build order (dependencies first)
 
-1. **Scaffold** — baseline (`/dev-scaffold`).
-2. **Authentication** — `/dev-auth`.
-3. _Feature — `docs/features/03-…md`_
+1. **Scaffold**: baseline (`/dev-scaffold`).
+2. **Authentication**: `/dev-auth`.
+3. _Feature: `docs/features/03-…md`_
 4. _…_
 
-> Rationale: _why this order — highest-risk / most-depended-on first._
+> Rationale: _why this order: highest-risk / most-depended-on first._
 
 ## Features
 
@@ -37,13 +37,13 @@
 - **Env/config:** _Zod-validated env, `.env.example`, secrets handling._
 - **Testing strategy:** _what's unit vs. integration vs. E2E; high-risk areas
   that must be covered (auth, permissions, billing, validation, critical flows)._
-- **Accessibility:** _WCAG 2.2 AA baseline — semantic HTML, labels/roles,
+- **Accessibility:** _WCAG 2.2 AA baseline: semantic HTML, labels/roles,
   keyboard + visible focus, contrast, target size, reduced-motion. Verified by
   `accessibility-critique` at launch._
 - **SEO (public surfaces):** _semantic HTML, framework metadata (titles/
   descriptions/OpenGraph), sitemap + robots, JSON-LD, canonical/hreflang.
   Verified by `seo-audit` at launch (needs `docs/BRAND.md`)._
-- **Design resources (app-wide):** _per `docs/design/RESOURCES.md` — the custom
+- **Design resources (app-wide):** _per `docs/design/RESOURCES.md`: the custom
   **app loader** (built in scaffold), the **marketing load-in** on public
   landing pages, and the Stripe-style dynamic **OG preview image**. All honor
   `prefers-reduced-motion`; the marketing load-in must not block LCP or shift

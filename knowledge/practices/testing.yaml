@@ -1,8 +1,8 @@
 _meta:
   id: practice-testing
   type: doc
-  title: "Best practice — Testing"
-  summary: Outcomes-driven testing — a test is a claim about behavior. Enumerate every distinct outcome (success/failure/edge/security), pick the right kind of test, and review suites for the gaps that matter.
+  title: "Best practice, Testing"
+  summary: Outcomes-driven testing, a test is a claim about behavior. Enumerate every distinct outcome (success/failure/edge/security), pick the right kind of test, and review suites for the gaps that matter.
   sensitivity: internal
   read_scope: brain.read
   tags: [practice, engineering, testing, init, feature, review]
@@ -21,12 +21,12 @@ practice:
 
   inputs_to_gather_first:
     - The spec / expected behavior for the surface under test (test from the spec, not the code).
-    - The boundaries that matter — auth, money, external deps, anything that's broken before.
+    - The boundaries that matter, auth, money, external deps, anything that's broken before.
     - Whether a real test DB is available (prefer it over mocking the database for integration tests).
 
   methodology:
     - Treat each test as a claim about behavior ("when the caller does X with state Y, Z happens"). If you can't phrase it that way, you don't know what you're testing yet.
-    - Write from the spec, not the implementation — mirroring the code freezes its bugs in.
+    - Write from the spec, not the implementation, mirroring the code freezes its bugs in.
     - Enumerate the outcomes across the axes (happy path, validation, authn, authz, state, concurrency, external-dep failure, side effects, security, invariants, regression anchors), then write one test per distinct outcome and parametrize over inputs.
     - Pick the right kind: unit for pure logic, integration for routes/DB/services (real test DB), component for UI state, E2E (Playwright) only for golden paths + top 2–3 critical failures.
     - Verify mocks are actually called; a test that never fails is not a test.
@@ -36,7 +36,7 @@ practice:
       prompt: "What surface are we testing, and what's its expected behavior from the spec?"
       why: Tests derive from intended behavior; without the spec you'll just mirror the code.
     - id: criticality
-      prompt: "What are the high-stakes paths here — auth, payments, data integrity, anything that's broken before?"
+      prompt: "What are the high-stakes paths here, auth, payments, data integrity, anything that's broken before?"
       why: Those get the deepest coverage (and possibly E2E); low-stakes surfaces get less.
     - id: realdb
       prompt: "Is there a real test database available, or do we mock persistence?"
@@ -62,7 +62,7 @@ practice:
     destination: "Tests in the repo (colocated *.test.ts for unit; tests/ for integration/e2e)."
     format: markdown
     template: |
-      # Test plan — <surface>
+      # Test plan, <surface>
 
       ## Outcomes to cover
       | Axis | Outcome | Test |
@@ -74,7 +74,7 @@ practice:
       | security | … | … |
 
       ## Kind of test
-      <Unit / integration / component / e2e — and why, per area.>
+      <Unit / integration / component / e2e, and why, per area.>
 
       ## Gaps deferred
       <Anything intentionally not tested and why.>

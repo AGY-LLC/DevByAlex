@@ -29,7 +29,7 @@ Every time I set up Stripe. Designed to prevent the mistakes I've already made.
 - [ ] Production mode: mirror of test prices created
 - [ ] Customer Portal enabled in Stripe dashboard (if using subscription management)
 - [ ] Webhook endpoint registered in Stripe dashboard (both test and production)
-- [ ] Webhook events selected — at minimum:
+- [ ] Webhook events selected: at minimum:
   - `checkout.session.completed`
   - `customer.subscription.updated`
   - `customer.subscription.deleted`
@@ -39,7 +39,7 @@ Every time I set up Stripe. Designed to prevent the mistakes I've already made.
 
 ## Environment variables
 
-- [ ] `STRIPE_SECRET_KEY` (server-side only — never expose to client)
+- [ ] `STRIPE_SECRET_KEY` (server-side only: never expose to client)
 - [ ] `STRIPE_PUBLISHABLE_KEY` (safe for client)
 - [ ] `STRIPE_WEBHOOK_SECRET`
 - [ ] Separate keys for test and production environments
@@ -64,7 +64,7 @@ Every time I set up Stripe. Designed to prevent the mistakes I've already made.
 - [ ] Webhook handler is idempotent (handles duplicate/retried events without double-applying)
 - [ ] Subscription status updated on relevant webhook events
 - [ ] Customer Portal session endpoint implemented (if self-service billing)
-- [ ] Success redirect page does NOT treat the redirect as authoritative — user sees a "processing" state until webhook confirms
+- [ ] Success redirect page does NOT treat the redirect as authoritative: user sees a "processing" state until webhook confirms
 
 ---
 

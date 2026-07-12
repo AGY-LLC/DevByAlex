@@ -10,7 +10,7 @@ description: >-
   (spelling, grammar, broken interpolation, placeholder leakage in
   user-facing text), and any app-specific launch concerns inferred from
   the code. Scope is strictly
-  codebase readiness — data migration and environment-variable setup are
+  codebase readiness: data migration and environment-variable setup are
   explicitly out of scope. Use when the user asks whether a project is ready
   to launch, wants a pre-launch audit, or requests a launch checklist,
   go/no-go review, or ship-readiness assessment.
@@ -48,8 +48,8 @@ as out of scope and continue with the codebase audit.
 - **Silent failure is worse than loud failure at launch.** Swallowed
   errors, missing logs, and unbounded retries all count as findings.
 - **Specific beats generic.** Tie every finding to a file, symbol, route,
-  or config key — never "review the auth layer carefully."
-- **Earn the slot.** Comprehensiveness is not the goal — actionable signal
+  or config key: never "review the auth layer carefully."
+- **Earn the slot.** Comprehensiveness is not the goal: actionable signal
   is. A finding must connect to a real consequence: a user notices, a law
   is implicated, an attacker gains something, a request fails, money leaks,
   or the next change gets materially riskier. Internal tidiness with no
@@ -78,11 +78,11 @@ as out of scope and continue with the codebase audit.
 If the audit surfaces items in these areas (e.g. "this env var must be set
 before launch", "this migration needs to run first"), record them in the
 **Out-of-scope launch prerequisites** section of the report so the user has
-a single handoff list — but do not execute them.
+a single handoff list, but do not execute them.
 
 ## Workflow
 
-The five checklist sections are **independent** — none of them depends on
+The five checklist sections are **independent**: none of them depends on
 the output of another. Run them as **parallel subagents** (fan-out +
 aggregate), not as a sequential pipeline. The orchestrator does steps 1–2
 itself to produce a shared briefing, fans out one subagent per section in
@@ -120,7 +120,7 @@ step 3, then merges their outputs in steps 4–5.
 Each of the five checklist sections below runs in its **own subagent**
 via the Agent tool (`subagent_type: general-purpose`), launched in
 parallel from a single message. This keeps the main conversation context
-clean — each subagent audits its section inside its own context window
+clean: each subagent audits its section inside its own context window
 and returns only a structured summary. Never run the checklist sections
 inline from the launch-readiness skill itself; the orchestrator's job is
 briefing, merging, and reporting.
@@ -132,7 +132,7 @@ Spawn one subagent per section:
 3. Security
 4. Performance & reliability
 5. App-specific considerations (brief from the concerns derived in step 1
-   of the workflow — skip this subagent only if step 1 surfaced none)
+   of the workflow: skip this subagent only if step 1 surfaced none)
 6. Grammar, spelling & copy quality
 
 ### Shared briefing
@@ -162,7 +162,7 @@ Additionally, tell each subagent:
 - **Which section** it owns (one of the five in **Checklist sections**
   below) and paste that section's bullet list verbatim as its
   authoritative coverage scope.
-- That it **must not** audit the other four sections — if it spots an
+- That it **must not** audit the other four sections: if it spots an
   issue that belongs elsewhere, it should note it as a cross-reference in
   its return but not file a finding.
 - That it is forbidden from fixing anything. Output is findings only.
@@ -216,8 +216,8 @@ findings.
 
 - **Privacy policy** exists, is linked from signup / footer / relevant
   consent flows, and accurately describes:
-  - Categories of data collected (including anything collected implicitly
-    — analytics, device info, IP, cookies, session replay).
+  - Categories of data collected (including anything collected implicitly:
+    analytics, device info, IP, cookies, session replay).
   - Purposes of processing.
   - Third parties data is shared with (cross-check against SDKs, analytics
     libs, error reporters, payment processors, AI providers actually
@@ -249,7 +249,7 @@ applicability."
     deletion, portability, objection. Flag if missing or if deletion is
     soft-delete that never actually purges.
   - Consent is freely given, specific, and revocable where it is the
-    basis — check the UI and the server side both honor revocation.
+    basis: check the UI and the server side both honor revocation.
   - DPA / sub-processor list is discoverable if claimed.
   - International transfer mechanism acknowledged if data leaves the EU.
 - **CCPA / CPRA (California users):** "Do Not Sell or Share My Personal
@@ -315,7 +315,7 @@ Follow the same rigor as a pre-merge security review, but framed as
   unbounded pagination, heavy work on the request thread that should be
   a background job.
 - **Resource leaks**: file handles, DB connections, HTTP clients, event
-  listeners, timers — all released on every path including errors.
+  listeners, timers: all released on every path including errors.
 - **Timeouts everywhere**: every outbound network call has an explicit
   timeout; no `await fetch(...)` without one on critical paths.
 - **Retries & idempotency**: retries exist where they make sense and are
@@ -341,7 +341,7 @@ Follow the same rigor as a pre-merge security review, but framed as
 
 ### 5. App-specific considerations
 
-Derive from step 1 of the workflow. Examples — not exhaustive:
+Derive from step 1 of the workflow. Examples: not exhaustive:
 
 - **Payments / billing**: idempotency keys on charge creation; webhooks
   verified; refund path; prorations; tax handling if claimed.
@@ -369,23 +369,23 @@ Derive from step 1 of the workflow. Examples — not exhaustive:
 
 Audit all **user-facing text** committed to the repo for spelling errors,
 grammar mistakes, awkward phrasing, broken interpolation, and
-inconsistent voice. Typos in shipped copy erode trust on day one — treat
+inconsistent voice. Typos in shipped copy erode trust on day one: treat
 them as launch findings, not nits.
 
 Cover every surface where users (or their inboxes) will see text:
 
 - **UI strings**: page copy, button labels, form labels, placeholders,
-  empty states, tooltips, modal text, navigation, settings descriptions —
+  empty states, tooltips, modal text, navigation, settings descriptions,
   including strings inside i18n/translation files (`en.json`,
   `locales/*`, `messages.po`, etc.).
 - **Error & validation messages**: thrown errors, toast messages, inline
   field errors, 4xx/5xx pages, fallback states. These are read under
-  stress — typos and unclear wording hurt most here.
+  stress: typos and unclear wording hurt most here.
 - **Emails & notifications**: transactional email templates (welcome,
   password reset, receipts), push-notification copy, SMS templates,
   in-app notifications.
 - **Legal & policy documents**: privacy policy, terms of service, cookie
-  banner copy, consent screens, EULA. Grammar/typo only — substantive
+  banner copy, consent screens, EULA. Grammar/typo only: substantive
   legal accuracy is owned by the Legal & policy compliance subagent.
 - **Marketing & landing copy** committed to the repo: hero text, feature
   descriptions, pricing pages, FAQ, testimonials.
@@ -416,7 +416,7 @@ What to flag:
 - **Numbers, units, dates**: inconsistent date format (`MM/DD/YYYY` vs
   `DD/MM/YYYY`) within the same product; missing units; currency symbols
   hardcoded where locale should drive them.
-- **Untranslated strings** in apps that ship multiple locales — keys
+- **Untranslated strings** in apps that ship multiple locales: keys
   present in `en` but missing in other locale files, or vice versa.
 - **Accessibility-adjacent copy**: `alt=""` on meaningful images,
   generic `aria-label="button"`, link text that says only "here" or
@@ -425,9 +425,9 @@ What to flag:
 
 Out of scope for this subagent (cross-reference, don't file):
 
-- Whether the legal copy is *substantively* accurate vs the code — that
+- Whether the legal copy is *substantively* accurate vs the code, that
   belongs to the Legal & policy compliance subagent.
-- Visual hierarchy, font choice, color, spacing — that's design review.
+- Visual hierarchy, font choice, color, spacing, that's design review.
 - Code comments, internal-only docs, commit messages, test fixtures,
   developer-only logs. Audit only what a user could see.
 
@@ -442,7 +442,7 @@ Severity guidance for this section:
 - **Low**: inconsistent capitalization or voice that does not change
   meaning; minor stylistic preferences.
 - **Note**: stylistic choices the user should confirm (e.g. British vs
-  American spelling — flag the inconsistency, not the choice).
+  American spelling: flag the inconsistency, not the choice).
 
 ## Materiality bar
 
@@ -451,24 +451,24 @@ engineer, told only the finding, would agree it is worth someone's time to
 fix before (or shortly after) launch. Concretely, it must plausibly connect
 to at least one real consequence:
 
-- **A user notices or is harmed** — broken or confusing UX, wrong output,
+- **A user notices or is harmed**: broken or confusing UX, wrong output,
   data loss, a visible copy/typo error, an accessibility barrier. Trust
   damage counts, so **user-visible copy errors and policy-vs-code
-  mismatches always clear the bar** — this section never downgrades them.
-- **Legal / privacy / compliance exposure** — a policy that misrepresents
+  mismatches always clear the bar**: this section never downgrades them.
+- **Legal / privacy / compliance exposure**: a policy that misrepresents
   behavior, a missing required disclosure, an unmet data-subject right.
-- **Security** — something an attacker can actually exploit, or that
+- **Security**: something an attacker can actually exploit, or that
   meaningfully widens the attack surface.
-- **Correctness** — a bug that produces a wrong result, corrupts state or
+- **Correctness**: a bug that produces a wrong result, corrupts state or
   money, or a race / edge case with a realistic trigger.
-- **Cost or reliability at realistic load** — a *measurable* regression, a
+- **Cost or reliability at realistic load**: a *measurable* regression, a
   resource leak, an unbounded retry, a guaranteed-to-page failure mode.
-- **Future-change risk** — a genuine maintainability hazard that makes the
+- **Future-change risk**: a genuine maintainability hazard that makes the
   next change materially riskier (not merely "could be tidier").
 
 ### Do not file (these waste triage budget)
 
-Skip — or at most roll into the **Non-blocking observations** list — any
+Skip, or at most roll into the **Non-blocking observations** list, any
 item that is *technically true but changes nothing that matters*:
 
 - Micro-optimizations with no measurable impact at realistic scale (saving
@@ -482,25 +482,25 @@ item that is *technically true but changes nothing that matters*:
 - Hardening against a threat the architecture already precludes, or a
   "could theoretically" issue with no realistic trigger.
 - **Re-litigating a documented decision.** If the repo has `docs/adr/` and an
-  `active` decision or deliberate omission covers the item, it's settled — cite
+  `active` decision or deliberate omission covers the item, it's settled: cite
   the entry instead of filing. Exceptions: legal/privacy/security/accessibility
-  items are still filed (tagged `ADR-conflict` — the two hard launch gates are
+  items are still filed (tagged `ADR-conflict`: the two hard launch gates are
   never overridable by an ADR); concrete evidence the decision itself causes
-  real harm is filed tagged `ADR-challenge` (entry + evidence, human-only —
+  real harm is filed tagged `ADR-challenge` (entry + evidence, human-only,
   the ADR blocks blind change, not criticism); and code that *contradicts* an
   `active` ADR entry with no recorded supersession is a real finding
   (architecture drift).
-- Any item whose own fix note has to argue the impact is negligible — if
+- Any item whose own fix note has to argue the impact is negligible: if
   you cannot state a concrete consequence, it does not earn a queue slot.
 
 When genuinely unsure, file it at the lowest severity with **Confidence:
-hypothesis** plus a one-line impact statement — but never manufacture a
+hypothesis** plus a one-line impact statement, but never manufacture a
 consequence to justify a finding.
 
 ## Severity rubric
 
 Severity is assigned **only after** a finding clears the **Materiality
-bar**. It grades how urgent a real consequence is — it is not a way to
+bar**. It grades how urgent a real consequence is: it is not a way to
 admit impact-free items as "just a Low."
 
 | Level          | Meaning                                                                                                  |
@@ -511,7 +511,7 @@ admit impact-free items as "just a Low."
 | **Low**        | Real but minor consequence (user-visible polish, hardening with a concrete payoff). Post-launch is fine. |
 | **Note**       | Observation, question, or something the user should confirm rather than the skill guessing.             |
 
-Items that fail the Materiality bar are **not** a severity level — they do
+Items that fail the Materiality bar are **not** a severity level: they do
 not enter the fix queue at all; they go to **Non-blocking observations**.
 
 ## Output format
@@ -522,10 +522,10 @@ Emit a single report in this order.
 
 One of:
 
-- **GO** — no Blockers, no unresolved Highs.
-- **GO WITH CAVEATS** — no Blockers, but one or more Highs the user must
+- **GO**: no Blockers, no unresolved Highs.
+- **GO WITH CAVEATS**: no Blockers, but one or more Highs the user must
   explicitly accept.
-- **NO-GO** — at least one Blocker, or the codebase cannot be
+- **NO-GO**: at least one Blocker, or the codebase cannot be
   meaningfully assessed (state why).
 
 Follow with 2–4 sentences: overall risk, main themes, counts of
@@ -538,18 +538,18 @@ Ordered list of findings. Use stable IDs `LR-001`, `LR-002`, … ordered by
 severity then dependency. Use this template per finding:
 
 ```markdown
-### LR-XXX — [one-line title]
+### LR-XXX: [one-line title]
 
 | Field                  | Value                                                                                               |
 | ---------------------- | --------------------------------------------------------------------------------------------------- |
 | **Severity**           | Blocker \| High \| Medium \| Low \| Note                                                            |
 | **Area**               | legal \| data-law \| security \| performance \| reliability \| app-specific \| copy                 |
 | **Confidence**         | confirmed \| likely \| hypothesis                                                                   |
-| **Location**           | `path/to/file.ext` — lines or symbol, or "repo-wide" when structural. Cite the narrowest anchor.    |
+| **Location**           | `path/to/file.ext`: lines or symbol, or "repo-wide" when structural. Cite the narrowest anchor.    |
 | **Symptom**            | What is wrong today (observable behavior, code, or missing artifact).                               |
 | **Launch impact**      | What breaks, who is at risk, or what obligation is unmet if this ships as-is.                       |
 | **Fix intent**         | One sentence: the desired end state or invariant.                                                   |
-| **Suggested approach** | Concrete steps, patterns, APIs, or copy changes — enough to start editing without re-auditing.      |
+| **Suggested approach** | Concrete steps, patterns, APIs, or copy changes: enough to start editing without re-auditing.      |
 | **Verify**             | How to prove the fix (test, grep, manual check, policy-vs-code diff).                               |
 | **Depends on**         | None \| LR-YYY                                                                                      |
 | **Out of scope**       | Optional: adjacent issues explicitly not covered.                                                   |
@@ -562,11 +562,11 @@ Rules:
   fundamentally requires env-var or data-migration work, move it to
   **Out-of-scope launch prerequisites** instead.
 - Every finding must clear the **Materiality bar**. An item that is true
-  but changes nothing that matters does not belong here — send it to
+  but changes nothing that matters does not belong here: send it to
   **Non-blocking observations** (§6) instead of filing a Low.
-- Mark **Confidence: hypothesis** rather than dropping a shaky finding —
+- Mark **Confidence: hypothesis** rather than dropping a shaky finding,
   the user can still triage it. (Low *confidence* is fine in the queue; low
-  *materiality* is not — those are different axes.)
+  *materiality* is not: those are different axes.)
 
 ### 3. Out-of-scope launch prerequisites
 
@@ -586,7 +586,7 @@ Short bulleted list of checklist sections that passed cleanly, each with
 a one-line justification so the user can see what was actually checked
 (not just what failed). Example:
 
-- **Secrets hygiene** — no credentials found in repo; `.env.example`
+- **Secrets hygiene**: no credentials found in repo; `.env.example`
   contains placeholders only; real env files gitignored.
 
 ### 5. Coverage gaps
@@ -598,7 +598,7 @@ skip.
 
 ### 6. Non-blocking observations
 
-Real-but-immaterial items that failed the **Materiality bar** — surfaced
+Real-but-immaterial items that failed the **Materiality bar**: surfaced
 so nothing is silently dropped, but kept out of the fix queue so they don't
 compete with work that matters. One line each, **no `LR-xxx` IDs, no
 severity, excluded from all counts in the verdict**, and explicitly "no
@@ -609,7 +609,7 @@ promote anything here into the queue without a concrete consequence.
 
 If the user points the skill at a subset (a single feature, a single
 service in a monorepo, a diff), scope the audit to that subset but still
-fan out every checklist-section subagent against it — narrow the target
+fan out every checklist-section subagent against it: narrow the target
 in each subagent's brief, don't drop subagents. Note in the verdict that
 the audit was scoped and that a full-repo pass is still needed before
 launch.

@@ -1,8 +1,8 @@
 _meta:
   id: practice-project-kickoff
   type: doc
-  title: "Best practice — Project kickoff"
-  summary: Turn a vague brief into an extensive, launch-sufficient spec before any code. Read whatever exists, form a hypothesis, interview to fill the gaps, draft the spec, then deep-vet it adversarially to surface roadblocks and locked-in tradeoffs — so the spec drives the data model, routes, and AI prompts from empty repo to launch.
+  title: "Best practice, Project kickoff"
+  summary: Turn a vague brief into an extensive, launch-sufficient spec before any code. Read whatever exists, form a hypothesis, interview to fill the gaps, draft the spec, then deep-vet it adversarially to surface roadblocks and locked-in tradeoffs, so the spec drives the data model, routes, and AI prompts from empty repo to launch.
   sensitivity: internal
   read_scope: brain.read
   tags: [practice, engineering, project-kickoff, spec, init]
@@ -16,50 +16,50 @@ practice:
   matched_skills:
     - /uiux-init
   use_when: >-
-    The user wants to start a new project — especially when the brief is a few
+    The user wants to start a new project, especially when the brief is a few
     vague sentences ("build me an app that…"). DO NOT start coding. Start by
     writing a spec and interviewing the user to fill the important but
     unanswered questions. The spec becomes the foundation for the data model,
     routes, and prompts.
 
   inputs_to_gather_first:
-    - Whatever already exists — a repo, a README, notes, screenshots, a half-built prototype. Read it before asking anything.
+    - Whatever already exists, a repo, a README, notes, screenshots, a half-built prototype. Read it before asking anything.
     - The one-sentence pitch and who it's for.
-    - Whether this is a throwaway prototype or a real project (changes how much rigor to apply — see how-i-start-projects "What I skip in prototypes").
+    - Whether this is a throwaway prototype or a real project (changes how much rigor to apply, see how-i-start-projects "What I skip in prototypes").
 
   methodology:
     - Read first, form a hypothesis. Before asking questions, state what you think the product is, who it serves, and the 3–5 core things a user must do. Vague questions waste the user's time.
-    - Open the interview with that hypothesis ("here's what I think this is — correct me where I'm wrong"), then ask the questions below in order. Stop once you have enough to draft; don't ask all of them if the first few resolve the ambiguity.
-    - Set the rigor from prototype_or_real. A throwaway prototype gets a lean one-pager (purpose, core loop, non-goals). A real project headed for users gets the extensive, launch-sufficient spec below — treat it as if it must contain everything needed to take the product from an empty repo to a launch-ready build with no further discovery. The "not building in v1" list is still the highest-value section; scope creep starts with things that feel small.
-    - Deep-vet the draft before locking it (real projects). Re-read the spec adversarially as a pre-mortem — hunt for the unanswered question that, left implicit, forces an expensive redesign or quietly locks in a tradeoff later (see deep_vet below). Turn each hit into a concrete question for the user or a recorded decision, then fold the answer back into the spec. Anything still unresolved goes in the spec's "Risks & open questions" log rather than staying silent.
+    - Open the interview with that hypothesis ("here's what I think this is, correct me where I'm wrong"), then ask the questions below in order. Stop once you have enough to draft; don't ask all of them if the first few resolve the ambiguity.
+    - Set the rigor from prototype_or_real. A throwaway prototype gets a lean one-pager (purpose, core loop, non-goals). A real project headed for users gets the extensive, launch-sufficient spec below, treat it as if it must contain everything needed to take the product from an empty repo to a launch-ready build with no further discovery. The "not building in v1" list is still the highest-value section; scope creep starts with things that feel small.
+    - Deep-vet the draft before locking it (real projects). Re-read the spec adversarially as a pre-mortem, hunt for the unanswered question that, left implicit, forces an expensive redesign or quietly locks in a tradeoff later (see deep_vet below). Turn each hit into a concrete question for the user or a recorded decision, then fold the answer back into the spec. Anything still unresolved goes in the spec's "Risks & open questions" log rather than staying silent.
     - Lock the stack from the defaults (see workflows/scaffolding) unless there's a real reason to deviate; novelty is a cost, not a feature.
     - Design the data model from the spec next (it's cheap to change now, expensive later), then skeleton routes, then the feature loop.
 
   questions:
     - id: pitch
       prompt: "In one sentence, what is this and who is it for? (If you'd rather I draft it from what exists and you react, say so.)"
-      why: Anchors everything. If they can't answer, the product isn't ready — work the positioning before the build.
+      why: Anchors everything. If they can't answer, the product isn't ready, work the positioning before the build.
     - id: core_actions
       prompt: "What are the 3–5 core things a user must be able to do? List them as verbs."
       why: These become the core product loop, the routes, and the must-have list.
     - id: success
-      prompt: "What does success look like at launch — what must be true for you to call v1 done?"
+      prompt: "What does success look like at launch, what must be true for you to call v1 done?"
       why: Becomes the finished-state definition; prevents an endless v1.
     - id: not_building
       prompt: "What are you explicitly NOT building in v1?"
       why: The single most valuable answer. Scope creep is almost guaranteed without an explicit non-goals list.
     - id: users
-      prompt: "Describe the primary user as a person, not a segment — what are they trying to get done this week?"
+      prompt: "Describe the primary user as a person, not a segment, what are they trying to get done this week?"
       why: Forces specificity; drives journeys and tone.
     - id: constraints
-      prompt: "Any hard constraints — platform (web/mobile/both), budget, deadline, existing systems, compliance, ownership/IP?"
+      prompt: "Any hard constraints, platform (web/mobile/both), budget, deadline, existing systems, compliance, ownership/IP?"
       why: Platform and compliance change the stack and the data model from day one.
     - id: prototype_or_real
       prompt: "Is this a quick prototype to test the idea, or a real project headed for users?"
       why: Decides how much of the scaffolding rigor (CI, tests, migrations, env validation) applies now vs. later, and whether to run the deep vet.
     - id: data_shape
       prompt: "What are the core entities, and who owns each record? Any money, multi-user/teams, or data that must be exportable or deletable on request?"
-      why: Ownership, tenancy, and money/PII representation are the decisions most expensive to reverse — settle them in the spec, not in a migration.
+      why: Ownership, tenancy, and money/PII representation are the decisions most expensive to reverse, settle them in the spec, not in a migration.
     - id: scale
       prompt: "Roughly how many users and how much data at launch, and what would 100x look like? Which external services does this depend on?"
       why: Surfaces vendor rate limits, cost curves, and data-model choices that are fine at 100 rows and a fire at 10M.
@@ -73,23 +73,23 @@ practice:
       to change. Run each lens against the draft; every hit becomes a question for
       the user or an explicit decision recorded in the spec.
     lenses:
-      - Identity & ownership — who owns a record, can accounts merge or collide, single- vs multi-tenant, will SSO/teams be needed later? Retrofitting tenancy or account-merge is brutal.
-      - Data shape that's expensive to reverse — money as integer minor units (not floats), timestamps as UTC with explicit timezone handling, soft- vs hard-delete, enums vs free text, i18n/locale from day one or never.
-      - Compliance triggers — PII, payments (PCI), health, or minors (age gate). Each changes the data model and the launch checklist on day one, not at the end.
-      - External dependencies — vendor rate limits, pricing at expected scale, lock-in, and the fallback when a third party is down. What's the cost curve if this actually works?
-      - Scale & cost assumptions — expected users/data at launch and at 100x; anything fine at 100 rows and fatal at 10M.
-      - Irreversible product/UX decisions — anything that, once users rely on it, can't change without a migration or a broken promise (URL structure, public IDs, pricing model, export expectations).
-      - Failure & empty states — what the product does with zero data, partial data, and every integration failing. Happy-path-only specs hide the real work.
+      - Identity & ownership, who owns a record, can accounts merge or collide, single- vs multi-tenant, will SSO/teams be needed later? Retrofitting tenancy or account-merge is brutal.
+      - Data shape that's expensive to reverse, money as integer minor units (not floats), timestamps as UTC with explicit timezone handling, soft- vs hard-delete, enums vs free text, i18n/locale from day one or never.
+      - Compliance triggers, PII, payments (PCI), health, or minors (age gate). Each changes the data model and the launch checklist on day one, not at the end.
+      - External dependencies, vendor rate limits, pricing at expected scale, lock-in, and the fallback when a third party is down. What's the cost curve if this actually works?
+      - Scale & cost assumptions, expected users/data at launch and at 100x; anything fine at 100 rows and fatal at 10M.
+      - Irreversible product/UX decisions, anything that, once users rely on it, can't change without a migration or a broken promise (URL structure, public IDs, pricing model, export expectations).
+      - Failure & empty states, what the product does with zero data, partial data, and every integration failing. Happy-path-only specs hide the real work.
     output: Each confirmed gap is resolved into the spec or logged under "Risks & open questions" with the tradeoff named. No silent unknowns.
 
   review_checklist:
     - The spec names the problem, the user, the 3–5 core actions, and what success looks like.
     - There is an explicit "not building in v1" / non-goals list.
-    - The domain model is sketched — entities, ownership, and money/time/delete representation — before feature code.
+    - The domain model is sketched, entities, ownership, and money/time/delete representation, before feature code.
     - Identity, roles, and account-merge/collision behavior are decided, not assumed.
     - External dependencies are named with their rate limits, cost-at-scale, and a fallback for each.
     - Compliance triggers (PII, payments, health, minors) are addressed or explicitly ruled out.
-    - The deep vet ran — irreversible/expensive-to-reverse decisions are surfaced, and every unresolved one is logged under "Risks & open questions" rather than left silent.
+    - The deep vet ran, irreversible/expensive-to-reverse decisions are surfaced, and every unresolved one is logged under "Risks & open questions" rather than left silent.
     - Empty/error/partial-data states are specified for the core surfaces, not just the happy path.
     - The stack is chosen and justified (defaults unless a real reason to deviate).
     - Launch blockers are separated from polish items, and the finished-state definition reads as a go/no-go.
@@ -101,7 +101,7 @@ practice:
     destination: "<repo>/docs/feature-spec.md (plus docs/architecture-spec.md and docs/data-model.md as the project grows)"
     format: markdown
     template: |
-      # <Product> — Feature Spec
+      # <Product>, Feature Spec
 
       > Source-of-truth spec for the launchable product. Written to be sufficient to take this from an empty repo to a launch-ready build. Keep it current; the data model, routes, and prompts derive from it.
 
@@ -109,7 +109,7 @@ practice:
       <One or two sentences: the problem and who it's for.>
 
       ## Primary users
-      <Each persona named and described as a person — what they're trying to get done.>
+      <Each persona named and described as a person, what they're trying to get done.>
 
       ## Product promise
       <The one declarative sentence the product delivers on.>
@@ -138,7 +138,7 @@ practice:
       <Top-level routes/screens and how a user moves between them. Public IDs and URL structure that must stay stable.>
 
       ## States & edge cases
-      <Empty, loading, error, partial-data, and offline behavior for the core surfaces — what happens with zero data and with every integration failing.>
+      <Empty, loading, error, partial-data, and offline behavior for the core surfaces, what happens with zero data and with every integration failing.>
 
       ## Monetization
       <Pricing/packaging, free vs paid boundaries, and what's gated. "None in v1" is a valid, deliberate answer.>
@@ -166,4 +166,4 @@ practice:
       <From the deep vet: each unresolved question or assumption, with the tradeoff it carries and what will resolve it.>
 
       ## Finished-state definition
-      <Numbered list of conditions that must all be true to ship v1 — the go/no-go for launch.>
+      <Numbered list of conditions that must all be true to ship v1, the go/no-go for launch.>

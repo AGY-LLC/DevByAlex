@@ -1,8 +1,8 @@
 _meta:
   id: practice-code-review
   type: doc
-  title: "Best practice — Code review"
-  summary: Adversarial code review — assume defects, trace untrusted data to dangerous sinks, work a per-diff checklist across security/logic/contracts/reliability/maintainability, and emit IDed, severity-ranked findings.
+  title: "Best practice, Code review"
+  summary: Adversarial code review, assume defects, trace untrusted data to dangerous sinks, work a per-diff checklist across security/logic/contracts/reliability/maintainability, and emit IDed, severity-ranked findings.
   sensitivity: internal
   read_scope: brain.read
   tags: [practice, engineering, code-review, security, review]
@@ -17,23 +17,23 @@ practice:
     - /code-review
     - /scout
   use_when: >-
-    You're reviewing a diff, PR, or module — or the user wants a skeptical
+    You're reviewing a diff, PR, or module, or the user wants a skeptical
     second pass, a security review, or findings for a follow-on fix pass.
 
   inputs_to_gather_first:
     - The diff or module in scope, and what it's supposed to do.
-    - The trust boundaries — where untrusted input enters (HTTP, DB, files, env, third-party responses).
+    - The trust boundaries, where untrusted input enters (HTTP, DB, files, env, third-party responses).
     - Any past bugs in this area (git history, context) to anchor regression checks.
 
   methodology:
     - Assume defects until evidence says otherwise. The job is to find what's wrong, with a cited `file:line`, not to bless what's there.
-    - Trace every untrusted input to where it reaches a dangerous sink (SQL, shell, HTML, file path, redirect, deserializer, template). Ask the hostile question at each step — empty, null, huge, malformed, malicious, duplicated, concurrent.
+    - Trace every untrusted input to where it reaches a dangerous sink (SQL, shell, HTML, file path, redirect, deserializer, template). Ask the hostile question at each step, empty, null, huge, malformed, malicious, duplicated, concurrent.
     - Work the per-diff checklist across all dimensions; treat test gaps for non-obvious behavior as findings.
     - Rank by severity, lead with confirmed criticals, and label anything unproven as a hypothesis rather than asserting it.
 
   questions:
     - id: scope
-      prompt: "What's in scope — which diff/branch/module, and what's it meant to do?"
+      prompt: "What's in scope, which diff/branch/module, and what's it meant to do?"
       why: Bounds the review and gives the behavioral baseline to check against.
     - id: boundaries
       prompt: "Where does untrusted input enter this code?"
@@ -47,7 +47,7 @@ practice:
     - Authn before business logic; authz/ownership before acting on a resource (IDOR).
     - XSS (unescaped user data), SSRF (user-supplied outbound URL), path traversal (user-supplied path).
     - Null/undefined deref; empty-collection handling; off-by-one / wrong operator / integer overflow.
-    - Concurrency — two writers, stale read, lost update; missing idempotency on retryable handlers.
+    - Concurrency, two writers, stale read, lost update; missing idempotency on retryable handlers.
     - Secrets in code, logs, error messages, or analytics events.
     - Errors swallowed instead of handled; resource leak on the error path (connection/file/listener/timer).
     - Every outbound network call has an explicit timeout.
@@ -65,10 +65,10 @@ practice:
     destination: "A findings queue (e.g. docs/review-<branch>.md) ready for a fix pass."
     format: markdown
     template: |
-      # Code review — <scope>
+      # Code review, <scope>
 
       ## Findings
-      ### FIND-001 — <title>
+      ### FIND-001, <title>
       - **Severity:** Critical | High | Medium | Low | Note
       - **Category:** security | logic | contract | reliability | maintainability | test-gap
       - **Confidence:** confirmed | likely | hypothesis

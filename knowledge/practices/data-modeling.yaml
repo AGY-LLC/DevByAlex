@@ -1,8 +1,8 @@
 _meta:
   id: practice-data-modeling
   type: doc
-  title: "Best practice — Data modeling"
-  summary: How to design and review a Postgres/Prisma schema — model before API, audit/lifecycle fields on everything, index for the queries you're about to write, and the migration-safety checks.
+  title: "Best practice, Data modeling"
+  summary: How to design and review a Postgres/Prisma schema, model before API, audit/lifecycle fields on everything, index for the queries you're about to write, and the migration-safety checks.
   sensitivity: internal
   read_scope: brain.read
   tags: [practice, engineering, data-modeling, database, prisma, init, feature, review]
@@ -18,14 +18,14 @@ practice:
     that adds/changes Prisma models, migrations, indexes, or relationships.
 
   inputs_to_gather_first:
-    - The feature spec — the entities and their lifecycles fall out of it.
+    - The feature spec, the entities and their lifecycles fall out of it.
     - The queries you're about to write (they decide the indexes).
     - Whether this is greenfield (schema can churn) or has real user data (migrations must be non-destructive).
 
   methodology:
     - Design the model before the API or UI; sketch it from the spec first (AI draft, then revise). Retrofitting under business logic is the expensive change.
     - Put `createdAt`/`updatedAt` on every model; a real user model with `id` + `email` + `providerUid`; explicit `status`/`state` enums for anything with a lifecycle, with named legal transitions.
-    - Decide indexes, many-to-many shape, and soft-delete policy BEFORE the first migration — all three are expensive to retrofit.
+    - Decide indexes, many-to-many shape, and soft-delete policy BEFORE the first migration, all three are expensive to retrofit.
     - Read the generated SQL before applying any migration; Prisma can silently pick a destructive path.
     - Stabilize migration history before production; schema churn (reset history, db push) is fine only while there's no real data.
 
@@ -37,7 +37,7 @@ practice:
       prompt: "Which entities have a lifecycle (states + transitions), e.g. draft→reviewed→published or uploaded→processing→ready→failed?"
       why: Lifecycles become status enums, not booleans; naming the transitions prevents invalid states.
     - id: queries
-      prompt: "What are the hot queries — what will you filter, sort, and join on?"
+      prompt: "What are the hot queries, what will you filter, sort, and join on?"
       why: Those columns need indexes from the start.
     - id: deletion
       prompt: "Soft delete or hard delete, per model?"
@@ -61,7 +61,7 @@ practice:
     destination: "<repo>/docs/data-model.md"
     format: markdown
     template: |
-      # <Product> — Data Model
+      # <Product>, Data Model
 
       > Canonical reference for the Postgres/Prisma schema. This doc is the contract.
 

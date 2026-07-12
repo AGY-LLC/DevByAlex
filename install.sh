@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# DevByAlex provisioner — installs the workflow's skills, agents, and templates
+# DevByAlex provisioner: installs the workflow's skills, agents, and templates
 # into a TARGET APP's project scope (<app>/.claude/) so they load only in that
 # app, and so a cron/headless run on that app carries its own workflow logic.
 #
@@ -17,10 +17,10 @@
 # --symlink only for dogfooding on this machine, where a live link back to this
 # repo is wanted and the repo will always be present at this path.
 #
-# All of DevByAlex's skills live in skills/ — the workflow stages (init-ai,
+# All of DevByAlex's skills live in skills/: the workflow stages (init-ai,
 # plan-*, dev-*, launch-*) and the supporting skills they call (scout, fix-errors,
 # seo-audit, marketer-*, …) alike. Every one is VENDORED in this repo (fully
-# self-contained — no external brain, no MCP, no ~/.claude dependency) and copied
+# self-contained: no external brain, no MCP, no ~/.claude dependency) and copied
 # into the target app, so a cloud/CI checkout of an onboarded app carries it all.
 #
 # Usage:
@@ -57,10 +57,10 @@ for arg in "$@"; do
 done
 
 # Registry of onboarded apps (absolute paths, one per line), used by --update-all.
-# Gitignored — it's a local operator convenience, not repo state.
+# Gitignored: it's a local operator convenience, not repo state.
 REGISTRY="$REPO_DIR/.onboarded-apps"
 
-# This repo's version (plugin manifest) and current git ref — stamped into each
+# This repo's version (plugin manifest) and current git ref: stamped into each
 # onboarded app so `--update` can report old -> new and the app records its lineage.
 DEVBYALEX_VERSION="$(sed -n 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$REPO_DIR/.claude-plugin/plugin.json" 2>/dev/null | head -1)"
 DEVBYALEX_VERSION="${DEVBYALEX_VERSION:-unknown}"
@@ -69,13 +69,13 @@ DEVBYALEX_REF="$(git -C "$REPO_DIR" rev-parse --short HEAD 2>/dev/null || echo u
 # --update-all: re-sync every registered app, then stop. No <app-path> needed.
 if [ "$MODE" = "update-all" ]; then
   if [ ! -f "$REGISTRY" ]; then
-    echo "no onboarded-apps registry ($REGISTRY) — nothing to update. Run a normal install first." >&2; exit 1
+    echo "no onboarded-apps registry ($REGISTRY): nothing to update. Run a normal install first." >&2; exit 1
   fi
   rc=0
   while IFS= read -r app; do
     [ -z "$app" ] && continue
     if [ ! -d "$app/.claude" ]; then
-      echo "skip  $app (no .claude — not onboarded or moved)"; continue
+      echo "skip  $app (no .claude: not onboarded or moved)"; continue
     fi
     echo "==> updating $app"
     "$REPO_DIR/install.sh" "$app" --update || { echo "FAILED $app" >&2; rc=1; }
@@ -143,7 +143,7 @@ place_one() {
 
 echo "DevByAlex: $MODE  (repo: $REPO_DIR  ->  $CLAUDE_DIR)"
 
-# All skills — workflow stages and the supporting skills they call — live in
+# All skills, workflow stages and the supporting skills they call, live in
 # skills/ and land flat in <app>/.claude/skills/. place_one handles copy / link /
 # uninstall, and only ever touches DevByAlex-managed names, so the app's own
 # unrelated .claude skills are left alone.

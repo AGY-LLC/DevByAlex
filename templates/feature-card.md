@@ -1,4 +1,4 @@
-# Feature {{NN}} — {{FEATURE_NAME}}
+# Feature {{NN}}: {{FEATURE_NAME}}
 
 > One card per feature, written by `/plan-guide`. The `test-author` writes tests
 > from the **Acceptance criteria**; the `feature-implementer` builds from the
@@ -7,7 +7,7 @@
 **Status:** todo <!-- todo | in-progress | blocked | done -->
 **Depends on:** _scaffold, auth, feature NN…_
 **Wireframes:** _link(s) to the screens in `docs/wireframes/`_
-**ADR:** `docs/adr/{{NN}}-{{SLUG}}.md` — consult before changing this feature; breaking an active decision needs explicit confirmation
+**ADR:** `docs/adr/{{NN}}-{{SLUG}}.md`: consult before changing this feature; breaking an active decision needs explicit confirmation
 
 ## Purpose
 
@@ -35,13 +35,13 @@ _One paragraph. Traceable to a spec core-job._
 - _SEO (public pages only): page title/description, heading hierarchy, image
   alt text, canonical/structured data if applicable._
 
-## Acceptance criteria (tests are written from THIS — keep it outcome-based)
+## Acceptance criteria (tests are written from THIS: keep it outcome-based)
 
 - [ ] _Given … when … then … (observable outcome)_
 - [ ] _Failure path: …_
 - [ ] _Edge case: …_
 - [ ] _Security boundary: … (authz, ownership/IDOR, validation, rate limit)_
-- [ ] _Accessibility (UI features — WCAG 2.2 AA): semantic structure + correct
+- [ ] _Accessibility (UI features: WCAG 2.2 AA): semantic structure + correct
       name/role, keyboard-operable with visible focus, sufficient contrast,
       adequate target size, labels tied to inputs and errors._
 

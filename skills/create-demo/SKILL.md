@@ -1,14 +1,14 @@
 ---
 name: create-demo
 description: >-
-  Plan, script, and implement marketing-grade demo recordings for an app —
+  Plan, script, and implement marketing-grade demo recordings for an app,
   not QA walkthroughs. Inspects an unfamiliar codebase, decides what is
   actually worth showing, drafts multiple demo flows tailored to different
   surfaces (landing hero, social short, app store preview, feature launch
   clip, investor demo), produces the automation (Playwright for web,
   Maestro for mobile), demo-safe seed data, recording scripts, and output
-  folders under `marketing/demos/`, and — after the user approves the
-  plan — runs the recording end-to-end so finished footage lands in
+  folders under `marketing/demos/`, and: after the user approves the
+  plan: runs the recording end-to-end so finished footage lands in
   `marketing/demos/output/` in the same session. Use when the user asks
   to "make a product demo", "record a demo video", "build a demo flow",
   "automate app screen recordings", "generate marketing video footage",
@@ -22,12 +22,12 @@ description: >-
 
 A **planner + implementer + runner** skill. It produces the strategy
 (what to show, why, in what order), the working automation that
-captures it, and — after an explicit approval gate — actually runs the
+captures it and, after an explicit approval gate, actually runs the
 recording so the user ends the session with footage on disk, not just
 scripts. The output is reusable marketing footage, not a regression
 test.
 
-## Core principle — read this first, twice
+## Core principle: read this first, twice
 
 > **Do not just automate whatever route is obvious.**
 > First figure out what would make a good marketing demo.
@@ -73,7 +73,7 @@ marketing/demos/
 For mobile, swap `flows/*.spec.ts` for `flows/*.yaml` (Maestro) and add
 a `device-matrix.md` describing which simulators/devices to capture on.
 
-## Phase 1 — Product Understanding
+## Phase 1: Product Understanding
 
 Before any automation, inspect the app (routes, README, marketing copy,
 package.json, schema, primary screens) and write
@@ -91,25 +91,25 @@ package.json, schema, primary screens) and write
   prior activity)
 
 If the codebase doesn't make these answers obvious, *ask the user*
-before proceeding. Do not guess and barrel ahead — the wrong "aha"
+before proceeding. Do not guess and barrel ahead: the wrong "aha"
 moment poisons every downstream artifact.
 
-## Phase 2 — Feature Prioritization
+## Phase 2: Feature Prioritization
 
 Write `marketing/demos/strategy/feature-priority.md` with three buckets:
 
-- **Hero features** — short to demo, visually strong, central to the
+- **Hero features**: short to demo, visually strong, central to the
   product's promise. These get their own videos.
-- **Supporting features** — only shown if they make a hero feature look
+- **Supporting features**: only shown if they make a hero feature look
   better, or are part of a natural flow toward the aha moment.
-- **Excluded features** — settings pages, admin screens, half-built UI,
+- **Excluded features**: settings pages, admin screens, half-built UI,
   anything requiring a paragraph of explanation, anything that exposes
   test/debug affordances.
 
 Write *why* each feature is in its bucket. A future contributor (or you,
 next quarter) should be able to re-evaluate without re-deriving.
 
-## Phase 3 — Marketing Story Rules
+## Phase 3: Marketing Story Rules
 
 Every demo needs a story. Pick one of these structures per recording
 and write it at the top of the flow file as a comment:
@@ -134,7 +134,7 @@ Avoid videos that feel like QA tests: no logging in three times, no
 visiting the settings page, no opening the admin panel "to show it
 exists".
 
-## Phase 4 — Video Format Planning
+## Phase 4: Video Format Planning
 
 Write `marketing/demos/strategy/demo-plan.md` as a matrix. Plan for the
 surfaces below; produce a flow for each one the user has, or will
@@ -150,13 +150,13 @@ plausibly have, in the next quarter.
 - 6–20s, vertical (9:16)
 - Strong first 2 seconds (the hook)
 - One clear feature, one clear benefit
-- Captions/callouts added later in Remotion — leave headroom in the
+- Captions/callouts added later in Remotion: leave headroom in the
   composition for them
 
 ### App Store / Play Store preview
 - Mobile-first, captured at exact device resolution
 - No private data, no debug overlays
-- Polished screens only — avoid tiny text
+- Polished screens only: avoid tiny text
 - Show core value within 3 seconds
 - Respect store rules (no competitor mentions, no pricing claims that
   could become stale, no UI chrome that suggests another OS)
@@ -172,7 +172,7 @@ plausibly have, in the next quarter.
 - 60–120s, narration-friendly cadence
 - OK to include light setup if it makes the payoff land
 
-## Phase 5 — Demo Flow Quality Bar
+## Phase 5: Demo Flow Quality Bar
 
 A good demo flow:
 
@@ -186,7 +186,7 @@ A good demo flow:
 - hides developer/debug UI (devtools, React Query devtool, Tailwind
   indicator, env banners, "staging" ribbons)
 - never shows production or private user data
-- ends on a satisfying result — not on a modal, not mid-form
+- ends on a satisfying result: not on a modal, not mid-form
 - is repeatable with a single command
 
 A bad demo flow:
@@ -204,13 +204,13 @@ A bad demo flow:
 If any of the "bad" items appear in the planned flow, change the plan
 before writing automation.
 
-## Phase 6 — Demo data seeding
+## Phase 6: Demo data seeding
 
 Real apps do not look good empty, and they do not look good with
 `test123`. Create `marketing/demos/seed/demo-data.ts` (or the
 language-appropriate equivalent) that populates the app with:
 
-- realistic names (curated, not random — `Maya Chen`, not `User 47`)
+- realistic names (curated, not random: `Maya Chen`, not `User 47`)
 - realistic content (well-written notes, plausible numbers, real-
   looking dates clustered around "today")
 - enough volume to look used, not abandoned (~8–20 items typically)
@@ -222,31 +222,31 @@ top so re-recording is one command.
 
 If the app has no seed mechanism, propose the smallest one that works
 (a script that hits the API or DB directly with the demo user's
-credentials) and implement it — do not skip seeding because it doesn't
+credentials) and implement it: do not skip seeding because it doesn't
 exist yet.
 
-## Phase 7 — Auth handling
+## Phase 7: Auth handling
 
 Demos should not show the user typing a password. Options, in order of
 preference:
 
 1. **Pre-authenticated storage state** (Playwright `storageState`,
-   Maestro `launchApp` with saved session) — fastest, cleanest.
-2. **Magic link / dev-only auth bypass** — acceptable if the bypass is
+   Maestro `launchApp` with saved session): fastest, cleanest.
+2. **Magic link / dev-only auth bypass**: acceptable if the bypass is
    not visible on screen.
-3. **Live login** — only if the auth screen *is* the demo (rare).
+3. **Live login**: only if the auth screen *is* the demo (rare).
 
 Never record real credentials. Use a dedicated demo account with a
 recognizable, on-brand display name and avatar.
 
-## Phase 8 — Test IDs and accessibility labels
+## Phase 8: Test IDs and accessibility labels
 
 Demo automation needs stable selectors. If the app lacks them:
 
 - Add `data-testid` (web) or `accessibilityIdentifier` (iOS) /
   `contentDescription` (Android) **only on the elements the demo
   touches**.
-- Do not blanket-add testids across the app — that's scope creep.
+- Do not blanket-add testids across the app, that's scope creep.
 - Document added selectors in the flow file so removing them later is
   intentional.
 
@@ -254,13 +254,13 @@ If the app is in a state where adding selectors is risky (frozen for
 release, owned by another team), use role/text selectors and flag the
 brittleness in the flow comment.
 
-## Phase 9 — Recording quality
+## Phase 9: Recording quality
 
 Web (Playwright):
 - Viewport: 1920×1080 for landing hero, 1280×800 for general use,
   390×844 (iPhone 14) or device-specific for mobile-web.
 - Disable animations that don't help (`prefers-reduced-motion`
-  selectively — keep brand animations, drop incidental ones).
+  selectively: keep brand animations, drop incidental ones).
 - Use `page.video()` with high bitrate, or capture frames and assemble
   with FFmpeg for editorial control.
 - Hide the cursor unless the cursor *is* the story; if shown, use a
@@ -269,7 +269,7 @@ Web (Playwright):
 Mobile (Maestro + simulator/emulator):
 - Use exact App Store / Play Store device sizes.
 - Set the demo time to a flattering value (9:41 on iOS by convention).
-- Hide the carrier, set full battery, full signal — use simulator
+- Hide the carrier, set full battery, full signal: use simulator
   status bar overrides.
 - Record at native resolution and downscale in post.
 
@@ -277,7 +277,7 @@ In both cases: pace the flow for *viewers*, not for *machines*. Insert
 explicit `wait`/`pause` after meaningful state changes so a human eye
 has time to register them.
 
-## Phase 10 — Output naming
+## Phase 10: Output naming
 
 Every recording lands in `marketing/demos/output/` named:
 
@@ -295,17 +295,17 @@ the right asset without opening it.
 
 `marketing/demos/output/.gitignore` excludes raw recordings from git.
 Final, color-graded, captioned exports live elsewhere (the marketing
-site repo, asset CDN, etc.) — this skill produces *footage*, not
+site repo, asset CDN, etc.) this skill produces *footage*, not
 finished videos.
 
-## Phase 11 — Required outputs
+## Phase 11: Required outputs
 
 Unless the user explicitly says "just one", produce a plan for **at
 least three** recordings:
 
-1. **Onboarding / first-value demo** — speed run to value
-2. **Core feature demo** — problem → action → payoff on the hero feature
-3. **Short social feature highlight** — one feature, one benefit, 9:16
+1. **Onboarding / first-value demo**: speed run to value
+2. **Core feature demo**: problem → action → payoff on the hero feature
+3. **Short social feature highlight**: one feature, one benefit, 9:16
 
 For mature apps, also plan:
 
@@ -318,7 +318,7 @@ For each: write the flow file *and* a one-paragraph brief at the top
 (surface, length target, story structure, the single sentence a viewer
 should walk away with).
 
-## Phase 12 — Implementation requirements
+## Phase 12: Implementation requirements
 
 Do **not** stop at strategy docs. Create the actual files:
 
@@ -336,14 +336,14 @@ Do **not** stop at strategy docs. Create the actual files:
 
 If the app cannot currently support reliable demo recording (no seed
 mechanism, no stable selectors, debug UI everywhere), make the
-**smallest safe changes** needed to make demos possible — and list
+**smallest safe changes** needed to make demos possible, and list
 each change in the PR description so the user can review them as
 intentional product changes, not test scaffolding.
 
-## Phase 13 — Approval gate
+## Phase 13: Approval gate
 
 After implementation, **stop and get explicit approval before running
-any recording**. This is the last cheap checkpoint — rerecording is
+any recording**. This is the last cheap checkpoint: rerecording is
 expensive, and the recording will touch the dev server, browsers,
 simulators, and disk.
 
@@ -366,7 +366,7 @@ Present a short SETUP REVIEW that includes:
 Then ask, plainly: **"Approve this setup and run the recording?"**
 Wait for explicit approval. Do not infer approval from earlier
 discussion, do not run on partial approval ("looks good, but…"), and
-do not run "to save a round trip" — this gate exists precisely to
+do not run "to save a round trip": this gate exists precisely to
 avoid producing footage the user will throw away.
 
 If the user changes the plan, update the flows / seed / scripts
@@ -377,24 +377,24 @@ system" type action (browsers open, simulators boot, time is spent,
 output lands on disk) and the whole point is producing footage the
 user actually wants. Ask, then run.
 
-## Phase 14 — Run the recording
+## Phase 14: Run the recording
 
 After approval, execute `scripts/record-all.sh` (or the narrower
-subset the user approved — they may say "just the social short" or
+subset the user approved: they may say "just the social short" or
 "skip the App Store preview for now"). While running:
 
 - **Refuse to run against production.** Before launching, check the
   target URL, NODE_ENV, DB connection string, and any feature-flag
   env vars. If anything looks like prod (prod hostname, real
-  customer DB, live payment keys), stop and re-confirm with the user
-  — even if they already approved. Demo recording must run against
+  customer DB, live payment keys), stop and re-confirm with the user,
+  even if they already approved. Demo recording must run against
   a dedicated demo / staging / local environment.
 - **Stream output** so the user sees per-flow progress and can
   interrupt with Ctrl-C if a flow is clearly heading somewhere bad.
 - **Fail loudly, not silently.** If a flow fails mid-recording,
   stop, surface the exact flow + step + error, and ask: fix and
   retry, skip and continue, or abort the run. Never silently re-run
-  a failed flow — re-runs hide flakes that will bite later.
+  a failed flow: re-runs hide flakes that will bite later.
 - **Watch for stalls.** If a flow runs > 2× its planned length, that
   almost always means a selector is missing or a loading state is
   stuck. Surface it and ask the user how to proceed.
@@ -402,7 +402,7 @@ subset the user approved — they may say "just the social short" or
   run produces footage the scripts on disk can't reproduce. Stop,
   fix, re-run from the top of that flow.
 
-## Phase 15 — Validation
+## Phase 15: Validation
 
 After the run completes:
 
@@ -413,16 +413,16 @@ After the run completes:
   product isn't proud of.
 - Confirm the recording is reproducible: a second run of the same
   flow should produce equivalent footage (frame-perfect is not the
-  bar — narratively equivalent is).
+  bar: narratively equivalent is).
 - For any video that fails the bar, fix the underlying flow / seed /
-  selector — do not just delete the file and hope. The next person
+  selector: do not just delete the file and hope. The next person
   to run the script should get usable footage on the first try.
 
 If anything fails, fix it and re-run that specific flow. Do not
 declare done with broken footage on disk and a note that says
 "should work after you tweak X".
 
-## Phase 16 — Final handoff
+## Phase 16: Final handoff
 
 End with a short message to the user covering:
 

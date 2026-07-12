@@ -11,7 +11,7 @@ description: >-
   management, focus visibility, contrast, hit targets, text scaling and
   reflow, reduced motion, live regions, form labeling and error association,
   media alternatives, language attributes, and screen-reader traversal.
-  Does not fix — output is a report; remediation is a follow-up (e.g. via
+  Does not fix: output is a report; remediation is a follow-up (e.g. via
   fix-errors). Use when the user asks for an accessibility critique,
   a11y audit, WCAG review, screen-reader review, keyboard-navigation
   review, or "is this app accessible?"-style assessment.
@@ -71,7 +71,7 @@ This skill does **not** modify code. It audits and reports.
   auto-play), animations (`prefers-reduced-motion`).
 - Copy that carries a11y signal: link text, button text, heading text.
 - Testing artifacts that claim a11y coverage (axe tests, snapshot of
-  roles, Playwright keyboard tests) — verify they actually cover what
+  roles, Playwright keyboard tests): verify they actually cover what
   they claim.
 
 ### Out of scope (note but do not audit)
@@ -93,7 +93,7 @@ Use whichever applies to the surface:
   focus indicator of sufficient area).
 - **ARIA 1.2 + ARIA Authoring Practices Guide (APG)** for custom widgets
   (combobox, listbox, menu, tabs, tree, disclosure, dialog, etc.).
-- **iOS Human Interface Guidelines — Accessibility** for native iOS:
+- **iOS Human Interface Guidelines: Accessibility** for native iOS:
   traits, labels, hints, rotor, Dynamic Type, reduce-motion, reduce
   transparency, voice control labels.
 - **Android Accessibility guidelines + Material A11y** for native
@@ -104,8 +104,8 @@ Use whichever applies to the surface:
   `accessibilityLiveRegion`, `accessibilityElementsHidden`,
   `importantForAccessibility`, `onAccessibilityTap`.
 - **EN 301 549** if the user indicates EU public-sector relevance.
-- **Section 508 (Revised)** if the user indicates US federal relevance
-  — conformance is via WCAG 2.0 AA at minimum; recommend 2.2 AA.
+- **Section 508 (Revised)** if the user indicates US federal relevance;
+  conformance is via WCAG 2.0 AA at minimum, with 2.2 AA recommended.
 
 If the user has not named a jurisdiction, default to WCAG 2.2 AA and
 note AAA wins opportunistically.
@@ -148,7 +148,7 @@ note AAA wins opportunistically.
    A suite that only runs axe on the landing page is not "a11y covered."
 8. **Derive app-specific a11y concerns.** Data visualizations, maps,
    rich editors, canvas/WebGL, media players, games, timed flows,
-   CAPTCHAs, document viewers, real-time collaboration cursors —
+   CAPTCHAs, document viewers, real-time collaboration cursors,
    each has its own a11y patterns; audit accordingly.
 9. **Emit the report** per **Output**.
 
@@ -181,7 +181,7 @@ produce either a pass note or findings.
 - Auto-playing media with audio > 3s has a pause/stop/mute control
   reachable without overlap with other UI (1.4.2).
 
-#### 1.3 Adaptable — semantic structure (WCAG 1.3.1, 1.3.2, 1.3.5)
+#### 1.3 Adaptable: semantic structure (WCAG 1.3.1, 1.3.2, 1.3.5)
 
 - **Landmarks present** on every page: `main`, `nav`, `header`,
   `footer`, `aside` where appropriate; single `main` per view.
@@ -205,11 +205,11 @@ produce either a pass note or findings.
 - **Use of color (1.4.1)**: color is never the only signal. Error
   states pair red with an icon + text; required fields are not
   indicated only by a red asterisk with no text fallback.
-- **Contrast (minimum) — 1.4.3**: body text ≥ 4.5:1; large text
+- **Contrast (minimum): 1.4.3**: body text ≥ 4.5:1; large text
   (≥18pt, or ≥14pt bold) ≥ 3:1. Compute against the *actual rendered*
   background (including overlays, gradients, images). Placeholder text
   inside inputs is a frequent offender.
-- **Non-text contrast — 1.4.11**: UI component boundaries and states
+- **Non-text contrast: 1.4.11**: UI component boundaries and states
   (input borders, focus rings, icon buttons, toggle states) ≥ 3:1
   against adjacent colors.
 - **Resize text (1.4.4)**: layout survives 200% zoom without loss.
@@ -225,7 +225,7 @@ produce either a pass note or findings.
   dismissible (Esc), hoverable (user can move pointer onto them), and
   persistent until dismissed.
 - **Dark mode / forced colors**: respects `prefers-color-scheme` and
-  survives `forced-colors: active` — no `!important` backgrounds that
+  survives `forced-colors: active`: no `!important` backgrounds that
   fight Windows High Contrast; semantic `Canvas`/`CanvasText` or
   `system-ui` colors used where appropriate.
 
@@ -237,7 +237,7 @@ produce either a pass note or findings.
   `onClick` on a non-`<button>`/`<a>`/`<summary>` and verify it has
   `role`, `tabIndex`, and keydown handlers for `Enter`/`Space`.
 - No keyboard traps (2.1.2). Focus can leave any widget the keyboard
-  entered — including custom dropdowns, date pickers, rich editors.
+  entered: including custom dropdowns, date pickers, rich editors.
 - Character shortcuts (single-key) can be remapped, turned off, or
   only fire on focus (2.1.4).
 
@@ -264,10 +264,10 @@ produce either a pass note or findings.
 - **Link purpose (2.4.4)**: "click here" / "read more" without
   programmatically determinable context is a finding. Icon-only links
   have accessible names.
-- **Multiple ways (2.4.5)**: nav, search, sitemap — at least two ways
+- **Multiple ways (2.4.5)**: nav, search, sitemap: at least two ways
   to reach any page (exempt: in-flow steps).
 - **Headings and labels (2.4.6)**: describe topic/purpose.
-- **Focus visible (2.4.7)** — **every** focusable control has a
+- **Focus visible (2.4.7)**: **every** focusable control has a
   visible focus indicator. Missing or invisible focus ring is a
   **Critical** finding. `outline: none` without a replacement is the
   most common offender.
@@ -335,7 +335,7 @@ produce either a pass note or findings.
 
 - **Name, Role, Value (4.1.2)**: every custom widget exposes all
   three. Audit any `role="button"`, `role="checkbox"`, `role="dialog"`,
-  etc. against APG — if it doesn't implement the pattern's keyboard
+  etc. against APG: if it doesn't implement the pattern's keyboard
   and state semantics, it's broken.
 - **Status messages (4.1.3)**: non-focus-moving status (toast saves,
   inline "Copied!", async validation results) uses `role="status"`,
@@ -460,7 +460,7 @@ Derive from the map in step 1. Examples:
 
 Calibrate: a real audit on a non-a11y-mature codebase should produce
 multiple Critical/High findings. If the queue is mostly Lows, re-check
-the custom widgets, focus states, and screen-reader flow — something
+the custom widgets, focus states, and screen-reader flow: something
 was under-audited.
 
 ## Output format
@@ -471,10 +471,10 @@ Emit a single report in this order.
 
 One of:
 
-- **CONFORMANT (AA)** — no Critical or High findings against the
+- **CONFORMANT (AA)**: no Critical or High findings against the
   targeted WCAG level.
-- **PARTIALLY CONFORMANT** — no Criticals, but Highs remain.
-- **NON-CONFORMANT** — one or more Critical findings, or the surface
+- **PARTIALLY CONFORMANT**: no Criticals, but Highs remain.
+- **NON-CONFORMANT**: one or more Critical findings, or the surface
   cannot be meaningfully assessed.
 
 Follow with 2–4 sentences: standards targeted (e.g. "WCAG 2.2 AA, RN
@@ -490,7 +490,7 @@ severity then dependency (foundational token/primitive fixes first).
 Template per finding:
 
 ```markdown
-### A11Y-XXX — [one-line title]
+### A11Y-XXX: [one-line title]
 
 | Field                  | Value                                                                                                    |
 | ---------------------- | -------------------------------------------------------------------------------------------------------- |
@@ -499,7 +499,7 @@ Template per finding:
 | **Principle**          | Perceivable \| Operable \| Understandable \| Robust \| Platform \| APG                                   |
 | **User impact**        | Who is blocked and how (keyboard-only users cannot activate X; screen-reader users hear no name for Y)   |
 | **Confidence**         | confirmed \| likely \| hypothesis                                                                        |
-| **Location**           | `path/to/file.ext:line` — narrowest anchor (component, selector, symbol)                                 |
+| **Location**           | `path/to/file.ext:line`: narrowest anchor (component, selector, symbol)                                 |
 | **Symptom**            | What the code does (or fails to do) today                                                                |
 | **Fix intent**         | One sentence: the desired end state                                                                      |
 | **Suggested approach** | Concrete: which attribute, which role, which hook, which token. Enough to start editing without re-audit |
@@ -515,7 +515,7 @@ Rules:
   is wrong, file it once against the primitive with a note listing
   the consumer files. Do not emit N duplicate findings.
 - Mark **Confidence: hypothesis** rather than dropping a shaky
-  finding — the user can still triage.
+  finding: the user can still triage.
 - Every finding must be actionable inside the repo. Things that need
   external work (user testing, VPAT authoring) go in **Out-of-scope**.
 
@@ -529,7 +529,7 @@ user should plan. Group as:
 - **Procurement / vendor** (captioning service, a11y testing
   subscription).
 - **Policy / legal** (accessibility statement, VPAT, conformance
-  report) — reference `launch-readiness` for legal copy checks.
+  report): reference `launch-readiness` for legal copy checks.
 - **Design tokens requiring product decisions** (brand-color swaps
   for contrast, motion reduction policy).
 
@@ -539,10 +539,10 @@ Short bulleted list of checklist sections that passed cleanly, each
 with a one-line justification so the user sees what was actually
 checked (not just what failed). Example:
 
-- **Forms — label association** — every `<input>` in `src/forms/` has
+- **Forms, label association**, every `<input>` in `src/forms/` has
   an associated `<label htmlFor>` or wrapping `<label>`; required
   fields announced via `aria-required`.
-- **Reduced motion** — every transition in `src/styles/motion.css`
+- **Reduced motion**: every transition in `src/styles/motion.css`
   is gated on `prefers-reduced-motion: no-preference`.
 
 ### 5. Coverage gaps
@@ -564,10 +564,10 @@ pass is still needed for a conformance claim.
 - Fix anything. Output is a report; remediation is a follow-up pass
   (e.g. `fix-errors` consuming the `A11Y-xxx` queue).
 - Make conformance claims on behalf of the organization. It reports
-  likely WCAG outcomes from static code reading — real conformance
+  likely WCAG outcomes from static code reading: real conformance
   requires rendered-page testing, assistive-tech testing, and often
   user testing.
-- Replace user testing with disabled users — it flags probable
+- Replace user testing with disabled users: it flags probable
   blockers but cannot model every assistive-tech interaction.
 - Audit live URLs, production services, or env-gated builds.
 

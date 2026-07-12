@@ -1,7 +1,7 @@
 # your task
 i need you to do the following:
 1. setup all of these agents and skills below based on the explanations so that a skill can pull it all into a repo.
-2. write a skill that will be called init-ai that will take a path to this folder and will initialize the app according this dev workflow below. this skills should be able to init an app and set the status and todos based on what is already done and not so it can integrate into existing repos as well as blank ones. 
+2. write a skill that will be called init-ai that will take a path to this folder and will initialize the app according this dev workflow below. this skills should be able to init an app and set the status and todos based on what is already done and not so it can integrate into existing repos as well as blank ones.
 3. explain what the best way to implement the scheduled actions is for this to be a constantly improving and working towrd launch ready.
 
 note: feel free to take a look at any existing skills in the user scope to see which would be useful here and pull them in if you want.
@@ -24,10 +24,10 @@ this is the single most important feature of the app. we need to build a way for
 ### build features
 this will be a loop where we build out each feature in the app in four steps that loop until the feature is fully implemented.
 there should be an agent assigned to the feature that will deploy the subagent steps listed below.
-here are the steps: 
+here are the steps:
 1. write tests and implemenht the feature in code in parallel
     - this should be done by two separate subagents so they tests are not built just to be right but rather based on the feature specs
-2. a validation agent 
+2. a validation agent
     - will run tests and well as inspect the feature-related code for quality, security, logic issues, and best practices.
     - if this fails we need to report back and write the tests that test the issue and fix the code to amend the issue
 3. an integration validation agent
@@ -39,4 +39,4 @@ here are the steps:
 ### staging deploy
 this is manually done by my
 ### write acceptance tests
-you will write out an acceptance test that explains a manual pass through all critical features of the app. from that document you will generate runnable test suites — playwright for the web surfaces and maestro for ios/android — that run against the staging environment to sanity check the app is working as expected.
+you will write out an acceptance test that explains a manual pass through all critical features of the app. from that document you will generate runnable test suites, playwright for the web surfaces and maestro for ios/android, that run against the staging environment to sanity check the app is working as expected.

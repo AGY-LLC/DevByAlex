@@ -9,7 +9,7 @@ updated: 2026-05-28
 
 Unit and integration testing for JavaScript/TypeScript. The standard for a reason.
 
-This doc is the *mechanics* (setup, mocking, patterns). For *what* to test and *why* — the outcomes-driven philosophy, what to enumerate, and which kind of test to reach for — see [Testing Strategy](../checklists/testing-strategy.md).
+This doc is the *mechanics* (setup, mocking, patterns). For *what* to test and *why*, the outcomes-driven philosophy, what to enumerate, and which kind of test to reach for, see [Testing Strategy](../checklists/testing-strategy.md).
 
 ---
 
@@ -90,15 +90,15 @@ describe('getUserById', () => {
 
 ## Rules
 
-- Mock external services (Prisma, Stripe, Firebase) in unit tests — don't hit real services
-- Don't test implementation details — test behavior and outcomes
+- Mock external services (Prisma, Stripe, Firebase) in unit tests: don't hit real services
+- Don't test implementation details: test behavior and outcomes
 - A test that never fails is not a test; verify your mocks are actually being called
 
 ## Preferences
 
 - `describe` blocks for grouping, `it` for individual cases
 - Test file colocated with source: `user.test.ts` next to `user.ts`
-- Keep tests fast — slow tests don't get run
+- Keep tests fast: slow tests don't get run
 - Use `jest.spyOn` over manual mocks when you want to preserve the original implementation partially
 
 ## AI notes

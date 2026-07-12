@@ -72,7 +72,7 @@ test('user can log in with email and password', async ({ page }) => {
 
 ## Handling auth in tests
 
-Don't log in through the UI for every test — it's slow and fragile. Use storage state to reuse auth sessions:
+Don't log in through the UI for every test: it's slow and fragile. Use storage state to reuse auth sessions:
 
 ```ts
 // tests/auth.setup.ts
@@ -96,11 +96,11 @@ Then reference `storageState` in tests that need auth.
 
 - Never run Playwright against production. Use a dedicated test environment or localhost.
 - Keep E2E tests focused on user journeys, not implementation details
-- Tests should clean up after themselves — don't leave test data in shared environments
+- Tests should clean up after themselves: don't leave test data in shared environments
 
 ## Preferences
 
-- Use `page.getByRole()` and `page.getByLabel()` over CSS selectors — more resilient to UI changes
+- Use `page.getByRole()` and `page.getByLabel()` over CSS selectors: more resilient to UI changes
 - Record with `npx playwright codegen` to scaffold tests quickly, then clean them up
 - Run E2E tests in CI on PR but not on every push if they're slow
 

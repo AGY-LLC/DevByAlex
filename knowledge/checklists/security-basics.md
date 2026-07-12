@@ -1,13 +1,13 @@
 ---
 id: checklists-security-basics
 title: "Security Basics Checklist"
-summary: "The baseline security practices I apply to every project. Not exhaustive — a security specialist would go much deeper — but the things that prevent the most common mistakes."
+summary: "The baseline security practices I apply to every project. Not exhaustive, a security specialist would go much deeper, but the things that prevent the most common mistakes."
 tags: ["checklists", "security-basics"]
 updated: 2026-05-28
 ---
 # Security Basics Checklist
 
-The baseline security practices I apply to every project. Not exhaustive — a security specialist would go much deeper — but the things that prevent the most common mistakes.
+The baseline security practices I apply to every project. Not exhaustive, a security specialist would go much deeper, but the things that prevent the most common mistakes.
 
 ---
 
@@ -31,7 +31,7 @@ The baseline security practices I apply to every project. Not exhaustive — a s
 ## Input validation & injection
 
 - [ ] All user input validated (Zod or equivalent)
-- [ ] No raw string interpolation in SQL queries — use parameterized queries (Prisma handles this)
+- [ ] No raw string interpolation in SQL queries: use parameterized queries (Prisma handles this)
 - [ ] File upload validation: check type and size, not just extension
 - [ ] Rich text / HTML input sanitized if rendered to DOM
 
@@ -45,15 +45,15 @@ The baseline security practices I apply to every project. Not exhaustive — a s
 
 Check with [securityheaders.com](https://securityheaders.com):
 
-- [ ] `Content-Security-Policy` — restrict sources for scripts, styles, etc.
-- [ ] `X-Frame-Options: DENY` — prevent clickjacking
+- [ ] `Content-Security-Policy`: restrict sources for scripts, styles, etc.
+- [ ] `X-Frame-Options: DENY`: prevent clickjacking
 - [ ] `X-Content-Type-Options: nosniff`
 - [ ] `Referrer-Policy: strict-origin-when-cross-origin`
-- [ ] `Permissions-Policy` — restrict browser features not needed
+- [ ] `Permissions-Policy`: restrict browser features not needed
 
 ## API security
 
-- [ ] CORS configured explicitly — not `*` on sensitive endpoints
+- [ ] CORS configured explicitly: not `*` on sensitive endpoints
 - [ ] Rate limiting on public APIs
 - [ ] Sensitive API routes authenticated
 - [ ] No internal error details in API responses (log server-side, return sanitized messages)
@@ -63,7 +63,7 @@ Check with [securityheaders.com](https://securityheaders.com):
 
 - [ ] `npm audit` clean (or known exceptions documented)
 - [ ] Dependencies kept reasonably up to date
-- [ ] Only necessary packages installed — check for unused dependencies
+- [ ] Only necessary packages installed: check for unused dependencies
 
 ## Data
 

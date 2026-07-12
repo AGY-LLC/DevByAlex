@@ -20,18 +20,18 @@ The setup mechanics live in [Jest](../stack/jest.md) and [Playwright](../stack/p
 
 For each behavior under test, walk these axes and list the distinct outcomes:
 
-- **Happy path** — each valid input class → expected observable output.
-- **Validation / contract** — missing field, wrong type, out-of-range, empty, whitespace, unicode, too large, duplicate.
-- **Authn** — unauthenticated, expired/revoked token.
-- **Authz** — wrong role, wrong owner (IDOR), access-control violation.
-- **State preconditions** — empty DB, populated, not-found, already-exists, stale cache, partial state.
-- **Concurrency** — duplicate submit, race on the same row, retry with idempotency key.
-- **External deps** — third-party timeout, 5xx, 4xx, malformed response, rate limit.
-- **Failure paths** — every throw, every error branch, every non-2xx response.
-- **Side effects** — email sent/not, webhook fired/not, row created/not, event emitted/not.
-- **Security boundaries** — injection, SSRF, path traversal, IDOR, mass assignment, secret leakage.
-- **Invariants** — things that must always be true: uniqueness, ordering, monotonicity, referential integrity.
-- **Regression anchors** — any past bug referenced in code, git history, or context gets a test that would have caught it.
+- **Happy path**: each valid input class → expected observable output.
+- **Validation / contract**: missing field, wrong type, out-of-range, empty, whitespace, unicode, too large, duplicate.
+- **Authn**: unauthenticated, expired/revoked token.
+- **Authz**: wrong role, wrong owner (IDOR), access-control violation.
+- **State preconditions**: empty DB, populated, not-found, already-exists, stale cache, partial state.
+- **Concurrency**: duplicate submit, race on the same row, retry with idempotency key.
+- **External deps**: third-party timeout, 5xx, 4xx, malformed response, rate limit.
+- **Failure paths**: every throw, every error branch, every non-2xx response.
+- **Side effects**: email sent/not, webhook fired/not, row created/not, event emitted/not.
+- **Security boundaries**: injection, SSRF, path traversal, IDOR, mass assignment, secret leakage.
+- **Invariants**: things that must always be true: uniqueness, ordering, monotonicity, referential integrity.
+- **Regression anchors**: any past bug referenced in code, git history, or context gets a test that would have caught it.
 
 ## A good suite covers
 
@@ -50,11 +50,11 @@ For each behavior under test, walk these axes and list the distinct outcomes:
 
 ## Which kind of test
 
-- **Unit** — pure functions, validators, reducers, format/parse. No I/O, minimal mocks.
-- **Integration** — HTTP routes, DB access, service classes. Use a real test DB when available; don't mock the database.
-- **Component** — a single UI component's state transitions and rendering.
-- **E2E (Playwright)** — whole user flows, but only the golden path plus the top 2–3 critical failures. Expensive to write and maintain — reserve for auth, payments, and paths that have broken before.
-- **Contract** — request/response shape and wire-format stability.
-- **Snapshot** — only where the exact serialized shape *is* the contract.
+- **Unit**: pure functions, validators, reducers, format/parse. No I/O, minimal mocks.
+- **Integration**: HTTP routes, DB access, service classes. Use a real test DB when available; don't mock the database.
+- **Component**: a single UI component's state transitions and rendering.
+- **E2E (Playwright):** whole user flows, but only the golden path plus the top 2–3 critical failures. These tests are expensive to write and maintain, so reserve them for auth, payments, and paths that have broken before.
+- **Contract**: request/response shape and wire-format stability.
+- **Snapshot**: only where the exact serialized shape *is* the contract.
 
 *See also: [Jest](../stack/jest.md) | [Playwright](../stack/playwright.md) | [Code Review](./code-review.md)*

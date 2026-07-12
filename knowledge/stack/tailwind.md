@@ -13,7 +13,7 @@ The utility-first CSS framework I use on nearly every web project. I was skeptic
 
 ## Pros
 
-- Constraints make design faster — you're not inventing a spacing system every project
+- Constraints make design faster: you're not inventing a spacing system every project
 - Colocated styles with components is genuinely better than jumping between CSS files once you're used to it
 - Excellent purging means production bundles are small
 - Dark mode support is clean
@@ -23,9 +23,9 @@ The utility-first CSS framework I use on nearly every web project. I was skeptic
 
 ## Cons
 
-- Long class strings are visually noisy — you adapt, but it's real
+- Long class strings are visually noisy: you adapt, but it's real
 - Complex responsive + state variants (`md:hover:focus:...`) can get unwieldy
-- Not ideal for highly custom design systems that deviate heavily from the defaults — you end up fighting the config
+- Not ideal for highly custom design systems that deviate heavily from the defaults: you end up fighting the config
 - Can make component extraction feel awkward (should I use `@apply`, extract a component, or live with the repetition?)
 - Overrides and specificity can still cause pain in larger codebases with third-party UI libraries
 
@@ -43,9 +43,9 @@ The utility-first CSS framework I use on nearly every web project. I was skeptic
 
 ## Alternatives
 
-- **CSS Modules** — good option, especially in larger teams. More explicit, more verbose.
-- **styled-components / Emotion** — CSS-in-JS, works but bundle size and runtime overhead have pushed me away
-- **shadcn/ui** — I use this *with* Tailwind, not instead of it. It's a component layer on top.
+- **CSS Modules**: good option, especially in larger teams. More explicit, more verbose.
+- **styled-components / Emotion**: CSS-in-JS, works but bundle size and runtime overhead have pushed me away
+- **shadcn/ui**: I use this *with* Tailwind, not instead of it. It's a component layer on top.
 
 ## Current stance
 
@@ -56,14 +56,14 @@ The utility-first CSS framework I use on nearly every web project. I was skeptic
 ## Rules
 
 - Extend Tailwind config with project brand tokens before writing custom inline styles
-- Don't use arbitrary values (`w-[327px]`) unless truly necessary — it usually means rethinking the layout
+- Don't use arbitrary values (`w-[327px]`) unless truly necessary: it usually means rethinking the layout
 - Use `cn()` (clsx + tailwind-merge) for conditional class concatenation. Don't string-concat class names.
 
 ## Preferences
 
 - Keep component files: styles colocated, not extracted to separate CSS files
-- Use `@layer components` sparingly — mostly for recurring patterns that don't justify a full component
-- Extract components before reaching for `@apply` — the component is usually the right abstraction level
+- Use `@layer components` sparingly: mostly for recurring patterns that don't justify a full component
+- Extract components before reaching for `@apply`: the component is usually the right abstraction level
 
 ## AI notes
 

@@ -1,6 +1,6 @@
-# CI — thin caller. ALL pipeline logic lives in the central reusable workflow
+# CI, thin caller. ALL pipeline logic lives in the central reusable workflow
 # (AGY-LLC/pipelinebyalex); this repo's pipeline is declared in pba.yml, read at
-# runtime. To change what runs, edit pba.yml — NOT this file.
+# runtime. To change what runs, edit pba.yml, NOT this file.
 # Reference: AGY-LLC/pipelinebyalex docs/usage.md.
 #
 # Install: write this to .github/workflows/ci.yml. The interpreter is pinned at

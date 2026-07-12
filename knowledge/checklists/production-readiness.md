@@ -13,7 +13,7 @@ A more thorough version of the before-launch list. Use this for projects that ne
 
 ## Infrastructure
 
-- [ ] Production database on managed infrastructure (RDS, PlanetScale, Supabase, Neon — not localhost)
+- [ ] Production database on managed infrastructure (RDS, PlanetScale, Supabase, Neon: not localhost)
 - [ ] Database automated backups enabled and tested (confirm you can restore)
 - [ ] Database connection pooling in place (especially critical for serverless)
 - [ ] Application deployed to production (not "will deploy later")
@@ -23,10 +23,10 @@ A more thorough version of the before-launch list. Use this for projects that ne
 
 ## Observability
 
-- [ ] Error tracking (Sentry or equivalent) — capturing unhandled exceptions
-- [ ] Structured logging — server-side errors logged with context
-- [ ] Uptime monitoring (BetterUptime, Pingdom, UptimeRobot — something)
-- [ ] Performance monitoring — at least Vercel Analytics or Lighthouse for baseline
+- [ ] Error tracking (Sentry or equivalent): capturing unhandled exceptions
+- [ ] Structured logging: server-side errors logged with context
+- [ ] Uptime monitoring (BetterUptime, Pingdom, UptimeRobot: something)
+- [ ] Performance monitoring: at least Vercel Analytics or Lighthouse for baseline
 - [ ] Database slow query monitoring if at any meaningful scale
 
 ## Reliability

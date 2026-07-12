@@ -1,9 +1,9 @@
-# {{APP_NAME}} pipeline — Pipeline by Alex (pba).
+# {{APP_NAME}} pipeline, Pipeline by Alex (pba).
 #
 # This ONE declarative file is the whole CI + deploy definition. It is read at
 # runtime by the central pipelinebyalex interpreter; the only other file is the
 # thin caller at .github/workflows/ci.yml (templates/ci-caller.yml). To change
-# what runs, edit THIS file — never the generated workflow YAML.
+# what runs, edit THIS file, never the generated workflow YAML.
 # Reference: AGY-LLC/pipelinebyalex docs/usage.md.
 #
 # ── Repo shape (user-facing monorepo) ───────────────────────────────────────
@@ -20,7 +20,7 @@
 #              deploys to the staging environment; promoted to main when prod-ready
 #
 # Scaffold note: components/gates/ci below run green immediately. The deploy
-# `targets` + `deploy` chains are stubbed — fill in domains / Vercel project IDs
+# `targets` + `deploy` chains are stubbed, fill in domains / Vercel project IDs
 # and uncomment per branch once the deploy secrets + environments exist. Until
 # then CI runs; nothing deploys.
 version: 1

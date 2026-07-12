@@ -15,7 +15,7 @@ These days I reach for Stytch over Firebase Auth when cross-platform sessions ma
 
 ## What it solves
 
-Managed auth, realtime database, file storage, and cloud functions — without managing your own infrastructure. Firebase Auth specifically handles OAuth providers, email/password, phone auth, and session management out of the box.
+Managed auth, realtime database, file storage, and cloud functions: without managing your own infrastructure. Firebase Auth specifically handles OAuth providers, email/password, phone auth, and session management out of the box.
 
 ## Why I used it (historically)
 
@@ -29,7 +29,7 @@ The token refresh issue is the one that burned me most: Firebase ID tokens expir
 
 ## Google OAuth for admin-only surfaces
 
-For an admin UI with a known, restricted list of editors (think: a content site where one or two people publish posts), the right call is usually Google OAuth with a hardcoded allowlist. Doesn't have to use Firebase Auth directly — OAuth through the auth adapter works — but the principle is the same: Google-authenticated sessions only, no public registration, no password reset flows.
+For an admin UI with a known, restricted list of editors (think: a content site where one or two people publish posts), the right call is usually Google OAuth with a hardcoded allowlist. Doesn't have to use Firebase Auth directly, OAuth through the auth adapter works, but the principle is the same: Google-authenticated sessions only, no public registration, no password reset flows.
 
 For a single-editor admin, this is the right call. Zero user management overhead.
 
@@ -74,22 +74,22 @@ export const verifyToken = (token: string) =>
 
 ## Pitfalls
 
-- **Token expiry** — ID tokens expire in 1 hour. Client needs to proactively refresh before sending. Easy to miss; causes intermittent auth failures.
-- **Firebase UID ≠ your user ID** — Always maintain your own user record keyed to the Firebase UID. Don't use Firebase UID as your primary user identifier in your database.
+- **Token expiry**: ID tokens expire in 1 hour. Client needs to proactively refresh before sending. Easy to miss; causes intermittent auth failures.
+- **Firebase UID ≠ your user ID**: Always maintain your own user record keyed to the Firebase UID. Don't use Firebase UID as your primary user identifier in your database.
 - **Firestore security rules** are powerful but confusing. Easy to accidentally expose data.
 - **Vendor lock-in is real.** Firestore's data model doesn't export cleanly. Plan your exit before you need it.
-- **Firebase Auth on both web and mobile** — doable, but the session handling patterns are different enough that you'll write more platform-specific code than you might expect.
+- **Firebase Auth on both web and mobile**: doable, but the session handling patterns are different enough that you'll write more platform-specific code than you might expect.
 
 ## Security notes
 
 - Never expose service account credentials in client code.
-- Always set restrictive Firestore rules — default open rules are a trap.
+- Always set restrictive Firestore rules: default open rules are a trap.
 - Validate Firebase tokens server-side for any privileged operation.
 - Don't use the Firebase Admin SDK on the client.
 
 ## Testing notes
 
-- Firebase offers a local emulator suite — use it when testing auth flows.
+- Firebase offers a local emulator suite: use it when testing auth flows.
 - `firebase emulators:start` for auth, Firestore, functions locally.
 - Testing Firebase Auth flows in integration tests requires either the emulator or careful mocking.
 
@@ -101,9 +101,9 @@ export const verifyToken = (token: string) =>
 
 ## What I'd avoid
 
-- Firebase Auth when you need a unified cross-platform session model — look at Stytch or similar
+- Firebase Auth when you need a unified cross-platform session model: look at Stytch or similar
 - Firestore as the primary database for structured relational data (use Postgres)
-- Deep coupling to Firebase — always put it behind an abstraction layer
+- Deep coupling to Firebase: always put it behind an abstraction layer
 - Relying on client-side Firestore rules as your only security boundary
 
 ## Stytch (as an alternative)
@@ -130,6 +130,6 @@ If you're building something with both a web app and a mobile app that need to s
 
 AI knows Firebase Auth fairly well but sometimes mixes up client SDK vs Admin SDK contexts. Always specify which side you're on in your prompt.
 
-AI also tends to miss the token refresh issue — it'll generate code that calls `getIdToken()` without proactive refresh. Always add the refresh logic explicitly.
+AI also tends to miss the token refresh issue: it'll generate code that calls `getIdToken()` without proactive refresh. Always add the refresh logic explicitly.
 
 Useful prompt: *"Write a server-side token verification middleware for Next.js App Router that uses Firebase Admin to verify a Bearer token from the Authorization header. Return 401 on invalid or missing token. TypeScript."*

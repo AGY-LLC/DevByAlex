@@ -1,7 +1,7 @@
 ---
 id: design-universal-rules
 title: "Universal UI/UX Design Rules"
-summary: "Timeless design principles that apply regardless of visual style, branding, platform, or theme — 31 rules plus the pre-ship Universal Checklist. Every design decision, sweep, and critique in the workflow holds these; the named style (PRIMARY × SECONDARY) colors them, never overrides them."
+summary: "Timeless design principles that apply regardless of visual style, branding, platform, or theme: 31 rules plus the pre-ship Universal Checklist. Every design decision, sweep, and critique in the workflow holds these; the named style (PRIMARY × SECONDARY) colors them, never overrides them."
 tags: ["design", "uiux", "principles", "checklist", "universal"]
 updated: 2026-07-11
 ---
@@ -216,7 +216,7 @@ Good animation explains:
 - what changed
 - what belongs together
 
-Motion should clarify — not decorate.
+Motion should clarify: not decorate.
 
 ## 18. Respect Attention
 
@@ -260,7 +260,7 @@ Support:
 - color blindness
 
 Accessibility improves usability for all users. (The workflow's hard floor is
-WCAG 2.2 AA — see [`../stack/uiux.md`](../stack/uiux.md).)
+WCAG 2.2 AA: see [`../stack/uiux.md`](../stack/uiux.md).)
 
 ## 21. Speed Feels Like Quality
 
@@ -355,11 +355,11 @@ The highest compliment: "I didn't have to think."
 
 Users notice bad interfaces. Great interfaces disappear.
 
-## 31. Show, Don't Tell — the UI Is Not the Decision Log
+## 31. Show, Don't Tell: the UI Is Not the Decision Log
 
 Specs, ADRs, and design decisions guide what gets built. They are **never
 pasted into the product**. Users should understand what a section is for from
-its layout, hierarchy, labels, and content — not from a paragraph explaining
+its layout, hierarchy, labels, and content: not from a paragraph explaining
 it.
 
 Tells that internal thinking leaked into the UI:
@@ -372,13 +372,13 @@ Tells that internal thinking leaked into the UI:
 
 If a section needs a preamble to be understood, redesign the section (Rule 1),
 don't annotate it. Helper text is reserved for the few places users genuinely
-need it — a teaching empty state (Rule 26), a consequential setting — and even
+need it, a teaching empty state (Rule 26), a consequential setting, and even
 there it's one short sentence, not an explanation of the design.
 
 ## Universal Checklist
 
-Before shipping a screen — and this is the checklist the **design-critic**
-agent runs over every screenshot — ask:
+Before shipping a screen, and this is the checklist the **design-critic**
+agent runs over every screenshot: ask:
 
 - [ ] Is the purpose immediately obvious?
 - [ ] Is there one clear primary action?
@@ -394,7 +394,7 @@ agent runs over every screenshot — ask:
 - [ ] Is spacing intentional?
 - [ ] Does motion clarify?
 - [ ] Does color communicate meaning?
-- [ ] Is it free of internal-decision text — no explanatory paragraph doing work the layout should do?
+- [ ] Is it free of internal-decision text: no explanatory paragraph doing work the layout should do?
 - [ ] Would a first-time user understand it?
 
 If the answer to all of these is yes, the design is likely strong regardless of

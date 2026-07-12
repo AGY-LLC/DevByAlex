@@ -11,7 +11,7 @@ The things I check before going live. This has grown from painful experience.
 
 Not every item applies to every project. Use judgment.
 
-For the broader *process* — staging environment, manual smoke testing, compliance pages, launch-day sequencing — see [Preparing for Launch](./preparing-for-launch.md). This file is the short checklist; that one is the workflow.
+For the broader *process*, staging environment, manual smoke testing, compliance pages, launch-day sequencing, see [Preparing for Launch](./preparing-for-launch.md). This file is the short checklist; that one is the workflow.
 
 ---
 
@@ -45,7 +45,7 @@ For the broader *process* — staging environment, manual smoke testing, complia
 ## Security
 
 - [ ] HTTPS is enforced
-- [ ] Security headers are set (CSP, HSTS, X-Frame-Options) — check with securityheaders.com
+- [ ] Security headers are set (CSP, HSTS, X-Frame-Options): check with securityheaders.com
 - [ ] Rate limiting on auth endpoints and public APIs
 - [ ] Input validation on all user-submitted data
 - [ ] File upload validation (type, size) if applicable

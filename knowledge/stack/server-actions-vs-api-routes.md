@@ -13,9 +13,9 @@ One of the first structural decisions in any Next.js App Router project: where d
 
 ## The options
 
-**API routes** — traditional HTTP endpoints in `app/api/[route]/route.ts`. Return JSON. Callable from anywhere, including external clients.
+**API routes**: traditional HTTP endpoints in `app/api/[route]/route.ts`. Return JSON. Callable from anywhere, including external clients.
 
-**Server actions** — async functions marked `'use server'` that run on the server, callable directly from client components or other server code. Introduced in Next.js 13 App Router.
+**Server actions**: async functions marked `'use server'` that run on the server, callable directly from client components or other server code. Introduced in Next.js 13 App Router.
 
 ---
 
@@ -63,7 +63,7 @@ export async function updateProfile(formData: FormData) {
 
 API routes are the right choice when:
 - The endpoint needs to be called by external clients (mobile app, third-party, CLI)
-- It's a webhook receiver (Stripe, etc.) — these require `POST` with specific headers
+- It's a webhook receiver (Stripe, etc.): these require `POST` with specific headers
 - You want a stable HTTP contract that other systems can depend on
 - You need fine-grained control over response headers, status codes, caching
 
@@ -92,7 +92,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
 ## When a mobile client shares the backend
 
-If a Next.js app is serving both a web client and a native/Expo mobile client, the mobile client can't use server actions — they're a Next.js-specific mechanism. So API routes are the right choice for anything the mobile app needs to call.
+If a Next.js app is serving both a web client and a native/Expo mobile client, the mobile client can't use server actions: they're a Next.js-specific mechanism. So API routes are the right choice for anything the mobile app needs to call.
 
 In that setup, some mutations end up with both a server action (for web) and an API route (for mobile). The pattern I've landed on: both the server action and the API route are thin wrappers that call the same service function, which contains the actual logic.
 
@@ -122,12 +122,12 @@ This avoids duplicating business logic while allowing both clients to use the ap
 
 - Webhook endpoints are always API routes. No exceptions.
 - Endpoints called by external clients (mobile app, etc.) are always API routes.
-- Auth check is always the first thing in both server actions and API routes — before any business logic.
+- Auth check is always the first thing in both server actions and API routes: before any business logic.
 
 ## Preferences
 
 - Default to server actions for in-app mutations on web; move to an API route only when there's a reason
-- Keep the service layer as the shared logic core — actions and routes are thin wrappers
+- Keep the service layer as the shared logic core: actions and routes are thin wrappers
 - Name service functions clearly: `updateProfile`, `cancelSubscription`, not `handleFormSubmit`
 
 ---

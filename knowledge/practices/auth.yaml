@@ -1,8 +1,8 @@
 _meta:
   id: practice-auth
   type: doc
-  title: "Best practice — Authentication"
-  summary: How to plan, build, and review authentication — provider choice, the data model, session/redirect handling, and the security failure modes to check on any auth diff.
+  title: "Best practice, Authentication"
+  summary: How to plan, build, and review authentication, provider choice, the data model, session/redirect handling, and the security failure modes to check on any auth diff.
   sensitivity: internal
   read_scope: brain.read
   tags: [practice, engineering, auth, security, init, feature, review]
@@ -21,14 +21,14 @@ practice:
     redirects, or access control.
 
   inputs_to_gather_first:
-    - Platforms in scope — web only, or web + mobile? (Drives the provider choice.)
+    - Platforms in scope, web only, or web + mobile? (Drives the provider choice.)
     - Whether OAuth providers (Google/Apple) are needed, and whether there's public registration or admin-only access.
     - The existing user model and how records link to the auth provider.
 
   methodology:
-    - Pick the provider from the decision doc — Stytch for web+mobile, Firebase Auth for web-only speed, Auth.js when you want full control. Don't roll your own.
+    - Pick the provider from the decision doc, Stytch for web+mobile, Firebase Auth for web-only speed, Auth.js when you want full control. Don't roll your own.
     - Model the user with a real `id` + `email` plus a `providerUid` to link to the provider, even though the provider owns the credential.
-    - Handle session and the `return_to` redirect carefully — validate redirects against relative paths only; never trust an absolute URL from the client.
+    - Handle session and the `return_to` redirect carefully, validate redirects against relative paths only; never trust an absolute URL from the client.
     - Treat OAuth + provider callback wiring as the part that's always harder than it looks; test the full round-trip.
     - Implement a return-to-origin pattern so a user bounced to login lands back where they started.
 
@@ -37,7 +37,7 @@ practice:
       prompt: "Web only, or web + mobile? Native apps too?"
       why: Stytch covers web+mobile uniformly; Firebase Auth is faster for web-only. The answer picks the provider.
     - id: methods
-      prompt: "Which sign-in methods — email magic link, OTP, Google, Apple, password?"
+      prompt: "Which sign-in methods, email magic link, OTP, Google, Apple, password?"
       why: Determines provider config, callbacks, and the test matrix.
     - id: registration
       prompt: "Public registration, or restricted (e.g. admin-only allowlist)?"
@@ -48,7 +48,7 @@ practice:
 
   review_checklist:
     - Auth check happens before business logic on every protected route; authz/ownership check before acting on a resource (no IDOR).
-    - Redirects validated against relative paths only — no open redirect via a client-supplied `return_to`/`next`.
+    - Redirects validated against relative paths only, no open redirect via a client-supplied `return_to`/`next`.
     - Session cookies are HttpOnly, Secure, SameSite; tokens expire and can be revoked; session rotates on privilege change.
     - Passwords (if any) hashed with a strong algorithm; login/reset throttled against brute force.
     - OAuth callback verifies state; the provider uid links to the local user record correctly (no account takeover via email collision).
@@ -64,7 +64,7 @@ practice:
     destination: "<repo>/docs/auth-spec.md (or a section of architecture-spec.md)"
     format: markdown
     template: |
-      # <Product> — Auth
+      # <Product>, Auth
 
       ## Provider & methods
       <Provider chosen + why; sign-in methods enabled.>

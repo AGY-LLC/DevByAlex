@@ -1,7 +1,7 @@
 ---
 name: prose-check
 description: >-
-  Strip AI tells from any user-facing prose — including strings written
+  Strip AI tells from any user-facing prose: including strings written
   directly in code (UI labels, button text, empty states, error messages,
   validation messages, toast/snackbar copy, modal titles and bodies,
   tooltips, in-app help, onboarding text, JSDoc/docstrings shown to users)
@@ -23,42 +23,42 @@ description: >-
 Eliminate predictable AI writing patterns from prose. Adapted from
 [hardikpandya/stop-slop](https://github.com/hardikpandya/stop-slop) (MIT).
 
-## Scope — Code Strings First, Docs Second
+## Scope: Code Strings First, Docs Second
 
 This skill treats prose as a coding workflow concern. The primary target is
 **user-facing string literals living inside the codebase**, not just standalone
 marketing pages:
 
-- **UI strings** — button labels, link text, headings, section titles, form
+- **UI strings**: button labels, link text, headings, section titles, form
   labels, placeholder text, helper text, empty states, loading states,
   modal/dialog titles and bodies, tooltips, snackbars/toasts, banners
-- **Errors and validation** — `throw new Error("...")`, zod/yup/joi messages,
+- **Errors and validation**: `throw new Error("...")`, zod/yup/joi messages,
   form-validation copy, API error response messages exposed to users,
   `console.error` strings that bubble into Sentry breadcrumbs the user sees
-- **i18n catalogs** — `messages.json`, `locales/en.json`, `i18n/en.ts`,
+- **i18n catalogs**: `messages.json`, `locales/en.json`, `i18n/en.ts`,
   `<Trans>` defaults, `t("key", { defaultMessage: "..." })`
-- **Onboarding / in-product copy** — walkthroughs, tooltips, "what's new"
+- **Onboarding / in-product copy**: walkthroughs, tooltips, "what's new"
   panes, in-app announcements
-- **Repo docs that ship to humans** — README, CHANGELOG, release notes,
+- **Repo docs that ship to humans**: README, CHANGELOG, release notes,
   CONTRIBUTING, anything under `docs/` that's not pure reference
-- **Marketing surfaces** — landing pages, pricing pages, blog posts,
-  emails — still in scope, just one of many
+- **Marketing surfaces**: landing pages, pricing pages, blog posts,
+  emails: still in scope, just one of many
 
 **Skip for:**
 - API reference docs (parameter tables, type signatures, machine-readable
   reference material)
 - Inline code comments meant for other developers (`// TODO`, `// HACK
-  around X` — different audience, different conventions)
-- Log messages and observability output (`logger.info(...)`) — these need
+  around X`: different audience, different conventions)
+- Log messages and observability output (`logger.info(...)`): these need
   to be parsable, not pretty
-- Commit messages (those have their own conventions — see
+- Commit messages (those have their own conventions: see
   `marketer-copywriting`/repo style guide)
 - Test names and assertion messages (signal-to-developer, not user-facing)
 
 ## When to invoke
 
 - User asks to edit, polish, tighten, de-slop, or "make this not sound like AI"
-- User is shipping any string a human user will read — including small
+- User is shipping any string a human user will read: including small
   ones (a single button label, a single error message, a single toast)
 - After `/uiux-audit` or `/uiux-redesign` introduces new UI copy
 - After `/seo-audit` surfaces weak titles, meta descriptions, or H1s
@@ -87,7 +87,9 @@ marketing pages:
    "You" beats "People." Specifics beat abstractions.
 
 6. **Vary rhythm.** Mix sentence lengths. Two items beat three. End
-   paragraphs differently. No em dashes — use commas or periods.
+   paragraphs differently. Em dashes are banned. Rewrite with commas,
+   periods, colons, parentheses, or separate sentences. Never substitute a
+   spaced hyphen between clauses.
 
 7. **Trust readers.** State facts directly. Skip softening, justification,
    hand-holding.
@@ -96,22 +98,27 @@ marketing pages:
 
 ## Workflow
 
-### Mode A — Prose blocks (README sections, blog posts, release notes, landing copy)
+### Mode A: Prose blocks (README sections, blog posts, release notes, landing copy)
 
 1. **Read the prose end to end** to absorb voice and intent.
-2. **Sweep against phrases.md** — flag every banned phrase and adverb.
-3. **Sweep against structures.md** — flag every binary contrast, fragment,
-   passive construction, Wh- opener, em dash.
+2. **Sweep against phrases.md**: flag every banned phrase and adverb.
+3. **Sweep against structures.md**: flag every binary contrast, fragment,
+   passive construction, Wh- opener, em dash, and spaced hyphen used as an
+   em-dash substitute.
 4. **Rewrite, don't excuse.** Replace each flagged span with the direct
    form. Don't leave a comment saying "consider rewriting."
-5. **Score the result** (see below). If under 35/50, revise again.
-6. **Report:** show before/after for non-trivial rewrites; list every
+5. **Enforce the dash ban.** Run `rg -n --pcre2 '\x{2014}' <scope>` and require
+   zero matches. Review `rg -n ' - ' <scope>` manually and rewrite every
+   spaced hyphen that joins clauses or introduces an aside. Keep legitimate
+   technical uses such as command syntax and data formats.
+6. **Score the result** (see below). If under 35/50, revise again.
+7. **Report:** show before/after for non-trivial rewrites; list every
    banned phrase removed; deliver final score.
 
-### Mode B — Code strings (UI labels, errors, validation, toasts, i18n catalogs)
+### Mode B: Code strings (UI labels, errors, validation, toasts, i18n catalogs)
 
 Short strings can't carry rhythm or paragraph structure, so the rule set
-collapses to a tighter checklist. Apply *all* of these and skip scoring —
+collapses to a tighter checklist. Apply *all* of these and skip scoring,
 these strings either pass or get rewritten.
 
 1. **Find the strings.** Grep the diff or the path the user pointed at for:
@@ -126,7 +133,7 @@ these strings either pass or get rewritten.
    - **One job per string.** A button says what it does. An error says what
      went wrong. A toast confirms the result. No editorializing.
    - **No throat-clearing.** Strip "Oops!", "Sorry,", "Looks like", "It seems",
-     "Unfortunately", "Just" — they delay the actual message.
+     "Unfortunately", "Just": they delay the actual message.
    - **No filler adverbs.** "Successfully saved" → "Saved". "Please try again" →
      "Try again". "Currently loading" → "Loading".
    - **Active voice with a clear subject.** Prefer "We couldn't reach the
@@ -137,16 +144,17 @@ these strings either pass or get rewritten.
      ("Couldn't load orders"). "Invalid input" → name what's invalid
      ("Email is required").
    - **No em dashes in micro-copy.** Buttons, labels, errors, and toasts
-     should not contain em dashes. Use a period or a colon.
+     must not contain them. A spaced hyphen is not an acceptable substitute.
+     Rewrite with a period, colon, comma, parentheses, or separate sentences.
    - **No exclamation marks unless the brand voice explicitly allows them.**
      Default-off; check `docs/BRAND.md` voice adjectives.
    - **Sentence case for UI text** unless the design system uses title case.
-     Match the project's existing convention — don't introduce a new one.
+     Match the project's existing convention: don't introduce a new one.
    - **No trailing periods on single-sentence button labels, headings, or
      menu items.** Periods on full-sentence body copy and tooltips are fine.
    - **Interpolation safety.** `"Hello, ${name}!"` where `name` could be empty
-     produces "Hello, !" — flag and suggest a default or guard. (Overlaps with
-     `launch-readiness` copy-quality pass — note overlap, don't duplicate.)
+     produces "Hello, !": flag and suggest a default or guard. (Overlaps with
+     `launch-readiness` copy-quality pass: note overlap, don't duplicate.)
    - **i18n keys describe purpose, not text.** `"errors.networkUnavailable"`
      beats `"errors.somethingWentWrong"`. Flag keys that lock English wording.
 3. **Cross-check against `docs/BRAND.md` if it exists.** Voice adjectives and
@@ -154,9 +162,9 @@ these strings either pass or get rewritten.
    "Get started 🚀" CTA on a brand that has "calm" / "not exclamatory" voice
    is a finding.
 4. **Rewrite in place.** For UI strings, deliver the replacement as a unified
-   diff or `Edit` call — these go straight into code, not into a "prose
+   diff or `Edit` call: these go straight into code, not into a "prose
    report".
-5. **Report briefly** — for code-string mode, the output is the diff plus a
+5. **Report briefly**: for code-string mode, the output is the diff plus a
    one-line rationale per change. Skip the 5-dimension score; it doesn't
    apply to micro-copy.
 
@@ -170,7 +178,9 @@ these strings either pass or get rewritten.
 - Any "not X, it's Y" contrasts? State Y directly.
 - Three consecutive sentences match length? Break one.
 - Paragraph ends with punchy one-liner? Vary it.
-- Em dash anywhere? Remove it.
+- Em dash anywhere? Rewrite the sentence to remove it.
+- Spaced hyphen joining clauses? Rewrite it. Do not use a hyphen as a
+  typographic substitute.
 - Vague declarative ("The implications are significant")? Name the implication.
 - Narrator-from-a-distance ("Nobody designed this")? Put the reader in the scene.
 - Meta-joiners ("The rest of this essay...")? Delete. Let the essay move.
@@ -199,7 +209,7 @@ When invoked on existing prose, return:
 [for each non-trivial rewrite]
 - BEFORE: <original span>
   AFTER:  <rewritten span>
-  WHY:    <rule violated — e.g. "binary contrast", "passive voice", "adverb">
+  WHY:    <rule violated: e.g. "binary contrast", "passive voice", "adverb">
 
 ## Removed
 - <phrase 1>
@@ -215,7 +225,7 @@ Rhythm: x/10
 Trust: x/10
 Authenticity: x/10
 Density: x/10
-Total: xx/50 — [ship | revise]
+Total: xx/50: [ship | revise]
 ```
 
 ## Examples

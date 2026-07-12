@@ -1,13 +1,13 @@
 ---
 id: stack-react-native
 title: "React Native"
-summary: "My go-to for mobile apps when I want to ship iOS and Android from a shared codebase. I use it with Expo almost always — bare React Native is for when Expo's limitations become real problems."
+summary: "My go-to for mobile apps when I want to ship iOS and Android from a shared codebase. I use it with Expo almost always: bare React Native is for when Expo's limitations become real problems."
 tags: ["stack", "react-native"]
 updated: 2026-05-28
 ---
 # React Native
 
-My go-to for mobile apps when I want to ship iOS and Android from a shared codebase. I use it with Expo almost always — bare React Native is for when Expo's limitations become real problems.
+My go-to for mobile apps when I want to ship iOS and Android from a shared codebase. I use it with Expo almost always: bare React Native is for when Expo's limitations become real problems.
 
 Typical setup I use: the Expo app lives under `app/` alongside a Next.js web app under `server/` in the same repo, sharing types and an auth provider where it makes sense.
 
@@ -24,9 +24,9 @@ Typical setup I use: the Expo app lives under `app/` alongside a Next.js web app
 
 ## Cons
 
-- Native modules break the managed workflow — when you need one, you're usually in for a painful detour
+- Native modules break the managed workflow: when you need one, you're usually in for a painful detour
 - Bridge-based architecture (pre-New Architecture) has performance ceilings that matter in animation-heavy apps
-- Debugging is harder than web. Remote JS debugger, Flipper, native crashes — it's messier
+- Debugging is harder than web. Remote JS debugger, Flipper, native crashes: it's messier
 - App review cycles (especially iOS) are a slow feedback loop that doesn't exist in web
 - Expo SDK upgrades can break things unexpectedly. Budget upgrade time into your roadmap.
 - TypeScript + React Native navigation types are verbose and easy to get wrong
@@ -36,7 +36,7 @@ Typical setup I use: the Expo app lives under `app/` alongside a Next.js web app
 A few things I've learned from running an Expo app and a Next.js web app in the same repo:
 
 - **Web is primary.** When web and mobile patterns conflict, web wins. The mobile app adapts. This constraint sounds limiting but it actually reduces decision fatigue.
-- **API contract drift is the main risk.** When you change an API response shape in `server/`, the `app/` consumer may not break immediately — it may just silently receive wrong data. Shared TypeScript types help, but they don't eliminate the problem.
+- **API contract drift is the main risk.** When you change an API response shape in `server/`, the `app/` consumer may not break immediately: it may just silently receive wrong data. Shared TypeScript types help, but they don't eliminate the problem.
 - **Auth needs to work on both.** Pick an auth provider that has a clean story for both web sessions and mobile sessions without wildly different integration patterns per platform. Some providers (Stytch, Clerk) handle this well; others (Firebase Auth) are doable but require more per-platform wiring.
 - **Don't mix web-only patterns into the Expo app.** It sounds obvious. It still happens when you're moving fast.
 
@@ -50,28 +50,28 @@ A few things I've learned from running an Expo app and a Next.js web app in the 
 ## When I'd avoid it
 
 - App where native performance is critical (complex animation, game-adjacent, AR)
-- Project where only one platform is needed — just use native or Flutter
+- Project where only one platform is needed: just use native or Flutter
 - Team with no JavaScript/React background
 - When budget is so tight that maintaining two separate apps is actually cheaper
 
 ## Alternatives
 
-- **Flutter** — better performance, Dart is a learning curve, design system is different
-- **Swift / Kotlin native** — right answer when you need full platform capability
-- **Capacitor + Ionic** — web-first approach, works better if you have a web team and a simple app
+- **Flutter**: better performance, Dart is a learning curve, design system is different
+- **Swift / Kotlin native**: right answer when you need full platform capability
+- **Capacitor + Ionic**: web-first approach, works better if you have a web team and a simple app
 
 ## Current stance
 
-**Default for mobile.** Expo managed workflow first, eject only when necessary. New Architecture adoption is progressing — keep an eye on it.
+**Default for mobile.** Expo managed workflow first, eject only when necessary. New Architecture adoption is progressing: keep an eye on it.
 
 ---
 
 ## Rules
 
 - Never eject from Expo unless you've hit a specific wall that truly requires it
-- OTA updates don't bypass app store review for native code changes — don't assume they do
+- OTA updates don't bypass app store review for native code changes: don't assume they do
 - Deep link handling needs to be tested on physical devices, not just simulators
-- Always test on both platforms before submitting — "it works on iOS" is not enough
+- Always test on both platforms before submitting: "it works on iOS" is not enough
 - In a web+mobile monorepo: keep the API contract explicit and test both consumers when backend shapes change
 
 ## Preferences

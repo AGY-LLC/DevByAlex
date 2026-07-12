@@ -1,4 +1,4 @@
-# {{APP_NAME}} — How this repo is built (DevByAlex workflow)
+# {{APP_NAME}}: How this repo is built (DevByAlex workflow)
 
 This project is built with the **DevByAlex** autonomous workflow. `docs/STATUS.md`
 is the live control file; this file is the map.
@@ -6,36 +6,36 @@ is the live control file; this file is the map.
 ## Stages
 
 1. **Plan** (human-gated)
-   - `/plan-spec` → `docs/SPEC.md` — interview until the spec is complete
+   - `/plan-spec` → `docs/SPEC.md`: interview until the spec is complete
      (incl. legal/privacy/compliance + SEO posture). Screenshots of apps you
-     like go into `docs/design/references/` — first-class design inputs.
-   - `/marketer-brand-generation` → `docs/BRAND.md` — brand foundation, **if the
+     like go into `docs/design/references/`: first-class design inputs.
+   - `/marketer-brand-generation` → `docs/BRAND.md`: brand foundation, **if the
      app is public-facing** (seeds SEO titles/locale + prose voice).
    - `/plan-guide` → `docs/IMPLEMENTATION_GUIDE.md` + `docs/features/*` +
-     `docs/adr/*` — granular, ordered build plan (incl. a compliance/legal
+     `docs/adr/*`: granular, ordered build plan (incl. a compliance/legal
      feature + a11y/SEO cross-cutting) plus one decision record per feature.
-   - `/plan-design` → `docs/DESIGN.md` — pick the named visual style, PRIMARY
+   - `/plan-design` → `docs/DESIGN.md`: pick the named visual style, PRIMARY
      (structure) × SECONDARY (feeling), with the reason recorded, so wireframes
      and scaffold build against a committed look. `restyle` mode re-picks for an
      existing app and hands off to `/uiux-redesign`.
-   - `/plan-wireframes` → `docs/wireframes/` — Figma frames per feature (needs a
+   - `/plan-wireframes` → `docs/wireframes/`: Figma frames per feature (needs a
      Figma MCP), designed against the chosen style; copy is `prose-check`ed.
    - **Alex approves** the spec, guide, and wireframes. The dev stage is blocked
      until the three gates in `docs/STATUS.md` are checked.
 
 2. **Dev** (autonomous once gates are met)
-   - `/dev-scaffold` — one-time baseline: monorepo topology (`marketing/` apex +
+   - `/dev-scaffold`: one-time baseline: monorepo topology (`marketing/` apex +
      `web/` full-stack app on app.domain + optional `app/` mobile), branch model
      (protected `main` = production, `staging` = working line), skeleton, tooling,
      tests, and CI + deploy via Pipeline by Alex (`pba.yml` + thin caller).
-   - `/dev-auth` — authentication first; security & privacy prioritized.
-   - `/feature-loop <id>` — per feature: parallel tests + implementation →
+   - `/dev-auth`: authentication first; security & privacy prioritized.
+   - `/feature-loop <id>`: per feature: parallel tests + implementation →
      feature validation → integration validation → align to guide/wireframes →
      update STATUS.
-   - `/dev-tweak` — the cosmetic light lane: drains `docs/TWEAKS.md` (copy,
+   - `/dev-tweak`: the cosmetic light lane: drains `docs/TWEAKS.md` (copy,
      tokens, spacing) behind a hard qualification test + a proportional gate,
      without paying the full feature loop.
-   - `/dev-autopilot` — advances the build one safe step per run; this is what a
+   - `/dev-autopilot`: advances the build one safe step per run; this is what a
      schedule calls. Drains `docs/BUGS.md`, then `docs/TWEAKS.md`, before any
      build step; every UI-changing run leaves a **visual pulse** (staging URL +
      screenshots) in the STATUS log.
@@ -43,29 +43,29 @@ is the live control file; this file is the map.
 3. **Launch readiness**
    - Staging deploys automatically via Pipeline by Alex on push to `staging`; the
      human gate is the `staging → main` production promotion (`main` is protected).
-   - `/launch-observability` — error monitoring (PII-scrubbed) + consent-gated
+   - `/launch-observability`: error monitoring (PII-scrubbed) + consent-gated
      analytics + uptime/alerting, each signal proven end-to-end on staging.
    - `/launch-acceptance` → `docs/ACCEPTANCE_TESTS.md` (scenario spec) plus the
      runnable suites that execute it against staging: Playwright specs for every
      web surface (`marketing/` + `web/`), Maestro flows for iOS/Android.
-   - `/launch-compliance` — legal scan (ToS, privacy policy, cookie consent),
+   - `/launch-compliance`: legal scan (ToS, privacy policy, cookie consent),
      `accessibility-critique` (WCAG 2.2 AA), `seo-audit`, and `prose-check`;
      reconciles a fix queue and the two **hard gates** (Legal & compliance,
      Accessibility) that block ship-ready in `docs/STATUS.md`.
    - Companions: `/staging-smoke-test`, `/launch-readiness`.
 
 4. **Live (post-launch)**
-   - Raw production signal — user emails, reviews, error-tracker exports — goes
+   - Raw production signal, user emails, reviews, error-tracker exports, goes
      into `docs/FEEDBACK.md`.
    - `/live-triage` (manual or scheduled) routes each item: functional problem →
      `docs/BUGS.md` tagged `[prod]`, cosmetic miss → `docs/TWEAKS.md`, feature
-     request → a STATUS blocker for Alex. Triage routes, never fixes — the
+     request → a STATUS blocker for Alex. Triage routes, never fixes: the
      autopilot drains those logs through the same verified loop that built the
      app.
 
 ## Rules of the road
 
-- Dev work commits and pushes **straight to the working branch** — the branch you
+- Dev work commits and pushes **straight to the working branch**: the branch you
   call the skill on, or the one a cron sets explicitly. No per-step branches, no
   PR pile-up. Use a dedicated iteration branch (e.g. `staging`/`autopilot`), not a
   protected default.
@@ -75,9 +75,9 @@ is the live control file; this file is the map.
   consult it before touching the feature. Breaking an active decision needs
   explicit human confirmation + a recorded supersession; documented deliberate
   omissions are not review findings (security/legal/a11y excepted). The ADR
-  blocks blind change, not criticism — evidence a decision causes real harm is
+  blocks blind change, not criticism: evidence a decision causes real harm is
   surfaced as an `ADR-challenge` for Alex, never silently fixed or dropped.
 - Tests trace to the spec; never weakened just to make code pass.
-- Security and privacy beat convenience — most of all in auth.
+- Security and privacy beat convenience: most of all in auth.
 
 To run unattended, see `docs/SCHEDULING.md` in the DevByAlex repo.

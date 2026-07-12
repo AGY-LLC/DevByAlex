@@ -2,12 +2,12 @@
 
 This is the answer to "what's the best way to implement the scheduled actions so
 the app is constantly improving and working toward launch-ready." Everything
-here is **ready to run** — but nothing is scheduled until you choose to flip it
-on. **`/dev-schedule` automates all of this** — it preflights, picks a tier, and
+here is **ready to run**, but nothing is scheduled until you choose to flip it
+on. **`/dev-schedule` automates all of this**: it preflights, picks a tier, and
 takes the explicit working branch; read on for what it sets up under the hood. The
 whole workflow (native skills, reused library skills, and the best-practice
 `knowledge/`) is vendored into the app's committed `.claude/` by `install.sh`, so
-a runner needs no MCP token or network brain — a committed checkout is fully
+a runner needs no MCP token or network brain: a committed checkout is fully
 self-sufficient.
 
 ## The idea in one paragraph
@@ -27,23 +27,23 @@ A naive "keep building until done" loop drifts, burns tokens, and produces giant
 unreviewable diffs. The DevByAlex loop is safe to automate because of four
 properties baked into `dev-autopilot`:
 
-1. **One unit of work per run** — scaffold, or auth, or one feature (with its
+1. **One unit of work per run**: scaffold, or auth, or one feature (with its
    full validate loop). Bounded blast radius; each run is a reviewable commit.
-2. **Durable state in the repo** — `docs/STATUS.md` is read at the start and
+2. **Durable state in the repo**: `docs/STATUS.md` is read at the start and
    written at the end of every run, so progress survives across runs and across
    machines. No external state to manage.
-3. **Hard gates** — it will not enter the dev stage until the spec, guide, and
+3. **Hard gates**: it will not enter the dev stage until the spec, guide, and
    wireframes are approved, and never self-approves. Plan and launch stay human.
-4. **Stop-on-blocker** — ambiguity, a finding that won't fix, a needed secret or
+4. **Stop-on-blocker**: ambiguity, a finding that won't fix, a needed secret or
    decision → it writes the blocker to STATUS and stops instead of guessing.
 
 That's what makes "constantly improving" safe rather than reckless.
 
 ## Recommended setup (tiered)
 
-### Tier 1 — Hosted remote routine  ⭐ best for hands-off progress
+### Tier 1: Hosted remote routine  ⭐ best for hands-off progress
 
-A **claude.ai remote routine** runs `/dev-autopilot` in the cloud on a cron —
+A **claude.ai remote routine** runs `/dev-autopilot` in the cloud on a cron,
 durable, survives your machine being off, true unattended. This is what the
 `/schedule` skill manages.
 
@@ -51,7 +51,7 @@ Run this when you're ready (it does **not** run yet):
 
 A cron has no "current branch" intent, so **name the working branch explicitly**
 (use a dedicated iteration branch like `staging` or `autopilot`, not a protected
-default). The run commits and **pushes straight to that branch — no PR.**
+default). The run commits and **pushes straight to that branch: no PR.**
 
 ```
 /schedule create a routine that runs "/dev-autopilot /home/alex/dev/Startups/<app> --branch autopilot"
@@ -65,7 +65,7 @@ Equivalent raw call (the `/schedule` skill wraps this `RemoteTrigger` create):
 {
   "name": "devbyalex-autopilot:<app>",
   "schedule": "17 */3 * * 1-5",          // off-minute on purpose; weekdays, every 3h
-  "prompt": "cd /home/alex/dev/Startups/<app> && /dev-autopilot . --branch autopilot — do one bounded run (fix every open bug in docs/BUGS.md if any, else advance one build step), commit, push straight to the autopilot branch (no PR), and reply with a one-paragraph summary + the pushed commit + any blockers.",
+  "prompt": "cd /home/alex/dev/Startups/<app> && /dev-autopilot . --branch autopilot: do one bounded run (fix every open bug in docs/BUGS.md if any, else advance one build step), commit, push straight to the autopilot branch (no PR), and reply with a one-paragraph summary + the pushed commit + any blockers.",
   "repo": "AGY-LLC/<app>"
 }
 ```
@@ -74,7 +74,7 @@ Pair it with: a notification so you see each pushed step + any blocker
 immediately. Watch the branch (not a PR queue) to review progress; the point is
 to not stack branches you have to merge while iterating fast.
 
-### Tier 2 — Local durable cron (machine on, Claude session alive)
+### Tier 2: Local durable cron (machine on, Claude session alive)
 
 `CronCreate` schedules within a running Claude Code session on your machine.
 Use `durable: true` so it persists to `.claude/scheduled_tasks.json` across
@@ -87,13 +87,13 @@ auto-expire after 7 days** (re-create weekly).
   "cron": "23 */4 * * *",                 // every 4h, off-minute
   "recurring": true,
   "durable": true,
-  "prompt": "/dev-autopilot /home/alex/dev/Startups/<app> --branch autopilot — one bounded run (drain docs/BUGS.md if it has open bugs, else one build step), commit, push straight to the autopilot branch (no PR), summarize + surface blockers."
+  "prompt": "/dev-autopilot /home/alex/dev/Startups/<app> --branch autopilot: one bounded run (drain docs/BUGS.md if it has open bugs, else one build step), commit, push straight to the autopilot branch (no PR), summarize + surface blockers."
 }
 ```
 
-### Tier 3 — In-session grind (watch it work now)
+### Tier 3: In-session grind (watch it work now)
 
-`/loop` runs a command on an interval in the current session — good for an
+`/loop` runs a command on an interval in the current session: good for an
 active push while you're at the desk:
 
 ```
@@ -103,11 +103,11 @@ active push while you're at the desk:
 Omit the interval to let it self-pace between steps. Interactive runs push to
 your **current branch**; add `--branch <name>` to pin a different one.
 
-### Tier 4 — CI-native (the loop lives in the repo)
+### Tier 4: CI-native (the loop lives in the repo)
 
 If you'd rather the loop live in the app's own CI, run Claude Code headless on a
 schedule. It checks out and pushes straight to a dedicated iteration branch (set
-it explicitly — CI has no "current branch" intent), **no PR**. Drop
+it explicitly: CI has no "current branch" intent), **no PR**. Drop
 `.github/workflows/devbyalex-autopilot.yml` into the target repo:
 
 ```yaml
@@ -130,21 +130,21 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           npx -y @anthropic-ai/claude-code -p \
-            "/dev-autopilot . --branch $WORKING_BRANCH — do one bounded run (fix every open bug in docs/BUGS.md if any, else advance one build step), commit, and stop. Do not open a PR." \
+            "/dev-autopilot . --branch $WORKING_BRANCH: do one bounded run (fix every open bug in docs/BUGS.md if any, else advance one build step), commit, and stop. Do not open a PR." \
             --permission-mode acceptEdits
       - name: Push the step straight to the working branch
         run: git push origin "HEAD:$WORKING_BRANCH"
 ```
 
 (The DevByAlex skills, the reused skills, **and** the best-practice `knowledge/`
-all travel in the app's committed `.claude/` — `install.sh` vendors every one —
+all travel in the app's committed `.claude/`, `install.sh` vendors every one,
 so a checkout is fully self-sufficient and reads nothing over the network. The
 **only** secret this runner needs is `ANTHROPIC_API_KEY` (it authenticates Claude
 Code itself; it is not project-specific). No MCP token, no brain.)
 
 ## Cadence & cost guidance
 
-- **During active dev:** every 3–6 hours on weekdays is plenty — each run is a
+- **During active dev:** every 3–6 hours on weekdays is plenty: each run is a
   meaningful step, not a poll. Don't go sub-hourly; there's nothing to gain and
   it just stacks commits faster than you can skim.
 - **Approaching launch:** drop to once or twice a day; most remaining work is
@@ -152,32 +152,32 @@ Code itself; it is not project-specific). No MCP token, no brain.)
 - **Review on your cadence, not per-step.** Each run pushes a green commit to the
   working branch, so you read the branch history when you choose instead of
   clearing a PR queue. When you want a merge gate back (e.g. promoting the
-  iteration branch toward `main`), open one PR for the accumulated branch — not
+  iteration branch toward `main`), open one PR for the accumulated branch: not
   one per step.
 - **It self-limits.** When STATUS shows all features done, autopilot stops at the
-  launch stage. The loop ends on its own — you don't have to babysit a kill
+  launch stage. The loop ends on its own: you don't have to babysit a kill
   switch.
 
 ## Turning it on (checklist)
 
-1. `/init-ai <app>` — bootstrap STATUS.
+1. `/init-ai <app>`: bootstrap STATUS.
 2. Plan stage done and **all three gates approved** (autopilot won't move
    otherwise).
 3. Pick the **working branch** (a dedicated iteration branch like `autopilot` or
    `staging`) and make sure it exists and isn't a protected default.
-4. Run **`/dev-schedule`** to create it — it preflights, picks a tier, and names
+4. Run **`/dev-schedule`** to create it: it preflights, picks a tier, and names
    that branch explicitly (`--branch <name>`) for the cron. The committed
    `.claude/` is self-sufficient, so the runner needs nothing extra: cloud needs
    no secret at all, and a GitHub-Actions runner needs only `ANTHROPIC_API_KEY`.
-5. Skim the commits the run pushes to the working branch — each UI-changing run
+5. Skim the commits the run pushes to the working branch: each UI-changing run
    ends its STATUS log entry with a **visual pulse** (staging URL + screenshots),
    so a glance tells you what the run did. Clear any blocker it logs in STATUS.
    Jot bugs in `docs/BUGS.md` and cosmetic tweaks in `docs/TWEAKS.md` as you spot
-   them — the next run drains both before building.
+   them: the next run drains both before building.
 6. When STATUS reaches the launch stage, staging is already deployed by Pipeline
    by Alex (CI, on push to `staging`); run `/launch-observability` to wire
    monitoring/analytics, then `/launch-acceptance` to write the
    suites, then `/launch-verify` to run them against it and drive them green.
-7. Post-launch, `/live-triage` is cron-safe too — schedule it alongside the
+7. Post-launch, `/live-triage` is cron-safe too: schedule it alongside the
    autopilot (same recipe, its own prompt) so `docs/FEEDBACK.md` keeps draining
    into the bug/tweak logs.

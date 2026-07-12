@@ -1,13 +1,13 @@
 ---
 id: stack-auth-decision
 title: "Auth Decision Guide"
-summary: "Which auth solution to reach for and why. This isn't a comprehensive survey — it's a decision framework based on what I've actually shipped."
+summary: "Which auth solution to reach for and why. This isn't a comprehensive survey: it's a decision framework based on what I've actually shipped."
 tags: ["stack", "auth-decision"]
 updated: 2026-05-28
 ---
 # Auth Decision Guide
 
-Which auth solution to reach for and why. This isn't a comprehensive survey — it's a decision framework based on what I've actually shipped.
+Which auth solution to reach for and why. This isn't a comprehensive survey: it's a decision framework based on what I've actually shipped.
 
 ---
 
@@ -34,7 +34,7 @@ Which auth solution to reach for and why. This isn't a comprehensive survey — 
 ### What it's not good at
 - Cross-platform session unification (web + mobile requires extra per-platform handling)
 - Token expiry: ID tokens expire in 1 hour and if you don't handle proactive refresh, you get intermittent auth failures that are hard to reproduce
-- Vendor lock-in is meaningful — if you want to migrate off later, it's work
+- Vendor lock-in is meaningful: if you want to migrate off later, it's work
 
 ### When I'd use it
 - Web-only project, single platform
@@ -54,14 +54,14 @@ Which auth solution to reach for and why. This isn't a comprehensive survey — 
 ## Stytch
 
 ### What it's good at
-- Clean cross-platform session model — the same session works on web and mobile
+- Clean cross-platform session model: the same session works on web and mobile
 - Magic links, OAuth, SMS OTP all built in
 - Good developer experience; API is clean
 - Handles the hard parts of cross-platform auth without per-platform special-casing
 - Session tokens with configurable expiry (not the Firebase 1-hour hard expiry)
 
 ### What it's not good at
-- Smaller ecosystem than Firebase — fewer third-party tutorials
+- Smaller ecosystem than Firebase: fewer third-party tutorials
 - More expensive than Firebase at scale
 - Newer, so AI assistance is thinner and less reliable (always verify generated Stytch code)
 
@@ -83,14 +83,14 @@ Which auth solution to reach for and why. This isn't a comprehensive survey — 
 ### What it's good at
 - Good fit for Next.js; maintained by Vercel (loosely)
 - Handles OAuth providers cleanly
-- You keep full control of sessions — stored in your own DB
+- You keep full control of sessions: stored in your own DB
 - Flexible: works with any OAuth provider, email/password, or credentials
 - No external auth vendor dependency (your sessions are in your database)
 
 ### What it's not good at
 - The v4 → v5 migration was rough; documentation has been inconsistent
 - Configuration has some sharp edges; the "credentials provider" is easy to misuse
-- Not great for mobile apps — designed for web sessions
+- Not great for mobile apps: designed for web sessions
 - More to configure than Firebase or Stytch out of the box
 
 ### When I'd use it
@@ -107,14 +107,14 @@ Which auth solution to reach for and why. This isn't a comprehensive survey — 
 ## Clerk (I haven't used this yet but have heard great things)
 
 ### What it's good at
-- Best-in-class developer experience — seriously good UI components
+- Best-in-class developer experience: seriously good UI components
 - Handles multi-tenancy / organizations out of the box
 - Good React hooks, prebuilt components
 - Passkeys, MFA, SSO all available
 
 ### What it's not good at
 - More expensive than most alternatives at meaningful scale
-- Pre-built components are opinionated — you trade flexibility for speed
+- Pre-built components are opinionated: you trade flexibility for speed
 - Can feel like overkill for simple auth needs
 
 ### When I'd use it

@@ -18,7 +18,7 @@ description: >-
 
 # Staging smoke test
 
-A **generator** skill. It does not run the test itself — it writes a
+A **generator** skill. It does not run the test itself: it writes a
 checklist that a human operator walks through against a live staging
 deployment. The goal: catch anything that "compiles and deploys" but isn't
 actually wired up correctly in the staging environment.
@@ -36,7 +36,7 @@ folder if it doesn't exist) containing:
 
 **Do not run the checks.** Do not spin up a browser, call staging APIs, or
 log in. This skill only writes the document. Executing the smoke test is
-the human's job — that is the whole point.
+the human's job, that is the whole point.
 
 **Do not overwrite blindly.** If `docs/staging-smoke-test.md` already
 exists, read it first. Preserve any operator notes / hand-edited sections
@@ -110,7 +110,7 @@ itself in place. If the user wants a clean rewrite, they will say so.
 Use these sections as a starting point. Drop sections that don't apply
 to this app. Add sections for anything app-specific the audit surfaces.
 
-### 1. Preflight — am I really on staging?
+### 1. Preflight: am I really on staging?
 
 Items that confirm the operator is hitting the staging environment, not
 prod, before they do anything destructive.
@@ -139,7 +139,7 @@ Cover every auth path the app supports.
   redirect to login.
 - Password reset. → Expected: email delivered, link resets password,
   old password no longer works.
-- SSO / OAuth providers (Google, GitHub, Apple, Microsoft, etc. —
+- SSO / OAuth providers (Google, GitHub, Apple, Microsoft, etc.,
   whichever are enabled). → Expected: redirect to provider, consent
   screen on staging's OAuth app, return to staging callback, account
   linked.
@@ -150,13 +150,13 @@ Cover every auth path the app supports.
 - Session expiry / refresh. → Expected: stale session is rejected;
   refresh token rotates if used.
 - Account deletion / data export (if shipped). → Expected: actually
-  purges or exports — check DB/storage to confirm.
+  purges or exports: check DB/storage to confirm.
 
 ### 3. Core user flows
 
 One subsection per primary user journey discovered from the code. For
 each, list the happy-path steps and the expected observable outcome.
-Do not be generic — name the actual flows ("Create a project",
+Do not be generic: name the actual flows ("Create a project",
 "Invite a teammate", "Publish a post", "Book a ride", "Start a
 conversation").
 
@@ -194,7 +194,7 @@ conversation").
 - Image transforms / thumbnails render. → Expected: correct sizes,
   not broken `img` tags.
 
-### 7. Third-party integrations — one block per integration
+### 7. Third-party integrations: one block per integration
 
 For each integration discovered in step 1, produce a labeled block.
 Examples (include only what actually ships):
@@ -234,7 +234,7 @@ Examples (include only what actually ships):
 - **CDN / image optimizer**: hard-reload a static asset. → Expected:
   served from staging CDN host; cache headers sane.
 
-### 8. Webhooks — inbound and outbound
+### 8. Webhooks: inbound and outbound
 
 - **Outbound**: trigger the event the app emits (e.g. order paid,
   user signed up). → Expected: receiver gets a signed request on the
@@ -285,7 +285,7 @@ Examples (include only what actually ships):
 
 ### 13. Performance sniff
 
-Not a load test — just "does it feel obviously broken?"
+Not a load test: just "does it feel obviously broken?"
 
 - Cold-load the landing page. → Expected: renders within a few
   seconds on a normal connection.
@@ -295,7 +295,7 @@ Not a load test — just "does it feel obviously broken?"
   unexpected requests to `localhost`, prod domains, or 404ing
   assets.
 
-### 14. Observability — did the run show up where it should?
+### 14. Observability: did the run show up where it should?
 
 At the end of the smoke test, the operator should confirm traces of
 the run in the monitoring stack.
@@ -317,7 +317,7 @@ the run in the monitoring stack.
 - Unsubscribe link in any marketing email works and actually
   unsubscribes (verify in provider dashboard).
 - Support / contact link points somewhere real; form submission
-  delivers (don't send to prod support inbox — verify staging
+  delivers (don't send to prod support inbox: verify staging
   routing).
 
 ### 16. Mobile / responsive (if applicable)
@@ -330,7 +330,7 @@ the run in the monitoring stack.
 
 ### 17. Accessibility smoke
 
-Not a full audit — just "obviously broken?"
+Not a full audit: just "obviously broken?"
 
 - Tab through a key form. → Expected: visible focus ring, logical
   order, every interactive element reachable.
@@ -344,7 +344,7 @@ Not a full audit — just "obviously broken?"
 - Previous release is still deployable / reachable via one-click
   rollback. → Expected: rollback path verified at least to the
   point of "the button/command exists and the operator knows how to
-  use it" — do not actually roll back unless asked.
+  use it": do not actually roll back unless asked.
 - Migrations are reversible or have a documented recovery path. →
   Expected: note present in the run notes, even if not exercised.
 
@@ -366,7 +366,7 @@ can check items off in a rendered view or directly in the file.
 
 Manual walkthrough to verify the staging deployment is functional and
 correctly wired before promoting to production. Walk through every
-item. If an item fails, stop and file it before continuing — a failed
+item. If an item fails, stop and file it before continuing: a failed
 smoke test means staging is not ready, and neither is prod.
 
 **Environment:** staging
@@ -387,7 +387,7 @@ smoke test means staging is not ready, and neither is prod.
 
 ---
 
-## 1. Preflight — am I really on staging?
+## 1. Preflight: am I really on staging?
 
 - [ ] Staging URL loads. → Expected: …
 - [ ] Staging banner visible. → Expected: …
@@ -410,9 +410,9 @@ smoke test means staging is not ready, and neither is prod.
 - [ ] No unexpected traffic hit production during the run.
 
 **Verdict:**
-- [ ] GO — safe to promote to production.
-- [ ] GO WITH FOLLOW-UPS — tickets filed: ________________
-- [ ] NO-GO — blocking issues: ________________
+- [ ] GO: safe to promote to production.
+- [ ] GO WITH FOLLOW-UPS: tickets filed: ________________
+- [ ] NO-GO: blocking issues: ________________
 
 **Operator signature:** ________________
 **Completed at:** ________________
@@ -430,4 +430,4 @@ smoke test means staging is not ready, and neither is prod.
 - **Duplicate `launch-readiness`.** `launch-readiness` audits the
   codebase for ship-readiness; this skill produces a manual runbook
   for verifying a deployed staging environment. They are
-  complementary — run both before a launch.
+  complementary: run both before a launch.
