@@ -1,6 +1,6 @@
 ---
 name: live-triage
-description: "The post-launch stage of the DevByAlex workflow. It turns production signal into workflow state so a shipped app keeps improving through the same machinery that built it. Reads the docs/FEEDBACK.md inbox (user emails, support messages, store reviews, error-tracker exports pasted in by the human) plus any error-monitor signal reachable from the session, dedupes against the existing bug/tweak logs, and routes each qualified item: functional problem → a docs/BUGS.md entry tagged [prod] (which dev-autopilot drains before any build step), cosmetic miss → a docs/TWEAKS.md entry (the light lane), feature request or scope change → surfaced to Alex in STATUS blockers, never silently turned into a feature. Triage routes; it never fixes. The autopilot's existing drain loops do the fixing, so production feedback flows into the exact same verified pipeline as everything else. Safe to run on a schedule. Use post-launch when the user says 'triage the feedback', 'process the inbox', 'what are users reporting', or on a cron alongside the autopilot."
+description: "The post-launch stage of the DevByAlex workflow. It turns production signal into workflow state so a shipped app keeps improving through the same machinery that built it. Reads the docs/FEEDBACK.md inbox (user emails, support messages, store reviews, error-tracker exports pasted in by the human) plus any error-monitor signal reachable from the session, dedupes against the existing lanes, and routes each qualified item: functional problem → a docs/BUGS.md entry tagged [prod] (which dev-goal drains before any build unit), cosmetic miss → a docs/TWEAKS.md entry (the light lane), small unambiguous improvement that adds no scope → a docs/TODO.md entry (the planned-change lane re-qualifies it), feature request or scope change → surfaced to Alex in STATUS blockers, never silently turned into a feature. Triage routes; it never fixes. dev-goal's drain loops do the fixing, so production feedback flows into the exact same verified pipeline as everything else. Idempotent: safe to run repeatedly. Use post-launch when the user says 'triage the feedback', 'process the inbox', or 'what are users reporting'."
 argument-hint: "[path to the app repo: defaults to cwd]"
 license: MIT
 metadata:
@@ -11,10 +11,10 @@ metadata:
 # live-triage: Turn production signal into workflow state
 
 The workflow used to end at TestFlight. This closes the loop: production
-errors and user feedback become `docs/BUGS.md` / `docs/TWEAKS.md` entries: the
-same logs the autopilot already drains with full verification, so a live app
-keeps improving through the pipeline that built it, not through ad-hoc hotfixes
-beside it.
+errors and user feedback become `docs/BUGS.md` / `docs/TWEAKS.md` /
+`docs/TODO.md` entries: the same lanes `dev-goal` already drains with full
+verification, so a live app keeps improving through the pipeline that built it,
+not through ad-hoc hotfixes beside it.
 
 **Triage routes; it never fixes.** The separation is the point: this skill has
 no opinion about code, so its judgments about *what* users reported stay honest,
@@ -24,8 +24,8 @@ and every fix still goes through the drain loops' verify machinery.
 
 - Post-launch (the app has real users on staging-promoted production or
   TestFlight/Play internal), and `docs/FEEDBACK.md` has inbox entries.
-- On a schedule: safe to cron alongside `dev-autopilot`; a run with an empty
-  inbox and no new error signal is a clean no-op.
+- Run it as often as you like; a run with an empty inbox and no new error
+  signal is a clean no-op.
 - The user asks "what are users reporting?" or "process the feedback."
 
 ## Inputs
@@ -40,7 +40,8 @@ and every fix still goes through the drain loops' verify machinery.
 ## Workflow
 
 ### Step 1: Load state
-Read `docs/FEEDBACK.md`, `docs/BUGS.md`, `docs/TWEAKS.md`, and `docs/STATUS.md`.
+Read `docs/FEEDBACK.md`, `docs/BUGS.md`, `docs/TWEAKS.md`, `docs/TODO.md`, and
+`docs/STATUS.md`.
 Note the last triage run (STATUS log). If there's no FEEDBACK.md, stamp it from
 the template and stop: nothing to triage yet.
 
@@ -66,21 +67,25 @@ For every item, in order:
    - **Cosmetic miss** (copy, spacing, visual polish) → a new `docs/TWEAKS.md`
      entry: it must genuinely pass the tweak qualification test; when in
      doubt, it's a bug.
+   - **Small improvement, no new scope** (existing behavior users want adjusted,
+     bounded and unambiguous: e.g. "sort newest first") → a new `docs/TODO.md`
+     entry; `/dev-todo`'s routing re-qualifies it before any work. When in doubt
+     about scope, it's a feature request for Alex, not a todo.
    - **Feature request / scope change** → STATUS › `## Blockers / open
      questions`, quoting the request. **Scope is Alex's call**: triage never
      converts a wish into a feature card.
    - **Not actionable / noise** → triaged with a one-line reason. Never
      silently dropped.
 3. **Mark it**: move the FEEDBACK entry from Inbox to Triaged with a pointer
-   to what it became (`→ BUG-014 [prod]`, `→ TWK-007`, `→ blocker (feature
-   request)`, `duplicate of BUG-009`).
+   to what it became (`→ BUG-014 [prod]`, `→ TWK-007`, `→ TODO-004`,
+   `→ blocker (feature request)`, `duplicate of BUG-009`).
 
 ### Step 4: Record and stop
 - Add a STATUS log line: items triaged, IDs created, anything escalated.
-- If this run filed any `[prod]` bugs, note in the log that the next autopilot
-  run will be a bug-fix run (the existing bugs-first rule does the rest: no
+- If this run filed any `[prod]` bugs, note in the log that the next `/dev-goal`
+  run starts with a bug drain (the existing bugs-first rule does the rest: no
   new mechanism needed).
-- Commit and push to the working branch. **Stop**: fixing is the autopilot's
+- Commit and push to the working branch. **Stop**: fixing is `/dev-goal`'s
   job on its next run.
 
 ## Rules
@@ -96,10 +101,11 @@ For every item, in order:
 - **Nothing vanishes.** Every inbox item leaves as a routed ID, a duplicate
   citation, or a reasoned not-actionable: the Triaged section is the audit
   trail.
-- Idempotent and cron-safe: empty inbox + no new signal = clean no-op run.
+- Idempotent: empty inbox + no new signal = clean no-op run.
 
 ## Output
 
-`docs/FEEDBACK.md` inbox drained to Triaged, new `[prod]` bug / tweak entries
-filed for the autopilot to drain, scope requests surfaced to Alex, and a STATUS
-log line: with the app's improvement loop now running on production signal.
+`docs/FEEDBACK.md` inbox drained to Triaged, new `[prod]` bug / tweak / todo
+entries filed for `/dev-goal` to drain, scope requests surfaced to Alex, and a
+STATUS log line: with the app's improvement loop now running on production
+signal.

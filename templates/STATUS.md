@@ -1,15 +1,16 @@
 # {{APP_NAME}}: DevByAlex Status
 
-> Single source of truth for the autonomous workflow. `dev-autopilot` reads this
+> Single source of truth for the autonomous workflow. `dev-goal` reads this
 > file to decide what to do next; every stage/feature skill updates it. Keep it
 > short and current: push detail into feature cards and the log. Use absolute
 > dates. Tag anything inferred (not observed) `(needs review)`.
 >
 > **Bugs you hit go in [`docs/BUGS.md`](./BUGS.md), cosmetic tweaks in
-> [`docs/TWEAKS.md`](./TWEAKS.md), and post-launch user feedback in
-> [`docs/FEEDBACK.md`](./FEEDBACK.md): not here.** The autopilot drains bugs,
-> then tweaks, **before any build step** and won't enter the launch stage while
-> either log has open entries; `/live-triage` converts feedback into those logs.
+> [`docs/TWEAKS.md`](./TWEAKS.md), planned changes in [`docs/TODO.md`](./TODO.md),
+> and post-launch user feedback in [`docs/FEEDBACK.md`](./FEEDBACK.md): not
+> here.** The goal run drains bugs, then tweaks, then todos, **before any build
+> unit** and won't enter the launch stage while any lane has open entries;
+> `/live-triage` converts feedback into those lanes.
 
 **Stage:** plan <!-- plan | dev | launch | live -->
 **Updated:** {{DATE}} <!-- date · commit · branch -->
@@ -52,7 +53,7 @@ Status: `todo` → `in-progress` → `blocked` → `done`.
 
 ## Launch
 
-- [ ] No open bugs in `docs/BUGS.md` or open tweaks in `docs/TWEAKS.md`   ← soft gate: autopilot won't enter launch while either log has open entries
+- [ ] No open entries in `docs/BUGS.md`, `docs/TWEAKS.md`, or `docs/TODO.md`   ← soft gate: the loop won't enter launch while any lane has open entries
 - [ ] Observability wired: error monitoring (PII-scrubbed) + consent-gated analytics + uptime, verified on staging (`/launch-observability`)
 - [ ] Acceptance tests written (`docs/ACCEPTANCE_TESTS.md`)
 - [ ] Acceptance suite passed against staging (`/launch-verify`)   ← gate `/launch-submit` reads as "acceptance suite green"
@@ -69,11 +70,11 @@ Status: `todo` → `in-progress` → `blocked` → `done`.
 ## Live (post-launch)
 
 - [ ] Observability receiving real production events (not just the staging test events)
-- [ ] Feedback triage running: `/live-triage` drains `docs/FEEDBACK.md` into the bug/tweak logs (manual or scheduled)
+- [ ] Feedback triage running: `/live-triage` drains `docs/FEEDBACK.md` into the bug/tweak/todo lanes
 
 ## Next action
 
-<!-- dev-autopilot reads THIS line first. Exactly one next step. -->
+<!-- dev-goal reads THIS line first. Exactly one next step. -->
 → Run `/plan-spec` to interview and write the spec.
 
 ## Blockers / open questions

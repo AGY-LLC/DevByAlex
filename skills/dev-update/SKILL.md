@@ -60,7 +60,7 @@ flag it so the user knows behavior may shift on the next run.
   `"<source_path>/install.sh" --update-all` from the DevByAlex checkout: it walks
   the onboarded-apps registry and updates each. That's an operator command, not
   this per-app skill.
-- **No auto-update.** Scheduled/autopilot runs do **not** self-update: updates
+- **No auto-update.** Goal runs do **not** self-update: updates
   are deliberate so a build can't shift underfoot mid-run. Run this when you want
   the new version, not before.
 

@@ -20,12 +20,12 @@ or a half-built one.
 The workflow is installed **per project, never user-scoped** (`~/.claude`). User
 scope would load the workflow into every repo and couldn't keep each app's
 `docs/STATUS.md` context pinned to that app. Project scope means the skills load
-only inside the target app, and a cron / headless run there carries the app's
+only inside the target app, and a headless/CI run there carries the app's
 own workflow logic and reads the app's own STATUS to know its stage and next
 action.
 
 It does **not** build anything. It sets up state and routes you (or the
-autopilot) to the right next stage. Respect the approval gates: never advance
+goal run) to the right next stage. Respect the approval gates: never advance
 into the dev stage on your own.
 
 ## When to activate
@@ -62,7 +62,7 @@ overwrite existing files without asking.
 
 ### Step 1.5: Provision the workflow into the app (project scope)
 Install the workflow into the target's own `.claude/` so it loads only in that
-app and a cron there is self-sufficient. Run the source repo's provisioner:
+app and a headless run there is self-sufficient. Run the source repo's provisioner:
 
 ```bash
 <repo-root>/install.sh <target-app>          # copy (default): self-contained, commit-able
@@ -83,9 +83,9 @@ library skills (`scout`, `fix-errors`, `issue-checker`, `test-suite-developer`,
 `staging-smoke-test`, `launch-readiness`, `prose-check`, `seo-audit`,
 `accessibility-critique`, `marketer-brand-generation`, `marketer-copywriting`),
 and the best-practice `knowledge/`. A committed checkout is fully self-sufficient,
-a scheduled run on any runner needs no MCP token or network brain. (The wireframe
+a run on any runner needs no MCP token or network brain. (The wireframe
 stage still wants a write-capable Figma MCP, but that's plan-time and human-run,
-not part of the unattended dev loop.)
+not part of the autonomous dev loop.)
 
 ### Step 2: Detect repo state (read-only pass)
 Inventory the target without changing anything. Capture:
@@ -142,10 +142,11 @@ in the summary (offer to merge, don't overwrite silently):
 
 | Template | Destination | Notes |
 |----------|-------------|-------|
-| `STATUS.md` | `docs/STATUS.md` | the control file the autopilot reads |
-| `BUGS.md` | `docs/BUGS.md` | the bug log the autopilot drains before each build step |
-| `TWEAKS.md` | `docs/TWEAKS.md` | the cosmetic light lane (`/dev-tweak`) the autopilot drains after bugs |
-| `FEEDBACK.md` | `docs/FEEDBACK.md` | the post-launch inbox `/live-triage` converts into bug/tweak entries |
+| `STATUS.md` | `docs/STATUS.md` | the control file `dev-goal` reads |
+| `BUGS.md` | `docs/BUGS.md` | the bug log the goal run drains before any build unit |
+| `TWEAKS.md` | `docs/TWEAKS.md` | the cosmetic light lane (`/dev-tweak`) drained after bugs |
+| `TODO.md` | `docs/TODO.md` | the planned-change lane (`/dev-todo`) drained after tweaks; most post-stable iteration lives here |
+| `FEEDBACK.md` | `docs/FEEDBACK.md` | the post-launch inbox `/live-triage` converts into bug/tweak/todo entries |
 | `DECISIONS.md` | `docs/DECISIONS.md` | the local decision log stages append to (replaces the old brain write-back) |
 | `AI_WORKFLOW.md` | `docs/AI_WORKFLOW.md` | per-repo pointer to the process |
 | `SPEC.md` | `docs/SPEC.md` | stub if blank; keep if it exists |
@@ -236,10 +237,10 @@ repo, this backfills the board so the workflow can pick up mid-stream, and the
 honest result is that a working app starts with most validation columns empty.
 
 **Set expectations for `partial`/`mature` repos.** Because validation columns
-start empty, the **first phase of autopilot is validate-and-harden, not new
+start empty, the **first phase of the goal run is validate-and-harden, not new
 building**: it re-certifies existing auth and features (tests backfilled from the
 spec, `scout`/validators run, fixes applied) before adding anything new. Say this
-plainly in the summary so "the autopilot will finish my app" maps to "it will
+plainly in the summary so "`/dev-goal` will finish my app" maps to "it will
 first prove what's there is correct." This is how existing code earns its way to
 launch-ready.
 
@@ -262,18 +263,18 @@ anything that needs a human. The routing rules:
 | scaffolded, no auth at all | `/dev-auth` (build) |
 | scaffolded, **auth present but unvalidated** | `/dev-auth validate`: audit + harden the existing auth |
 | features identified, **any feature missing its ADR** | `/plan-guide adr-backfill`: write `docs/adr/<NN>-<slug>.md` for **every** feature (and consolidate scattered feature docs) before any feature work |
-| auth validated, ADRs complete, features remain | `/dev-autopilot` (or `/feature-loop <feature>`): validate/harden existing features first, then build missing ones |
+| auth validated, ADRs complete, features remain | `/dev-goal` (or `/feature-loop <feature>`): validate/harden existing features first, then build missing ones |
 | all features built + validated | `/launch-observability` (wire monitoring/analytics) → `/launch-acceptance` → `/launch-verify` (run the suite against staging), then `/launch-compliance` (legal/a11y/SEO/prose: drives the hard gates) + `/launch-readiness` |
-| launched, real users in production | `/live-triage`: drain `docs/FEEDBACK.md` into the bug/tweak logs (manual or scheduled alongside the autopilot) |
+| launched, real users in production | `/live-triage`: drain `docs/FEEDBACK.md` into the bug/tweak/todo lanes, then `/dev-goal` to work them |
 
 If integrating a code-first repo with no spec, recommend backfilling the spec
-and guide **from the code** before any further building, so the autopilot has a
+and guide **from the code** before any further building, so the goal run has a
 target to validate against.
 
 **Queue the show-don't-tell sweep if Step 2 found decision leakage.** For each
 screen flagged in Step 2 (explanatory paragraphs, spec/ADR text in the UI), log
 an entry in `docs/BUGS.md`: one per screen, tagged `[show-dont-tell]`, naming
-the offending copy and file. The autopilot drains these before building
+the offending copy and file. The goal run drains these before building
 anything new; the fix standard is **restructure the section so layout,
 hierarchy, and labels carry the meaning, don't just shorten the paragraph**,
 and the reworked screens must pass the design-critic screenshot gate like any
@@ -285,7 +286,7 @@ fixes.
 
 **Queue the orphan sweep if Step 2 found orphans.** Log one `docs/BUGS.md`
 entry tagged `[orphan]` per cluster of trivial orphans (dead files, unused
-exports/deps, scratch scripts, stale copies), naming the paths: the autopilot
+exports/deps, scratch scripts, stale copies), naming the paths: the goal run
 drains these before building anything new, and the fix is removal. Anything
 flagged as **substantial orphaned work** goes to STATUS ›
 `## Blockers / open questions` as a keep-or-remove question for Alex instead,
@@ -306,12 +307,12 @@ eyes; an unreviewed backfilled ADR still beats no record.
 
 **Pick a working branch for the dev stage.** The dev skills push straight to the
 working branch (no PRs). For an existing repo with a real `main`, tell the user
-to use a dedicated iteration branch (e.g. `autopilot`/`staging`), and to pass
-`--branch <name>` to any cron, so unattended runs don't push to a protected
-default. Note this in the summary and `## Blockers / open questions` if no such
-branch exists yet.
+to use a dedicated iteration branch (e.g. `staging`), and to pass
+`--branch <name>` to `/dev-goal` when the current branch isn't it, so goal runs
+don't push to a protected default. Note this in the summary and
+`## Blockers / open questions` if no such branch exists yet.
 
-### Step 7: Make the workflow discoverable + ready to schedule
+### Step 7: Make the workflow discoverable + ready to run
 The skills are already provisioned into `<app>/.claude/` (Step 1.5), so they load
 when the app is opened in Claude Code. To finish wiring it in:
 - Offer to add a short `## DevByAlex workflow` section to the repo's
@@ -319,11 +320,10 @@ when the app is opened in Claude Code. To finish wiring it in:
 - Decide whether `<app>/.claude/{skills,agents,templates,knowledge}` should be
   committed (so clones and CI carry the workflow) or gitignored (machine-local
   only). Recommend committing for any repo you'll run unattended on a remote/CI.
-- If they want unattended runs, route them to **`/dev-schedule`** (and
-  `docs/SCHEDULING.md`). The committed `.claude/` is fully self-contained: skills
-  and best-practice `knowledge/` all travel with it, so a runner needs no MCP
-  token or network brain. Do **not** create cron jobs from here; `/dev-schedule`
-  is the dedicated place.
+- To advance the build, route them to **`/dev-goal`**: hand it the goal and it
+  pushes until the goal is met. The committed `.claude/` is fully self-contained:
+  skills and best-practice `knowledge/` all travel with it, so any checkout
+  (local or CI) needs no MCP token or network brain.
 
 ### Step 8: Report
 Print a tight summary:
@@ -332,7 +332,7 @@ Print a tight summary:
 - The reconciled stage and the **one** next action.
 - For an existing repo: **what's present but unvalidated**: auth, and the count
   of features that are impl-present/validation-pending, and the explicit note
-  that autopilot's first phase is validate-and-harden, not new building.
+  that the goal run's first phase is validate-and-harden, not new building.
 - The **ADR ledger**: which features have an ADR vs. need backfill, and any
   scattered feature docs slated for consolidation into `docs/adr/` or removal.
 - The working branch to use for the dev stage (and a flag if none exists yet).

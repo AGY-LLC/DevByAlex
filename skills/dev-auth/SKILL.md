@@ -1,6 +1,6 @@
 ---
 name: dev-auth
-description: "The most important dev stage of the DevByAlex workflow. It builds authentication first, with security and privacy prioritized above everything else, so the rest of the app has a solid foundation. Chooses/implements the auth approach from the spec (provider or self-rolled), sign-up/login/logout, session handling, password/credential security, access control and route protection, and the user/session data model. Then runs the build through the same validate loop every feature uses (feature + integration validation) before marking it done. Also runs in validate-existing mode: when an app already has auth (common in integrated/existing repos), it does NOT re-implement; it audits, security-validates, and hardens the existing auth before marking it done, because existing auth that was never put through the security loop is the highest-risk code in a not-launch-ready repo. Leans on the vendored auth best-practice playbook. Use after scaffold, when the user says 'build auth', 'add login', 'set up authentication', 'validate the existing auth', or the autopilot reaches a scaffolded repo without validated auth."
+description: "The most important dev stage of the DevByAlex workflow. It builds authentication first, with security and privacy prioritized above everything else, so the rest of the app has a solid foundation. Chooses/implements the auth approach from the spec (provider or self-rolled), sign-up/login/logout, session handling, password/credential security, access control and route protection, and the user/session data model. Then runs the build through the same validate loop every feature uses (feature + integration validation) before marking it done. Also runs in validate-existing mode: when an app already has auth (common in integrated/existing repos), it does NOT re-implement; it audits, security-validates, and hardens the existing auth before marking it done, because existing auth that was never put through the security loop is the highest-risk code in a not-launch-ready repo. Leans on the vendored auth best-practice playbook. Use after scaffold, when the user says 'build auth', 'add login', 'set up authentication', 'validate the existing auth', or the goal run reaches a scaffolded repo without validated auth."
 argument-hint: "[optional: auth provider/constraints, or 'validate' to audit+harden existing auth]"
 license: MIT
 metadata:
@@ -37,7 +37,7 @@ Detect which one you're in before Step 3:
 - Scaffold is done and **Dev → Authentication** is unchecked in STATUS.
 - The user says "build auth," "add login," "set up authentication," or
   "validate the existing auth."
-- `dev-autopilot` reaches a scaffolded repo without **validated** auth: whether
+- `dev-goal` reaches a scaffolded repo without **validated** auth: whether
   no auth exists (build) or auth exists but is unvalidated (validate-existing).
 
 ## Workflow
@@ -65,7 +65,7 @@ the governing record future auth changes are checked against), and append a
 one-line pointer to `docs/DECISIONS.md`.
 
 ### Step 3: Implement or harden (security-first)
-On the working branch (the one you're on, or the one `dev-autopilot` passed down;
+On the working branch (the one you're on, or the one `dev-goal` passed down;
 do not create a separate auth branch).
 - **Build mode:** implement sign-up, login, logout, session lifecycle, and
   route/middleware protection.
@@ -107,7 +107,7 @@ findings dictate the fixes in Step 3:
   summary.
 - Commit and **push to the working branch** (`git push origin HEAD:<branch>`)
   once green: no PR.
-- Set `## Next action` to `/dev-autopilot` (or `/feature-loop <first feature>`).
+- Set `## Next action` to `/dev-goal` (or `/feature-loop <first feature>`).
 
 ## Rules
 

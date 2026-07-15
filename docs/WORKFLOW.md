@@ -25,16 +25,18 @@ is the live control file every skill reads and writes.
                          │   (once)            (security      │ 1. test-author ∥ feature-implementer│ │
                          │                      first)        │ 2. feature-validator   (loop on ✗)  │ │
                          │                                    │ 3. integration-validator (loop on ✗)│ │
-                         │   driven unattended by             │ 4. align to guide+wireframes;       │ │
+                         │   driven to the goal by            │ 4. align to guide+wireframes;       │ │
                          │                                    │    UI ⇒ screenshots + design-critic │ │
                          │                                    │    pass (loop on ✗); STATUS         │ │
-                         │   /dev-autopilot (1 step/run) ◄────┴─────────────────────────────────────┘ │
-                         │   ▲ each run first DRAINS docs/BUGS.md (human-logged bugs), then          │
-                         │     docs/TWEAKS.md via /dev-tweak (the cosmetic light lane), before        │
-                         │     building, and every UI-changing run leaves a visual pulse (staging   │
-                         │     URL + screenshots) in the STATUS log                                   │
+                         │   /dev-goal (push until met) ◄─────┴─────────────────────────────────────┘ │
+                         │   ▲ a slim orchestrator: each unit runs in a subagent (one green commit   │
+                         │     per unit), looping until the goal is reached. Before building it      │
+                         │     DRAINS docs/BUGS.md (human-logged bugs), then docs/TWEAKS.md via      │
+                         │     /dev-tweak (cosmetic light lane), then docs/TODO.md via /dev-todo     │
+                         │     (planned changes), and every UI-changing unit leaves a visual pulse   │
+                         │     (staging URL + screenshots) in the STATUS log                          │
                          └───────────────────────────────┬───────────────────────────────────────────┘
-                             all features done  AND  BUGS.md + TWEAKS.md have no open entries
+                             all features done  AND  BUGS.md + TWEAKS.md + TODO.md have no open entries
                                                           │
                          ┌──────────────────────────── LAUNCH READINESS ────────────────────────────┐
                          │  (staging deploys via PBA) ─► /launch-observability (errors · consent-gated │
@@ -50,9 +52,10 @@ is the live control file every skill reads and writes.
                                                         │  shipped: real users
                          ┌───────────────────────────── LIVE (post-launch) ─────────────────────────┐
                          │  production errors + user feedback ─► docs/FEEDBACK.md ─► /live-triage ─►   │
-                         │  BUGS.md [prod] / TWEAKS.md / STATUS blockers (feature requests → Alex)     │
-                         │  …which the next /dev-autopilot run drains: the same verified build loop,  │
-                         │  now running on production signal (cron-safe; triage routes, never fixes)   │
+                         │  BUGS.md [prod] / TWEAKS.md / TODO.md / STATUS blockers (features → Alex)   │
+                         │  …which the next /dev-goal run drains: the same verified build loop, now    │
+                         │  running on production signal (triage routes, never fixes). Post-stable,    │
+                         │  most iteration is exactly this: jot changes into the lanes, drain them     │
                          └──────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -72,9 +75,9 @@ is the live control file every skill reads and writes.
 | `dev-auth` | dev | Authentication first, security & privacy prioritized. Validate-existing mode audits + hardens auth an existing repo already has. |
 | `feature-loop` | dev | The per-feature 4-step build/validate engine. |
 | `dev-tweak` | dev | The cosmetic light lane, drains `docs/TWEAKS.md` (copy, tokens, spacing, asset swaps) behind a hard qualification test (no logic/data/API/auth/dependency/test changes, heavier entries get reclassified, never forced through) and a proportional gate: suite green, prose pass on copy, screenshot + design-critic pass on anything visual. ADRs still govern. |
-| `dev-autopilot` | dev | Advances the build one safe step per run (what a schedule calls): after draining bugs, then tweaks. Every UI-changing run ends its STATUS log entry with a **visual pulse** (staging URL + screenshots of the affected screens, reusing the step's own captures) so an unattended run can be judged at a glance. |
+| `dev-todo` | dev | The planned-change lane, drains `docs/TODO.md` (deliberate improvements heavier than a tweak, smaller than a feature) after bugs and tweaks. Routes every entry first (broken → BUGS, cosmetic → TWEAKS, feature-sized → a proposal for Alex, never silently into scope), then applies the qualified batch: failing test first where behavior changes, suite green, prose/screenshot gates as applicable. Post-stable, most iteration lives here. |
+| `dev-goal` | dev | The driver: give it a goal (default: dev stage complete) and it pushes until the goal is met or only human-blocked work remains. A slim orchestrator: every unit (drain, scaffold, auth, feature) runs in a subagent returning a bounded report, one green commit per unit, so a multi-feature rollout never drowns the main context and the run is safe to interrupt and resume. Every UI-changing unit ends its STATUS log entry with a **visual pulse** (staging URL + screenshots, reusing the unit's own captures). |
 | `dev-update` | dev/ops | Re-vendors the latest DevByAlex skills/agents/templates into the current app (`install.sh --update`); the manual update path that keeps the local committed copies current. |
-| `dev-schedule` | dev/ops | Sets up the unattended schedule that calls `dev-autopilot` off an explicitly named working branch; the committed `.claude/` is self-sufficient, so the runner needs nothing extra (a GitHub-Actions runner needs only `ANTHROPIC_API_KEY`). |
 | `launch-observability` | launch | Wires the app so production can be heard: error monitoring (client + server, PII scrubbed from events), consent-gated product analytics (never fired before cookie consent, same posture `/launch-compliance` audits), a health endpoint + uptime ping, and alert routing, each signal **proven end-to-end on staging** before its box is checked. The prerequisite for `/live-triage`. |
 | `launch-acceptance` | launch | Writes the staging acceptance pass as runnable suites, Playwright (web) + Maestro (iOS/Android), generated from a scenario doc. |
 | `launch-verify` | launch | Runs the `launch-acceptance` suites against the live staging environment, triages failures into an `ACC-xxx` queue → `fix-errors`, re-runs to green, and checks the "acceptance suite passed against staging" gate `launch-submit` reads. The runner half of the author/run split. |
@@ -82,7 +85,7 @@ is the live control file every skill reads and writes.
 | `launch-visual-qa` | launch | The cross-platform screenshot loop (build → boot → screenshot → critique → fix): boots iOS sim + Android emulator, drives the Maestro flows to capture every key screen/state, the `design-critic` agent vets them (against wireframes, `docs/DESIGN.md`, and the universal design rules) and emits a `VIS-xxx` queue → `fix-errors`, re-screenshots to confirm. Reuses the `launch-acceptance` Maestro flows + `fix-errors`. |
 | `launch-store-assets` | launch | The "App Store tab," doubled: icon, device-framed screenshots (iOS sizes + Android phone/tablet), Play feature graphic, and per-field listing copy for **both** App Store Connect and Play Console, from the real running app. Reuses `create-demo`, `marketer-copywriting`, `ios-audit`. |
 | `launch-submit` | launch | Dual-store delivery lane: detects Expo→EAS / bare→Fastlane, builds, and submits to **TestFlight + Play internal testing**. Gated on readiness/compliance/hard-gates; **human-triggered only**, never auto-promotes to production. Reuses `launch-readiness`, `ios-audit`. |
-| `live-triage` | live | The post-launch loop, converts the `docs/FEEDBACK.md` inbox (user emails, reviews, error-tracker signal) into workflow state: functional problems → `docs/BUGS.md` tagged `[prod]`, cosmetic misses → `docs/TWEAKS.md`, feature requests → STATUS blockers for Alex (scope stays human). **Routes, never fixes**, the autopilot's drain loops do the fixing, so production feedback flows through the same verified pipeline that built the app. Cron-safe. |
+| `live-triage` | live | The post-launch loop, converts the `docs/FEEDBACK.md` inbox (user emails, reviews, error-tracker signal) into workflow state: functional problems → `docs/BUGS.md` tagged `[prod]`, cosmetic misses → `docs/TWEAKS.md`, feature requests → STATUS blockers for Alex (scope stays human). **Routes, never fixes**, `dev-goal`'s drain loops do the fixing, so production feedback flows through the same verified pipeline that built the app. |
 
 ### Agents (the specialists the feature loop deploys)
 
@@ -151,26 +154,26 @@ token or network brain.
 
 Every skill reads it first and writes it last. It holds: the macro stage, the
 approval gates (Alex-only), the plan/dev/launch checkboxes, the **feature table**
-(per-feature per-step status), the single `## Next action` line `dev-autopilot`
+(per-feature per-step status), the single `## Next action` line `dev-goal`
 keys off, the blockers list, and a log. Keep it short; detail lives in feature
 cards and the log.
 
 ## The bug log: `docs/BUGS.md`
 
 The human-written counterpart to STATUS. You drop bugs you hit into its `## Open`
-section; `dev-autopilot` drains it **before any build step**: fixing every open
-bug through its verify loop, moving each to `## Fixed`, and stopping the run there
-(a bug-fix run does nothing else). Open bugs are also a **soft launch gate**: the
-autopilot won't enter `/launch-acceptance` while any remain. This is one of the
-two places the "one step per run" rule bends: the whole log drains in a single
-run, because known-broken code is never a base for new work.
+section; `dev-goal` drains it **before any build unit**: fixing every open bug
+through its verify loop and moving each to `## Fixed`, worst-first, before it
+touches tweaks, todos, or new build work. Open bugs are also a **soft launch
+gate**: the loop won't enter `/launch-acceptance` while any remain. The whole
+log drains before anything else, because known-broken code is never a base for
+new work.
 
 ## The tweak lane: `docs/TWEAKS.md`
 
 The light lane, because changing a button label shouldn't cost what building a
 feature costs. Small cosmetic changes (copy, tokens, spacing, asset swaps) go
-here; `dev-autopilot` drains it via `/dev-tweak` **after bugs, before any build
-step**, the whole lane in one run. What keeps the lane honest is the **hard
+here; `dev-goal` drains it via `/dev-tweak` **after bugs, before any build
+unit**, the whole lane in one pass. What keeps the lane honest is the **hard
 qualification test**: a tweak may touch only copy/tokens/styles/assets/ordering
 and none of logic, data model, API, auth, dependencies, or tests: anything
 heavier is **reclassified** to `docs/BUGS.md` or a feature proposal, never
@@ -178,14 +181,31 @@ squeezed through. The gate is proportional but real: suite green, prose pass on
 changed copy, and the same screenshot + design-critic pass every design change
 gets. Open tweaks soft-block launch just like open bugs.
 
+## The todo lane: `docs/TODO.md`
+
+The third lane, and where most post-stable iteration lives. Planned changes,
+deliberate improvements heavier than a cosmetic tweak (behavior, structure, or
+flows may change) but smaller than a feature (no new scope), go here; `dev-goal`
+drains it via `/dev-todo` **after bugs and tweaks, before any build unit**, the
+whole lane in one pass. Every entry is **routed before it's worked**: broken
+behavior is reclassified to `docs/BUGS.md`, cosmetic-only entries to
+`docs/TWEAKS.md`, and anything feature-sized becomes a proposal for Alex in
+STATUS blockers, never silently absorbed into scope: the routing is what keeps
+the lane from becoming a back door around the plan gates or the feature loop.
+Qualified entries get a proportional gate: a failing test first where behavior
+changes, suite green, prose pass on copy, screenshot + design-critic pass on
+anything visual. Open todos soft-block launch just like the other two lanes.
+The intended rhythm: push to stable fast with `/dev-goal`, then keep jotting
+changes into this lane and draining it.
+
 ## The feedback inbox: `docs/FEEDBACK.md`
 
 The post-launch counterpart to BUGS. Raw production signal: user emails, store
 reviews, error-tracker exports: lands in its `## Inbox`; `/live-triage`
-(manual or scheduled) converts each item into workflow state: functional
+converts each item into workflow state: functional
 problems → `docs/BUGS.md` tagged `[prod]`, cosmetic misses → `docs/TWEAKS.md`,
 feature requests → STATUS blockers for Alex, duplicates/noise → triaged with a
-reason. **Triage routes; it never fixes**: the autopilot's existing drain
+reason. **Triage routes; it never fixes**: `dev-goal`'s existing drain
 loops do the fixing, so a live app keeps improving through the same verified
 pipeline that built it. `/launch-observability` wires the error/analytics
 signal this loop feeds on.
@@ -202,7 +222,7 @@ stamped `docs/adr/README.md`):
 - **Consult before change.** Every skill/agent that touches a feature reads its
   ADR first: builds, bug fixes, and validation loops alike.
 - **Breaking an `active` decision requires explicit human confirmation.** The
-  loop/autopilot stops and surfaces the conflict (citing the entry); on
+  loop stops and surfaces the conflict (citing the entry); on
   confirmation the old entry is marked superseded and the new decision recorded.
   Never a silent divergence.
 - **Documented deliberate omissions are not findings.** The validators, `scout`,
@@ -243,7 +263,7 @@ rest**:
 3. **Validate before building.** `init-ai` does **not** check off existing work as
    done: auth that exists but was never security-validated stays unchecked
    (`/dev-auth validate` audits + hardens it), and existing features are recorded
-   impl-present / validation-pending. So autopilot's **first phase is
+   impl-present / validation-pending. So the goal run's **first phase is
    validate-and-harden**, backfill spec-traced tests, run the validators, fix,
    re-certifying what's there before adding anything new.
 4. **Then build the rest** via the normal feature loop, pushing to the working
@@ -267,26 +287,30 @@ app "done."
   confirmation + a recorded supersession, and documented deliberate omissions
   are never review findings (security/legal/a11y excepted, and the hard launch
   gates are never ADR-overridable).
-- **One safe step per autopilot run.** Bounded, resumable, reviewable: except
-  the drain runs: a bug-fix run drains all of `docs/BUGS.md`, and a tweak run
-  drains all of `docs/TWEAKS.md`, before any build step resumes.
-- **Bugs, then tweaks, before building.** Open entries in `docs/BUGS.md` or
-  `docs/TWEAKS.md` preempt scaffold/auth/feature work and block entry to the
-  launch stage until drained. The tweak lane's qualification test is what keeps
-  it from becoming a back door around the feature loop.
-- **Every UI-changing autopilot run leaves a visual pulse**: staging URL +
-  screenshots in the STATUS log, reusing the step's own captures, so an
-  unattended build can be judged at a glance, not only by reading diffs.
+- **The goal run is a slim orchestrator; one green commit per unit.** `dev-goal`
+  pushes until the goal is met, but every unit of work (a drain, scaffold, auth,
+  a feature) runs in its own subagent and ends in its own green commit pushed to
+  the working branch. The driver holds bounded reports, never diffs; the repo
+  (STATUS, the lanes, the ADRs) is the memory. That keeps a multi-feature
+  rollout's main context slim, and makes the run safe to interrupt and resume.
+- **Bugs, then tweaks, then todos, before building.** Open entries in
+  `docs/BUGS.md`, `docs/TWEAKS.md`, or `docs/TODO.md` preempt
+  scaffold/auth/feature work and block entry to the launch stage until drained.
+  The tweak lane's qualification test and the todo lane's routing are what keep
+  the light lanes from becoming back doors around the feature loop.
+- **Every UI-changing unit leaves a visual pulse**: staging URL + screenshots in
+  the STATUS log, reusing the unit's own captures, so an autonomous build can be
+  judged at a glance, not only by reading diffs.
 - **Production feedback flows through the same pipeline.** Post-launch signal is
-  triaged (`/live-triage`) into the bug/tweak logs and drained by the autopilot
-  with full verification: triage routes, it never fixes, and feature requests
-  go to Alex, never silently into scope.
+  triaged (`/live-triage`) into the bug/tweak/todo lanes and drained by the
+  goal run with full verification: triage routes, it never fixes, and feature
+  requests go to Alex, never silently into scope.
 - **Green suite at every stop; push straight to the working branch.** Nothing
   marked done with red tests or open findings. To keep iteration fast the dev
   stage commits and pushes to one working branch: no per-step branches, no PR
-  pile-up. Green suite is the gate, not a human merge. Interactive runs use the
-  current branch; a cron names the branch explicitly. Use a dedicated iteration
-  branch (e.g. `staging`/`autopilot`), not a protected default.
+  pile-up. Green suite is the gate, not a human merge. Runs use the current
+  branch unless one is passed explicitly. Use a dedicated iteration branch
+  (e.g. `staging`), not a protected default.
 - **Nothing is left orphaned.** Every run cleans up after itself: artifacts its
   work superseded or left unreferenced: scratch/debug scripts, temp files,
   dead code and unused exports/deps, components/assets/tokens nothing renders,
@@ -304,4 +328,4 @@ app "done."
   conformance are designed for in the plan and verified by `/launch-compliance`
   before ship: no launch with either gate open.
 
-See `docs/SCHEDULING.md` for running the dev stage unattended.
+To run the dev stage, hand `/dev-goal` the goal and let it push until it's met.

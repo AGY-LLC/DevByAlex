@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # DevByAlex provisioner: installs the workflow's skills, agents, and templates
 # into a TARGET APP's project scope (<app>/.claude/) so they load only in that
-# app, and so a cron/headless run on that app carries its own workflow logic.
+# app, and so a headless/CI run on that app carries its own workflow logic.
 #
 # This is project-scoped on purpose: the user scope (~/.claude) would load the
 # workflow into every repo and couldn't keep per-project STATUS context pinned

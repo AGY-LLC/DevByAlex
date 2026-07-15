@@ -40,7 +40,7 @@ vendored. The old `live-stubs/` directory and `sync/gen-live-stubs.sh` are gone.
 
 The trade-off of copies is that an upstream improvement doesn't reach an app until
 it's re-vendored. That cost is one command (below), and the propagation is
-**deliberate, never automatic**, so a scheduled build can't shift underfoot.
+**deliberate, never automatic**, so an autonomous build can't shift underfoot.
 
 ## The update pipeline
 

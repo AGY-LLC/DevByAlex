@@ -1,6 +1,6 @@
 ---
 name: dev-tweak
-description: "The light lane of the DevByAlex dev stage. It applies small, provably low-risk cosmetic changes (user-facing copy, design tokens, spacing/color/radius, static asset swaps, ordering/visibility of existing elements) without paying the full per-feature build/validate loop. Each entry in docs/TWEAKS.md is put through a hard qualification test first (no logic, no data model, no API, no auth, no new dependency, no test changes; anything heavier gets reclassified to docs/BUGS.md or a feature proposal, never forced through); qualified tweaks are applied with a proportional gate: typecheck + lint + the existing suite green, a prose pass on changed copy, and the screenshot + design-critic pass for anything visual. ADRs still govern. A tweak that contradicts an active decision is a blocker, not a change. Drains the whole open list in one run and moves each entry to Done with its commit. Called by dev-autopilot after the bug log is clear; also runnable by hand for a one-off tweak. Use when the change is 'make this label say X', 'tighten this spacing', 'swap this icon'; not when behavior is wrong (that's a bug) or something new is wanted (that's a feature)."
+description: "The light lane of the DevByAlex dev stage. It applies small, provably low-risk cosmetic changes (user-facing copy, design tokens, spacing/color/radius, static asset swaps, ordering/visibility of existing elements) without paying the full per-feature build/validate loop. Each entry in docs/TWEAKS.md is put through a hard qualification test first (no logic, no data model, no API, no auth, no new dependency, no test changes; anything heavier gets reclassified to docs/BUGS.md, docs/TODO.md, or a feature proposal, never forced through); qualified tweaks are applied with a proportional gate: typecheck + lint + the existing suite green, a prose pass on changed copy, and the screenshot + design-critic pass for anything visual. ADRs still govern. A tweak that contradicts an active decision is a blocker, not a change. Drains the whole open list in one run and moves each entry to Done with its commit. Called by dev-goal after the bug log is clear; also runnable by hand for a one-off tweak. Use when the change is 'make this label say X', 'tighten this spacing', 'swap this icon'; not when behavior is wrong (that's a bug) or something new is wanted (that's a feature)."
 argument-hint: "[path to the app repo: defaults to cwd] [optional: a single tweak described inline, else drains docs/TWEAKS.md]"
 license: MIT
 metadata:
@@ -18,7 +18,7 @@ squeezed through**.
 
 ## When to activate
 
-- `docs/TWEAKS.md` has open entries (the autopilot calls this after the bug log
+- `docs/TWEAKS.md` has open entries (`dev-goal` calls this after the bug log
   is clear).
 - The user asks for a one-off change that smells like a tweak: "change this
   copy," "tighten the spacing here," "swap that icon," "make this button use
@@ -41,9 +41,11 @@ A change qualifies as a tweak only if **all** of these hold:
    STATUS › `## Blockers / open questions` and skip it.
 
 **Fails the test → reclassify, don't force.** Behavior wrong or risk present →
-move it to `docs/BUGS.md` as a proper bug entry. Something new wanted → record
-it as a feature proposal in STATUS › Blockers for Alex (scope is his call).
-Either way, note the reclassification on the TWEAKS entry so the requester sees
+move it to `docs/BUGS.md` as a proper bug entry. A deliberate behavior change
+that adds no scope → move it to `docs/TODO.md`, the planned-change lane.
+Something new wanted → record it as a feature proposal in STATUS › Blockers for
+Alex (scope is his call).
+In every case, note the reclassification on the TWEAKS entry so the requester sees
 where it went. Never silently drop an entry, and never let the light lane become
 the back door around the feature loop.
 
@@ -51,7 +53,7 @@ the back door around the feature loop.
 
 ### Step 1: Load the lane
 Resolve the repo (arg or cwd) and the working branch (the branch you're on, or
-the one `dev-autopilot` passed down: same iteration rule, no per-tweak
+the one `dev-goal` passed down: same iteration rule, no per-tweak
 branches). Read `docs/TWEAKS.md`. If invoked with an inline tweak instead, log
 it as a `TWK-xxx` entry first: the lane's audit trail applies to one-offs too.
 
@@ -84,7 +86,7 @@ the system).
   (title · what changed · branch · commit · date). Reclassified entries note
   where they went.
 - Add a STATUS log line naming the TWK IDs cleared; include the pulse
-  (screenshots + staging URL) per the autopilot's pulse rule when UI changed.
+  (screenshots + staging URL) per the goal run's pulse rule when UI changed.
 - Commit and push to the working branch once green. One commit for the batch is
   fine: the lane is light; the TWEAKS entries are the per-item record.
 

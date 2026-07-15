@@ -3,8 +3,9 @@
 > Drop small cosmetic changes here: one entry per tweak under **Open**. This is
 > the **light lane**: copy edits, token/spacing/color adjustments, asset swaps,
 > changes that carry no logic risk and therefore don't deserve the full
-> per-feature build/validate loop. `/dev-tweak` (called by `dev-autopilot` after
-> the bug log is clear) drains it.
+> per-feature build/validate loop. `/dev-tweak` (called by `dev-goal` after
+> the bug log is clear) drains it. Changes that alter behavior on purpose belong
+> in [`docs/TODO.md`](./TODO.md), the planned-change lane.
 >
 > **A tweak must pass the qualification test** (see `/dev-tweak`): user-visible
 > copy, design tokens/styles, static assets, or ordering/visibility of existing

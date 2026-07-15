@@ -1,6 +1,6 @@
 ---
 name: dev-scaffold
-description: "First dev stage of the DevByAlex workflow: a one-time pass that stands up the project baseline so every later feature has solid ground to build on. Decides the repo topology (for a user-facing product: a monorepo with marketing/ on the apex domain, web/ as the full-stack Next.js app on app.domain, and an optional app/ Expo mobile client), initializes the branch model (intentional protected main = production; staging = the working line all dev happens on until prod-ready), and creates the skeleton: dependencies, TypeScript-strict config, linting/formatting, the test runner + a green example test, the Prisma data layer in web/ wired to env via Zod, env handling, the design baseline, and the CI + deploy pipeline via Pipeline by Alex (pba.yml + a thin caller). Defaults to Alex's stack but adapts to whatever the spec/guide chose. Runs only once per project. Use after the implementation guide and wireframes are approved, when the user says 'scaffold the app', 'set up the project baseline', or the autopilot reaches an unscaffolded repo."
+description: "First dev stage of the DevByAlex workflow: a one-time pass that stands up the project baseline so every later feature has solid ground to build on. Decides the repo topology (for a user-facing product: a monorepo with marketing/ on the apex domain, web/ as the full-stack Next.js app on app.domain, and an optional app/ Expo mobile client), initializes the branch model (intentional protected main = production; staging = the working line all dev happens on until prod-ready), and creates the skeleton: dependencies, TypeScript-strict config, linting/formatting, the test runner + a green example test, the Prisma data layer in web/ wired to env via Zod, env handling, the design baseline, and the CI + deploy pipeline via Pipeline by Alex (pba.yml + a thin caller). Defaults to Alex's stack but adapts to whatever the spec/guide chose. Runs only once per project. Use after the implementation guide and wireframes are approved, when the user says 'scaffold the app', 'set up the project baseline', or the goal run reaches an unscaffolded repo."
 argument-hint: "[optional: stack overrides]"
 license: MIT
 metadata:
@@ -23,7 +23,7 @@ foundations instead of bootstrapping structure mid-feature.
 
 - Approval gates are met and **Dev → Scaffold** is unchecked in STATUS.
 - The user says "scaffold the app" / "set up the baseline."
-- `dev-autopilot` reaches a repo whose scaffold step isn't done.
+- `dev-goal` reaches a repo whose scaffold step isn't done.
 
 ## Workflow
 
@@ -73,7 +73,7 @@ Two long-lived branches, distinct roles:
 
 So: scaffold establishes `main`, then does its work on `staging`. The dev stage
 and the feature loop run on `staging`/feature branches: never commit dev work
-straight to `main`. If `dev-autopilot` passed a working branch, honor it; default
+straight to `main`. If `dev-goal` passed a working branch, honor it; default
 to `staging`.
 
 ### Step 3: Scaffold the structure

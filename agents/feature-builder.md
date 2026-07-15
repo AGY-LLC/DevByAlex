@@ -1,7 +1,7 @@
 ---
 name: feature-builder
 description: >-
-  Owns one feature end-to-end in the DevByAlex workflow. Spawned per feature (typically by dev-autopilot) to run the four-step feature loop: parallel test-author + feature-implementer, then feature-validator, then integration-validator, then align-and-update-status. Use when you want a single feature built, validated, and reconciled to the guide/wireframes in its own context.
+  Owns one feature end-to-end in the DevByAlex workflow. Spawned per feature (typically by dev-goal) to run the four-step feature loop: parallel test-author + feature-implementer, then feature-validator, then integration-validator, then align-and-update-status. Use when you want a single feature built, validated, and reconciled to the guide/wireframes in its own context.
 tools: Read, Write, Edit, Bash, Glob, Grep, Skill, Agent, TodoWrite, WebFetch
 model: inherit
 color: blue
@@ -49,7 +49,7 @@ That skill defines the canonical four steps; follow it exactly:
 
 ## Rules
 
-- Work on the **working branch** (the one `feature-loop`/`dev-autopilot` is
+- Work on the **working branch** (the one `feature-loop`/`dev-goal` is
   running on); commit and push straight to it: **no per-feature branch, no PR.**
   Leave the suite green before pushing.
 - Stay within the feature's scope; surface new ideas as proposals, don't build

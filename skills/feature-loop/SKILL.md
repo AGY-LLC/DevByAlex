@@ -1,6 +1,6 @@
 ---
 name: feature-loop
-description: "The DevByAlex per-feature build engine. It takes one feature from its card to done by running the four-step loop the workflow defines: (1) write tests and implement the feature IN PARALLEL via two separate subagents (test-author works from the spec, feature-implementer writes the code; keeping them apart means tests aren't written just to match the implementation); (2) a feature-validator agent runs the tests and reviews the feature's code for quality/security/logic/best-practices, looping back to write a failing test + fix on any issue; (3) an integration-validator agent runs the full suite and reviews the whole codebase, looping back the same way; (4) confirm the finished feature aligns with the implementation guide and wireframes. For any customer-facing UI, capture screenshots of the running screens and have the design-critic agent vet them (looping on its findings) before the feature may be marked done. Then update docs/STATUS.md. Use to build one specific feature, or as the unit of work the autopilot calls per feature."
+description: "The DevByAlex per-feature build engine. It takes one feature from its card to done by running the four-step loop the workflow defines: (1) write tests and implement the feature IN PARALLEL via two separate subagents (test-author works from the spec, feature-implementer writes the code; keeping them apart means tests aren't written just to match the implementation); (2) a feature-validator agent runs the tests and reviews the feature's code for quality/security/logic/best-practices, looping back to write a failing test + fix on any issue; (3) an integration-validator agent runs the full suite and reviews the whole codebase, looping back the same way; (4) confirm the finished feature aligns with the implementation guide and wireframes. For any customer-facing UI, capture screenshots of the running screens and have the design-critic agent vet them (looping on its findings) before the feature may be marked done. Then update docs/STATUS.md. Use to build one specific feature, or as the unit of work dev-goal dispatches per feature."
 argument-hint: "[feature id or slug from docs/features/: e.g. 03-billing]"
 license: MIT
 metadata:
@@ -12,8 +12,8 @@ metadata:
 
 The orchestrator for a single feature. It owns that feature end-to-end and
 deploys specialist subagents for each step. This is the "agent assigned to the
-feature that deploys the subagent steps" from the workflow spec; the autopilot
-calls it once per feature.
+feature that deploys the subagent steps" from the workflow spec; `dev-goal`
+dispatches it once per feature.
 
 > **Gate + order check.** Requires approval gates met, **Scaffold** and
 > **Authentication** done. If not, route to the right earlier stage.
@@ -45,7 +45,7 @@ ADR `docs/adr/<id>.md`** (plus `docs/adr/scaffold.md` / `docs/adr/auth.md` if
 the feature touches those seams), the relevant section of
 `docs/IMPLEMENTATION_GUIDE.md`, the wireframe screens for this feature, and
 `docs/STATUS.md`. Build on the **working branch**: the branch you're on, or
-the one `dev-autopilot` passed down; **don't create a per-feature branch.**
+the one `dev-goal` passed down; **don't create a per-feature branch.**
 Mark the feature row **in-progress** in STATUS.
 
 **The ADR is a gate on the work itself.** If the feature has no ADR, stop and

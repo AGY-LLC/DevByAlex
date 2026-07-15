@@ -35,10 +35,16 @@ is the live control file; this file is the map.
    - `/dev-tweak`: the cosmetic light lane: drains `docs/TWEAKS.md` (copy,
      tokens, spacing) behind a hard qualification test + a proportional gate,
      without paying the full feature loop.
-   - `/dev-autopilot`: advances the build one safe step per run; this is what a
-     schedule calls. Drains `docs/BUGS.md`, then `docs/TWEAKS.md`, before any
-     build step; every UI-changing run leaves a **visual pulse** (staging URL +
-     screenshots) in the STATUS log.
+   - `/dev-todo`: the planned-change lane: drains `docs/TODO.md` (deliberate
+     improvements heavier than a tweak, smaller than a feature), routing every
+     entry first (broken → BUGS, cosmetic → TWEAKS, feature-sized → a proposal
+     for Alex). Once the app is stable, most iteration lives here.
+   - `/dev-goal`: the driver: give it a goal (default: dev stage complete) and
+     it pushes until the goal is met, draining `docs/BUGS.md`, then
+     `docs/TWEAKS.md`, then `docs/TODO.md` before each build unit. Each unit
+     runs in a subagent and ends in its own green commit, so the run is safe to
+     interrupt and resume; every UI-changing unit leaves a **visual pulse**
+     (staging URL + screenshots) in the STATUS log.
 
 3. **Launch readiness**
    - Staging deploys automatically via Pipeline by Alex on push to `staging`; the
@@ -57,17 +63,17 @@ is the live control file; this file is the map.
 4. **Live (post-launch)**
    - Raw production signal, user emails, reviews, error-tracker exports, goes
      into `docs/FEEDBACK.md`.
-   - `/live-triage` (manual or scheduled) routes each item: functional problem →
-     `docs/BUGS.md` tagged `[prod]`, cosmetic miss → `docs/TWEAKS.md`, feature
-     request → a STATUS blocker for Alex. Triage routes, never fixes: the
-     autopilot drains those logs through the same verified loop that built the
-     app.
+   - `/live-triage` routes each item: functional problem →
+     `docs/BUGS.md` tagged `[prod]`, cosmetic miss → `docs/TWEAKS.md`, planned
+     change → `docs/TODO.md`, feature request → a STATUS blocker for Alex.
+     Triage routes, never fixes: the next `/dev-goal` run drains those lanes
+     through the same verified loop that built the app.
 
 ## Rules of the road
 
 - Dev work commits and pushes **straight to the working branch**: the branch you
-  call the skill on, or the one a cron sets explicitly. No per-step branches, no
-  PR pile-up. Use a dedicated iteration branch (e.g. `staging`/`autopilot`), not a
+  call the skill on, or one passed explicitly. No per-unit branches, no
+  PR pile-up. Use a dedicated iteration branch (e.g. `staging`), not a
   protected default.
 - Agents never self-approve a gate; approvals are Alex's.
 - `docs/STATUS.md` stays accurate and the test suite stays green at every stop.
@@ -80,4 +86,4 @@ is the live control file; this file is the map.
 - Tests trace to the spec; never weakened just to make code pass.
 - Security and privacy beat convenience: most of all in auth.
 
-To run unattended, see `docs/SCHEDULING.md` in the DevByAlex repo.
+To advance the build, run `/dev-goal` and let it push until the goal is met.

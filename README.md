@@ -4,9 +4,9 @@ An autonomous, stage-gated workflow that takes an app from a one-line idea to
 launch-ready: packaged as a Claude Code plugin (skills + specialist agents).
 
 **Plan** it (spec → implementation guide → wireframes, human-approved), **build**
-it (scaffold → auth → a per-feature build/validate loop that runs unattended on
-a schedule), **verify** it for launch, then keep it improving **live** (production
-errors and user feedback triaged back into the same build loop). State lives in
+it (scaffold → auth → a per-feature build/validate loop that `/dev-goal` pushes
+until the goal is met), **verify** it for launch, then keep it improving **live**
+(production errors and user feedback triaged back into the same build loop). State lives in
 each target repo's
 `docs/STATUS.md`; one command, `init-ai`, brings any repo, blank or existing,
 under the workflow.
@@ -35,15 +35,19 @@ you can run by hand to bootstrap a brand-new app before `init-ai` is loaded.
 #    …then YOU approve the spec, guide, and wireframes in docs/STATUS.md
 
 # 3. Build it (autonomous once gates are approved):
-/dev-scaffold     # one-time baseline
-/dev-auth         # authentication first
-/dev-autopilot .  # advance the build one safe step (run repeatedly / on a schedule)
-#    Hit a bug? Jot it in docs/BUGS.md: each autopilot run drains the bug log
-#    (fixing + verifying every open bug) BEFORE it touches any feature work.
+/dev-goal .       # push the build until the goal is met (default: dev stage
+#                   complete). A slim orchestrator: each unit runs in a subagent,
+#                   one green commit per unit, so it's safe to interrupt + resume.
+#    Hit a bug? Jot it in docs/BUGS.md: the loop drains the bug log (fixing +
+#    verifying every open bug) BEFORE it touches any feature work.
 #    Small cosmetic change (copy, spacing, a color)? Jot it in docs/TWEAKS.md,
 #    the light lane (/dev-tweak) drains it right after bugs, without paying the
-#    full feature loop. Every UI-changing run leaves a visual pulse in STATUS
-#    (staging URL + screenshots), so you can judge unattended runs at a glance.
+#    full feature loop.
+#    Planned change (rework a flow, adjust behavior)? Jot it in docs/TODO.md,
+#    the third lane (/dev-todo) drains it after tweaks: once the app is stable,
+#    most iteration is exactly this jot-and-drain rhythm.
+#    Every UI-changing unit leaves a visual pulse in STATUS (staging URL +
+#    screenshots), so you can judge autonomous runs at a glance.
 
 # 4. Launch readiness (staging deploys via Pipeline by Alex on push to staging):
 /launch-observability  # error monitoring + consent-gated analytics + uptime, proven on staging
@@ -56,14 +60,12 @@ you can run by hand to bootstrap a brand-new app before `init-ai` is loaded.
 # 5. Live (post-launch: the loop keeps running):
 #    Paste user feedback / error reports into docs/FEEDBACK.md, then:
 /live-triage           # routes each item → BUGS.md [prod] / TWEAKS.md / a question
-                       #   for you, and the autopilot drains those as usual
+                       #   for you, and the next /dev-goal run drains those as usual
 ```
 
-To run the dev stage unattended, use **`/dev-schedule`**: it preflights, picks a
-tier, and takes the explicit working branch (e.g. `staging`, never assumed
-`main`). The committed `.claude/` is fully self-contained, so a runner needs no
-MCP token or network brain. See **[docs/SCHEDULING.md](docs/SCHEDULING.md)** for
-the underlying recipes.
+The committed `.claude/` is fully self-contained (skills + agents + templates +
+knowledge all vendored), so any checkout, local or a CI/cloud runner, carries
+the whole workflow with no MCP token or network brain.
 
 ## What's in here
 
@@ -73,10 +75,9 @@ install.sh                   provision skills+agents+templates+knowledge into <a
 skills/                      all 34 skills, the workflow stages (init-ai, plan-*, dev-*, launch-*, live-*) and the supporting skills they call (scout, fix-errors, seo-audit, marketer-*, …), full committed copies, no external brain
 agents/                      the 6 specialist agents the feature loop deploys (incl. design-critic: vets screenshots of every design change before it counts as done)
 knowledge/                   the vendored best-practice brain the skills read (practices/*.yaml, stack/*.md, checklists/*.md, design/design-styles.md, the 50-style vocabulary /plan-design picks from, and design/universal-design-rules.md, the 31 style-independent rules every screen holds)
-templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, TWEAKS, FEEDBACK, SPEC, DECISIONS, adr/, …)
+templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, TWEAKS, TODO, FEEDBACK, SPEC, DECISIONS, adr/, …)
 docs/WORKFLOW.md             the full architecture and invariants
 docs/LIVE-SYNC.md            the fully-vendored skill model (everything committed, nothing served live) + the --update pipeline
-docs/SCHEDULING.md           how to run the loop unattended (ready-to-run recipes)
 IMPLEMENT.md                 the original brief this implements
 ```
 
@@ -88,12 +89,13 @@ agent, the existing skills it reuses, and the invariants that make autonomy safe
 - **Human gates** between plan and dev (spec/guide/wireframes approval) and
   before the `staging → main` promotion to production: agents never self-approve.
   Staging itself deploys automatically via Pipeline by Alex on push to `staging`.
-- **One safe step per autopilot run**, all state in the repo, so the loop is
-  bounded, resumable, and reviewable (one commit per step).
-- **Push straight to the working branch**: no per-step branches, no PR pile-up
-  that slows iteration. Interactive runs use the current branch; a cron names the
-  **working branch it builds off explicitly** (e.g. `staging`, not assumed
-  `main`). Green suite is the gate.
+- **One green commit per unit of work**, all state in the repo (`docs/STATUS.md`
+  plus the three lanes), so a `/dev-goal` push is bounded per unit, resumable,
+  and reviewable even when one run covers many units.
+- **Push straight to the working branch**: no per-unit branches, no PR pile-up
+  that slows iteration. Runs use the current branch unless one is passed
+  explicitly (use a dedicated iteration branch like `staging`, never a protected
+  default). Green suite is the gate.
 - **Tests trace to the spec** (test-author and implementer run blind, in
   parallel); **validators judge but don't fix**; **green suite** at every stop.
 - **ADRs govern change**: every feature carries a decision record in
@@ -124,5 +126,4 @@ agent, the existing skills it reuses, and the invariants that make autonomy safe
   See [docs/LIVE-SYNC.md](docs/LIVE-SYNC.md) for the vendored model and the
   `--update` pipeline.
 - For a **GitHub-Actions** runner, the only secret needed is `ANTHROPIC_API_KEY`
-  (authenticates Claude Code itself; not project-specific). `/dev-schedule` covers
-  it. See `docs/SCHEDULING.md`.
+  (authenticates Claude Code itself; not project-specific).

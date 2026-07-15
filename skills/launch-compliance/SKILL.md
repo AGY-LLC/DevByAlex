@@ -114,7 +114,7 @@ queue.
   passed` are in the **Gates** block, which is **Alex's to check, not the
   agent's**. When their scans are clean, report that they're *ready for Alex to
   sign off*; **never self-check a gate.** While either gate is unchecked the app
-  is **not ship-ready**: `dev-autopilot` already hard-stops on unmet gates.
+  is **not ship-ready**: `dev-goal` already hard-stops on unmet gates.
 - **Fix queue**: hand the combined findings (legal gaps + `A11Y-xxx` + SEO +
   prose) to `fix-errors` to drive to zero; re-run the relevant scan after fixes.
 - Add a log line and set `## Next action` (typically `/fix-errors` if findings

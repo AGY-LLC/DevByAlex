@@ -28,7 +28,7 @@ rollout stays Alex's manual decision in App Store Connect / Play Console.
   "deliver the build."
 - `--dry-run` runs the full preflight and reports go/no-go **without** building or
   submitting anything: safe to run anytime.
-- **Never** invoke this from `dev-autopilot` or a scheduled action. If the dev
+- **Never** invoke this from `dev-goal` or any automated action. If the dev
   loop reaches "ready to submit," it sets the next action to *suggest* this skill
   for a human to run: it does not run it.
 
@@ -112,7 +112,7 @@ report the error: do not attempt to submit a failed or stale artifact.
 ## Rules
 
 - **Explicit human trigger only.** Never run from a cron, a schedule, or
-  `dev-autopilot`. Outward-facing publish requires a person asking, each time.
+  `dev-goal`. Outward-facing publish requires a person asking, each time.
 - **TestFlight / internal only: never auto-promote to production.** Public
   release is Alex's manual decision in the store consoles.
 - **Gates are hard.** Don't build or submit while a hard gate is unchecked, a bug
