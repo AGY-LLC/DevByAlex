@@ -143,6 +143,36 @@ place_one() {
 
 echo "DevByAlex: $MODE  (repo: $REPO_DIR  ->  $CLAUDE_DIR)"
 
+# The managed-name manifests: what this version of the repo vendors. Written
+# into the stamp so a later --update can prune managed entries that were
+# retired upstream (the app's own unrelated .claude entries are never listed,
+# so they are never pruned).
+CUR_SKILLS="$(for d in "$REPO_DIR"/skills/*/; do [ -f "$d/SKILL.md" ] && basename "${d%/}"; done | tr '\n' ' ')"
+CUR_AGENTS="$(for f in "$REPO_DIR"/agents/*.md; do [ -f "$f" ] && basename "$f"; done | tr '\n' ' ')"
+
+# On --update, prune managed names the previous stamp vendored that this
+# version no longer ships. Pre-manifest stamps (< v0.3.0) get the legacy list
+# of names retired at v0.3.0, the only removals that predate the manifest.
+if [ "$IS_UPDATE" = "yes" ] && [ "$MODE" != "uninstall" ]; then
+  OLD_SKILLS="$(sed -n 's/.*"managed_skills"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$STAMP" 2>/dev/null | head -1)"
+  OLD_AGENTS="$(sed -n 's/.*"managed_agents"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$STAMP" 2>/dev/null | head -1)"
+  [ -z "$OLD_SKILLS" ] && OLD_SKILLS="dev-autopilot dev-schedule"
+  for name in $OLD_SKILLS; do
+    case " $CUR_SKILLS " in *" $name "*) ;; *)
+      if [ -e "$SKILLS_DST/$name" ] || [ -L "$SKILLS_DST/$name" ]; then
+        rm -rf "$SKILLS_DST/$name"; echo "pruned  $name (retired upstream)"
+      fi ;;
+    esac
+  done
+  for name in $OLD_AGENTS; do
+    case " $CUR_AGENTS " in *" $name "*) ;; *)
+      if [ -e "$AGENTS_DST/$name" ] || [ -L "$AGENTS_DST/$name" ]; then
+        rm -rf "$AGENTS_DST/$name"; echo "pruned  $name (retired upstream)"
+      fi ;;
+    esac
+  done
+fi
+
 # All skills, workflow stages and the supporting skills they call, live in
 # skills/ and land flat in <app>/.claude/skills/. place_one handles copy / link /
 # uninstall, and only ever touches DevByAlex-managed names, so the app's own
@@ -180,7 +210,9 @@ else
   "version": "$DEVBYALEX_VERSION",
   "source_ref": "$DEVBYALEX_REF",
   "source_path": "$REPO_DIR",
-  "updated_at": "$now"
+  "updated_at": "$now",
+  "managed_skills": "$(echo $CUR_SKILLS)",
+  "managed_agents": "$(echo $CUR_AGENTS)"
 }
 EOF
   # Record this app in the registry (dedup; create if absent).
