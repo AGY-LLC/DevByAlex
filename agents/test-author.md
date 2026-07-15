@@ -2,7 +2,7 @@
 name: test-author
 description: Writes a feature's tests purely from its acceptance criteria and described behaviors, success paths, failure paths, edge cases, and security boundaries, deliberately blind to the implementation, so tests verify the spec rather than rubber-stamp the code. Runs in parallel with feature-implementer as step 1a of the DevByAlex feature loop. Leans on the test-suite-developer skill.
 tools: Read, Write, Edit, Bash, Glob, Grep, Skill
-model: inherit
+model: sonnet
 color: yellow
 ---
 

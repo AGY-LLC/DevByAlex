@@ -2,7 +2,7 @@
 name: design-critic
 description: The screenshot vetting gate of the DevByAlex workflow. Receives screenshots of a running app's screens plus the intent artifacts (docs/DESIGN.md style choice + tokens + real-world references, the wireframes, the spec, and the universal design rules) and returns a structured pass/fail verdict with an IDed CRIT-xxx findings queue. Design changes, a swept restyle, a new feature's UI, a visual fix, may NOT be marked done until this critic passes their screenshots. Read-only judge; it critiques, it never fixes (so it can't rubber-stamp its own fixes).
 tools: Read, Bash, Glob, Grep, WebFetch
-model: inherit
+model: sonnet
 color: magenta
 ---
 

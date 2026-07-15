@@ -27,15 +27,23 @@ criteria, and tell it exactly what to return. The named agent types live in this
 plugin's `agents/` dir; if they aren't registered, fall back to
 `subagent_type: general-purpose` and tell the subagent which skill to invoke.
 
-The agents and the skills they lean on:
+**Route models by reasoning difficulty, not importance**
+(`../../knowledge/workflow/model-routing.md`): each agent carries its tier in
+frontmatter, fast discovery feeds capable implementation, and the strong tier
+is spent on verification, not on re-searching the repo. Every brief that
+follows discovery includes the evidence package and the line "don't repeat
+completed searches unless the evidence appears incorrect or insufficient."
 
-| Step | Agent | Leans on |
-|------|-------|----------|
-| 1a tests | `test-author` | `test-suite-developer` |
-| 1b code | `feature-implementer` | the feature card + guide |
-| 2 feature validation | `feature-validator` | `scout` (feature-scoped), `issue-checker`, `fix-errors` |
-| 3 integration validation | `integration-validator` | `scout` (whole repo), `fix-errors` |
-| 4 design vetting (UI features) | `design-critic` | screenshots vs. `docs/DESIGN.md` + wireframes + universal rules |
+The agents, their tiers, and the skills they lean on:
+
+| Step | Agent | Tier | Leans on |
+|------|-------|------|----------|
+| 0 discovery (existing code) | `explorer` | 1 fast | Grep/Glob/Bash: evidence package |
+| 1a tests | `test-author` | 2 capable | `test-suite-developer` |
+| 1b code | `feature-implementer` | 2 capable | the feature card + guide + evidence package |
+| 2 feature validation | `feature-validator` | 3 strong | `scout` (feature-scoped), `issue-checker`, `fix-errors` |
+| 3 integration validation | `integration-validator` | 3 strong | `scout` (whole repo), `fix-errors` |
+| 4 design vetting (UI features) | `design-critic` | 2 capable | screenshots vs. `docs/DESIGN.md` + wireframes + universal rules |
 
 ## Workflow
 
@@ -62,6 +70,15 @@ First decide whether this feature is **greenfield** (no real implementation yet)
 or **existing** (already built: common when `init-ai` integrated an existing
 repo and marked the row impl-present-but-unvalidated). The check: does the
 feature's code already exist and roughly work?
+
+**Discovery is Tier 1 work.** When the feature touches existing code (the
+existing path, or a greenfield feature that integrates with built seams),
+spawn the **`explorer`** agent first to collect the evidence package: the
+relevant files, existing patterns, current tests, and observed behavior, with
+exact references. Paste that package into every subsequent brief so the
+implementer and validators start from findings instead of re-running
+repository-wide discovery. A purely greenfield feature on an empty seam can
+skip this: there is nothing to discover.
 
 **Greenfield: build:** Spawn **two separate subagents in the same message** so
 they run concurrently and independently:

@@ -73,8 +73,8 @@ the whole workflow with no MCP token or network brain.
 .claude-plugin/plugin.json   plugin manifest
 install.sh                   provision skills+agents+templates+knowledge into <app>/.claude; --update / --update-all re-vendor an onboarded app to the latest (version-stamped)
 skills/                      all 34 skills, the workflow stages (init-ai, plan-*, dev-*, launch-*, live-*) and the supporting skills they call (scout, fix-errors, seo-audit, marketer-*, …), full committed copies, no external brain
-agents/                      the 6 specialist agents the feature loop deploys (incl. design-critic: vets screenshots of every design change before it counts as done)
-knowledge/                   the vendored best-practice brain the skills read (practices/*.yaml, stack/*.md, checklists/*.md, design/design-styles.md, the 50-style vocabulary /plan-design picks from, and design/universal-design-rules.md, the 31 style-independent rules every screen holds)
+agents/                      the 7 specialist agents the feature loop deploys, each carrying its model tier (incl. explorer: the fast-tier evidence collector, and design-critic: vets screenshots of every design change before it counts as done)
+knowledge/                   the vendored best-practice brain the skills read (practices/*.yaml, stack/*.md, checklists/*.md, workflow/model-routing.md, the model routing + verification policy the orchestrators route by, design/design-styles.md, the 50-style vocabulary /plan-design picks from, and design/universal-design-rules.md, the 31 style-independent rules every screen holds)
 templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, TWEAKS, TODO, FEEDBACK, SPEC, DECISIONS, adr/, …)
 docs/WORKFLOW.md             the full architecture and invariants
 docs/LIVE-SYNC.md            the fully-vendored skill model (everything committed, nothing served live) + the --update pipeline
@@ -102,6 +102,11 @@ agent, the existing skills it reuses, and the invariants that make autonomy safe
   `docs/adr/` (what it has, what it deliberately doesn't, and why). Automated
   reviews can't flag a documented conscious choice, and breaking an active
   decision needs explicit human confirmation, never a silent divergence.
+- **Models routed by reasoning difficulty, not project importance**: fast-tier
+  discovery feeds capable-tier implementation, and the strong tier is reserved
+  for ambiguity, trust boundaries, and verification, which **always** runs
+  strong (`knowledge/workflow/model-routing.md`). Speed comes off the
+  mechanical work, never off the gates.
 - **Security & privacy first**, most of all in auth.
 
 ## Requirements

@@ -47,6 +47,19 @@ foundation for new work, the cosmetic lane is cheap by definition, and planned
 changes land before new scope. Each lane drains fully when it has open entries,
 and open entries in any lane block the launch stage.
 
+**Route models by reasoning difficulty, not importance**
+(`../../knowledge/workflow/model-routing.md`). The specialist agents carry
+their tier in frontmatter (fast `explorer` discovery → capable
+implementation → strong verification); when dispatching a unit to a
+general-purpose subagent, match the model to the unit's hardest reasoning, not
+its label: a bug-log drain of mechanical fixes or a tweak-lane pass is fast-
+or capable-tier work, while anything crossing an escalation boundary (auth,
+payments, migrations, concurrency, ambiguous root cause) keeps strong-tier
+verification. Tell every subagent that follows another's work to build on the
+reported evidence, not re-derive it. Routing lowers the cost of mechanical
+work, never the strength of the gates: validators and high-risk review always
+run strong.
+
 ## Working branch (the iteration rule)
 
 The dev stage **commits and pushes straight to one working branch: no per-unit

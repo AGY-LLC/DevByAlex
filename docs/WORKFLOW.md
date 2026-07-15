@@ -89,14 +89,28 @@ is the live control file every skill reads and writes.
 
 ### Agents (the specialists the feature loop deploys)
 
-| Agent | Role |
-|-------|------|
-| `feature-builder` | Owns one feature; deploys the four steps. |
-| `feature-implementer` | Writes the feature code (not its tests). |
-| `test-author` | Writes tests from the spec, blind to the code. |
-| `feature-validator` | Runs tests + reviews feature code; reports, doesn't fix. |
-| `integration-validator` | Runs full suite + reviews whole repo; reports, doesn't fix. |
-| `design-critic` | Vets screenshots of design changes against `docs/DESIGN.md` (style + references), the wireframes, and the universal design rules; emits a `CRIT-xxx` queue. Design work isn't done until it passes; judges, doesn't fix. |
+| Agent | Tier (model) | Role |
+|-------|--------------|------|
+| `feature-builder` | router (`inherit`) | Owns one feature; deploys the four steps and routes work between the tiers. |
+| `explorer` | 1 fast (`haiku`) | Discovery + evidence collection + test running: returns a compact evidence package so stronger tiers verify instead of re-searching. Never decides architecture/security/product. |
+| `feature-implementer` | 2 capable (`sonnet`) | Writes the feature code (not its tests); escalates by reporting when evidence, trust boundaries, or architecture demand it. |
+| `test-author` | 2 capable (`sonnet`) | Writes tests from the spec, blind to the code. |
+| `feature-validator` | 3 strong (`inherit`) | Runs tests + reviews feature code; reports, doesn't fix. Verification always runs strong. |
+| `integration-validator` | 3 strong (`inherit`) | Runs full suite + reviews whole repo; reports, doesn't fix. Verification always runs strong. |
+| `design-critic` | 2 capable (`sonnet`) | Vets screenshots of design changes against `docs/DESIGN.md` (style + references), the wireframes, and the universal design rules; emits a `CRIT-xxx` queue. Design work isn't done until it passes; judges, doesn't fix. |
+
+The tiers come from the **model routing and verification policy**
+(`knowledge/workflow/model-routing.md`, vendored like the rest of the
+knowledge): use the fastest model that can reliably perform each stage, route
+each subtask by the reasoning difficulty of that step (not the importance of
+the project), and have stronger models **verify concise evidence packages and
+diffs** rather than repeat completed mechanical work. Fast discovery
+(`explorer`) feeds capable implementation, the strong tier is reserved for
+ambiguity, trust boundaries, and independent verification of high-risk
+changes, and automated tests stay the final objective gate. Escalation is
+mandatory at the policy's boundaries (ambiguity, architecture, security/data,
+concurrency, verification) and covers only the uncertain portion of a task,
+never the mechanical work around it.
 
 ### Existing skills it reuses (not reinvented)
 
@@ -322,6 +336,14 @@ app "done."
   "keep" gets recorded so the next sweep doesn't re-flag it. `init-ai`
   inventories pre-existing orphans on integration and queues them as
   `[orphan]` bugs.
+- **Models are routed by reasoning difficulty, not project importance.**
+  Mechanical discovery and repetitive work run on the fast tier, normal
+  implementation on the capable tier, and ambiguity, trust boundaries, and
+  high-risk verification on the strong tier: with stronger models verifying
+  evidence packages instead of redoing lower-tier work
+  (`knowledge/workflow/model-routing.md`). Routing lowers the cost of the
+  mechanical 80%, never the strength of the gates: validators and every
+  high-risk review always run strong.
 - **Security & privacy beat convenience**, most of all in auth.
 - **Legal & accessibility are hard launch gates.** Terms of Service, a privacy
   policy accurate to real data flows, a web cookie-consent banner, and WCAG 2.2 AA

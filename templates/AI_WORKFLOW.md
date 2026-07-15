@@ -84,6 +84,11 @@ is the live control file; this file is the map.
   blocks blind change, not criticism: evidence a decision causes real harm is
   surfaced as an `ADR-challenge` for Alex, never silently fixed or dropped.
 - Tests trace to the spec; never weakened just to make code pass.
+- **Models are routed by reasoning difficulty**
+  (`.claude/knowledge/workflow/model-routing.md`): fast tier for discovery and
+  mechanical work, capable tier for normal implementation, strong tier for
+  ambiguity, trust boundaries, and verification. Stronger models verify
+  evidence packages and diffs; they don't redo completed mechanical work.
 - Security and privacy beat convenience: most of all in auth.
 
 To advance the build, run `/dev-goal` and let it push until the goal is met.

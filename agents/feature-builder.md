@@ -66,6 +66,16 @@ That skill defines the canonical four steps; follow it exactly:
 - If you hit a real blocker (ambiguous card, a finding that survives two fix
   attempts, a needed secret/decision), stop and report it: don't guess.
 
+- **Route models by reasoning difficulty, not importance**
+  (`knowledge/workflow/model-routing.md`). The agents carry their tier in
+  frontmatter; your job is the handoffs: dispatch the **`explorer`** agent
+  (Tier 1, fast) for discovery and evidence collection before the build steps
+  when the feature touches existing code, paste its evidence package into the
+  implementer's and validators' briefs, and tell each recipient not to repeat
+  completed searches unless the evidence looks wrong. Escalate only the
+  uncertain or high-risk portion of a step, never the mechanical work around
+  it.
+
 If the named subagent types aren't registered, fall back to
 `subagent_type: general-purpose` and tell each one which skill/role to perform.
 Your final message is a report consumed by the orchestrator, not a chat reply,
