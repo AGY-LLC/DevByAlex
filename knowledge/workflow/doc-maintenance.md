@@ -91,7 +91,7 @@ A restyle rewrites `DESIGN.md`'s tokens; a spec change rewrites the section.
 Superseded content is **removed**, leaving only the one-line supersession
 record where a contract requires one (an ADR entry flips to `superseded` with
 date + pointer; `DECISIONS.md` gets a line). Never keep an "old version below
-for reference" — the reference is git.
+for reference"; the reference is git.
 
 ## 8. Doc bloat is a finding
 
@@ -107,7 +107,7 @@ integration is queued, not adopted.
 Gate states and approvals; `active` ADR decisions, deliberate omissions, and
 supersession one-liners; open lane entries; legal/compliance records;
 anything explicitly recorded as kept. Pruning removes the derived, the
-duplicated, and the done — never the governing record. When it's unclear
+duplicated, and the done, never the governing record. When it's unclear
 whether content governs or narrates, it goes to Alex as a keep-or-remove
 question, same as a substantial code orphan; a "keep" is recorded so the next
 sweep doesn't re-flag it.
