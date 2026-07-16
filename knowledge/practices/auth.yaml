@@ -6,7 +6,7 @@ _meta:
   sensitivity: internal
   read_scope: brain.read
   tags: [practice, engineering, auth, security, init, feature, review]
-  updated: 2026-05-30
+  updated: 2026-07-16
 
 practice:
   id: auth
@@ -31,6 +31,9 @@ practice:
     - Handle session and the `return_to` redirect carefully, validate redirects against relative paths only; never trust an absolute URL from the client.
     - Treat OAuth + provider callback wiring as the part that's always harder than it looks; test the full round-trip.
     - Implement a return-to-origin pattern so a user bounced to login lands back where they started.
+    - Mobile browser-to-app auth follows RFC 8252, the redirect into the app carries only a single-use, short-lived exchange code; the app redeems it over HTTPS and gets the real session token in the response body. Never a token, session, or secret in the deep link, and this holds even when your own server (not the identity provider) mints the session.
+    - PKCE on every mobile flow, the app generates the verifier, keeps it in app memory, and sends only the challenge outward; a verifier that transits the deep link protects nothing.
+    - Prefer claimed HTTPS redirects (Android App Links / iOS Universal Links) over custom URI schemes, which any app can register and intercept; run the round-trip in the system browser (ASWebAuthenticationSession / Custom Tabs), never a WebView.
 
   questions:
     - id: platforms
@@ -54,6 +57,9 @@ practice:
     - OAuth callback verifies state; the provider uid links to the local user record correctly (no account takeover via email collision).
     - No secrets, tokens, or session ids logged.
     - Account-collision / verify-and-switch path handled when the same email arrives via a second provider.
+    - Mobile redirects (deep links, magic links) carry only a single-use exchange code, never a token, session, or PKCE verifier; the code is short-lived, invalidated on first use, and redeemed over HTTPS (RFC 8252).
+    - PKCE verifier is generated in the app and never leaves it; an intercepted redirect must be unredeemable without it.
+    - Claimed HTTPS redirects (App Links / Universal Links) used where the platform supports them; a custom scheme alone is a finding on any auth-bearing redirect.
 
   references:
     - ../../knowledge/checklists/auth-setup.md

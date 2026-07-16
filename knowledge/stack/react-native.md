@@ -3,7 +3,7 @@ id: stack-react-native
 title: "React Native"
 summary: "My go-to for mobile apps when I want to ship iOS and Android from a shared codebase. I use it with Expo almost always: bare React Native is for when Expo's limitations become real problems."
 tags: ["stack", "react-native"]
-updated: 2026-05-28
+updated: 2026-07-16
 ---
 # React Native
 
@@ -71,6 +71,7 @@ A few things I've learned from running an Expo app and a Next.js web app in the 
 - Never eject from Expo unless you've hit a specific wall that truly requires it
 - OTA updates don't bypass app store review for native code changes: don't assume they do
 - Deep link handling needs to be tested on physical devices, not just simulators
+- Auth over deep links follows RFC 8252: the redirect carries a single-use exchange code (never a token or PKCE verifier), redeemed over HTTPS; prefer App Links / Universal Links over custom schemes and use `expo-web-browser` (system browser), never a WebView. Details in `../checklists/auth-setup.md`
 - Always test on both platforms before submitting: "it works on iOS" is not enough
 - In a web+mobile monorepo: keep the API contract explicit and test both consumers when backend shapes change
 

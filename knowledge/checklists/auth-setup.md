@@ -3,7 +3,7 @@ id: checklists-auth-setup
 title: "Auth Setup Checklist"
 summary: "What I go through every time I set up authentication on a new project. Informed by real experience across cross-platform (web + mobile) and admin-only projects."
 tags: ["checklists", "auth-setup"]
-updated: 2026-05-28
+updated: 2026-07-16
 ---
 # Auth Setup Checklist
 
@@ -76,6 +76,25 @@ If your project has both a web app and a mobile app:
 
 ---
 
+## Mobile OAuth / deep-link auth (RFC 8252)
+
+RFC 8252 ("OAuth 2.0 for Native Apps") is the standard every mobile OAuth or
+browser-to-app auth handoff must follow, including flows routed through your
+own server. The redirect back into the app is the attack surface: on Android
+any app can register the same custom scheme, so treat everything in the
+redirect as readable by a hostile app.
+
+- [ ] Authorization-code flow only; the implicit flow (tokens in the redirect) is banned
+- [ ] **Never put a token, session, or secret in the deep link.** The redirect carries only a single-use exchange code; the app redeems it over HTTPS (POST) and receives the real token in the response body
+- [ ] Exchange codes are single-use, short-lived (about 60 seconds), and invalidated on first redemption
+- [ ] PKCE on every mobile flow: the app generates the verifier before launching the browser, keeps it in app memory only, and sends just the challenge outward. The verifier never transits the deep link, so an intercepted code is unredeemable
+- [ ] This applies equally to server-mediated flows: if your server mints the session instead of the identity provider, recreate code + PKCE at your own session boundary rather than handing the session token through the redirect
+- [ ] Prefer claimed HTTPS redirects over custom schemes: Android App Links (Digital Asset Links) / iOS Universal Links (AASA), which the OS binds to exactly one app. Custom schemes are acceptable only as a fallback, and only with the exchange-code + PKCE layer in place
+- [ ] Use the system browser for the auth round-trip (`ASWebAuthenticationSession` / Custom Tabs, or `expo-web-browser`), never an embedded WebView
+- [ ] Same rules for magic links and email verification links that log the user in: land on an HTTPS page that hands the app a code, not a token
+
+---
+
 ## Security specifics
 
 - [ ] Tokens verified server-side on every protected request
@@ -127,6 +146,8 @@ If your project has both a web app and a mobile app:
 | Not maintaining your own user record | Always write to your DB, don't rely on the auth provider as your user store |
 | Token refresh not handled on mobile | Mobile apps need explicit proactive token refresh before requests |
 | Not testing on both platforms | iOS + Android + web each need a manual pass |
+| Session token in the mobile deep link | Redirect carries a single-use code; token comes back in the HTTPS exchange response (RFC 8252) |
+| PKCE verifier sent through the redirect | Verifier stays in app memory; only the challenge leaves the app, or PKCE protects nothing |
 
 ---
 
