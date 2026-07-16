@@ -39,6 +39,7 @@ _(none)_
 ## Fixed
 
 <!-- newest first, the loop appends here: BUG-id, title, fix summary
-     (branch · commit · date). Kept as an audit trail; safe to prune old entries. -->
+     (branch · commit · date). Rotates: keep the current stage's entries,
+     max ~20; each names its commit, so pruning loses nothing. -->
 
 _(none)_

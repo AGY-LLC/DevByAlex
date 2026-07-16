@@ -34,6 +34,7 @@ _(none)_
 ## Triaged
 
 <!-- newest first: /live-triage appends here:
-     FB-id, title → BUG-xxx `[prod]` | TWK-xxx | TODO-xxx | blocker (feature request) | duplicate of <id> | not actionable, one-line reason (date) -->
+     FB-id, title → BUG-xxx `[prod]` | TWK-xxx | TODO-xxx | blocker (feature request) | duplicate of <id> | not actionable, one-line reason (date).
+     Rotates: delete a row once its routed entry is closed (git keeps the history). -->
 
 _(none)_

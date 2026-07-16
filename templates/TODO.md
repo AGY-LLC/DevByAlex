@@ -33,6 +33,7 @@ _(none)_
 ## Done
 
 <!-- newest first, /dev-todo appends here: TODO-id, title, what changed
-     (branch · commit · date). Safe to prune old entries. -->
+     (branch · commit · date). Rotates: keep the current stage's entries,
+     max ~20; each names its commit, so pruning loses nothing. -->
 
 _(none)_

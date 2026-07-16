@@ -155,7 +155,13 @@ Run this loop **per section**:
    - Requires it to cover, at minimum: **security**, **logic / correctness**,
      **edge cases**, **test coverage**, **documentation accuracy**,
      **error handling**, **observability**, **API contract integrity**,
-     **concurrency / idempotency** where applicable.
+     **concurrency / idempotency** where applicable. Documentation accuracy
+     cuts both ways: missing/wrong docs, and **doc bloat**
+     (`knowledge/workflow/doc-maintenance.md`, if vendored): duplicated
+     content, superseded sections kept around, drained-but-listed lane
+     entries, rotation caps blown: filed under the `docs` category tagged
+     `doc-bloat`. Gates, active ADR entries, open lane entries, and
+     compliance records are never bloat findings.
    - Asks for output as a list of **candidate findings** in the FIND-xxx
      template (see Output format below). Severity and confidence required.
      Confidence = `confirmed` for issues it can cite chapter and verse on,

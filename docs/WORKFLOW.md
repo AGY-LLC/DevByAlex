@@ -336,6 +336,14 @@ app "done."
   "keep" gets recorded so the next sweep doesn't re-flag it. `init-ai`
   inventories pre-existing orphans on integration and queues them as
   `[orphan]` bugs.
+- **Docs are heavy by design, so they're kept lean by rule**
+  (`knowledge/workflow/doc-maintenance.md`). The `docs/` set is closed (a new
+  file needs a recorded decision), every fact has one home, and each skill's
+  final doc write is a **reconcile pass**: prune what the unit completed or
+  superseded, never a bare append. Append-heavy sections rotate on hard caps
+  (git keeps the history), supersession replaces rather than accumulates, and
+  doc bloat is a review finding like dead code. Pruning never touches gates,
+  active ADRs, open lane entries, or compliance records.
 - **Models are routed by reasoning difficulty, not project importance.**
   Mechanical discovery and repetitive work run on the fast tier, normal
   implementation on the capable tier, and ambiguity, trust boundaries, and

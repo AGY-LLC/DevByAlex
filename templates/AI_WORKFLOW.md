@@ -89,6 +89,13 @@ is the live control file; this file is the map.
   mechanical work, capable tier for normal implementation, strong tier for
   ambiguity, trust boundaries, and verification. Stronger models verify
   evidence packages and diffs; they don't redo completed mechanical work.
+- **Docs stay lean** (`.claude/knowledge/workflow/doc-maintenance.md`): the
+  `docs/` set is closed (new files need a recorded decision), every fact has
+  one home, and every skill's last doc write is a reconcile pass that prunes
+  what its work completed or superseded. Append-heavy sections rotate on hard
+  caps; git is the archive. Doc bloat is a review finding like dead code:
+  but pruning never touches gates, active ADRs, open lane entries, or
+  compliance records.
 - Security and privacy beat convenience: most of all in auth.
 
 To advance the build, run `/dev-goal` and let it push until the goal is met.

@@ -32,7 +32,13 @@ You are given: the repo path and the feature that was just built. You return:
    clean). Report trivial orphans as findings for removal; tag an orphan that
    is **substantial work** `keep-or-remove` so the orchestrator routes it to
    Alex instead of a delete queue, and an orphan explicitly recorded as kept
-   (ADR / `docs/DECISIONS.md`) is not a finding at all. Invoke the **`scout`**
+   (ADR / `docs/DECISIONS.md`) is not a finding at all. **Doc bloat is an
+   orphan class** (`knowledge/workflow/doc-maintenance.md`): the same fact
+   duplicated across docs, drained-but-still-listed lane entries, log/closed
+   sections past their rotation cap, superseded content kept "for reference,"
+   and process narration are findings tagged `doc-bloat`: but never flag
+   gates, active ADR entries, open lane entries, or compliance records.
+   Invoke the **`scout`**
    skill over the repo for an adversarial whole-repo pass and a FIND-xxx queue.
 3. **Filter candidates against `docs/adr/`: both directions.** Read the ADRs
    for the features a candidate touches (plus `scaffold.md` / `auth.md`). A

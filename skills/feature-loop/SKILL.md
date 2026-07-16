@@ -158,7 +158,10 @@ With the feature fully built and both validations clean:
   STATUS › `## Blockers / open questions` as a keep-or-remove question for
   Alex, and record his "keep" so the next sweep doesn't re-flag it.
 - Mark every step for this feature ✅ and the row **done** in
-  `docs/STATUS.md`; add a log line (branch, commit, what shipped).
+  `docs/STATUS.md`; add a log line (branch, commit, what shipped). The STATUS
+  write is a **reconcile pass** (`knowledge/workflow/doc-maintenance.md`):
+  also delete blockers this feature resolved and keep the log inside its
+  rotation cap: never a bare append above stale state.
 - Commit and **push to the working branch** (`git push origin HEAD:<branch>`),
   no PR. Leave the suite green before pushing.
 - Set `## Next action` to the next not-done feature (or `/launch-observability`,

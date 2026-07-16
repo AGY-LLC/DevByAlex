@@ -119,6 +119,11 @@ Inventory the target without changing anything. Capture:
   `ARCHITECTURE.md`, decision writeups in the README, comments-as-docs folders.
   Inventory them; they'll be consolidated into `docs/adr/` (or removed if
   irrelevant) during the ADR backfill, so the repo keeps one source of truth.
+  The doc set is **closed** (`knowledge/workflow/doc-maintenance.md`): a
+  pre-existing extra doc is either consolidated into its owner file, kept via
+  a recorded decision in `docs/DECISIONS.md`, or queued for removal: never
+  silently adopted. Bloat inside workflow docs (duplicated facts, superseded
+  sections, narration) is inventoried the same way and queued, not kept.
 - **Orphaned artifacts**: files and code nothing references: dead routes/
   components, unused exports/dependencies, scratch or debug scripts,
   `.bak`/`.old` copies, stale generated artifacts, superseded docs. Inventory

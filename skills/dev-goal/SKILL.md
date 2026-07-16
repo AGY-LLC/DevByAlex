@@ -123,7 +123,11 @@ Repeat until the goal is met or only blocked work remains. Each pass:
    log entry with `pulse: <staging URL> · <1-3 screenshot paths>`, reusing the
    screenshots the unit itself captured (the feature loop's design-critic gate,
    `/dev-tweak`, and `/dev-todo` all save under `docs/visual-qa/<run-date>/`);
-   `pulse: n/a` when no UI changed. Confirm the unit's commit is pushed. Loop.
+   `pulse: n/a` when no UI changed. The write is a **reconcile pass**, not a
+   bare append (`knowledge/workflow/doc-maintenance.md`): delete blockers the
+   unit resolved, prune the log to the current stage's entries (max ~15
+   lines), and keep the lanes' closed sections inside their caps: git keeps
+   the history. Confirm the unit's commit is pushed. Loop.
 
 **The report contract** (what every subagent must return, and all the driver
 keeps): what changed (one short paragraph), the commit hash pushed, the verdict

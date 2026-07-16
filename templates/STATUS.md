@@ -83,5 +83,7 @@ Status: `todo` → `in-progress` → `blocked` → `done`.
 
 ## Log
 
-<!-- newest first: date, skill, what changed (branch, commit), pulse: <staging URL> · <screenshot paths> (or pulse: n/a for non-UI runs) -->
+<!-- newest first: date, skill, what changed (branch, commit), pulse: <staging URL> · <screenshot paths> (or pulse: n/a for non-UI runs).
+     Rotates: keep the current stage's entries, max ~15 lines; prune the rest
+     on stage transition (git keeps the history). -->
 - {{DATE}}, init-ai, workflow bootstrapped.
