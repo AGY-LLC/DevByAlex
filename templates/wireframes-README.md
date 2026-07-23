@@ -1,12 +1,12 @@
 # {{APP_NAME}}: Wireframes
 
 > Written by `/plan-wireframes`, in one of two modes. **GENERATE** (greenfield):
-> low-fidelity Figma frames per feature. **CAPTURE** (existing app): an inventory
-> of the screens already in the code: no Figma. Either way it's the artifact each
+> low-fidelity Penpot boards per feature. **CAPTURE** (existing app): an inventory
+> of the screens already in the code: no Penpot. Either way it's the artifact each
 > feature is validated against and **part of Alex's approval gate** with the guide.
 
-**Mode:** GENERATE (Figma) | CAPTURE (from code): _delete one_
-**Figma file/project:** _link (GENERATE only)_
+**Mode:** GENERATE (Penpot) | CAPTURE (from code): _delete one_
+**Penpot file/project:** _link (GENERATE only)_
 **Updated:** {{DATE}}
 
 ## Screen → feature map
@@ -31,3 +31,9 @@
 - Non-happy states (empty / loading / error) are included, that's where flows
   break.
 - If `docs/DESIGN.md` exists, these honor its tokens.
+- **Penpot is the living source of truth for layout/design** (see
+  `knowledge/workflow/penpot-source-of-truth.md`): design/layout changes go
+  Penpot-first, then code. When a change ships before the boards are updated
+  (e.g. an unattended run with no browser connected), record `Penpot-sync:
+  pending` against that screen's row and clear it once the boards are
+  reconciled.

@@ -14,7 +14,7 @@ is the live control file every skill reads and writes.
 ```
                          ┌──────────────────────────── PLAN (human-gated) ───────────────────────────┐
   /init-ai  ──────────►  │  /plan-spec ──► /plan-guide ──► /plan-design ──► /plan-wireframes           │
-  (bootstrap STATUS)     │   SPEC.md        GUIDE.md +      DESIGN.md        Figma frames +            │
+  (bootstrap STATUS)     │   SPEC.md        GUIDE.md +      DESIGN.md        Penpot boards +           │
                          │   (+legal+SEO)   cards + ADRs    (style pick)     wireframes/README + design/RESOURCES.md │
                          │   └► /marketer-brand-generation → BRAND.md (if public-facing, before guide)  │
                          └───────────────────────────────┬───────────────────────────────────────────┘
@@ -70,7 +70,7 @@ is the live control file every skill reads and writes.
 | `plan-guide` | plan | Expands the spec into a granular, ordered guide + feature cards + per-feature ADRs (`adr-backfill` mode writes the missing ADRs for an existing repo's features). |
 | `plan-design` | plan | Picks the app's named visual style, PRIMARY (structure, 1 of 12 product directions) × SECONDARY (feeling, 1 of 50 named styles from `knowledge/design/design-styles.md`), then **web-searches 3–5 real-world references** of the confirmed style (live products/galleries) to seed the tokens, and records pick + references + reason in `docs/DESIGN.md` before wireframes. `restyle` mode re-picks for an existing app, records the supersession, and hands off to `uiux-redesign` to apply it. |
 | `uiux-redesign` | plan/dev | The application half of a `restyle`: sweeps a confirmed new style across an existing app's every customer-facing screen: rewrites the `docs/DESIGN.md` token system, then conforms the diverging surfaces (web + mobile) via token/shared-component changes, **leaving already-aligned surfaces alone** (change is justified by divergence, not by the sweep). Runs as code change through the validate loop, re-verifies WCAG 2.2 AA, and routes regressions to an `RSTY-xxx` queue → `fix-errors`. Owns the rollout, not the taste call. |
-| `plan-wireframes` | plan | Wireframe each feature: GENERATE via Figma MCP (greenfield) or CAPTURE existing screens from code (existing app, no Figma). Reads the committed style from `docs/DESIGN.md`. |
+| `plan-wireframes` | plan | Wireframe each feature: GENERATE via Penpot MCP (greenfield) or CAPTURE existing screens from code (existing app, no Penpot). Reads the committed style from `docs/DESIGN.md`. The boards are the **living** source of truth for layout/design: later design/layout changes go Penpot-first (`knowledge/workflow/penpot-source-of-truth.md`). |
 | `dev-scaffold` | dev | One-time baseline: monorepo topology (`marketing/` apex + `web/` full-stack app on app.domain + optional `app/` mobile), branch model (protected `main` = production, `staging` = working line), skeleton, tooling, tests, and CI + deploy via Pipeline by Alex (`pba.yml` + thin caller). |
 | `dev-auth` | dev | Authentication first, security & privacy prioritized. Validate-existing mode audits + hardens auth an existing repo already has. |
 | `feature-loop` | dev | The per-feature 4-step build/validate engine; accretes each feature's golden-path E2E flow via the e2e gate. |
@@ -266,7 +266,7 @@ rest**:
 1. **Backfill the plan from code.** No spec/guide exist, so `init-ai` routes to
    `/plan-spec reverse` (infer the spec from code, tag inferences) → `/plan-guide`.
    The wireframe gate is satisfied by `/plan-wireframes capture`: an inventory of
-   the screens already in the code, **no Figma needed**: since the UI exists.
+   the screens already in the code, **no Penpot needed**: since the UI exists.
    The backfill includes the **ADRs**: every identified feature gets its
    `docs/adr/` record (inferred decisions + deliberate omissions, tagged
    `(needs review)`), with any scattered feature docs consolidated into them or
@@ -315,6 +315,13 @@ app "done."
 - **Every UI-changing unit leaves a visual pulse**: staging URL + screenshots in
   the STATUS log, reusing the unit's own captures, so an autonomous build can be
   judged at a glance, not only by reading diffs.
+- **Penpot is the living source of truth for layout and design**
+  (`knowledge/workflow/penpot-source-of-truth.md`). Any design or layout change
+  goes Penpot-first, then code, so the wireframe boards never drift from what
+  ships. The `penpot` MCP write lands only against a browser-connected file, so a
+  connected session updates the boards then the code, while an unattended run
+  records a Penpot-sync debt and clears it (verified by the design-critic) before
+  the change is done. No review gate unless Alex asks to preview in Penpot first.
 - **A feature's golden path is proven end to end before done**
   (`knowledge/workflow/e2e-gate.md`). Any feature with a user-facing flow runs
   its golden-path flow green against the running app in feature-loop step 4:

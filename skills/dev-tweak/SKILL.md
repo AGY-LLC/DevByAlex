@@ -67,6 +67,16 @@ code and the `docs/DESIGN.md` token system (a styling tweak changes the token
 or uses an existing one; it doesn't hardcode a one-off value that drifts from
 the system).
 
+**Penpot is the source of truth for layout/design** (see
+[`../../knowledge/workflow/penpot-source-of-truth.md`](../../knowledge/workflow/penpot-source-of-truth.md)):
+any tweak that alters design or layout (styling values, ordering/visibility of
+elements) goes Penpot-first, then code. When the app's Penpot wireframe file is
+open and Connected, update the boards before applying the tweak; when Penpot is
+not connected, record a Penpot-sync debt on the changed screen (in
+`docs/wireframes/README.md`) and reconcile it before the tweak is marked done.
+Purely non-visual tweaks (copy-only, asset swap with no layout change) are
+exempt. No review gate unless the user asks to preview in Penpot first.
+
 ### Step 4: The light gate (proportional, but real)
 - **Always:** typecheck + lint + the **existing** test suite green. (No new
   tests: a change that needs one failed the qualification test. The e2e gate

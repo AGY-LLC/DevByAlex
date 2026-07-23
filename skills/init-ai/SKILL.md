@@ -84,7 +84,7 @@ library skills (`scout`, `fix-errors`, `issue-checker`, `test-suite-developer`,
 `accessibility-critique`, `marketer-brand-generation`, `marketer-copywriting`),
 and the best-practice `knowledge/`. A committed checkout is fully self-sufficient,
 a run on any runner needs no MCP token or network brain. (The wireframe
-stage still wants a write-capable Figma MCP, but that's plan-time and human-run,
+stage still wants a write-capable Penpot MCP, but that's plan-time and human-run,
 not part of the autonomous dev loop.)
 
 ### Step 2: Detect repo state (read-only pass)
@@ -159,7 +159,7 @@ in the summary (offer to merge, don't overwrite silently):
 | `feature-card.md` | `docs/features/_TEMPLATE.md` | copied per-feature later |
 | `adr-README.md` | `docs/adr/README.md` | the ADR contract: consult before change, confirm before breaking a decision |
 | `adr-feature.md` | `docs/adr/_TEMPLATE.md` | copied per-feature by `/plan-guide` (and during backfill) |
-| `wireframes-README.md` | `docs/wireframes/README.md` | screen index (Figma frames or captured-from-code) |
+| `wireframes-README.md` | `docs/wireframes/README.md` | screen index (Penpot boards or captured-from-code) |
 | `ACCEPTANCE_TESTS.md` | `docs/ACCEPTANCE_TESTS.md` | stub if blank |
 | `secrets.manifest.json` | `docs/secrets.manifest.json` | the value-free secret map passworder syncs from (`knowledge/stack/secrets-passworder.md`); placeholder entries get replaced during scaffold/backfill |
 
@@ -275,8 +275,8 @@ anything that needs a human. The routing rules:
 | has spec, **public-facing, no `docs/BRAND.md`** | `/marketer-brand-generation`: brand foundation (seeds SEO + voice), then `/plan-guide` |
 | has spec (+ brand if public-facing), no guide | `/plan-guide`: expand the approved spec |
 | has guide, **no UI yet, no design style** | `/plan-design`: pick the named style (PRIMARY × SECONDARY) → `docs/DESIGN.md`, then wireframes |
-| has guide + style, no wireframes, **no UI yet** | `/plan-wireframes`: generate (needs Figma MCP), drawn to the chosen style |
-| has guide, no wireframes, **UI already exists** | `/plan-wireframes capture`: inventory existing screens (no Figma needed); `/plan-design restyle` only if changing the look |
+| has guide + style, no wireframes, **no UI yet** | `/plan-wireframes`: generate (needs Penpot MCP), drawn to the chosen style |
+| has guide, no wireframes, **UI already exists** | `/plan-wireframes capture`: inventory existing screens (no Penpot needed); `/plan-design restyle` only if changing the look |
 | guide + wireframes done, **gates unchecked** | Tell Alex to review & approve: dev is blocked |
 | gates approved, no scaffold | `/dev-scaffold` |
 | scaffolded, no auth at all | `/dev-auth` (build) |

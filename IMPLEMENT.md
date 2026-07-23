@@ -14,7 +14,7 @@ i will give the brief explanation of what i want. your job is to ask questions t
 ### detailed implement guide
 from the answers you collect from be you will build an expanded version of the spec that include granular details about each feature and section as well as the approach to implement it and the order you will implement the features
 ### wire framing designs
-you will then use the figma mcp to create wire framing designs for each feature. this will be used to help you understand the flow of the app and how it will work. the design questions will you have will need to be answered in that initial spec conversation that we will have.
+you will then use the penpot mcp to create wire framing designs for each feature. this will be used to help you understand the flow of the app and how it will work. the design questions will you have will need to be answered in that initial spec conversation that we will have.
 ## dev
 we cannot move to this stage until i approve the wire framing designs and the implement guide. once approved, this section will be an iterate automatically without a person (using crons or scheduled actions) until everything described is implemented, tested, and validated according to this flow.
 ### scaffold the app with all the basics

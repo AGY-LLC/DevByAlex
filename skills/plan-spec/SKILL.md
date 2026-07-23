@@ -60,7 +60,7 @@ answers. Work backwards from the user. Cover at minimum:
    states (empty/loading/error/onboarding/upgrade), brand assets (incl. **is a
    logo SVG available?**), references loved/hated, anti-patterns to avoid.
    **Ask for visual references as images, not just names:** screenshots of apps
-   or screens the user likes (or a Figma export) go into
+   or screens the user likes (or a Penpot export) go into
    `docs/design/references/` (create the folder; any pasted image gets saved
    there with a descriptive filename). For each, capture **one line on what
    specifically they like about it**: the palette, the density, the type, the

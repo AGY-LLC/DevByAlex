@@ -210,7 +210,7 @@ The OG image is the entire above-the-fold experience on every platform that prev
 
 Two paths:
 
-- **Static per-page OG images**: design once in Figma, export to `public/og/<slug>.png`. Cheap, controlled, gets stale fast.
+- **Static per-page OG images**: design once in Penpot, export to `public/og/<slug>.png`. Cheap, controlled, gets stale fast.
 - **Dynamic OG images** with Next's `ImageResponse`: generate from a TSX template per route. Stays in sync as titles change.
 
 ```ts

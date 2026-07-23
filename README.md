@@ -31,7 +31,7 @@ you can run by hand to bootstrap a brand-new app before `init-ai` is loaded.
                   #   into docs/design/references/; a picture beats adjectives
 /plan-guide       # → docs/IMPLEMENTATION_GUIDE.md + docs/features/*
 /plan-design      # → docs/DESIGN.md: pick the named style (PRIMARY × SECONDARY) + web-search real references of it
-/plan-wireframes  # → Figma frames (needs a write-capable Figma MCP), drawn to that style
+/plan-wireframes  # → Penpot boards (needs a write-capable Penpot MCP), drawn to that style
 #    …then YOU approve the spec, guide, and wireframes in docs/STATUS.md
 
 # 3. Build it (autonomous once gates are approved):
@@ -115,12 +115,14 @@ agent, the existing skills it reuses, and the invariants that make autonomy safe
   Every skill and the best-practice `knowledge/` are vendored into the app's
   committed `.claude/`, so there's no external brain, MCP, or token to connect for
   the build to run (locally or on a CI/cloud runner).
-- A **write-capable Figma MCP** for the wireframing stage: the official remote
-  server with **write-to-canvas** (`claude plugin install figma@claude-plugins-official`,
-  then `/plugin` → OAuth). Read-only "design → code" servers can't create frames;
-  write-to-canvas needs a Full seat (or a Dev seat writing into a draft file).
-  `/plan-wireframes` stops and points you to setup if none is connected. It's
-  plan-time and human-run: not part of the unattended loop.
+- A **write-capable Penpot MCP** for the wireframing stage: Penpot's official MCP
+  server (v2.15+), which writes to the canvas via its `execute_code` tool. Enable it
+  in Penpot (Your account → Integrations → MCP Server), then connect the cloud
+  server over remote HTTP: `claude mcp add --scope user --transport http penpot
+  "https://design.penpot.app/mcp/stream?userToken=YOUR_MCP_KEY"`. Read-only
+  "design → code" servers can't create boards. `/plan-wireframes` stops and points
+  you to setup if none is connected. It's plan-time and human-run: not part of the
+  unattended loop.
 - **passworder** (recommended), the secrets MCP
   (`~/dev/Startups/AlexOS/passworder`, registered user-scoped): lets the loop
   provision, sync, and locally materialize app secrets by NAME only (agents

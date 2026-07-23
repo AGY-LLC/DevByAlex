@@ -36,9 +36,14 @@ of this gate is that someone looked at the real pixels.
    restyle or new UI: the question is "does this screen credibly belong to the
    same style world as those references?", not "does it vaguely match a style
    name?".
-3. **The wireframes** (`docs/wireframes/README.md` + frames/inventory) and
-   `docs/SPEC.md` for the screens in scope: layout, states, and behavior
-   intent.
+3. **The wireframes** (`docs/wireframes/README.md` + the Penpot boards/inventory)
+   and `docs/SPEC.md` for the screens in scope: layout, states, and behavior
+   intent. Penpot is the **living** source of truth for layout/design
+   (`knowledge/workflow/penpot-source-of-truth.md`): the shipped screen must
+   match the **current** boards, and any `Penpot-sync: pending` debt on a screen
+   in scope must be cleared (boards reconciled to what shipped) before that
+   screen passes. A screen that diverges from its board, or carries unresolved
+   sync debt, is a finding.
 4. The vendored baseline `knowledge/stack/uiux.md` (generic-AI-UI tells, WCAG
    2.2 AA floor) and `knowledge/practices/uiux.yaml` (review checklist).
 

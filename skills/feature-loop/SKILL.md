@@ -137,6 +137,15 @@ With the feature fully built and both validations clean:
   for this feature: behavior, screens, and states all match. If something
   drifted, fix it (or, if the drift is intentional and better, note it and flag
   the guide/wireframe for Alex to update: don't silently diverge).
+- **Penpot is the source of truth for layout/design** (see
+  [`../../knowledge/workflow/penpot-source-of-truth.md`](../../knowledge/workflow/penpot-source-of-truth.md)):
+  a feature that alters layout or design goes Penpot-first, then code. When the
+  app's Penpot wireframe file is open and Connected, update the boards before
+  implementing the change; when Penpot is not connected, record a Penpot-sync
+  debt on the changed screen (in `docs/wireframes/README.md`) and reconcile it
+  before the feature is marked done. Features with no visual surface (pure
+  logic, data, API, background work) are exempt. No review gate unless the
+  user asks to preview in Penpot first.
 - **Screenshot + critic gate (any feature with customer-facing UI): required.**
   Run the app and capture screenshots of the feature's screens in their key
   states (populated, empty, loading, error; light + dark where supported),
