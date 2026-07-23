@@ -31,7 +31,16 @@ criteria map to which tests.
    high-risk logic (auth, permissions, billing, data validation, critical
    flows); include error-path tests, not just happy paths; don't over-test
    trivial UI. Use the project's runner (Jest unit/integration, Playwright E2E).
-4. Write tests that will **fail until the behavior exists**, that's correct and
+4. **If the feature has a user-facing flow, author its golden-path E2E flow**
+   (the e2e gate, `knowledge/workflow/e2e-gate.md`): a Playwright spec under
+   the repo's `e2e/acceptance/` dir for each web surface, a Maestro flow under
+   `.maestro/acceptance/` for native, named after the feature id/slug. Cover
+   the golden path plus the top 1-2 failure paths only where the card marks
+   them critical. Parameterize the target (base URL / API URL) via env vars so
+   the same flow runs against the local dev build now and staging at launch.
+   The orchestrator runs it in step 4; the feature can't be marked done until
+   it's green.
+5. Write tests that will **fail until the behavior exists**, that's correct and
    useful; it reveals real gaps when the suite runs.
 
 ## Rules

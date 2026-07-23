@@ -97,6 +97,12 @@ findings dictate the fixes in Step 3:
   security-focused review of the auth code; `scout`/`issue-checker`).
 - **Integration validation**: spawn the `integration-validator` agent (full
   suite + whole-codebase review for how auth wires into everything).
+- **E2E gate**: auth is the canonical golden path
+  (`../../knowledge/workflow/e2e-gate.md`). Run the sign-up / login / logout
+  flow green against the running app: a Playwright spec in `e2e/acceptance/`
+  for web, a Maestro flow in `.maestro/acceptance/` for native,
+  env-parameterized so the same flow runs against staging at launch. Auth is
+  not done until this flow passes.
 - On any failure: write a test that captures the issue, fix the code, re-run.
   Loop until clean.
 

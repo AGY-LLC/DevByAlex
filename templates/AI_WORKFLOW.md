@@ -30,7 +30,8 @@ is the live control file; this file is the map.
      tests, and CI + deploy via Pipeline by Alex (`pba.yml` + thin caller).
    - `/dev-auth`: authentication first; security & privacy prioritized.
    - `/feature-loop <id>`: per feature: parallel tests + implementation →
-     feature validation → integration validation → align to guide/wireframes →
+     feature validation → integration validation → align to guide/wireframes +
+     golden-path E2E flow green against the running app (the e2e gate) →
      update STATUS.
    - `/dev-tweak`: the cosmetic light lane: drains `docs/TWEAKS.md` (copy,
      tokens, spacing) behind a hard qualification test + a proportional gate,
@@ -53,7 +54,9 @@ is the live control file; this file is the map.
      analytics + uptime/alerting, each signal proven end-to-end on staging.
    - `/launch-acceptance` → `docs/ACCEPTANCE_TESTS.md` (scenario spec) plus the
      runnable suites that execute it against staging: Playwright specs for every
-     web surface (`marketing/` + `web/`), Maestro flows for iOS/Android.
+     web surface (`marketing/` + `web/`), Maestro flows for iOS/Android. A
+     reconcile pass: the feature loop's e2e gate accreted a flow per feature;
+     this maps them to scenarios and backfills only the gaps.
    - `/launch-compliance`: legal scan (ToS, privacy policy, cookie consent),
      `accessibility-critique` (WCAG 2.2 AA), `seo-audit`, and `prose-check`;
      reconciles a fix queue and the two **hard gates** (Legal & compliance,
@@ -84,6 +87,12 @@ is the live control file; this file is the map.
   blocks blind change, not criticism: evidence a decision causes real harm is
   surfaced as an `ADR-challenge` for Alex, never silently fixed or dropped.
 - Tests trace to the spec; never weakened just to make code pass.
+- **The golden path is proven end to end before done**
+  (`.claude/knowledge/workflow/e2e-gate.md`): a feature with a user-facing
+  flow runs its Playwright (web) / Maestro (native) golden-path flow green
+  against the running app before its row flips done; `e2e: n/a` recorded
+  when there is no flow. Tweaks are exempt by qualification; bug/todo work
+  re-runs only flows it broke or reshaped.
 - **Models are routed by reasoning difficulty**
   (`.claude/knowledge/workflow/model-routing.md`): fast tier for discovery and
   mechanical work, capable tier for normal implementation, strong tier for

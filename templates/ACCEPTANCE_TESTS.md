@@ -2,7 +2,10 @@
 
 > Written by `/launch-acceptance`. The scenario spec for the automated staging
 > acceptance pass: **Playwright** executes the web scenarios, **Maestro**
-> executes the iOS/Android scenarios. Every expected result is stated
+> executes the iOS/Android scenarios. The per-feature golden-path flows were
+> accreted by the feature loop's e2e gate as each feature was built; this doc
+> maps them to scenarios and adds the backfilled gaps (cross-feature
+> journeys, pre-gate features). Every expected result is stated
 > explicitly and maps to an assertion in the runner (or an explicit
 > `[manual]` marker): assume no insider knowledge.
 

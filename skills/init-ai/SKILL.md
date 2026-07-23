@@ -222,10 +222,12 @@ defaults:
   - **Impl** → ✅ `(needs review)` when the feature's code clearly exists.
   - **Tests** → only ✅ if tests for that feature actually exist (and note you
     can't tell if they trace to the spec).
-  - **Feat-Valid / Integ-Valid / Aligned** → leave **⬜**. These mean "passed the
-    validators / aligned to an approved guide+wireframes," none of which can be
-    known from code. A shipped-but-never-validated feature is impl-present,
-    validation-pending: not done.
+  - **Feat-Valid / Integ-Valid / E2E / Aligned** → leave **⬜**. These mean
+    "passed the validators / golden-path flow ran green / aligned to an
+    approved guide+wireframes," none of which can be known from code. A
+    shipped-but-never-validated feature is impl-present, validation-pending:
+    not done. (E2E: mark `n/a` where the feature clearly has no user-facing
+    flow; an existing acceptance flow file alone is not a green run.)
   Mark every inferred value `(needs review)`; keep observed facts and guesses
   separate. Set each feature's **Status** to `in-progress` (validation pending),
   not `done`, unless validation evidence exists.

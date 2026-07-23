@@ -1,6 +1,6 @@
 ---
 name: launch-acceptance
-description: "Launch-readiness stage of the DevByAlex workflow: write the staging acceptance pass as runnable automated suites: Playwright specs for every web surface and Maestro flows for iOS/Android, derived from a human-readable scenario doc. Inspects the implementation guide, feature cards, and STATUS to enumerate the critical flows, writes docs/ACCEPTANCE_TESTS.md as the scenario spec (ordered steps, explicit expected results, setup/teardown), then generates the Playwright specs and Maestro flows that execute those scenarios against the staging environment. Pairs with the launch-readiness and staging-smoke-test skills. Use once features are built and the app is staged, when the user says 'write the acceptance tests', 'create the staging acceptance pass', or 'prep launch verification'."
+description: "Launch-readiness stage of the DevByAlex workflow: reconcile the staging acceptance pass into complete runnable suites: Playwright specs for every web surface and Maestro flows for iOS/Android, tied to a human-readable scenario doc. The feature loop's e2e gate accretes a golden-path flow per feature as features are built, so this stage audits that accreted suite against the critical flows, writes docs/ACCEPTANCE_TESTS.md as the scenario spec (ordered steps, explicit expected results, setup/teardown), and backfills only what is missing: cross-feature journeys, [manual] markers, staging parameterization, and coverage for features that predate the gate. Pairs with the launch-readiness and staging-smoke-test skills. Use once features are built and the app is staged, when the user says 'write the acceptance tests', 'create the staging acceptance pass', or 'prep launch verification'."
 argument-hint: "[optional: staging URL or flows to focus on]"
 license: MIT
 metadata:
@@ -14,8 +14,16 @@ The launch-readiness stage. Staging deploys automatically via Pipeline by Alex
 on push to `staging`; this skill produces the automated acceptance pass that runs
 against that staging environment to confirm every critical flow actually works
 before promoting to production: **Playwright** specs for every web surface
-(`marketing/` and `web/`), **Maestro** flows for iOS and Android, both generated
-from a single scenario document.
+(`marketing/` and `web/`), **Maestro** flows for iOS and Android, both tied to
+a single scenario document.
+
+**This is a reconcile, not a from-scratch authoring pass.** The feature
+loop's e2e gate (`../../knowledge/workflow/e2e-gate.md`) has been accreting a
+golden-path flow per feature into `e2e/acceptance/` and
+`.maestro/acceptance/` since each feature was built. Start from what exists:
+map the accreted flows to scenarios, then author only the gaps
+(cross-feature journeys, features that predate the gate, steps only staging
+can exercise).
 
 ## When to activate
 
@@ -47,9 +55,13 @@ suites are generated from:
   scenario, and which steps are `[manual]` (see Step 3).
 - **Teardown**: clean up created data.
 
-### Step 3: Generate the runnable suites
-Translate every scenario into automated tests, respecting the repo's existing
-conventions (reuse an existing Playwright config/e2e dir if present):
+### Step 3: Reconcile and backfill the runnable suites
+Inventory the flows the feature loop already accreted (`e2e/acceptance/`,
+`.maestro/acceptance/`) and map each to its scenario in the doc; extend a
+flow rather than duplicating it when a scenario is a superset of one. Then
+translate every still-uncovered scenario into automated tests, respecting the
+repo's existing conventions (reuse an existing Playwright config/e2e dir if
+present):
 
 **Web → Playwright** (e.g. `e2e/acceptance/*.spec.ts`):
 - One spec file per scenario (or tightly related group), named after it
@@ -86,7 +98,9 @@ against the live staging environment and drives failures to green.
 ### Step 4: Cross-check coverage
 Every critical feature in STATUS marked done must have at least one scenario,
 and every scenario must map to a Playwright spec, a Maestro flow, or an
-explicit `[manual]` marker. Flag any done feature with no acceptance coverage.
+explicit `[manual]` marker. Backfill the flow for any done feature with no
+acceptance coverage (features done before the e2e gate existed won't have
+one); update its `E2E` cell in the STATUS features table once covered.
 
 ### Step 5: Update STATUS and route
 - Check **Launch → Acceptance tests written**.

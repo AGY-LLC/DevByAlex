@@ -57,7 +57,10 @@ per-entry branches). For each entry:
 2. **The gate, proportional but real:** typecheck + lint + **full suite green**;
    prose pass on any changed user-facing copy; **screenshot + design-critic
    pass on anything visual** (same standard as every design change, saved under
-   `docs/visual-qa/<run-date>/`).
+   `docs/visual-qa/<run-date>/`); and if the change **reshapes a user-facing
+   flow covered by an acceptance flow** (`knowledge/workflow/e2e-gate.md`),
+   update the affected Playwright/Maestro flow and re-run it green: a todo
+   that leaves flow shapes intact owes nothing beyond the suite.
 3. Record any material decision the change makes: feature-scoped → that
    feature's `docs/adr/<id>.md`; cross-cutting → `docs/DECISIONS.md`.
 4. **Move the entry to `## Done`** with a one-line summary (branch · commit ·

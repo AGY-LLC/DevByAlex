@@ -53,7 +53,7 @@ For each behavior under test, walk these axes and list the distinct outcomes:
 - **Unit**: pure functions, validators, reducers, format/parse. No I/O, minimal mocks.
 - **Integration**: HTTP routes, DB access, service classes. Use a real test DB when available; don't mock the database.
 - **Component**: a single UI component's state transitions and rendering.
-- **E2E (Playwright):** whole user flows, but only the golden path plus the top 2–3 critical failures. These tests are expensive to write and maintain, so reserve them for auth, payments, and paths that have broken before.
+- **E2E (Playwright web / Maestro native):** whole user flows. The golden path per feature is **required at feature-done**, not optional: the e2e gate (`../workflow/e2e-gate.md`) accretes one flow per user-facing feature into the acceptance suite. Beyond the golden path, add only the top 2-3 critical failures, reserved for auth, payments, and paths that have broken before: these tests stay expensive to write and maintain, so breadth belongs in the layers above.
 - **Contract**: request/response shape and wire-format stability.
 - **Snapshot**: only where the exact serialized shape *is* the contract.
 

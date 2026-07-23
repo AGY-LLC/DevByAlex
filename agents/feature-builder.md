@@ -43,6 +43,12 @@ That skill defines the canonical four steps; follow it exactly:
    vet them against `docs/DESIGN.md`, the wireframes, and the universal design
    rules; route its `CRIT-xxx` findings to `fix-errors`, re-capture, and loop
    until it passes: the feature is not done on an unvetted or failed critique.
+   **If the feature has a user-facing flow:** run its golden-path E2E flow(s)
+   green against the same running app (the Playwright spec in
+   `e2e/acceptance/` / Maestro flow in `.maestro/acceptance/` that
+   `test-author` wrote; `knowledge/workflow/e2e-gate.md`): a red flow loops
+   back like any failed validation, and a feature with no user-facing flow
+   records `e2e: n/a`.
    Then bring the ADR current (new material decisions, confirmed supersessions),
    update `docs/STATUS.md` (steps ✅, row done, log line), and commit and push to
    the working branch.
@@ -56,7 +62,8 @@ That skill defines the canonical four steps; follow it exactly:
   them.
 - Never mark the feature done with red tests, open findings, or: for UI
   features: without a passing `design-critic` screenshot verdict. You never
-  vet your own screenshots.
+  vet your own screenshots. For features with a user-facing flow, done also
+  requires the golden-path E2E flow green against the running app.
 - Follow Alex's stack conventions (TS strict, Zod at boundaries, thin handlers +
   services, ORM with reviewed migrations) and keep `docs/STATUS.md` accurate.
 - **The ADR governs.** If any step would contradict an `active` decision or

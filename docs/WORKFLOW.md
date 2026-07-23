@@ -73,13 +73,13 @@ is the live control file every skill reads and writes.
 | `plan-wireframes` | plan | Wireframe each feature: GENERATE via Figma MCP (greenfield) or CAPTURE existing screens from code (existing app, no Figma). Reads the committed style from `docs/DESIGN.md`. |
 | `dev-scaffold` | dev | One-time baseline: monorepo topology (`marketing/` apex + `web/` full-stack app on app.domain + optional `app/` mobile), branch model (protected `main` = production, `staging` = working line), skeleton, tooling, tests, and CI + deploy via Pipeline by Alex (`pba.yml` + thin caller). |
 | `dev-auth` | dev | Authentication first, security & privacy prioritized. Validate-existing mode audits + hardens auth an existing repo already has. |
-| `feature-loop` | dev | The per-feature 4-step build/validate engine. |
+| `feature-loop` | dev | The per-feature 4-step build/validate engine; accretes each feature's golden-path E2E flow via the e2e gate. |
 | `dev-tweak` | dev | The cosmetic light lane, drains `docs/TWEAKS.md` (copy, tokens, spacing, asset swaps) behind a hard qualification test (no logic/data/API/auth/dependency/test changes, heavier entries get reclassified, never forced through) and a proportional gate: suite green, prose pass on copy, screenshot + design-critic pass on anything visual. ADRs still govern. |
 | `dev-todo` | dev | The planned-change lane, drains `docs/TODO.md` (deliberate improvements heavier than a tweak, smaller than a feature) after bugs and tweaks. Routes every entry first (broken → BUGS, cosmetic → TWEAKS, feature-sized → a proposal for Alex, never silently into scope), then applies the qualified batch: failing test first where behavior changes, suite green, prose/screenshot gates as applicable. Post-stable, most iteration lives here. |
 | `dev-goal` | dev | The driver: give it a goal (default: dev stage complete) and it pushes until the goal is met or only human-blocked work remains. A slim orchestrator: every unit (drain, scaffold, auth, feature) runs in a subagent returning a bounded report, one green commit per unit, so a multi-feature rollout never drowns the main context and the run is safe to interrupt and resume. Every UI-changing unit ends its STATUS log entry with a **visual pulse** (staging URL + screenshots, reusing the unit's own captures). |
 | `dev-update` | dev/ops | Re-vendors the latest DevByAlex skills/agents/templates into the current app (`install.sh --update`); the manual update path that keeps the local committed copies current. |
 | `launch-observability` | launch | Wires the app so production can be heard: error monitoring (client + server, PII scrubbed from events), consent-gated product analytics (never fired before cookie consent, same posture `/launch-compliance` audits), a health endpoint + uptime ping, and alert routing, each signal **proven end-to-end on staging** before its box is checked. The prerequisite for `/live-triage`. |
-| `launch-acceptance` | launch | Writes the staging acceptance pass as runnable suites, Playwright (web) + Maestro (iOS/Android), generated from a scenario doc. |
+| `launch-acceptance` | launch | Reconciles the staging acceptance pass: maps the flows the feature loop accreted to a scenario doc and backfills the gaps (cross-feature journeys, pre-gate features), Playwright (web) + Maestro (iOS/Android). |
 | `launch-verify` | launch | Runs the `launch-acceptance` suites against the live staging environment, triages failures into an `ACC-xxx` queue → `fix-errors`, re-runs to green, and checks the "acceptance suite passed against staging" gate `launch-submit` reads. The runner half of the author/run split. |
 | `launch-compliance` | launch | Legal (ToS / privacy policy / cookie consent), accessibility (WCAG 2.2 AA), SEO, and prose scans; drives the two hard launch gates + a fix queue. Reuses `launch-readiness`, `accessibility-critique`, `seo-audit`, `prose-check`. |
 | `launch-visual-qa` | launch | The cross-platform screenshot loop (build → boot → screenshot → critique → fix): boots iOS sim + Android emulator, drives the Maestro flows to capture every key screen/state, the `design-critic` agent vets them (against wireframes, `docs/DESIGN.md`, and the universal design rules) and emits a `VIS-xxx` queue → `fix-errors`, re-screenshots to confirm. Reuses the `launch-acceptance` Maestro flows + `fix-errors`. |
@@ -315,6 +315,16 @@ app "done."
 - **Every UI-changing unit leaves a visual pulse**: staging URL + screenshots in
   the STATUS log, reusing the unit's own captures, so an autonomous build can be
   judged at a glance, not only by reading diffs.
+- **A feature's golden path is proven end to end before done**
+  (`knowledge/workflow/e2e-gate.md`). Any feature with a user-facing flow runs
+  its golden-path flow green against the running app in feature-loop step 4:
+  Playwright for web, Maestro for native, written spec-blind by `test-author`
+  and stored where the launch acceptance suite lives, so that suite accretes
+  per feature and `/launch-acceptance` reconciles instead of authoring at the
+  end. The gate rides the feature lane (auth included) and scales down, not
+  around: tweaks are exempt by qualification, and bug/todo work only re-runs
+  flows it broke or reshaped. `e2e: n/a` is recorded explicitly for features
+  with no user-facing flow.
 - **Production feedback flows through the same pipeline.** Post-launch signal is
   triaged (`/live-triage`) into the bug/tweak/todo lanes and drained by the
   goal run with full verification: triage routes, it never fixes, and feature

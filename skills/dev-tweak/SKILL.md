@@ -69,7 +69,10 @@ the system).
 
 ### Step 4: The light gate (proportional, but real)
 - **Always:** typecheck + lint + the **existing** test suite green. (No new
-  tests: a change that needs one failed the qualification test.)
+  tests: a change that needs one failed the qualification test. The e2e gate
+  never applies here: `knowledge/workflow/e2e-gate.md` exempts the tweak lane
+  by construction, because a change that alters a user flow fails
+  qualification.)
 - **Changed copy:** a quick prose pass over the changed strings (the
   `prose-check` standard: no AI tells, no decision leakage into UI copy per
   universal rule 31).

@@ -46,10 +46,12 @@
 
 Build order top-to-bottom. Per-step legend: ⬜ not started · 🟡 in progress · ✅ done · ❌ failing.
 Status: `todo` → `in-progress` → `blocked` → `done`.
+E2E = golden-path flow green against the running app (Playwright web /
+Maestro native); `n/a` when the feature has no user-facing flow.
 
-| # | Feature | Spec | Wireframe | Tests | Impl | Feat-Valid | Integ-Valid | Aligned | Status |
-|---|---------|:----:|:---------:|:-----:|:----:|:----------:|:-----------:|:-------:|--------|
-| 1 | _(seeded by `/plan-guide`)_ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | todo |
+| # | Feature | Spec | Wireframe | Tests | Impl | Feat-Valid | Integ-Valid | E2E | Aligned | Status |
+|---|---------|:----:|:---------:|:-----:|:----:|:----------:|:-----------:|:---:|:-------:|--------|
+| 1 | _(seeded by `/plan-guide`)_ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | todo |
 
 ## Launch
 
