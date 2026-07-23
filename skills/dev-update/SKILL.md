@@ -68,7 +68,7 @@ flag it so the user knows behavior may shift on the next run.
   report: the one-time migration (register the project, write the manifest,
   `import_env_file` existing env files) is described in
   `knowledge/stack/secrets-passworder.md` and runs via `/init-ai`'s additive
-  backfill — it is **not** performed by this skill, and never automatically.
+  backfill; it is **not** performed by this skill, and never automatically.
 
 ## Output
 

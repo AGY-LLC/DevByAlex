@@ -123,8 +123,8 @@ agent, the existing skills it reuses, and the invariants that make autonomy safe
   plan-time and human-run: not part of the unattended loop.
 - **passworder** (recommended), the secrets MCP
   (`~/dev/Startups/AlexOS/passworder`, registered user-scoped): lets the loop
-  provision, sync, and locally materialize app secrets by NAME only — agents
-  never see values, which live in 1Password and flow to Vercel/Fly/GitHub.
+  provision, sync, and locally materialize app secrets by NAME only (agents
+  never see values), which live in 1Password and flow to Vercel/Fly/GitHub.
   With it connected, `generated` secrets are fully self-serve and `provided`
   ones become a fill-in-1Password request instead of a manual dashboard chore;
   without it, skills degrade to the old behavior (a needed secret is a human

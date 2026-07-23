@@ -98,7 +98,7 @@ STATUS blocker naming exactly what Alex must provision: not a checked box.
   definition; everything else is a recorded omission.
 - Provider **accounts** are Alex's to create; the resulting keys/DSNs flow
   through passworder (`request_secret` with an obtain hint, then
-  `sync_secrets`; see `knowledge/stack/secrets-passworder.md`) — never a
+  `sync_secrets`; see `knowledge/stack/secrets-passworder.md`), never a
   guessed or hardcoded credential, and never a value in context. Without the
   passworder MCP, a missing secret is a blocker, the old way.
 

@@ -194,12 +194,12 @@ as found:
   `docs/secrets.manifest.json` (or the manifest is still template placeholders)
   and the passworder MCP is connected: `register_project` with components
   matching the deploy story in `pba.yml`, write the real manifest from the
-  repo's `.env.example`/env usage, then onboard existing values —
+  repo's `.env.example`/env usage, then onboard existing values:
   `import_env_file` per env for on-disk env files, or
   `scripts/migrate-environment.sh` (human-run, in the passworder repo) for
   values living in 1Password Environments. Values never enter context; record
   the migration as done in the summary. Skip silently if the passworder MCP
-  isn't connected — but note it as a pending one-time step in STATUS. See
+  isn't connected, but note it as a pending one-time step in STATUS. See
   `knowledge/stack/secrets-passworder.md`.
 Note every backfilled item in the summary so the user can fill the new spec
 stubs. If unsure whether a section is "really" present (e.g. worded differently),
