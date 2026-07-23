@@ -87,8 +87,13 @@ lives at the root and each workspace extends it.
 2. **`web/`** (the full-stack app):
    - Next.js app, directory conventions (`app/` routes, `components/`,
      `services/`, `lib/`, `tests/`); thin route handlers over a `services/` layer.
-   - Zod-validated `env` module; `.env.example` (never commit secrets); `.env*`
-     gitignored.
+   - Zod-validated `env` module; `.env.example` (names only, never values);
+     `.env*` gitignored. Secrets are provisioned through passworder
+     (`knowledge/stack/secrets-passworder.md`): fill `docs/secrets.manifest.json`
+     with the real entries, `generate_secret` every `generated` one,
+     `request_secret` the `provided` ones (with obtain hints), and
+     `write_env_file` the local tier so the scaffold boots without Alex
+     touching a dashboard.
    - Prisma init + an empty schema + first migration plumbing (don't model
      features yet, that's per-feature work). A healthcheck route (`/api/health`).
    - Test runner wired with **one green example test**.
@@ -126,6 +131,13 @@ Do **not** hand-roll workflow YAML. Use PBA central runtime mode:
    triggering on `main` + `staging`). All pipeline logic stays in `pba.yml`.
 3. The deploy chains encode the branch model: `staging` → staging environment,
    `main` → production. `order` IS the `needs` chain (migrate before web deploy).
+4. Register the app with passworder (`register_project`), components mirroring
+   the `pba.yml` targets (each Vercel project, each Fly app per env, the GitHub
+   repo for CI secrets), then `sync_secrets` staging once targets exist and
+   `verify_secrets` before the first staging deploy. The CI secrets the central
+   pipeline needs (`VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, …) are
+   manifest entries with component `ci` and exactly one env. If the passworder
+   MCP isn't connected, record secret provisioning as a blocker instead.
 
 Reference: `AGY-LLC/pipelinebyalex` `docs/usage.md`. Each Vercel project's own git
 integration must be OFF (`vercel.json` `deploymentEnabled:false`) so CI owns the
@@ -162,7 +174,9 @@ all pass. Validate `pba.yml` if the interpreter's check is available
 - **Pipeline by Alex owns CI + deploy.** Edit `pba.yml`, never the generated
   workflow YAML. Don't hand-roll `.github/workflows/*` beyond the thin caller.
 - Don't build feature data models or feature UI here: only the baseline.
-- Never commit secrets; `.env*` stays gitignored with an `.env.example`.
+- Never commit secrets; `.env*` stays gitignored with an `.env.example` (names
+  only). Secret values live in 1Password via passworder and are never read,
+  printed, or pasted by an agent (`knowledge/stack/secrets-passworder.md`).
 - Leave the suite **green** before marking done.
 
 ## Output

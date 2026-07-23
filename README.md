@@ -119,9 +119,18 @@ agent, the existing skills it reuses, and the invariants that make autonomy safe
   server with **write-to-canvas** (`claude plugin install figma@claude-plugins-official`,
   then `/plugin` → OAuth). Read-only "design → code" servers can't create frames;
   write-to-canvas needs a Full seat (or a Dev seat writing into a draft file).
-  `/plan-wireframes` stops and points you to setup if none is connected. This is
-  the one optional MCP, and it's plan-time and human-run: not part of the
-  unattended loop.
+  `/plan-wireframes` stops and points you to setup if none is connected. It's
+  plan-time and human-run: not part of the unattended loop.
+- **passworder** (recommended), the secrets MCP
+  (`~/dev/Startups/AlexOS/passworder`, registered user-scoped): lets the loop
+  provision, sync, and locally materialize app secrets by NAME only — agents
+  never see values, which live in 1Password and flow to Vercel/Fly/GitHub.
+  With it connected, `generated` secrets are fully self-serve and `provided`
+  ones become a fill-in-1Password request instead of a manual dashboard chore;
+  without it, skills degrade to the old behavior (a needed secret is a human
+  blocker). Contract + playbook: `knowledge/stack/secrets-passworder.md`.
+  Already-onboarded apps do a one-time migration via `/init-ai` backfill
+  (register + manifest + `import_env_file`).
 - The **supporting skills** the workflow calls (`test-suite-developer`, `scout`,
   `issue-checker`, `fix-errors`, `staging-smoke-test`, `launch-readiness`,
   `prose-check`, `seo-audit`, `accessibility-critique`, `ios-audit`,

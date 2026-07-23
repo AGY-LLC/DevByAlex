@@ -96,8 +96,11 @@ STATUS blocker naming exactly what Alex must provision: not a checked box.
 - **Every signal proven end-to-end on staging** before its box is checked.
 - **Track little, deliberately.** The event list traces to the spec's success
   definition; everything else is a recorded omission.
-- Provider accounts/secrets are Alex's to provision: blocker, never a guessed
-  or hardcoded credential.
+- Provider **accounts** are Alex's to create; the resulting keys/DSNs flow
+  through passworder (`request_secret` with an obtain hint, then
+  `sync_secrets`; see `knowledge/stack/secrets-passworder.md`) — never a
+  guessed or hardcoded credential, and never a value in context. Without the
+  passworder MCP, a missing secret is a blocker, the old way.
 
 ## Output
 

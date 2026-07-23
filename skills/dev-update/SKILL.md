@@ -63,6 +63,12 @@ flag it so the user knows behavior may shift on the next run.
 - **No auto-update.** Goal runs do **not** self-update: updates
   are deliberate so a build can't shift underfoot mid-run. Run this when you want
   the new version, not before.
+- **One-time secrets migration.** If the app has no `docs/secrets.manifest.json`
+  after the update, it predates the passworder integration. Flag it in the
+  report: the one-time migration (register the project, write the manifest,
+  `import_env_file` existing env files) is described in
+  `knowledge/stack/secrets-passworder.md` and runs via `/init-ai`'s additive
+  backfill — it is **not** performed by this skill, and never automatically.
 
 ## Output
 

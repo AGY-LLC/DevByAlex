@@ -149,7 +149,14 @@ A unit stops and records a blocker in STATUS `## Blockers / open questions` when
 - The unit would contradict an `active` decision in `docs/adr/` (cite the entry;
   never silently supersede an ADR).
 - The same validation finding survives two fix attempts.
-- It needs a secret, an external service, a manual deploy, or a decision only
+- It needs a secret that passworder can't self-serve
+  (`knowledge/stack/secrets-passworder.md`): `generated` secrets are minted
+  autonomously (`generate_secret` + `sync_secrets`, never a blocker);
+  a `provided` secret gets `request_secret` filed immediately and blocks
+  **only the units that need it, only until Alex fills it in 1Password** (poll
+  `list_secrets`). No passworder MCP in the session → any needed secret is a
+  blocker, the old way.
+- It needs an external service account, a manual deploy, or a decision only
   Alex can make.
 - Tests can't go green for a reason that isn't a code bug (environment/config).
 

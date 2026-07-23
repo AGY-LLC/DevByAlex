@@ -161,6 +161,7 @@ in the summary (offer to merge, don't overwrite silently):
 | `adr-feature.md` | `docs/adr/_TEMPLATE.md` | copied per-feature by `/plan-guide` (and during backfill) |
 | `wireframes-README.md` | `docs/wireframes/README.md` | screen index (Figma frames or captured-from-code) |
 | `ACCEPTANCE_TESTS.md` | `docs/ACCEPTANCE_TESTS.md` | stub if blank |
+| `secrets.manifest.json` | `docs/secrets.manifest.json` | the value-free secret map passworder syncs from (`knowledge/stack/secrets-passworder.md`); placeholder entries get replaced during scaffold/backfill |
 
 Fill placeholders (`{{APP_NAME}}`, `{{DATE}}`, stack) from Step 2. Convert any
 relative date to an absolute one.
@@ -189,6 +190,17 @@ as found:
   `_TEMPLATE.md` in. The per-feature ADR files themselves are **backfilled, not
   stamped**, that's real analysis work (see Step 6): every feature in the table
   needs its ADR written before feature work proceeds.
+- **Secrets (one-time passworder migration).** If the repo predates
+  `docs/secrets.manifest.json` (or the manifest is still template placeholders)
+  and the passworder MCP is connected: `register_project` with components
+  matching the deploy story in `pba.yml`, write the real manifest from the
+  repo's `.env.example`/env usage, then onboard existing values —
+  `import_env_file` per env for on-disk env files, or
+  `scripts/migrate-environment.sh` (human-run, in the passworder repo) for
+  values living in 1Password Environments. Values never enter context; record
+  the migration as done in the summary. Skip silently if the passworder MCP
+  isn't connected — but note it as a pending one-time step in STATUS. See
+  `knowledge/stack/secrets-passworder.md`.
 Note every backfilled item in the summary so the user can fill the new spec
 stubs. If unsure whether a section is "really" present (e.g. worded differently),
 flag it for the user rather than appending a duplicate.
