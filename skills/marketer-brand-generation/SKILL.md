@@ -1,7 +1,7 @@
 ---
 name: marketer-brand-generation
 description: >-
-  When the user wants to generate, refresh, or formalize a brand foundation for a project: including positioning, voice and tone, audience, value proposition, pillar messaging, naming/tagline, and visual vocabulary direction. Also use when the user says "create a brand," "brand strategy," "brand voice," "positioning," "messaging framework," "tagline," "value prop," "brand guidelines," "define our brand," "rebrand," "brand identity," "tone of voice," or "who are we and what do we say." Reads any existing `docs/BRAND.md` for context, and writes the brand foundation to `docs/BRAND.md` for downstream skills (copywriting, seo-audit, uiux-init) to reference.
+  When the user wants to generate, refresh, or formalize a brand foundation for a project: including positioning, voice and tone, audience, value proposition, pillar messaging, naming/tagline, and visual vocabulary direction. Also use when the user says "create a brand," "brand strategy," "brand voice," "positioning," "messaging framework," "tagline," "value prop," "brand guidelines," "define our brand," "rebrand," "brand identity," "tone of voice," or "who are we and what do we say." Reads any existing `docs/BRAND.md` for context, and writes the brand foundation to `docs/BRAND.md` for downstream skills (copywriting, seo-audit, plan-design) to reference.
 metadata:
   version: 1.0.0
 ---
@@ -33,7 +33,7 @@ Cover these six dimensions. Confirm or fill each one. Anything that's already lo
 3. **Core promise / JTBD**: the one outcome we credibly deliver. The job the user "hires" the product for.
 4. **Differentiators**: what we do that the comparison set doesn't, or does worse. Should be defensible, not aspirational.
 5. **Voice & tone**: pick 3 voice adjectives + 3 anti-adjectives ("we are X, not Y"). Tone shifts by surface (marketing site is bolder, in-product is calmer, support is warmer).
-6. **Visual vocabulary direction**, high-level mood (premium editorial / playful consumer / calm Japanese / technical devtool / etc., see custom-uiux-skill references for the 12 directions). This seeds `/uiux-init` but doesn't replace it.
+6. **Visual vocabulary direction**, high-level mood (premium editorial / playful consumer / calm Japanese / technical devtool / etc., see the 12 directions in knowledge/design/design-styles.md). This seeds `/plan-design` but doesn't replace it.
 
 ## Step 3: Write `docs/BRAND.md`
 
@@ -117,12 +117,12 @@ Provide 2–3 alternates for the tagline so the user can pick.
 
 ## 8. Visual Vocabulary Direction
 
-- **Mood**: {{e.g., calm Japanese / premium editorial / technical devtool: see /custom-uiux-skill 12 directions}}
+- **Mood**: {{e.g., calm Japanese / premium editorial / technical devtool: see the 12 directions in knowledge/design/design-styles.md}}
 - **Color feel**: {{e.g., warm neutrals + one accent, monochrome + neon, etc.}}
 - **Typography feel**: {{e.g., serif headlines + grotesque body, all-mono, etc.}}
 - **What to avoid**: {{e.g., gradient hero, glassmorphism, sparkle icons, bento grid, pastel blur orbs}}
 
-> This is a brief, not a system. `/uiux-init` turns it into a full `docs/DESIGN.md`.
+> This is a brief, not a system. `/plan-design` turns it into a full `docs/DESIGN.md`.
 
 ## 9. Anti-Brand (What we are not)
 
@@ -139,7 +139,7 @@ After writing `docs/BRAND.md`, tell the user which downstream skill is the next 
 
 - New copy → `/marketer-copywriting` (will read `docs/BRAND.md` automatically)
 - SEO meta/titles aligned to the new brand → `/seo-audit`
-- Visual identity / design tokens → `/uiux-init`
+- Visual identity / design tokens → `/plan-design`
 - Polishing prose for AI tells → `/prose-check`
 
 ## Operating Rules
@@ -154,5 +154,5 @@ After writing `docs/BRAND.md`, tell the user which downstream skill is the next 
 
 - **marketer-copywriting**: Consumes `docs/BRAND.md` to write page copy aligned with voice and pillars
 - **seo-audit**: Consumes `docs/BRAND.md` (required) to evaluate titles/meta/H1s/JSON-LD against positioning and pillar messages
-- **uiux-init**: Consumes the visual vocabulary direction in Section 8 to produce `docs/DESIGN.md`
+- **plan-design**: Consumes the visual vocabulary direction in Section 8 to produce `docs/DESIGN.md`
 - **prose-check**: Final pass for AI tells in any brand-generated copy

@@ -1,6 +1,6 @@
 ---
 name: plan-design
-description: "Design-selection stage of the DevByAlex plan phase. It picks the app's visual style with intent before wireframing. Reads docs/SPEC.md (category, audience, tone, density, platform), docs/BRAND.md if present, and any references/anti-patterns, then recommends a named style as PRIMARY (structure, one of the 12 product directions) × SECONDARY (feeling, one of the 50 named styles in knowledge/design/design-styles.md), with a rationale and two alternatives. Alex confirms; then a REQUIRED web search pulls 3–5 real-world references of the confirmed style (live products/sites, gallery entries, actual instances of the style, not descriptions) whose concrete treatments seed the starting tokens; the pick + references + starting tokens are written to docs/DESIGN.md and recorded as a decision, so /plan-wireframes and /dev-scaffold build against a committed style. The 'restyle' mode drives the rollout to an existing app: pick a new style, record the supersession, and hand off to /uiux-redesign to apply it across screens. Use after the implementation guide exists, when the user says 'pick a design style', 'choose the look', 'what style should this app be', 'set the visual direction', or 'restyle this app'."
+description: "Design-selection stage of the DevByAlex plan phase. It picks the app's visual style with intent before wireframing. Reads docs/SPEC.md (category, audience, tone, density, platform), docs/BRAND.md if present, and any references/anti-patterns, then recommends a named style as PRIMARY (structure, one of the 12 product directions) × SECONDARY (feeling, one of the 50 named styles in knowledge/design/design-styles.md), with a rationale and two alternatives. Alex confirms; then a REQUIRED web search pulls 3–5 real-world references of the confirmed style (live products/sites, gallery entries, actual instances of the style, not descriptions) whose concrete treatments seed the token system; the pick + references + the full design-system tokens (color, type, spacing, radius/shadow, motion, iconography, component rules, states) are written to docs/DESIGN.md and recorded as a decision, so /plan-wireframes and /dev-scaffold build against a committed style. Folds in the former /uiux-init: this skill now writes the complete design doc, not just the style pick. The 'restyle' mode drives the rollout to an existing app: pick a new style, record the supersession, and hand off to /uiux-redesign to apply it across screens. Use after the implementation guide exists, when the user says 'pick a design style', 'choose the look', 'what style should this app be', 'set the visual direction', or 'restyle this app'."
 argument-hint: "[optional: a style/direction to steer toward; or 'restyle' to re-pick + roll out to an existing app]"
 license: MIT
 metadata:
@@ -112,23 +112,44 @@ of the confirmed style: this step is mandatory, not optional polish:
   references must be pulled, not recalled.
 
 These references are recorded in `docs/DESIGN.md` (Step 6) and are the
-inspiration set every downstream stage designs against: `/uiux-init` expands
-tokens toward them, `/plan-wireframes` frames against them, and the design
-critic judges swept screens with them in hand.
+inspiration set every downstream stage designs against: this skill expands the
+token system toward them (Step 5), `/plan-wireframes` frames against them, and
+the design critic judges swept screens with them in hand.
 
-### Step 5: Translate the pick into starting tokens
+### Step 5: Expand the full design-system tokens
 Once confirmed, derive the style's implications **from the references, not from
-memory**: palette temperament, type register (serif/sans/mono/display),
-texture/motif set, radius/shadow feel, and a 2–3 word motion personality: each
-traceable to something observed in the pulled references. These seed the design
-system: the full token table and component rules are expanded by `/uiux-init`
-(or the vendored uiux practice) from this choice, not invented separately.
+memory**, and expand them into the complete token system this app builds
+against. Work from the design-system dimensions in
+[`../../knowledge/stack/uiux.md`](../../knowledge/stack/uiux.md) and the
+`docs/DESIGN.md` output template in
+[`../../knowledge/practices/uiux.yaml`](../../knowledge/practices/uiux.yaml).
+Define each as `Token | Value | Intent`, every value traceable to something
+observed in the pulled references (never invented from memory):
+
+- **Color**: palette + semantic roles (bg / surface / text / border / primary /
+  positive / warning / danger), light and dark, each meeting the WCAG 2.2 AA
+  contrast floor.
+- **Typography**: type register (serif / sans / mono / display) + a
+  size / weight / line-height ramp.
+- **Spacing**: base unit + scale.
+- **Radius / shadow / depth**: radius set + elevation feel.
+- **Motion**: duration + easing tokens, a 2–3 word motion personality, and the
+  `prefers-reduced-motion` policy.
+- **Iconography**: icon set / style + stroke rules.
+- **Component rules**: buttons, inputs, cards, modals, nav: shape, state, density.
+- **Empty / loading / error** state policy.
+
+**Mine an existing repo (integrated apps).** If UI code already exists, inventory
+the recurring colors, type, spacing, radii, shadows, and motion durations and
+snap them to the scale; mark any token inferred (not explicit in code) as
+`PROPOSED: needs review`.
 
 ### Step 6: Write it to docs/DESIGN.md
-Create or update `docs/DESIGN.md`. If the file doesn't exist, start it from the
-`uiux.yaml` output template and fill the **Style choice** section; if it exists
-(e.g. `/uiux-init` already ran), update that section and reconcile: the named
-pick governs. Record:
+Create or update `docs/DESIGN.md`, writing the **complete** design doc: the
+Style choice section below, then the full token system from Step 5, using the
+`docs/DESIGN.md` output template in
+[`../../knowledge/practices/uiux.yaml`](../../knowledge/practices/uiux.yaml). If
+the file already exists, update and reconcile: the named pick governs. Record:
 
 ```
 ## Style choice
@@ -152,12 +173,17 @@ adjectives: the reason is mandatory, like every DevByAlex decision.>
      Anti-reference optional. Downstream stages design toward these, not toward
      memory. -->
 
-**Starting tokens (seed: /uiux-init expands):**
-- Palette temperament: …
-- Type register: …
-- Texture / motif: …
-- Radius / shadow feel: …
-- Motion personality: …
+**Design tokens (the full system from Step 5):**
+- Color: palette + semantic roles (light + dark), all meeting WCAG 2.2 AA contrast
+- Typography: register + size/weight/line-height ramp
+- Spacing: base unit + scale
+- Radius / shadow / depth: radius set + elevation feel
+- Motion: durations + easings + motion personality + reduced-motion policy
+- Iconography: set/style + stroke rules
+- Component rules: buttons, inputs, cards, modals, nav
+- Empty / loading / error: state policy
+<!-- Each value is a Token | Value | Intent row per knowledge/stack/uiux.md; mark
+     any value inferred from existing code PROPOSED: needs review. -->
 
 **Usability is independent of aesthetic.** The WCAG 2.2 AA floor and the
 forms/interaction rules hold regardless of style: this pick never lowers
@@ -208,10 +234,11 @@ one applied across its screens.
 
 ## What this skill does NOT do
 
-- It doesn't write the full token system or component rules, that's `/uiux-init`.
 - It doesn't sweep screens across an existing app, that's the native
   `/uiux-redesign` (with `/uiux-audit` as the fallback).
+- It doesn't audit built screens against the doc, that's `/uiux-audit`.
 - It doesn't approve itself: the pick is Alex's to confirm.
 
-It owns exactly one thing: **choosing and recording the named visual style**, so
-every downstream stage builds against an intentful, committed look.
+It owns **choosing and recording the named visual style and expanding it into the
+committed design system** (`docs/DESIGN.md`), so every downstream stage builds
+against an intentful, committed look and token set.

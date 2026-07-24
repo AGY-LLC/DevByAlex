@@ -102,7 +102,7 @@ in so later stages can reference them.
 - **Read the committed style.** `docs/DESIGN.md` should carry a **Style choice**
   (PRIMARY × SECONDARY) from `/plan-design`: design the frames to that style,
   consult its recorded **real-world references** (open them: the frames should
-  belong to the same world), and honor any tokens `/uiux-init` has expanded. If
+  belong to the same world), and honor any tokens `/plan-design` has expanded. If
   no style is recorded yet, run `/plan-design` first rather than defaulting to a
   generic look.
 - **Read the universal design rules**

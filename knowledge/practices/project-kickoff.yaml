@@ -14,7 +14,7 @@ practice:
   domain: engineering
   activities: [init]
   matched_skills:
-    - /uiux-init
+    - /plan-design
   use_when: >-
     The user wants to start a new project, especially when the brief is a few
     vague sentences ("build me an app that…"). DO NOT start coding. Start by

@@ -68,7 +68,7 @@ is the live control file every skill reads and writes.
 | `init-ai` | entry | Bootstraps/integrates the workflow into a repo; reconciles STATUS from what's already done. |
 | `plan-spec` | plan | Interviews to a complete spec; collects **visual references as images** (screenshots of apps the user likes → `docs/design/references/`, each with a "what I like about it" line) as first-class design inputs; `reverse` mode backfills from code. |
 | `plan-guide` | plan | Expands the spec into a granular, ordered guide + feature cards + per-feature ADRs (`adr-backfill` mode writes the missing ADRs for an existing repo's features). |
-| `plan-design` | plan | Picks the app's named visual style, PRIMARY (structure, 1 of 12 product directions) × SECONDARY (feeling, 1 of 50 named styles from `knowledge/design/design-styles.md`), then **web-searches 3–5 real-world references** of the confirmed style (live products/galleries) to seed the tokens, and records pick + references + reason in `docs/DESIGN.md` before wireframes. `restyle` mode re-picks for an existing app, records the supersession, and hands off to `uiux-redesign` to apply it. |
+| `plan-design` | plan | Picks the app's named visual style, PRIMARY (structure, 1 of 12 product directions) × SECONDARY (feeling, 1 of 50 named styles from `knowledge/design/design-styles.md`), then **web-searches 3–5 real-world references** of the confirmed style (live products/galleries) to seed the tokens, **expands the full design system** (color/type/spacing/radius/shadow/motion/iconography/component rules/states, absorbing the former `uiux-init`), and records pick + references + reason in `docs/DESIGN.md` before wireframes. `restyle` mode re-picks for an existing app, records the supersession, and hands off to `uiux-redesign` to apply it. |
 | `uiux-redesign` | plan/dev | The application half of a `restyle`: sweeps a confirmed new style across an existing app's every customer-facing screen: rewrites the `docs/DESIGN.md` token system, then conforms the diverging surfaces (web + mobile) via token/shared-component changes, **leaving already-aligned surfaces alone** (change is justified by divergence, not by the sweep). Runs as code change through the validate loop, re-verifies WCAG 2.2 AA, and routes regressions to an `RSTY-xxx` queue → `fix-errors`. Owns the rollout, not the taste call. |
 | `plan-wireframes` | plan | Wireframe each feature: GENERATE via Penpot MCP (greenfield) or CAPTURE existing screens from code (existing app, no Penpot). Reads the committed style from `docs/DESIGN.md`. The boards are the **living** source of truth for layout/design: later design/layout changes go Penpot-first (`knowledge/workflow/penpot-source-of-truth.md`). |
 | `dev-scaffold` | dev | One-time baseline: monorepo topology (`marketing/` apex + `web/` full-stack app on app.domain + optional `app/` mobile), branch model (protected `main` = production, `staging` = working line), skeleton, tooling, tests, and CI + deploy via Pipeline by Alex (`pba.yml` + thin caller). |
@@ -143,14 +143,16 @@ The supporting skills (`scout`, `fix-errors`, `issue-checker`,
   (rejection preflight) and `launch-store-assets` (metadata/age-rating compliance).
 - `create-demo`: Maestro-driven capture of the real running app; `launch-store-assets`
   reuses it to pull real screenshots for the store listing.
-- `uiux-init` / `uiux-audit`: optional external design-doc + UI alignment
-  alongside wireframes: `uiux-init` expands a fresh pick into the full token
-  system + component rules, and `uiux-audit` aligns screens to `docs/DESIGN.md`.
-  The native `plan-design` owns the **style decision** (the named PRIMARY ×
-  SECONDARY pick), and the native `uiux-redesign` owns the **rollout**: sweeping
-  a confirmed new style across an existing app's screens when `plan-design
-  restyle` re-picks. (`uiux-audit` is the fallback for the screen sweep if
-  `uiux-redesign` isn't present.)
+- `uiux-audit`: the native UI-alignment pass, it audits built screens against
+  `docs/DESIGN.md` and applies `AUD-xxx` tweaks inline, judging against
+  DevByAlex's own `knowledge/design/` + `knowledge/stack/uiux.md` +
+  `knowledge/practices/uiux.yaml` (no external skill). The native `plan-design`
+  owns the **style decision** (the named PRIMARY × SECONDARY pick) and writes the
+  full design system into `docs/DESIGN.md`: it absorbed the former `uiux-init`.
+  The native `uiux-redesign` owns the **rollout**: sweeping a confirmed new style
+  across an existing app's screens when `plan-design restyle` re-picks.
+  (`uiux-audit` is the fallback for the screen sweep if `uiux-redesign` isn't
+  present.)
 
 And it reads Alex's encoded conventions from the **vendored `knowledge/`**
 (copied into `<app>/.claude/knowledge/` by `install.sh`; skills read it directly

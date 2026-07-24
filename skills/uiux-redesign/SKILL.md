@@ -33,7 +33,7 @@ new style instead of the decision sitting in a doc.
 - The user says "roll out the new style," "apply the redesign," "sweep the
   screens," "restyle every screen," or "uiux-redesign."
 - **Not** for a greenfield app with no UI yet: expanding a *first* token system
-  from a fresh pick is `/uiux-init`'s job. This skill changes an app that already
+  from a fresh pick is `/plan-design`'s job. This skill changes an app that already
   has screens.
 
 ## Prerequisites
@@ -197,7 +197,7 @@ not get a pass because it's "just visual":
 - It doesn't **pick** the style, that's `/plan-design restyle` (the decision).
 - It doesn't **self-approve** the taste call: the pick was already confirmed.
 - It doesn't expand a *first* token system on a greenfield app, that's
-  `/uiux-init`.
+  `/plan-design`.
 - It doesn't **fix its own regressions**: it routes them to `fix-errors`.
 
 It owns exactly one thing: **rolling a confirmed new style across an existing

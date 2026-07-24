@@ -15,7 +15,6 @@ practice:
   activities: [feature, review]
   matched_skills:
     - /plan-design
-    - /uiux-init
     - /uiux-audit
     - /uiux-redesign
     - /accessibility-critique
@@ -38,7 +37,7 @@ practice:
     - Pin the design-system dimensions as intent-based tokens, color (+ contrast), typography ramp, spacing scale, radius/shadow, motion (with a reduced-motion policy), iconography, and every interactive state (default/hover/focus/active/disabled/loading/error/empty).
     - Hold the accessibility floor (WCAG 2.2 AA) on every customer-facing surface, focus visible, keyboard operable, contrast, hit targets, semantic structure, labels + error association, alternatives, reduced motion, zoom/reflow.
     - Don't skip empty, loading, and error states, they're where AI UI is laziest.
-    - For a new project, run the /uiux-init interview and write docs/DESIGN.md before building; audit against it with /uiux-audit.
+    - For a new project, run the /plan-design interview and write docs/DESIGN.md before building; audit against it with /uiux-audit.
 
   questions:
     - id: product

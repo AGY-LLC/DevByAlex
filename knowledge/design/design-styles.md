@@ -1,14 +1,14 @@
 ---
 id: design-styles
 title: "Design style vocabulary: 50 named styles + the structure×feeling model"
-summary: "The named-style vocabulary the /plan-design step picks from. A visual style is chosen as PRIMARY (structure/layout, one of custom-uiux-skill's 12 product directions) × SECONDARY (feeling/decoration, one of these 50 named styles). This file is the catalog, the structure→feeling mapping, and the decision procedure that turns an app's category + audience + tone into a recommended pairing. Feeds docs/DESIGN.md."
+summary: "The named-style vocabulary the /plan-design step picks from. A visual style is chosen as PRIMARY (structure/layout, one of 12 product directions) × SECONDARY (feeling/decoration, one of these 50 named styles). This file is the catalog, the structure→feeling mapping, and the decision procedure that turns an app's category + audience + tone into a recommended pairing. Feeds docs/DESIGN.md."
 tags: ["design", "uiux", "style", "branding", "plan"]
 updated: 2026-07-06
 ---
 # Design style vocabulary
 
 > Read by **`/plan-design`** to recommend a named visual style for an app, and by
-> `/uiux-init` / `/uiux-audit` / `/uiux-redesign` when a style has been chosen.
+> `/uiux-audit` / `/uiux-redesign` when a style has been chosen.
 > The output of a style pick lives in the app's **`docs/DESIGN.md`** ("Style
 > choice"), and the decision is recorded like any other (ADR / DECISIONS).
 
@@ -22,7 +22,7 @@ typography, textures, and mood does it have?"* A strong brief names **both**.
 
 Never pick a single style. Pick **two**, with clear jobs:
 
-- **PRIMARY = structure / layout.** The spine. One of **custom-uiux-skill's 12
+- **PRIMARY = structure / layout.** The spine. One of **12
   visual directions** (below): these encode the *product archetype* and drive
   layout, density, navigation, and component choices. The primary **wins every
   conflict** and always governs usability (a brutalist landing page does **not**
@@ -36,7 +36,7 @@ Never pick a single style. Pick **two**, with clear jobs:
 > then layout, colors, typography, textures, lighting, motifs, mood, use case,
 > constraints (readable · modern · production-ready · not cluttered · not generic).
 
-### The 12 PRIMARY directions (structure: from custom-uiux-skill)
+### The 12 PRIMARY directions (structure)
 
 `premium editorial` · `playful consumer` · `calm Japanese` · `technical devtool`
 · `AI-native productivity` · `social mobile` · `finance dashboard` · `luxury
@@ -164,9 +164,8 @@ pairing that fights the primary's job.
    is a taste call: **present, let Alex confirm or override.**
 5. **Translate the pick into starting tokens**: the style implies a palette
    temperament, a type register (serif/sans/mono/display), a texture/motif set,
-   a radius/shadow feel, and a motion personality. Seed these into
-   `docs/DESIGN.md`; `/uiux-init` (or the vendored uiux practice) expands them
-   into the full token system and component rules.
+   a radius/shadow feel, and a motion personality. `/plan-design` expands these
+   into the full token system and component rules in `docs/DESIGN.md`.
 6. **Keep usability independent of aesthetic.** The accessibility floor
    ([`../stack/uiux.md`](../stack/uiux.md), WCAG 2.2 AA) and the forms/interaction
    rules hold regardless of style: a dramatic style never lowers contrast,

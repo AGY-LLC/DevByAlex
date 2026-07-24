@@ -7,7 +7,7 @@ updated: 2026-05-30
 ---
 # UI/UX Baseline
 
-How I want UI built and reviewed. Per-project specifics live in that project's `docs/DESIGN.md` (see nisatsu for the canonical example); this is the cross-project baseline the `/uiux-init`, `/uiux-audit`, and `/accessibility-critique` skills operate against.
+How I want UI built and reviewed. Per-project specifics live in that project's `docs/DESIGN.md` (see nisatsu for the canonical example); this is the cross-project baseline the `/plan-design`, `/uiux-audit`, and `/accessibility-critique` skills operate against.
 
 Underneath everything here sit the **[universal design rules](../design/universal-design-rules.md)**: 31 style-independent principles (clarity above everything, one primary action, obvious hierarchy, immediate feedback, error prevention + recovery, show-don't-tell, …) plus the pre-ship Universal Checklist the `design-critic` agent runs over every screenshot. Every screen holds them regardless of the style chosen below.
 
@@ -50,8 +50,8 @@ Non-negotiable on every customer-facing surface:
 - [ ] **Color not the only signal**: pair color with icon + text (e.g. red error gets an icon and a message).
 - [ ] **Modal focus management**: focus moves in, Tab is trapped, focus returns on close, `aria-modal`/inert applied.
 
-## Setting direction (the `/uiux-init` interview)
+## Setting direction (the `/plan-design` interview)
 
 Before designing, answer: what the product does (one sentence); who the user is and their sophistication; the primary goal on the main screen; the business goal; emotional tone (2–3 adjectives); interaction density (low consumer / medium productivity / high dashboard); platform priority; existing brand assets; references loved and hated; and explicit anti-patterns to avoid.
 
-*See also: [Tailwind](./tailwind.md) | `/uiux-init`, `/uiux-audit`, `/accessibility-critique` skills*
+*See also: [Tailwind](./tailwind.md) | `/plan-design`, `/uiux-audit`, `/accessibility-critique` skills*
