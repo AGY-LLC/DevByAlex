@@ -1,85 +1,104 @@
-# Before/after examples
+# Context-sensitive examples
 
-## Example 1: throat-clearing + binary contrast
+The same phrase can work for one brand and fail for another. These examples
+show the reasoning, not universal replacements.
 
-**Before:**
-> "Here's the thing: building products is hard. Not because the technology is complex. Because people are complex. Let that sink in."
+## Preserve warmth
 
-**After:**
-> "Building products is hard. Technology is manageable. People aren't."
-
-**Changes:** Removed opener, binary contrast structure, and emphasis crutch. Direct statements.
-
----
-
-## Example 2: filler + unnecessary reassurance
+**Brand brief:** Calm, encouraging, and patient. Never blames the user.
 
 **Before:**
-> "It turns out that most teams struggle with alignment. The uncomfortable truth is that nobody wants to admit they're confused. And that's okay."
+> "It looks like we couldn't save your changes. Your work is still here, so
+> take a moment and try again when you're ready."
 
-**After:**
-> "Teams struggle with alignment. Nobody admits confusion."
+**Bad revision:**
+> "Save failed. Try again."
 
-**Changes:** Cut hedging ("most"), removed throat-clearing phrases, deleted permission-granting ending.
+The shorter version is clear but cold. It removes reassurance that fits the
+brand and the stressful context.
 
----
+**Better revision:**
+> "We couldn't save your changes, but your work is still here. Try again when
+> you're ready."
 
-## Example 3: business jargon stack
+This removes a little delay without flattening the voice.
 
-**Before:**
-> "In today's fast-paced landscape, we need to lean into discomfort and navigate uncertainty with clarity. This matters because your competition isn't waiting."
+## Keep a useful adverb
 
-**After:**
-> "Move faster. Your competition is."
-
-**Changes:** Eliminated jargon entirely. Core message in six words.
-
----
-
-## Example 4: dramatic fragmentation
+**Brand brief:** Honest, practical, and transparent about uncertainty.
 
 **Before:**
-> "Speed. Quality. Cost. You can only pick two. That's it. That's the tradeoff."
+> "You can usually restore a deleted draft for 30 days."
 
-**After:**
-> "Speed, quality, cost: pick two."
+**Keep it.** "Usually" changes the claim and protects accuracy. Removing it
+would make the sentence shorter and less truthful.
 
-**Note:** Original uses an em dash; rewrite with a comma instead: "Speed, quality, cost: pick two."
+## Keep a rhetorical question
 
-**Changes:** Single sentence. No performative emphasis.
-
----
-
-## Example 5: rhetorical setup
+**Brand brief:** Curious and conversational, with occasional playful prompts.
 
 **Before:**
-> "What if I told you that the best teams don't optimize for productivity? Here's what I mean: they optimize for learning. Think about it."
+> "Not sure where to begin? Pick the story that sounds fun."
 
-**After:**
-> "The best teams optimize for learning, not productivity."
+**Keep it.** The question mirrors the reader's likely thought and the answer
+fits the brand. It is not empty scaffolding.
 
-**Changes:** Direct claim. No rhetorical scaffolding.
+## Revise a repeated formula
 
----
-
-## Example 6: false agency
+**Brand brief:** Direct, grounded, and low on hype.
 
 **Before:**
-> "The decision emerges from a culture that rewards taking risks. The data tells us this works."
+> "It's not just a dashboard. It's your command center. It's not just data.
+> It's clarity."
 
 **After:**
-> "Leaders who reward risk-taking make bolder decisions. The 2023 cohort shipped twice as often."
+> "See the numbers that matter and decide what to do next."
 
-**Changes:** Named the actor. Replaced "the data tells us" with the specific result.
+The original stacks two identical contrast formulas and uses generic hype. The
+revision states the product benefit in the brand's practical voice.
 
----
+## Preserve passive voice
 
-## Example 7: narrator-from-a-distance + passive
+**Context:** A neutral account-security notification where the actor is
+unknown.
 
 **Before:**
-> "Nobody designed this system. Mistakes were made. People tend to add features without removing old ones."
+> "Your password was changed at 3:42 p.m."
+
+**Keep it.** The event matters, and inventing "we" would be inaccurate. Follow
+with a clear action if the user did not make the change.
+
+## Remove an em dash without changing rhythm
+
+**Before:**
+> "Your draft is safe[em dash]even if you close the app."
 
 **After:**
-> "You inherit the system one feature at a time. You add. You rarely subtract."
+> "Your draft is safe, even if you close the app."
 
-**Changes:** Put the reader in the scene. Replaced passive with active. Cut "people tend to."
+The comma preserves the reassuring aside. Splitting this into "Your draft is
+safe. You can close the app." would sound more abrupt.
+
+## Let marketing copy breathe
+
+**Brand brief:** Thoughtful, literary, and intimate without being precious.
+
+**Before:**
+> "Some mornings, the words arrive slowly. That's part of writing, too."
+
+**Keep it.** The softness, fragment-like second sentence, and comma create the
+intended cadence. "Words sometimes arrive slowly" would be denser and less
+human.
+
+## Tighten a control
+
+**Context:** A button beside a draft invoice.
+
+**Before:**
+> "Click here to send this invoice now"
+
+**After:**
+> "Send invoice"
+
+Controls benefit from predictable brevity. This does not imply that the
+surrounding explanation should be equally terse.

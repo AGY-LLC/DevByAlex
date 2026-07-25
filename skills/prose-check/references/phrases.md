@@ -1,132 +1,100 @@
-# Phrases to remove
+# Phrase review signals
 
-## Throat-clearing openers
+These phrases can make prose feel templated when they are repeated, unsupported,
+or inconsistent with the brand. They are review signals, not banned words.
 
-Remove these announcement phrases. State the content directly.
+Keep a phrase when it sounds natural in the established voice and serves a real
+purpose. Revise it when it delays the point, manufactures emotion, or appears
+often enough to become a verbal tic.
 
-- "Here's the thing:"
-- "Here's what [X]"
-- "Here's this [X]"
-- "Here's that [X]"
-- "Here's why [X]"
-- "The uncomfortable truth is"
+## Openers and transitions
+
+Review phrases such as:
+
+- "Here's the thing"
 - "It turns out"
-- "The real [X] is"
 - "Let me be clear"
-- "The truth is,"
-- "I'll say it again:"
+- "The truth is"
 - "I'm going to be honest"
 - "Can we talk about"
-- "Here's what I find interesting"
-- "Here's the problem though"
+- "Here's the problem"
 
-Any "here's what/this/that" construction is throat-clearing before the
-point. Cut it and state the point.
+Conversational brands may use these naturally. Keep them when they create an
+intentional relationship with the reader. Cut them when the next sentence
+works better on its own or when several paragraphs use the same setup.
 
-## Emphasis crutches
+## Emphasis
 
-These add no meaning. Delete them.
+Review:
 
-- "Full stop." / "Period."
-- "Let that sink in."
-- "This matters because"
+- "Full stop"
+- "Period"
+- "Let that sink in"
 - "Make no mistake"
-- "Here's why that matters"
-
-## Business jargon
-
-Replace with plain language.
-
-| Avoid                  | Use instead             |
-|------------------------|-------------------------|
-| Navigate (challenges)  | Handle, address         |
-| Unpack (analysis)      | Explain, examine        |
-| Lean into              | Accept, embrace         |
-| Landscape (context)    | Situation, field        |
-| Game-changer           | Significant, important  |
-| Double down            | Commit, increase        |
-| Deep dive              | Analysis, examination   |
-| Take a step back       | Reconsider              |
-| Moving forward         | Next, from now          |
-| Circle back            | Return to, revisit      |
-| On the same page       | Aligned, agreed         |
-
-## Adverbs
-
-Kill all adverbs. No -ly words. No softeners, no intensifiers, no hedges.
-
-Specific offenders:
-
-- "really"
-- "just"
-- "literally"
-- "genuinely"
-- "honestly"
-- "simply"
-- "actually"
-- "deeply"
-- "truly"
-- "fundamentally"
-- "inherently"
-- "inevitably"
-- "interestingly"
-- "importantly"
-- "crucially"
-
-Also cut these filler phrases:
-
-- "At its core"
-- "In today's [X]"
-- "It's worth noting"
-- "At the end of the day"
-- "When it comes to"
-- "In a world where"
-- "The reality is"
-
-## Meta-commentary
-
-Remove self-referential asides. The essay should move, not announce its
-own structure.
-
-- "Hint:"
-- "Plot twist:" / "Spoiler:"
-- "You already know this, but"
-- "But that's another post"
-- "X is a feature, not a bug"
-- "Dressed up as"
-- "The rest of this essay explains..."
-- "Let me walk you through..."
-- "In this section, we'll..."
-- "As we'll see..."
-- "I want to explore..."
-
-## Performative emphasis
-
-False intimacy or manufactured sincerity:
-
-- "creeps in"
-- "I promise"
-- "They exist, I promise"
-
-## Telling instead of showing
-
-Announcing difficulty or significance rather than demonstrating it:
-
-- "This is genuinely hard"
-- "This is what leadership actually looks like"
-- "This is what X actually looks like"
-- "actually matters"
-
-## Vague declaratives
-
-Sentences that announce importance without naming the specific thing.
-Kill these.
-
-- "The reasons are structural"
-- "The implications are significant"
-- "This is the deepest problem"
+- "This matters because"
 - "The stakes are high"
 - "The consequences are real"
 
-If a sentence says something is important/deep/structural without showing
-the specific thing, cut it or replace it with the specific thing.
+Ask whether the surrounding details earn the emphasis. Replace unsupported
+importance claims with specifics. Keep direct emotional language when the
+brand allows it and the moment warrants it.
+
+## Business language
+
+Words such as "navigate," "landscape," "lean into," "deep dive," "double
+down," and "circle back" are not inherently wrong. Revise them when they are
+vague, clichéd, or off-brand. Use the clearest term for the actual audience,
+which may be a specialist term for an expert product.
+
+## Adverbs, softeners, and hedges
+
+Do not remove adverbs mechanically.
+
+Review words such as:
+
+- really
+- just
+- genuinely
+- honestly
+- simply
+- actually
+- deeply
+- truly
+- fundamentally
+- importantly
+- crucially
+
+Remove an adverb when it adds empty emphasis. Keep it when it changes meaning,
+creates natural cadence, conveys uncertainty, or fits the voice.
+
+Examples:
+
+- Keep "This is genuinely difficult" when acknowledging a stressful task is
+  part of a supportive brand voice.
+- Revise "Your data is completely secure" because the absolute claim is
+  probably inaccurate.
+- Keep "You can usually restore the file" when the outcome is not guaranteed.
+
+Softeners such as "please," "sorry," and "it looks like" can be useful in
+errors and sensitive moments. Judge whether they reassure, blame, delay, or
+mislead.
+
+## Meta-commentary
+
+Review:
+
+- "Let me walk you through"
+- "In this section, we'll"
+- "As we'll see"
+- "I want to explore"
+- "The rest of this guide explains"
+
+Keep signposting when it helps readers navigate complex material. Remove it
+when the structure is already obvious or the same transition repeats.
+
+## Specificity
+
+Phrases such as "the implications are significant" or "this is the deepest
+problem" need supporting detail. Add the concrete consequence when the reader
+needs it. Do not replace a clear emotional statement with sterile detail if
+the brand voice calls for both.
