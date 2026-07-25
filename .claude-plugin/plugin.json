@@ -1,7 +1,7 @@
 {
   "name": "devbyalex",
-  "description": "An autonomous, stage-gated app-building workflow: plan (spec → implementation guide → wireframes), dev (scaffold → auth → per-feature build/validate loop + cosmetic tweak and planned-change lanes), launch readiness (incl. observability wiring), and live (post-launch feedback triaged back into the loop). Ships init-ai to bootstrap or integrate the workflow into any repo, plus the orchestrator skills and specialist agents that drive each stage. dev-goal drives the dev stage: give it a goal and it pushes until the app is stable, then iteration lives in the bug/tweak/todo lanes.",
-  "version": "0.10.0",
+  "description": "An autonomous, stage-gated app-building workflow: plan (spec \u2192 implementation guide \u2192 wireframes), dev (scaffold \u2192 auth \u2192 per-feature build/validate loop + cosmetic tweak and planned-change lanes), launch readiness (incl. observability wiring), and live (post-launch feedback triaged back into the loop). Ships init-ai to bootstrap or integrate the workflow into any repo, plus the orchestrator skills and specialist agents that drive each stage. dev-goal drives the dev stage: give it a goal and it pushes until the app is stable, then iteration lives in the bug/tweak/todo lanes.",
+  "version": "0.11.0",
   "author": {
     "name": "Alexander Yoza",
     "email": "agyoza64@gmail.com"

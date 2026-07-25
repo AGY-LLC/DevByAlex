@@ -5,11 +5,20 @@ title: "Penpot wireframes are a plan-time artifact, refreshed on demand"
 
 # Penpot wireframes are a plan-time artifact, refreshed on demand
 
-**Objective: get the planning value of wireframes without taxing every UI
-change.** The boards exist so the app's screens and flow are thought through
-before they are built, and so a human can see the shape of the app at a glance.
-They are built **once** per app (the initial rollout) and **refreshed on
-demand**. They are not a continuously-synced mirror of the shipped UI.
+**Objective: a design sandbox Alex can work in without touching code.** The
+point of the Penpot file is to try design ideas visually, cheaply, and
+reversibly, then hand the chosen direction back to be implemented. Penpot is
+therefore an **input** to code, not a record of it. The boards are built **once**
+per app (the initial rollout) and **refreshed on demand**. They are not a
+continuously-synced mirror of the shipped UI.
+
+This purpose sets the fidelity bar. A board of grey placeholder boxes with text
+labels documents a screen but cannot be *designed against*: you cannot judge a
+type scale, a color relationship, or a spacing rhythm on a wireframe. So boards
+are built at **real fidelity**: the app's actual copy, its real type scale and
+fonts, and its committed colors registered as **Penpot design tokens** so one
+token edit restyles every board. Repeated elements should be components where
+practical, so an edit propagates instead of needing to be repeated per board.
 
 ## The rule
 
@@ -28,6 +37,32 @@ demand**. They are not a continuously-synced mirror of the shipped UI.
   restyles, and feature UI ship without touching Penpot.
 - **No Penpot-sync debt.** That bookkeeping is gone. Do not record
   `Penpot-sync: pending`, and do not gate any task on reconciling boards.
+
+## The Penpot-to-code lane (how a design idea comes back)
+
+This is the direction that matters, and it is always **Alex-initiated**:
+
+1. **Alex explores in Penpot.** Edit a token, restyle a board, move a region, try
+   a different hierarchy. No code changes, no agent involved, nothing to undo in
+   the repo.
+2. **Alex hands it back**, naming the app and what changed (or just "I changed the
+   Novaform boards, implement it"). The Penpot file must be open and Connected for
+   the boards to be read.
+3. **The agent reads the changed boards and reports before writing code**: which
+   tokens changed (old to new value), which boards diverge from the shipped
+   screens, and what the code-side blast radius is. State it as a short plan, get
+   a go-ahead, then implement.
+4. **Implementation lands in code the normal way**: `docs/DESIGN.md` is updated
+   first when tokens or the style itself changed (it stays the binding design
+   intent), then the sweep runs through the usual lanes (`/uiux-redesign` for a
+   restyle, `/dev-tweak` for a cosmetic change, the feature loop for new surface),
+   including the screenshot + design-critic gate.
+
+Two rules keep this honest. **Never implement a Penpot change that was not asked
+for**: finding a board that differs from the code is not a work order, because
+boards are expected to drift. And **never quietly reinterpret a design**: if a
+board is ambiguous or would violate the universal design rules or the WCAG floor,
+say so and ask rather than shipping a guess.
 
 ## Why it works this way
 

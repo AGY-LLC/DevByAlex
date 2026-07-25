@@ -1,6 +1,6 @@
 ---
 name: plan-wireframes
-description: "Stage 3 of the DevByAlex plan phase. It establishes the wireframe artifact each feature is later validated against. Two modes. GENERATE mode (greenfield): drives a write-capable Penpot MCP to build one low-fidelity board per key screen (with empty/loading/error/onboarding/upgrade states) from the design/UX answers in docs/SPEC.md. CAPTURE mode (existing app with UI already built): inventories the app's EXISTING screens from the code and documents them. No Penpot MCP is required, so the wireframe gate can be satisfied for an integrated repo without re-designing UI that already exists. Either way writes docs/wireframes/README.md indexing screens, states, and the screen-to-feature mapping. Use after the implementation guide exists, when the user says 'wireframe the app', 'design the screens', 'create the wireframes', or 'document the existing screens'."
+description: "Stage 3 of the DevByAlex plan phase. It stands up the app's Penpot design sandbox: the file Alex explores design ideas in without touching code, then hands back to be implemented. Two modes. GENERATE mode (greenfield): drives a write-capable Penpot MCP to build a real-fidelity board per key screen (with empty/loading/error/onboarding/upgrade states) from the design/UX answers in docs/SPEC.md, registering the app's docs/DESIGN.md values as Penpot design tokens so one token edit restyles every board. CAPTURE mode (existing app with UI already built): inventories the app's EXISTING screens from the code and documents them. No Penpot MCP is required, so the wireframe gate can be satisfied for an integrated repo without re-designing UI that already exists. Either way writes docs/wireframes/README.md indexing screens, states, and the screen-to-feature mapping. Use after the implementation guide exists, when the user says 'wireframe the app', 'design the screens', 'create the wireframes', or 'document the existing screens'."
 argument-hint: "[optional: feature/screen; or 'capture' to inventory an existing app's screens]"
 license: MIT
 metadata:
@@ -147,10 +147,43 @@ Terms of Service page, Privacy Policy page, and the **cookie consent banner**
 Group screens by feature and by the end-to-end flow a user walks.
 
 ### Step 3: Produce the wireframe artifact
-- **GENERATE:** for each screen, create a low-fidelity Penpot board (layout,
-  hierarchy, key copy, primary CTA, relevant states). Keep it lo-fi: structure
-  and flow, not pixel polish. Lay boards out per feature with flow arrows between
-  screens. Use concrete placeholder copy (Alex prefers it over lorem ipsum).
+
+**Build boards Alex can design in, not diagrams of screens.** The Penpot file is
+a design sandbox: its job is to let a design idea be tried without touching code
+(`../../knowledge/workflow/penpot-wireframes.md`). A board of grey placeholder
+rectangles with text labels fails that job, because a type scale, a colour
+relationship, or a spacing rhythm cannot be judged on it. So:
+
+- **Register the app's tokens as Penpot design tokens first**, from
+  `docs/DESIGN.md`: a `light` set (and a `dark` set if the app has one) with the
+  real colour, radius, font-size, spacing, and weight values. Bind shape fills
+  and text sizes to those tokens (`shape.applyToken(token, [...])`) so changing
+  one token restyles every board at once. This is the single highest-value thing
+  in the file.
+- **Use the app's real type scale and font family**, not a default. Check what
+  Penpot actually has with `penpot.fonts.findByName(...)` and pick the closest
+  match to the app's stack.
+- **Use the app's real copy** where it exists (captured from code) and concrete
+  written copy where it does not. Never lorem ipsum.
+- **Draw the actual composition**: the real sections in the real order, at real
+  proportions. If a screen has an eyebrow, two CTAs, and a stats band, the board
+  has those, not one generic hero block.
+- **Name every layer semantically** (`prompt-card / field-label`, not `Rect 12`),
+  because those names are how a change made in Penpot gets read back and turned
+  into code.
+- **Mark states the code lacks explicitly** (a `MISSING:` marker in the app's
+  danger colour) rather than drawing them as if they shipped.
+
+Operational notes, each learned the hard way: **verify
+`penpot.currentFile.name` before every write** (page names are generically "Page
+1", so a wrong connection is invisible); `clone()` returns `null` unless you
+`await` a short delay between clones; batch deletes and large builds, since
+sweeping ~1000 shapes at once can hang the browser tab; and `letterSpacing`
+rejects negative values, so tighten tracking by other means.
+
+- **GENERATE:** for each screen, create a Penpot board per the fidelity bar above
+  (layout, hierarchy, real copy, primary CTA, relevant states). Lay boards out per
+  feature with flow arrows between screens.
   **Show, don't tell:** never give sections a descriptive subtitle or paragraph
   explaining what they're for, and never let spec/decision rationale appear as
   UI copy: layout, hierarchy, and labels carry that meaning (universal rule
@@ -223,7 +256,9 @@ Write `docs/wireframes/README.md` from `../../templates/wireframes-README.md`:
 - **CAPTURE mode documents reality, it doesn't design.** Describe screens that
   exist in the code; don't invent new ones or redesign. Record missing states as
   gaps for the feature board, not as wireframes.
-- Wireframes are low-fidelity: flow and structure first.
+- Boards are built at real fidelity (tokens, real type scale, real copy, real
+  composition) so a design idea can actually be tried in them. Grey placeholder
+  boxes with text labels are not an acceptable board.
 - Cover the non-happy states (empty/loading/error) they're where flows break.
 - Don't unlock the dev stage; that's Alex's approval to give (he approves a
   captured inventory the same way he'd approve generated boards).
