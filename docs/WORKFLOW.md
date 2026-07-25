@@ -70,7 +70,7 @@ is the live control file every skill reads and writes.
 | `plan-guide` | plan | Expands the spec into a granular, ordered guide + feature cards + per-feature ADRs (`adr-backfill` mode writes the missing ADRs for an existing repo's features). |
 | `plan-design` | plan | Picks the app's named visual style, PRIMARY (structure, 1 of 12 product directions) × SECONDARY (feeling, 1 of 50 named styles from `knowledge/design/design-styles.md`), then **web-searches 3–5 real-world references** of the confirmed style (live products/galleries) to seed the tokens, **expands the full design system** (color/type/spacing/radius/shadow/motion/iconography/component rules/states, absorbing the former `uiux-init`), and records pick + references + reason in `docs/DESIGN.md` before wireframes. `restyle` mode re-picks for an existing app, records the supersession, and hands off to `uiux-redesign` to apply it. |
 | `uiux-redesign` | plan/dev | The application half of a `restyle`: sweeps a confirmed new style across an existing app's every customer-facing screen: rewrites the `docs/DESIGN.md` token system, then conforms the diverging surfaces (web + mobile) via token/shared-component changes, **leaving already-aligned surfaces alone** (change is justified by divergence, not by the sweep). Runs as code change through the validate loop, re-verifies WCAG 2.2 AA, and routes regressions to an `RSTY-xxx` queue → `fix-errors`. Owns the rollout, not the taste call. |
-| `plan-wireframes` | plan | Wireframe each feature: GENERATE via Penpot MCP (greenfield) or CAPTURE existing screens from code (existing app, no Penpot). Reads the committed style from `docs/DESIGN.md`. The boards are the **living** source of truth for layout/design: later design/layout changes go Penpot-first (`knowledge/workflow/penpot-source-of-truth.md`). |
+| `plan-wireframes` | plan | Wireframe each feature: GENERATE via Penpot MCP (greenfield) or CAPTURE existing screens from code (existing app, no Penpot). Reads the committed style from `docs/DESIGN.md`. The boards are **plan-time** intent, built once and refreshed only on demand by re-running this skill (`knowledge/workflow/penpot-wireframes.md`); dev-stage work never touches Penpot. |
 | `dev-scaffold` | dev | One-time baseline: monorepo topology (`marketing/` apex + `web/` full-stack app on app.domain + optional `app/` mobile), branch model (protected `main` = production, `staging` = working line), skeleton, tooling, tests, and CI + deploy via Pipeline by Alex (`pba.yml` + thin caller). |
 | `dev-auth` | dev | Authentication first, security & privacy prioritized. Validate-existing mode audits + hardens auth an existing repo already has. |
 | `feature-loop` | dev | The per-feature 4-step build/validate engine; accretes each feature's golden-path E2E flow via the e2e gate. |
@@ -317,13 +317,19 @@ app "done."
 - **Every UI-changing unit leaves a visual pulse**: staging URL + screenshots in
   the STATUS log, reusing the unit's own captures, so an autonomous build can be
   judged at a glance, not only by reading diffs.
-- **Penpot is the living source of truth for layout and design**
-  (`knowledge/workflow/penpot-source-of-truth.md`). Any design or layout change
-  goes Penpot-first, then code, so the wireframe boards never drift from what
-  ships. The `penpot` MCP write lands only against a browser-connected file, so a
-  connected session updates the boards then the code, while an unattended run
-  records a Penpot-sync debt and clears it (verified by the design-critic) before
-  the change is done. No review gate unless Alex asks to preview in Penpot first.
+- **Penpot wireframes are a plan-time artifact, refreshed on demand**
+  (`knowledge/workflow/penpot-wireframes.md`). The boards are built once per app
+  and updated only when Alex asks; ordinary UI work never touches Penpot. This is
+  deliberate: a `penpot` MCP write lands only on a file open and Connected in a
+  live browser tab, so requiring Penpot per change would make unattended runs
+  unable to finish any UI work. The boards therefore drift from what ships, and
+  design-critic never treats drift as a finding. Current state lives in text
+  instead: the screen inventory in `docs/wireframes/README.md` (kept current by
+  the dev skills) and the binding style in `docs/DESIGN.md`. An app with **no UI
+  surface** (a CLI, an MCP server) or a surface **too simple to pay for the
+  round-trip** (a static single-page site) can be declared exempt by Alex in its
+  `docs/wireframes/README.md`. Only Alex declares or reverses an exemption;
+  agents never self-exempt an app.
 - **A feature's golden path is proven end to end before done**
   (`knowledge/workflow/e2e-gate.md`). Any feature with a user-facing flow runs
   its golden-path flow green against the running app in feature-loop step 4:

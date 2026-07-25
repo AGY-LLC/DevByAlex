@@ -36,14 +36,18 @@ of this gate is that someone looked at the real pixels.
    restyle or new UI: the question is "does this screen credibly belong to the
    same style world as those references?", not "does it vaguely match a style
    name?".
-3. **The wireframes** (`docs/wireframes/README.md` + the Penpot boards/inventory)
-   and `docs/SPEC.md` for the screens in scope: layout, states, and behavior
-   intent. Penpot is the **living** source of truth for layout/design
-   (`knowledge/workflow/penpot-source-of-truth.md`): the shipped screen must
-   match the **current** boards, and any `Penpot-sync: pending` debt on a screen
-   in scope must be cleared (boards reconciled to what shipped) before that
-   screen passes. A screen that diverges from its board, or carries unresolved
-   sync debt, is a finding.
+3. **The screen inventory** in `docs/wireframes/README.md` plus `docs/SPEC.md`
+   for the screens in scope: layout, states, and behavior intent. The inventory
+   is the current-state record (screen → source file → states covered, with
+   **(missing)** marking states the code lacks); judge the screenshot against
+   the states it claims.
+   **The Penpot boards are plan-time context, not a gate.** Per
+   `knowledge/workflow/penpot-wireframes.md` the boards are built once and
+   refreshed only on demand, so they **drift from the shipped UI by design**.
+   Consult them for how a flow was conceived if that helps, but **board drift is
+   never a finding**, and a missing, stale, or exempt-by-declaration board never
+   blocks a pass. Never require a Penpot connection to reach a verdict, and
+   never report `Penpot-sync` debt: that concept no longer exists.
 4. The vendored baseline `knowledge/stack/uiux.md` (generic-AI-UI tells, WCAG
    2.2 AA floor) and `knowledge/practices/uiux.yaml` (review checklist).
 

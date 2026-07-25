@@ -110,14 +110,12 @@ Implement fixes inline. Smallest change that resolves the item. Don't refactor
 surrounding code. Don't lose interaction states the original had. Don't strip
 features.
 
-**Penpot is the source of truth for layout/design** (see
-[`../../knowledge/workflow/penpot-source-of-truth.md`](../../knowledge/workflow/penpot-source-of-truth.md)):
-any `AUD-` item that changes layout or design goes Penpot-first, then code. When
-the app's Penpot wireframe file is open and Connected, update the boards before
-applying the tweak; when Penpot is not connected, record a `Penpot-sync: pending`
-debt on the changed screen (in `docs/wireframes/README.md`) and reconcile it
-before the audit is called done. No review gate unless the user asks to preview
-in Penpot first. Purely non-visual fixes are exempt.
+**Do not touch Penpot to apply an `AUD-` item** (see
+[`../../knowledge/workflow/penpot-wireframes.md`](../../knowledge/workflow/penpot-wireframes.md)):
+the boards are a plan-time artifact refreshed only on demand, so fixes ship
+code-only, with no sync debt and no browser connection required. Keep the text
+current instead: if a fix changes a screen's structure or the states it covers,
+update that row in the screen inventory in `docs/wireframes/README.md`.
 
 For each `AUD-` item, mark: `applied` | `partial` | `deferred (reason)`.
 

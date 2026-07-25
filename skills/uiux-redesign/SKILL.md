@@ -38,16 +38,15 @@ new style instead of the decision sitting in a doc.
 
 ## Prerequisites
 
-**Penpot is the source of truth for layout/design** (see
-[`../../knowledge/workflow/penpot-source-of-truth.md`](../../knowledge/workflow/penpot-source-of-truth.md)):
-a restyle is inherently a design change, so the Penpot-first flow always
-applies here. The Penpot boards get restyled to the new tokens first, then the
-code sweep follows, keeping the boards and the shipped screens in step. When
-the app's Penpot wireframe file is open and Connected, restyle the boards
-before (or alongside) Step 5's screen sweep; when Penpot is not connected,
-record a Penpot-sync debt on each swept screen (in `docs/wireframes/README.md`)
-and reconcile it before the restyle is marked done. No review gate unless the
-user asks to preview in Penpot first.
+**Penpot is optional here, and never blocking** (see
+[`../../knowledge/workflow/penpot-wireframes.md`](../../knowledge/workflow/penpot-wireframes.md)):
+the boards are a plan-time artifact refreshed on demand, so the code sweep does
+not wait on them and accrues no sync debt. A restyle is, however, the **natural
+moment to ask for a refresh**: if Alex wants the boards restyled to the new
+tokens, that is an explicit request, and it needs the app's Penpot file open and
+Connected in a live browser tab. If it is not requested or not connected, sweep
+the code and move on. Either way, update `docs/DESIGN.md` (the binding intent)
+and the screen inventory in `docs/wireframes/README.md`.
 
 - `docs/DESIGN.md` has a current **Style choice** (the new `PRIMARY × SECONDARY`)
   with the old one marked **superseded**: the supersession is an ADR-governed

@@ -20,6 +20,10 @@ is the live control file; this file is the map.
      existing app and hands off to `/uiux-redesign`.
    - `/plan-wireframes` → `docs/wireframes/`: Penpot boards per feature (needs a
      Penpot MCP), designed against the chosen style; copy is `prose-check`ed.
+     Built **once**, refreshed only on demand by re-running this skill; the
+     dev stage never touches Penpot, so the boards drift from what ships by
+     design. The screen inventory in `docs/wireframes/README.md` is the part
+     kept current.
    - **Alex approves** the spec, guide, and wireframes. The dev stage is blocked
      until the three gates in `docs/STATUS.md` are checked.
 

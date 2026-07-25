@@ -15,13 +15,32 @@ validated against, so the app's flow is clear before the dev stage proceeds.
 Wireframes plus the implementation guide are the two artifacts Alex approves to
 unlock the dev stage.
 
-**The boards are a living artifact, not a frozen one.** Once approved, the
-Penpot wireframe stays the source of truth for layout and design: any later
-design or layout change goes **Penpot-first, then code**, so the boards keep
-matching what ships (see
-[`../../knowledge/workflow/penpot-source-of-truth.md`](../../knowledge/workflow/penpot-source-of-truth.md)).
-This stage stands the boards up; the dev and uiux skills keep them in step, and
-the design-critic verifies the shipped screen still matches them.
+**The boards are built once here, then refreshed only on demand** (see
+[`../../knowledge/workflow/penpot-wireframes.md`](../../knowledge/workflow/penpot-wireframes.md)).
+They are plan-time intent, not a continuously-synced mirror of the shipped UI:
+the dev and uiux skills deliberately do **not** touch Penpot, because writes need
+a human with a Connected browser tab and that would stall unattended runs. So the
+boards drift, by design, and design-critic never treats drift as a finding.
+
+Running this skill again **is** the refresh: use it when Alex asks, or when the
+boards are about to be used for planning again (a redesign, a new feature area, a
+flow rework). Between refreshes, current state lives in the **text**: the screen
+inventory in `docs/wireframes/README.md` (kept current by the dev skills) and the
+binding style in `docs/DESIGN.md`.
+
+## Step 0: is this app exempt?
+
+Read `docs/wireframes/README.md` first. If it carries a
+`**Penpot:** exempt (permanent)` declaration, **stop**: the wireframe gate is
+already satisfied for this app and it needs no boards (grounds and reasoning in
+[`../../knowledge/workflow/penpot-wireframes.md`](../../knowledge/workflow/penpot-wireframes.md)).
+Do not generate boards and do not backfill.
+If the app has since grown real UI that boards would inform, say so and let Alex
+reverse the exemption: **never self-exempt an app, and never self-revoke one.**
+
+If the app is exempt but its CAPTURE inventory has drifted from the code, that
+**is** in scope: refresh the inventory (it is design-critic's primary layout
+intent there) and leave the exemption block intact.
 
 ## Two modes: pick one first
 
