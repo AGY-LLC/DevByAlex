@@ -11,6 +11,23 @@
 supported, and role/admin views only when required, in `docs/wireframes/`_
 **ADR:** `docs/adr/auth.md`
 
+## Authentication posture decision
+
+> Authentication is never assumed. Record the choice even when the answer is
+> "no accounts." Absence of auth code is not evidence of a product decision.
+
+- **Account posture:** _no accounts / externally managed customer accounts /
+  operator-only / end-user accounts / organization or team accounts / mixed_
+- **Decision status:** _proposed / active / superseded, with approval date_
+- **Why this posture fits the product:** _why accounts are needed, or why the
+  product is intentionally public/local/accountless_
+- **Provisioning:** _N/A / public Create account / invite / allowlist /
+  provider-admin / external system_
+- **Revisit when:** _the concrete product, risk, collaboration, or deployment
+  change that would require this decision to be reconsidered_
+- **Source of truth:** _the active entry in `docs/adr/auth.md`; link any
+  numbered legacy auth ADR that it supersedes or aliases_
+
 ## Purpose and trust boundary
 
 - **Who may create an account:** _public / invite-only / allowlist / no accounts_

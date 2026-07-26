@@ -77,6 +77,7 @@ agents/                      the 7 specialist agents the feature loop deploys, e
 knowledge/                   the vendored best-practice brain the skills read (practices/*.yaml, stack/*.md, checklists/*.md, workflow/model-routing.md, the model routing + verification policy the orchestrators route by, design/design-styles.md, the 50-style vocabulary /plan-design picks from, and design/universal-design-rules.md, the 31 style-independent rules every screen holds)
 templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, TWEAKS, TODO, FEEDBACK, SPEC, DECISIONS, adr/, …)
 docs/WORKFLOW.md             the full architecture and invariants
+docs/AUTH-PORTFOLIO.md       audited account/auth posture across registered DBA apps, with each app's governing ADR and review gaps
 docs/LIVE-SYNC.md            the fully-vendored skill model (everything committed, nothing served live) + the --update pipeline
 IMPLEMENT.md                 the original brief this implements
 ```

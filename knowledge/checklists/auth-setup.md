@@ -13,6 +13,8 @@ What I go through every time I set up authentication on a new project. Informed 
 
 ## Planning
 
+- [ ] Explicitly choose and record the account posture: no accounts, externally managed customer accounts, operator-only, end-user accounts, organization/team accounts, or a deliberate combination. Absence of auth code is not a decision.
+- [ ] Record the decision status, rationale, provisioning path, approver/date, and concrete revisit trigger in `docs/adr/auth.md`, including when authentication is N/A.
 - [ ] Decide: build auth or use a service (Stytch, Firebase Auth, Auth.js, Clerk, Supabase Auth)
 - [ ] Decide Create account and Sign in methods per platform: passwordless, magic link/OTP, passkey, Google, Apple, password, or other. Password is optional.
 - [ ] Keep Create account and Sign in as separate operations and user intents. Tabs are a default presentation, not a requirement.
