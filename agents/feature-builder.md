@@ -34,8 +34,10 @@ That skill defines the canonical four steps; follow it exactly:
    capture it as a failing test, fix the code (drive findings to zero with
    `fix-errors`), and re-validate. Loop until clean.
 3. **Integration validation**: spawn `integration-validator`. Same remedy on
-   failure. Loop until clean; if an integration fix reopens the feature, redo
-   step 2.
+   failure. It must rerun the stable auth regression command(s) from
+   `docs/features/authentication.md` and check `docs/adr/auth.md`, even when the
+   new feature does not appear auth-related. Loop until clean; if an integration
+   fix reopens the feature, redo step 2.
 4. **Align + status**: confirm the feature matches the implementation guide and
    wireframes. **If the feature has customer-facing UI:** capture screenshots of
    its screens in their key states (running app: Playwright for web, the
@@ -70,6 +72,9 @@ That skill defines the canonical four steps; follow it exactly:
   omission in the feature's ADR, stop and report the conflict (cite the entry),
   breaking an architecture decision needs explicit human confirmation and a
   recorded supersession, never a silent divergence.
+- **Authentication remains foundational.** Every feature preserves
+  `docs/features/authentication.md`; never weaken its tests or identity/access
+  invariants to land unrelated work.
 - If you hit a real blocker (ambiguous card, a finding that survives two fix
   attempts, a needed secret/decision), stop and report it: don't guess.
 

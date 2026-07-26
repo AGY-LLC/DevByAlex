@@ -1,6 +1,6 @@
 ---
 name: feature-loop
-description: "The DevByAlex per-feature build engine. It takes one feature from its card to done by running the four-step loop the workflow defines: (1) write tests and implement the feature IN PARALLEL via two separate subagents (test-author works from the spec, feature-implementer writes the code; keeping them apart means tests aren't written just to match the implementation); (2) a feature-validator agent runs the tests and reviews the feature's code for quality/security/logic/best-practices, looping back to write a failing test + fix on any issue; (3) an integration-validator agent runs the full suite and reviews the whole codebase, looping back the same way; (4) confirm the finished feature aligns with the implementation guide and wireframes. For any customer-facing UI, capture screenshots of the running screens and have the design-critic agent vet them (looping on its findings), and for any feature with a user-facing flow, run its golden-path E2E flow green against the running app (Playwright web / Maestro native, the e2e gate) before the feature may be marked done. Then update docs/STATUS.md. Use to build one specific feature, or as the unit of work dev-goal dispatches per feature."
+description: "The DevByAlex per-feature build engine. Takes one feature from its card to done through independent parallel test authoring and implementation, feature validation, whole-codebase integration validation, and final alignment to the guide and wireframes. Customer-facing UI requires running screenshots plus design-critic approval; user-facing flows require green Playwright/Maestro E2E. Every feature also preserves docs/features/authentication.md and reruns its stable auth regression suite before STATUS can move to done. On any finding, capture it with a failing test, fix, and repeat the relevant gate. Use to build one specific feature or as the unit dev-goal dispatches per feature."
 argument-hint: "[feature id or slug from docs/features/: e.g. 03-billing]"
 license: MIT
 metadata:
@@ -50,8 +50,10 @@ The agents, their tiers, and the skills they lean on:
 
 ### Step 0: Load the feature
 Read the feature card `docs/features/<id>.md`, its acceptance criteria, **its
-ADR `docs/adr/<id>.md`** (plus `docs/adr/scaffold.md` / `docs/adr/auth.md` if
-the feature touches those seams), the relevant section of
+ADR `docs/adr/<id>.md`**, plus the cross-cutting auth contract at
+`docs/features/authentication.md` and `docs/adr/auth.md` for every feature.
+Also read `docs/adr/scaffold.md` when the feature touches that seam, the relevant
+section of
 `docs/IMPLEMENTATION_GUIDE.md`, the wireframe screens for this feature, and
 `docs/STATUS.md`. Build on the **working branch**: the branch you're on, or
 the one `dev-goal` passed down; **don't create a per-feature branch.**
@@ -124,12 +126,21 @@ to drive the queue to zero), and re-run Step 2. Loop until clean.
 ### Step 3: Integration validation
 Spawn the **`integration-validator`** agent. It:
 - runs the **entire** test suite, and
+- runs the stable auth regression command(s) recorded in
+  `docs/features/authentication.md` even if the project's default full-suite
+  command omits them, and
 - inspects the **whole codebase** for quality, security, logic issues, and best
   practices introduced by integrating this feature (via `scout` over the repo).
 
 If it passes, go to Step 4. **If it fails**, same remedy: write a test that
 captures the issue, fix the code (`fix-errors` to zero), and re-run Step 3.
 Loop until clean. (If an integration fix reopens the feature, re-run Step 2.)
+Any auth regression, weakened identity/access invariant, role/permission/tenant
+matrix gap, or drift from `docs/adr/auth.md` fails the integration gate. Every
+new protected operation gets explicit allow and deny tests for its applicable
+roles/policies. If the feature changes an auth flow or boundary, update and
+rerun the affected auth Playwright/Maestro flow too. Never weaken an auth test
+to make the new feature pass.
 
 ### Step 4: Align and update status
 With the feature fully built and both validations clean:

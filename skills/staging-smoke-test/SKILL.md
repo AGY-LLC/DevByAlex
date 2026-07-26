@@ -129,22 +129,42 @@ prod, before they do anything destructive.
 
 ### 2. Auth & account lifecycle
 
-Cover every auth path the app supports.
+Cover every auth path in `docs/features/authentication.md`. Password is
+optional; do not assume it exists.
 
-- Sign up with a new email. → Expected: account created, verification
-  email delivered to a real inbox, verification link works.
-- Log in with the new account. → Expected: redirected to the
+- Create account through each enabled method, separately from Sign in. →
+  Expected: one account created, any required unchecked 13+ affirmation stays
+  signup-only, verification completes, and no existing account is silently
+  signed in or mutated.
+- Sign in through each enabled method. → Expected: no new account created;
+  redirected to the
   post-login surface; session cookie set with correct flags.
 - Log out. → Expected: session invalidated; protected routes now
   redirect to login.
 - Password reset. → Expected: email delivered, link resets password,
-  old password no longer works.
+  old password no longer works. Skip only when the app is explicitly
+  passwordless; if passwords are supported, also test change and test add only
+  when specified.
 - SSO / OAuth providers (Google, GitHub, Apple, Microsoft, etc.,
   whichever are enabled). → Expected: redirect to provider, consent
   screen on staging's OAuth app, return to staging callback, account
   linked.
 - Magic link / OTP if supported. → Expected: email / SMS delivered,
   code works, expires correctly.
+- Safe response contract. → Expected: nonexistent account, wrong credential or
+  method, existing-account Create account, and recovery do not reveal account
+  existence through public copy/status/shape; each gives a useful next action.
+- Account management, if specified. → Expected: add/link/use/disconnect
+  resolves to one user; changes notify the user; removing the last verified
+  usable method is blocked. If self-service management is out of scope, its UI
+  and mutation endpoints are absent.
+- Roles/permissions/organizations, if specified. → Expected: each role can
+  perform only its allowed operations; wrong-role, wrong-owner, direct-endpoint,
+  stale-access, and cross-tenant attempts are denied; grants/revokes take effect
+  as specified.
+- Fresh-auth step-up. → Expected: each specified dangerous action offers
+  eligible methods in context, returns to its confirmation point, and safely
+  rejects cancel/failure/expiry/tampering/replay without auto-executing.
 - MFA enrollment and challenge if supported. → Expected: enroll, log
   out, log in, prompted for second factor.
 - Session expiry / refresh. → Expected: stale session is rejected;

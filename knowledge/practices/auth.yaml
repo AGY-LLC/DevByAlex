@@ -6,7 +6,7 @@ _meta:
   sensitivity: internal
   read_scope: brain.read
   tags: [practice, engineering, auth, security, init, feature, review]
-  updated: 2026-07-16
+  updated: 2026-07-26
 
 practice:
   id: auth
@@ -22,12 +22,24 @@ practice:
 
   inputs_to_gather_first:
     - Platforms in scope, web only, or web + mobile? (Drives the provider choice.)
-    - Whether OAuth providers (Google/Apple) are needed, and whether there's public registration or admin-only access.
+    - The exact Create account and Sign in methods per platform; password is optional, not assumed.
+    - Whether there is public registration or admin-only access, and whether Create account requires an explicit 13+ affirmation or other signup-only consent.
+    - The recovery, optional account-management, authorization/role/tenant, and fresh-auth step-up requirements.
     - The existing user model and how records link to the auth provider.
 
   methodology:
     - Pick the provider from the decision doc, Stytch for web+mobile, Firebase Auth for web-only speed, Auth.js when you want full control. Don't roll your own.
-    - Model the user with a real `id` + `email` plus a `providerUid` to link to the provider, even though the provider owns the credential.
+    - Treat password as one optional authenticator. Build only the methods the product spec chooses; a passwordless app must not grow password UI or endpoints by default.
+    - Keep Create account and Sign in as separate intents and operations. Tabs are a useful default presentation, but brand may use distinct pages or another clearly separated pattern. Never silently create an account from Sign in or mutate/sign into an existing account from Create account.
+    - Keep any 13+ affirmation or signup-only consent unchecked, explicit, and transaction-bound to Create account; do not infer it from Terms acceptance or let stale state bleed into Sign in.
+    - Model a canonical local user with one-to-many authenticator/identity records (provider + stable subject id), even though providers own credentials. Define email normalization once and apply it consistently.
+    - Link a new method only from an authenticated existing account after recent authentication and proof of the new method. Never auto-link solely on an email string match; enforce uniqueness so one external identity cannot attach to two users.
+    - Treat self-service account management as an explicit product choice. If method management exists, require recent auth and new-method proof, block removal of the last verified usable method, and notify users out of band. If it does not exist, do not invent the settings UI or leave a self-service mutation endpoint exposed.
+    - Choose the authorization model from the real access shape, simple ownership, RBAC/permissions, organization membership, ABAC, or ReBAC. Define an explicit allow/deny matrix, deny by default, enforce it server-side on every request and resource lookup, and never treat hidden UI as authorization.
+    - Define who can grant/revoke roles and memberships, prevent self-elevation, protect any last-owner/admin invariant, and specify session/token/cache invalidation plus audit evidence when access changes.
+    - Keep public signup, sign-in, and recovery responses generic enough to prevent account enumeration across message, status, response shape, and practical timing. Still provide safe next actions, Sign in, Create account, another enabled method, or recovery. Put account-specific guidance in an email to the entered address when appropriate, not on the public screen.
+    - If passwords are enabled, always support forgot/reset from Sign in and a change-password path; support adding a password only when the account-management posture allows it. Require recent authentication for changes, use single-use expiring reset artifacts, support paste/password managers, and do not impose arbitrary composition rules.
+    - Define which dangerous actions require fresh authentication. Preserve a validated, short-lived, one-time action context, offer eligible methods in place, and return to the action's confirmation point after success. Do not open-redirect, replay, or auto-execute the dangerous action.
     - Handle session and the `return_to` redirect carefully, validate redirects against relative paths only; never trust an absolute URL from the client.
     - Treat OAuth + provider callback wiring as the part that's always harder than it looks; test the full round-trip.
     - Implement a return-to-origin pattern so a user bounced to login lands back where they started.
@@ -40,11 +52,26 @@ practice:
       prompt: "Web only, or web + mobile? Native apps too?"
       why: Stytch covers web+mobile uniformly; Firebase Auth is faster for web-only. The answer picks the provider.
     - id: methods
-      prompt: "Which sign-in methods, email magic link, OTP, Google, Apple, password?"
-      why: Determines provider config, callbacks, and the test matrix.
+      prompt: "Which Create account and Sign in methods apply on each platform, and does this app support passwords at all?"
+      why: Password is optional; the exact method matrix determines provider config, callbacks, UI, recovery, and tests.
+    - id: intent_split
+      prompt: "How should Create account and Sign in be separated in this brand, tabs, separate pages, or another clear treatment?"
+      why: The operations must stay distinct even when they share a visual container.
     - id: registration
-      prompt: "Public registration, or restricted (e.g. admin-only allowlist)?"
-      why: Admin-only auth (like japanbyalex) has a very different surface than open signup.
+      prompt: "Public registration, restricted allowlist, or no registration, and does Create account require a 13+ affirmation or other signup-only consent?"
+      why: Eligibility and signup-only proof must not leak into returning-user Sign in.
+    - id: lifecycle
+      prompt: "Does this app need self-service account or sign-in-method management at all; if so, what can users manage and what is the last-method rule?"
+      why: Account management is optional, but any exposed lifecycle path must be complete and safe.
+    - id: authorization
+      prompt: "Is access simple ownership, roles/permissions, organization membership, or attribute/relationship based; what may each role do and who can grant or revoke it?"
+      why: Complex account access needs a deny-by-default server-side policy and a complete allow/deny test matrix.
+    - id: responses
+      prompt: "What brand-appropriate generic responses should guide wrong credentials, existing-account signup, recovery, and provider failures without confirming account existence?"
+      why: Helpful public errors and anti-enumeration safety must be designed together.
+    - id: step_up
+      prompt: "Which dangerous actions require a fresh sign-in, and where should users return after completing or cancelling it?"
+      why: Step-up must preserve the intended action without becoming an open redirect or dead end.
     - id: post_auth
       prompt: "Where should users land after login, and do you need return-to-origin after a bounce?"
       why: Redirect handling is the most common source of auth bugs.
@@ -54,9 +81,16 @@ practice:
     - Redirects validated against relative paths only, no open redirect via a client-supplied `return_to`/`next`.
     - Session cookies are HttpOnly, Secure, SameSite; tokens expire and can be revoked; session rotates on privilege change.
     - Passwords (if any) hashed with a strong algorithm; login/reset throttled against brute force.
+    - Password surfaces are complete when enabled (change/forgot/reset always; create/add as specified), and absent when the app is passwordless.
+    - Create account and Sign in are behaviorally separate; signup-only age/consent state cannot bleed across auth transactions.
+    - Public signup/sign-in/recovery messages, status codes, response shapes, and practical timing do not disclose whether an account exists.
     - OAuth callback verifies state; the provider uid links to the local user record correctly (no account takeover via email collision).
-    - No secrets, tokens, or session ids logged.
-    - Account-collision / verify-and-switch path handled when the same email arrives via a second provider.
+    - Identity linking requires recent auth plus proof of the new method; no auto-link by email alone; one identity cannot bind to multiple users.
+    - Account management matches the spec. If method management exists, users can add/use/disconnect methods but cannot remove the last verified usable method; if absent, no self-service mutation seam is exposed.
+    - Every protected operation enforces the specified ownership/role/permission/tenant policy server-side and defaults to deny; role changes invalidate access as specified and cannot self-elevate.
+    - Password recovery and other recovery artifacts are single-use, expiring, throttled, and do not disclose account existence.
+    - Step-up offers eligible methods and returns through a validated, expiring, one-time action context to a confirmation point without auto-executing the action.
+    - No secrets, tokens, full reset URLs, unnecessary PII, or session ids logged.
     - Mobile redirects (deep links, magic links) carry only a single-use exchange code, never a token, session, or PKCE verifier; the code is short-lived, invalidated on first use, and redeemed over HTTPS (RFC 8252).
     - PKCE verifier is generated in the app and never leaves it; an intercepted redirect must be unredeemable without it.
     - Claimed HTTPS redirects (App Links / Universal Links) used where the platform supports them; a custom scheme alone is a finding on any auth-bearing redirect.
@@ -67,25 +101,43 @@ practice:
     - ../../knowledge/checklists/security-basics.md
 
   output:
-    destination: "<repo>/docs/auth-spec.md (or a section of architecture-spec.md)"
+    destination: "<repo>/docs/features/authentication.md"
     format: markdown
     template: |
       # <Product>, Auth
 
       ## Provider & methods
-      <Provider chosen + why; sign-in methods enabled.>
+      <Provider chosen + why; Create account and Sign in methods by platform;
+      explicit password or passwordless posture.>
 
-      ## Data model
-      <User model, providerUid linkage, session storage.>
+      ## Identity and session model
+      <Canonical User plus authenticator identities, uniqueness/linking rules,
+      optional account-management posture, last-method invariant when
+      applicable, session storage.>
+
+      ## Authorization model
+      <Ownership/RBAC/permissions/organization/ABAC/ReBAC policy, role-resource
+      allow/deny matrix, grant/revoke authority, tenancy, and change
+      invalidation/audit behavior.>
 
       ## Flows
-      ### Sign-up / login
+      ### Create account (separate intent, signup-only age/consent)
+      ### Sign in
       ### OAuth callback (state + account linking)
+      ### Recovery and password lifecycle (if enabled)
+      ### Add/disconnect sign-in methods (if supported)
+      ### Fresh-auth step-up and return-to-action
       ### Return-to-origin after bounce
       ### Sign-out / session expiry
+
+      ## Safe response contract
+      <Brand copy plus invariant disclosure behavior for signup, sign-in,
+      recovery, and provider failures.>
 
       ## Source-of-truth decisions
       <Who owns identity, where sessions live, redirect-allowlist rule.>
 
-      ## Security checklist
-      <The review_checklist items, confirmed for this implementation.>
+      ## Exhaustive validation matrix
+      <Every enabled method x platform x create/sign-in/recovery; optional
+      management; role/policy allow-deny matrix; safe failures, abuse cases,
+      step-up, E2E, and stable regression command.>

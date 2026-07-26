@@ -1,6 +1,6 @@
 ---
 name: plan-guide
-description: "Stage 2 of the DevByAlex plan phase. It expands an approved docs/SPEC.md into a granular implementation guide. For every feature and section, write what it does, the data model and API surface it needs, the implementation approach, edge cases and acceptance criteria, and the order features will be built (dependencies first: scaffold, then auth, then the rest). Emits docs/IMPLEMENTATION_GUIDE.md, one feature card per feature under docs/features/, one ADR per feature under docs/adr/ (the decisions + deliberate omissions that govern future change), and seeds the feature table in docs/STATUS.md. The 'adr-backfill' mode writes the missing docs/adr/ records for an existing repo's features. It infers them from code + docs, consolidates scattered feature docs, and must complete before feature work proceeds. Use after the spec is approved, when the user says 'write the implementation guide', 'expand the spec', 'plan the build order', or 'backfill the ADRs'."
+description: "Stage 2 of the DevByAlex plan phase. It expands an approved docs/SPEC.md into a granular implementation guide. Authentication is the first and most important feature after scaffold: it always gets a dedicated docs/features/authentication.md contract and docs/adr/auth.md before ordinary product features. For every feature, write behavior, data/API/UI, edge cases, security, and acceptance criteria, then order dependencies as scaffold, authentication, and the rest. Emits docs/IMPLEMENTATION_GUIDE.md, feature cards under docs/features/, ADRs under docs/adr/, and seeds STATUS. The 'adr-backfill' mode writes missing records for an existing repo. Use after spec approval, when asked to expand the spec, plan the build order, or backfill ADRs."
 argument-hint: "[optional: specific area to expand, or 'adr-backfill' for an existing repo]"
 license: MIT
 metadata:
@@ -36,8 +36,16 @@ dev stage builds against and validates against, so it must be concrete.
 Break the app into discrete, independently buildable **features** (each becomes
 one feature card and one row in the STATUS table). A good feature is one a
 single `feature-loop` pass can build, test, and validate. Authentication is its
-own first-class item (built by `dev-auth`, not the generic loop). Keep features
-small enough to validate but whole enough to be meaningful.
+own first-class item (built by `dev-auth`, not the generic loop). Always expand
+the spec's auth decisions into `docs/features/authentication.md` using
+`../../templates/auth-feature-card.md`, and seed `docs/adr/auth.md`. The auth
+card must cover enabled password or passwordless methods, separate account
+creation and sign-in, signup-only age/consent, optional account-management
+scope, identity linking and last-method protection where management exists,
+recovery/password lifecycle, safe non-enumerating responses, step-up
+return-to-action, the app's ownership/RBAC/ABAC/ReBAC/tenant authorization
+model, session rules, and its exhaustive test matrix. Keep ordinary product
+features small enough to validate but whole enough to be meaningful.
 
 When the spec's **Legal, privacy & compliance** section calls for them, add a
 first-class **"Compliance & legal" feature** (one card, one row) covering: a
@@ -48,7 +56,8 @@ where GDPR/CCPA applies. This feature is what `/launch-compliance` verifies
 against the legal hard gate.
 
 ### Step 3: Detail each feature
-For every feature, write a feature card from `../../templates/feature-card.md`
+First write the dedicated auth card and ADR above. For every remaining product
+feature, write a feature card from `../../templates/feature-card.md`
 at `docs/features/<NN>-<slug>.md` containing:
 - **Purpose**: one paragraph, traceable to a spec core-job.
 - **User stories / behaviors**: the observable outcomes (what success looks
@@ -82,7 +91,9 @@ need an entry.
 
 ### Step 4: Decide the build order
 Order features by dependency and risk: **scaffold → authentication → core jobs →
-supporting features → nice-to-haves**. Highest-risk / most-depended-on first.
+supporting features → nice-to-haves**. Authentication is always the first
+feature after scaffold and receives the deepest initial validation. Highest-risk
+/ most-depended-on first.
 Record the order explicitly in the guide and reflect it in the STATUS feature
 table ordering.
 
@@ -96,13 +107,16 @@ image specced in `docs/design/RESOURCES.md`: loader + OG image built in scaffold
 **legal/consent** (ToS + privacy routes, cookie-consent + analytics
 gating), CI), and the stack decisions (default to Alex's: TypeScript strict, Zod
 at boundaries, thin route handlers + services, Prisma with reviewed migrations,
-Jest + Playwright).
+Jest + Playwright). Link the detailed auth card and state that every later
+feature's integration validation reruns its stable auth regression suite and
+checks `docs/adr/auth.md`.
 
 ### Step 6: Seed STATUS and route
 - Populate the **Features** table in `docs/STATUS.md` with one row per feature
   in build order, all steps `⬜`.
 - Check **Plan → IMPLEMENTATION_GUIDE.md written** and **Plan → Feature ADRs
-  seeded** (only if every feature got its `docs/adr/` file).
+  seeded** (only if authentication has `docs/adr/auth.md` and every ordinary
+  feature got its `docs/adr/` file).
 - Set `## Next action` to `/plan-design`.
 - Tell the user the guide needs **their approval** (a gate) before dev, and the
   next step is `/plan-design` (pick the visual style) → then `/plan-wireframes`.
@@ -113,8 +127,17 @@ Run when `init-ai` (or the user) finds features without decision records,
 common when the ADR system arrives at a repo that already has features, or a
 repo was integrated under an older workflow version. **Feature work is blocked
 until this completes**: without the records, the validators can't tell a gap
-from a choice. This mode touches only `docs/adr/` (plus removals of absorbed
-docs) it doesn't rewrite the guide or cards.
+from a choice. This mode touches `docs/adr/`, plus
+`docs/features/authentication.md` when the required auth contract is missing or
+still an empty template, and removals of absorbed docs. It doesn't rewrite the
+guide or ordinary feature cards.
+
+Before numbered features, backfill the authentication contract from the
+approved spec, current auth code, routes, schemas, provider config, and tests.
+Cover the same method/optional-management/authorization/safe-response/step-up
+matrix required in Step 2, tag inferred decisions `(needs review)`, and seed
+`docs/adr/auth.md`. Existing auth remains validation-pending until
+`/dev-auth validate` proves this contract.
 
 For **every** feature in the STATUS table missing `docs/adr/<NN>-<slug>.md`:
 

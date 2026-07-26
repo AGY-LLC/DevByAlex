@@ -67,13 +67,13 @@ is the live control file every skill reads and writes.
 |-------|-------|------|
 | `init-ai` | entry | Bootstraps/integrates the workflow into a repo; reconciles STATUS from what's already done. |
 | `plan-spec` | plan | Interviews to a complete spec; collects **visual references as images** (screenshots of apps the user likes → `docs/design/references/`, each with a "what I like about it" line) as first-class design inputs; `reverse` mode backfills from code. |
-| `plan-guide` | plan | Expands the spec into a granular, ordered guide + feature cards + per-feature ADRs (`adr-backfill` mode writes the missing ADRs for an existing repo's features). |
+| `plan-guide` | plan | Expands the spec into a granular, ordered guide + a dedicated `docs/features/authentication.md` contract + ordinary feature cards + ADRs (`adr-backfill` also reconstructs missing auth/feature records for an existing repo). |
 | `plan-design` | plan | Picks the app's named visual style, PRIMARY (structure, 1 of 12 product directions) × SECONDARY (feeling, 1 of 50 named styles from `knowledge/design/design-styles.md`), then **web-searches 3–5 real-world references** of the confirmed style (live products/galleries) to seed the tokens, **expands the full design system** (color/type/spacing/radius/shadow/motion/iconography/component rules/states, absorbing the former `uiux-init`), and records pick + references + reason in `docs/DESIGN.md` before wireframes. `restyle` mode re-picks for an existing app, records the supersession, and hands off to `uiux-redesign` to apply it. |
 | `uiux-redesign` | plan/dev | The application half of a `restyle`: sweeps a confirmed new style across an existing app's every customer-facing screen: rewrites the `docs/DESIGN.md` token system, then conforms the diverging surfaces (web + mobile) via token/shared-component changes, **leaving already-aligned surfaces alone** (change is justified by divergence, not by the sweep). Runs as code change through the validate loop, re-verifies WCAG 2.2 AA, and routes regressions to an `RSTY-xxx` queue → `fix-errors`. Owns the rollout, not the taste call. |
 | `plan-wireframes` | plan | Wireframe each feature: GENERATE via Penpot MCP (greenfield) or CAPTURE existing screens from code (existing app, no Penpot). Reads the committed style from `docs/DESIGN.md`. The boards are **plan-time** intent, built once and refreshed only on demand by re-running this skill (`knowledge/workflow/penpot-wireframes.md`); dev-stage work never touches Penpot. |
 | `dev-scaffold` | dev | One-time baseline: monorepo topology (`marketing/` apex + `web/` full-stack app on app.domain + optional `app/` mobile), branch model (protected `main` = production, `staging` = working line), skeleton, tooling, tests, and CI + deploy via Pipeline by Alex (`pba.yml` + thin caller). |
-| `dev-auth` | dev | Authentication first, security & privacy prioritized. Validate-existing mode audits + hardens auth an existing repo already has. |
-| `feature-loop` | dev | The per-feature 4-step build/validate engine; accretes each feature's golden-path E2E flow via the e2e gate. |
+| `dev-auth` | dev | The first and most important feature after scaffold. Builds the app-specific password or passwordless contract, separate Create account/Sign in, optional account management, ownership/role/tenant access, safe responses, recovery, and step-up; exhaustively validates it. Validate-existing mode audits + hardens existing auth. |
+| `feature-loop` | dev | The per-feature 4-step build/validate engine; accretes each feature's golden-path E2E flow and reruns the stable auth regression suite so later work cannot weaken the identity/access foundation. |
 | `dev-tweak` | dev | The cosmetic light lane, drains `docs/TWEAKS.md` (copy, tokens, spacing, asset swaps) behind a hard qualification test (no logic/data/API/auth/dependency/test changes, heavier entries get reclassified, never forced through) and a proportional gate: suite green, prose pass on copy, screenshot + design-critic pass on anything visual. ADRs still govern. |
 | `dev-todo` | dev | The planned-change lane, drains `docs/TODO.md` (deliberate improvements heavier than a tweak, smaller than a feature) after bugs and tweaks. Routes every entry first (broken → BUGS, cosmetic → TWEAKS, feature-sized → a proposal for Alex, never silently into scope), then applies the qualified batch: failing test first where behavior changes, suite green, prose/screenshot gates as applicable. Post-stable, most iteration lives here. |
 | `dev-goal` | dev | The driver: give it a goal (default: dev stage complete) and it pushes until the goal is met or only human-blocked work remains. A slim orchestrator: every unit (drain, scaffold, auth, feature) runs in a subagent returning a bounded report, one green commit per unit, so a multi-feature rollout never drowns the main context and the run is safe to interrupt and resume. Every UI-changing unit ends its STATUS log entry with a **visual pulse** (staging URL + screenshots, reusing the unit's own captures). |
@@ -340,6 +340,14 @@ app "done."
   around: tweaks are exempt by qualification, and bug/todo work only re-runs
   flows it broke or reshaped. `e2e: n/a` is recorded explicitly for features
   with no user-facing flow.
+- **Authentication remains a live foundation.** It is specified separately in
+  `docs/features/authentication.md`, exhaustively validated before ordinary
+  features, and governed by `docs/adr/auth.md`. Every later feature rereads both
+  and its integration gate reruns the recorded stable auth regression suite.
+  A new feature cannot land by weakening account intent separation, the
+  specified account-management posture, method-linking/last-method rules where
+  applicable, role/permission/tenant access, safe responses, sessions, or
+  step-up.
 - **Production feedback flows through the same pipeline.** Post-launch signal is
   triaged (`/live-triage`) into the bug/tweak/todo lanes and drained by the
   goal run with full verification: triage routes, it never fixes, and feature

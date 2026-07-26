@@ -108,6 +108,11 @@ agent, the existing skills it reuses, and the invariants that make autonomy safe
   strong (`knowledge/workflow/model-routing.md`). Speed comes off the
   mechanical work, never off the gates.
 - **Security & privacy first**, most of all in auth.
+- **Authentication is a continuously checked foundation**: password is
+  app-specific, Create account and Sign in stay distinct, account management is
+  optional, role/permission/tenant rules scale to the app, and method/recovery/
+  step-up behavior gets an exhaustive contract. Every later feature reruns the
+  stable auth regression suite.
 
 ## Requirements
 

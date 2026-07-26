@@ -45,8 +45,27 @@ answers. Work backwards from the user. Cover at minimum:
 3. **Out of scope**: what this explicitly will *not* do for v1.
 4. **Data model shape**: the main entities and how they relate (enough to seed
    `data-modeling`).
-5. **Auth & access**, who logs in, how, what they can see/do, multi-tenant?
-   (Security/privacy is the top priority later: get the requirements now.)
+5. **Auth & access**: treat this as the most important feature requirement, not
+   a one-line provider choice. Resolve:
+   - who may Create account vs. Sign in, what they can access, roles/tenancy;
+   - which methods the app supports on each platform (Google, Apple, magic
+     link, OTP, passkey, password, other) and whether password exists at all;
+   - separate Create account and Sign in intents/screens (tabs are the default
+     presentation, but brand can choose another), including signup-only 13+
+     affirmation or other consent;
+   - recovery and, only if passwords exist, forgot/change/reset password plus
+     whether adding a password is part of the management scope;
+   - whether the app exposes any self-service account/sign-in-method management
+     at all; if it does, how users add/link and disconnect methods while never
+     removing their last usable method;
+   - the authorization model: simple authenticated/owner checks, roles and
+     permissions, organization/team membership, or attribute/relationship
+     policies; define every role, grant/revoke authority, and tenant boundary;
+   - non-enumerating but actionable signup/sign-in/recovery/provider messages;
+   - which sensitive actions require a fresh sign-in and how the user returns
+     to the exact action after step-up.
+   Security/privacy is the top priority later, so do not defer these product
+   choices to implementation.
 6. **Money**: free / paid / subscription / one-time? (seed `payments`).
 7. **Platform & topology**: web, mobile web, native, desktop, multi. For a
    **user-facing product**, record that it splits into separate surfaces (drives
@@ -100,13 +119,17 @@ Before writing, state your confidence and list any remaining assumptions. If
 you are not confident, ask more: do not paper over a gap with a guess. Only
 proceed when the open-questions list is empty or every remaining item is
 genuinely deferrable and marked as such. **The spec is not approvable while the
-legal/privacy posture (ToS, privacy policy, cookie consent, regimes) or the
-accessibility target is undecided**: these drive the build and the launch hard
-gates, so they can't be left blank.
+  legal/privacy posture (ToS, privacy policy, cookie consent, regimes), the
+  accessibility target, or the auth method/account-lifecycle/step-up contract is
+  undecided**: these drive the build and the launch hard gates, so they can't be
+  left blank.
 
 ### Step 4: Write docs/SPEC.md
 Use `../../templates/SPEC.md` as the structure. Capture problem, users, core
-jobs, out-of-scope, data-model sketch, auth/privacy requirements, the
+  jobs, out-of-scope, data-model sketch, the complete auth/access requirements
+  (including password-or-passwordless choice, separate account creation and
+  sign-in, optional account-management scope, authorization/role model, safe
+  responses, recovery, and step-up), the
 **legal/privacy/compliance** section (data/PII, ToS, privacy policy, cookie
 consent, regimes, user-rights, accessibility target), monetization, platform,
 the design/UX answers (verbatim enough for wireframing: including the

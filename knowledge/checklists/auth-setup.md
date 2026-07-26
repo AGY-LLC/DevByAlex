@@ -3,7 +3,7 @@ id: checklists-auth-setup
 title: "Auth Setup Checklist"
 summary: "What I go through every time I set up authentication on a new project. Informed by real experience across cross-platform (web + mobile) and admin-only projects."
 tags: ["checklists", "auth-setup"]
-updated: 2026-07-16
+updated: 2026-07-26
 ---
 # Auth Setup Checklist
 
@@ -14,7 +14,14 @@ What I go through every time I set up authentication on a new project. Informed 
 ## Planning
 
 - [ ] Decide: build auth or use a service (Stytch, Firebase Auth, Auth.js, Clerk, Supabase Auth)
-- [ ] Decide: which providers? Email/password, Google, Apple, magic link?
+- [ ] Decide Create account and Sign in methods per platform: passwordless, magic link/OTP, passkey, Google, Apple, password, or other. Password is optional.
+- [ ] Keep Create account and Sign in as separate operations and user intents. Tabs are a default presentation, not a requirement.
+- [ ] Decide whether Create account needs an explicit unchecked 13+ affirmation or other signup-only consent; never reuse it for Sign in.
+- [ ] Decide recovery for every method and password add/change/forgot/reset only if passwords are supported.
+- [ ] Decide whether self-service account/sign-in-method management exists. If it does, define recent-auth, new-method proof, notifications, and last-usable-method protection; if not, do not build the surface.
+- [ ] Decide authorization: simple ownership, roles/permissions, organization/team membership, ABAC/ReBAC, or a combination. Define every role/policy, tenant scope, and who may grant/revoke access.
+- [ ] Decide safe public responses for wrong credentials/method, existing-account signup, recovery, and provider failures without confirming account existence.
+- [ ] Decide which dangerous actions require fresh authentication and how the user returns to the action's confirmation point.
 - [ ] If building for web + mobile: confirm the auth provider has a clean cross-platform story before committing
 - [ ] Decide: sessions vs JWTs (or both)
 - [ ] Does the app need roles/permissions? Design now, not later.
@@ -25,8 +32,9 @@ What I go through every time I set up authentication on a new project. Informed 
 
 ## Database
 
-- [ ] User table with at minimum: `id`, `email`, `createdAt`
-- [ ] If using an external auth provider: add a `providerUid` field to link records (e.g., `stytchUserId`, `firebaseUid`)
+- [ ] Canonical User table with at minimum: stable `id`, contact/profile fields, and `createdAt`
+- [ ] One-to-many authenticator/identity records with provider + stable subject id, verified state, timestamps, and uniqueness that prevents one external identity from attaching to multiple users
+- [ ] Define and consistently apply email comparison/normalization across create, sign in, recovery, and linking; never auto-link accounts solely because email strings match
 - [ ] If implementing roles: `role` enum or separate `user_roles` table
 - [ ] If using sessions: session table or rely on JWT (decision recorded)
 
@@ -34,14 +42,50 @@ What I go through every time I set up authentication on a new project. Informed 
 
 ## Implementation
 
-- [ ] Sign up creates a user record in your database (not just in the auth service)
-- [ ] Login flow verified end to end
+- [ ] Create account creates a user record in your database (not just in the auth service) and never silently signs into/mutates an existing account
+- [ ] Sign in never silently creates a new account
+- [ ] Create account and Sign in are visually and behaviorally distinct, with a clear path between them
+- [ ] Signup-only age/consent state is unchecked, explicit, transaction-bound, and cleared on cancellation/failure so it cannot bleed into Sign in
+- [ ] Every enabled method is verified end to end on every supported platform
 - [ ] Email verification configured if required
 - [ ] Password reset flow configured and tested (if using email/password)
+- [ ] Password change works through an authenticated or provider-managed path with recent authentication; adding a password works only when specified (if passwords are supported)
+- [ ] No password fields, reset routes, or password-required assumptions exist when the app is passwordless
 - [ ] OAuth providers configured in auth service dashboard
+- [ ] Account management matches the spec; no unrequested settings surface or hidden self-service mutation endpoint exists
+- [ ] If method management is supported, authenticated users can add, verify, use, and disconnect methods; linking requires proof of current account + new method and cannot create a duplicate user
+- [ ] If disconnect is supported, removing the last verified, currently usable method is blocked with an actionable explanation
+- [ ] Supported method/password/recovery changes send an out-of-band security notification
+- [ ] Ownership/role/permission/tenant policy is enforced at one server-side boundary on every protected request and resource lookup; UI visibility is not the guard
+- [ ] Role/membership grant and revoke cannot self-elevate, preserve required last-owner/admin invariants, update active sessions/caches as specified, and produce audit evidence
 - [ ] Server-side auth middleware / session check in place
 - [ ] **Return-to-origin redirect implemented**: user lands on the page they were trying to reach, not always `/dashboard`
 - [ ] `return_to` parameter validated to be a relative path (not an external URL) before redirect
+
+---
+
+## Safe response and recovery contract
+
+Public responses must help legitimate users without confirming whether an
+email/account exists. Keep message, HTTP status, response shape, and practical
+timing equivalent wherever different behavior would permit enumeration.
+
+- [ ] Sign in failure does not distinguish nonexistent account, wrong password, disabled account, or unlinked method. Offer retry, another enabled method, Create account, and recovery when applicable.
+- [ ] Create account does not publicly say that an email is already registered. Give the same neutral next-step response and a Sign in route; when possible, send account-specific guidance only to the entered address.
+- [ ] Forgot password/recovery always responds like: "If an account uses that email, we'll send recovery instructions."
+- [ ] OAuth/magic-link/OTP errors may name the method the user chose and whether the attempt expired/cancelled, but not whether that provider/email is linked to an account.
+- [ ] Authenticated account settings may be specific about linked methods because identity is already established, while still requiring recent authentication for sensitive changes.
+- [ ] Reset, verification, OTP, magic-link, and recovery artifacts are single-use, expiring, replay-safe, throttled, and never logged as tokens or full URLs.
+
+---
+
+## Fresh-authentication step-up
+
+- [ ] List dangerous actions that require recent authentication (e.g. sign-in method/email/password change, account deletion, billing/admin changes, sensitive export)
+- [ ] Keep the user in context and offer their eligible method(s); do not send them to a generic Sign in dead end
+- [ ] Store the action/return context server-side or sign it; allowlist destinations, expire it quickly, bind it to the user/session, and reject replay
+- [ ] After success, return to the action's confirmation point without automatically executing the dangerous action
+- [ ] On cancel, failure, or expiry, return safely with no state change and a useful next action
 
 ---
 
@@ -113,18 +157,30 @@ redirect as readable by a hostile app.
 - [ ] Protected routes redirect to login for unauthenticated users
 - [ ] Loading state handled (don't flash protected content before auth check resolves)
 - [ ] Errors displayed clearly (wrong password, unverified email, etc.)
+- [ ] Public error copy remains non-enumerating while offering safe, useful next actions
+- [ ] Create account and Sign in remain separate in labels, headings, analytics, and submitted server intent
+- [ ] If account settings exist, they show only the specified controls and explain why the last usable method cannot be removed; otherwise the settings surface is absent
+- [ ] Password fields allow paste and password-manager/autofill semantics; no cognitive-function test is the sole auth method
 - [ ] Redirect to intended page after login (return-to-origin, not just always `/dashboard`)
 
 ---
 
 ## Testing
 
-- [ ] Sign up → verify email → log in tested manually
+- [ ] Separate Create account → verify → Sign in tested for every enabled method and supported platform
 - [ ] Password reset tested manually (if applicable)
+- [ ] Password change is tested when passwords are supported; adding a password from an originally passwordless/social account is tested only when specified
 - [ ] OAuth login tested manually (on real device for mobile)
+- [ ] Account-management posture tested: supported add/link/use/disconnect paths cover collision and last-method behavior; unsupported self-service paths are unreachable
+- [ ] Every role/permission/policy and protected operation has positive and negative tests, including unauthenticated, wrong-role, wrong-owner, direct-endpoint, stale-access, and cross-tenant attempts
+- [ ] Role/membership invitation, grant, revoke, elevation, and last-owner/admin rules tested where applicable
+- [ ] Nonexistent-account, existing-account signup, wrong-password/method, provider failure, and recovery responses tested for message/status/shape/timing enumeration differences
+- [ ] Expired/replayed/tampered auth artifacts and cross-transaction signup-only age state tested
+- [ ] Every step-up action tested for success, cancel, failure, expiry, replay, open redirect, and return to the correct confirmation point
 - [ ] Unauthenticated access to protected routes tested
 - [ ] Session expiry handled gracefully tested
 - [ ] Return-to-origin redirect tested: visiting a protected page while logged out, then logging in, should land on that page
+- [ ] Stable auth regression command/tag recorded in `docs/features/authentication.md` and rerun after every later feature
 
 ---
 
@@ -146,6 +202,12 @@ redirect as readable by a hostile app.
 | Not maintaining your own user record | Always write to your DB, don't rely on the auth provider as your user store |
 | Token refresh not handled on mobile | Mobile apps need explicit proactive token refresh before requests |
 | Not testing on both platforms | iOS + Android + web each need a manual pass |
+| Treating password as mandatory | Choose auth methods per app; passwordless is a valid complete posture |
+| Combining signup and login behavior | Keep Create account and Sign in distinct even when tabs share one screen |
+| Revealing "email already registered" | Use a neutral public response and send specific help only to the entered address |
+| Auto-linking accounts by matching email | Require an authenticated session, recent auth, and proof of the new method |
+| Letting the last method be removed | Count only verified, currently usable methods and preserve at least one |
+| Sending step-up to generic login | Carry a validated short-lived action context and return to confirmation |
 | Session token in the mobile deep link | Redirect carries a single-use code; token comes back in the HTTPS exchange response (RFC 8252) |
 | PKCE verifier sent through the redirect | Verifier stays in app memory; only the challenge leaves the app, or PKCE protects nothing |
 

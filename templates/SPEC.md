@@ -26,9 +26,48 @@
 
 ## Auth & access
 
-- _Who logs in, how (provider vs. self-rolled), what they can see/do,
-  multi-tenant? Privacy/compliance requirements. (Security is top priority in
-  the build.)_
+> Authentication is the first and most important feature after scaffold.
+> Password is optional: choose methods for this app rather than assuming one.
+> `/plan-guide` expands these decisions into
+> `docs/features/authentication.md`; `/dev-auth` exhaustively validates them.
+
+- **Account eligibility and access:** _Who may Create account and who may Sign
+  in._
+- **Authorization model:** _Simple authenticated/owner checks, RBAC,
+  permission-based, organization/team membership, ABAC/ReBAC, or a combination.
+  Define roles/permissions, default role, scope/hierarchy, tenant boundaries,
+  who can grant/revoke them, and what happens to active sessions when access
+  changes._
+- **Methods by platform:** _Google / Apple / magic link / email or SMS OTP /
+  passkey / password / other for web, iOS, and Android._
+- **Password posture:** _Not supported / optional add-on / offered at account
+  creation / required, with the product or risk reason._
+- **Create account vs. Sign in:** _Keep them behaviorally separate. Tabs are the
+  default UI, but brand may use separate pages or another clear treatment.
+  Never silently create an account from Sign in or sign into an existing
+  account from Create account._
+- **Signup-only affirmation:** _Is an explicit unchecked 13+ affirmation or
+  other signup consent required? It belongs only to Create account and must not
+  carry into Sign in. Record N/A with reason when it does not apply._
+- **Recovery:** _How users recover without a password; if passwords exist,
+  include Forgot password plus change/reset behavior, and decide whether the
+  account-management posture permits adding a password._
+- **Account management scope:** _None / provider-admin only / basic profile and
+  recovery / self-service sign-in-method management / fuller account or team
+  administration. Do not build a settings surface the app does not need._
+- **Linked methods, if self-service management exists:** _How an authenticated
+  user adds/verifies/disconnects methods; require proof and recent auth, prevent
+  duplicate-account takeover, and never remove the last currently usable
+  method. Otherwise record who or what manages methods._
+- **Safe response contract:** _For wrong credentials/method, nonexistent
+  account, existing-account signup, provider failure, and recovery: define
+  helpful next actions without revealing publicly whether an account exists.
+  Keep body/status/timing equivalent where enumeration is a risk._
+- **Fresh-auth step-up:** _Which dangerous actions require a recent sign-in;
+  which eligible method(s) are offered; preserve a validated short-lived action
+  context and return to its confirmation point without auto-executing it._
+- **Session and privacy posture:** _Expiry/rotation/revocation, return-to-origin,
+  sensitive logging rules, provider vs. self-rolled, and assurance/MFA needs._
 
 ## Legal, privacy & compliance (the "don't get sued" section)
 

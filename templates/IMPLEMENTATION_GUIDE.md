@@ -16,7 +16,11 @@
 ## Build order (dependencies first)
 
 1. **Scaffold**: baseline (`/dev-scaffold`).
-2. **Authentication**: `/dev-auth`.
+2. **Authentication**: `/dev-auth`, built from
+   `docs/features/authentication.md` and governed by `docs/adr/auth.md`.
+   Password is app-specific, not assumed. This gets exhaustive initial
+   validation and its stable regression suite is rerun after every later
+   feature.
 3. _Feature: `docs/features/03-…md`_
 4. _…_
 
@@ -30,7 +34,11 @@
 
 ## Cross-cutting concerns
 
-- **Auth/authz model:** _default-deny, where checks live._
+- **Auth/authz model:** _Link `docs/features/authentication.md`; list enabled
+  methods, optional account-management scope, identity/linking/session
+  boundaries, ownership/role/permission/tenant policy matrix, default-deny
+  enforcement, and the stable auth regression command every later feature
+  reruns._
 - **Error handling:** _shape of errors, user-facing vs. logged._
 - **Validation:** _Zod at every boundary._
 - **Logging/observability:** _logger, what gets logged (never secrets)._

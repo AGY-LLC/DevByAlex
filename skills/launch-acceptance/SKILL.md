@@ -35,9 +35,14 @@ can exercise).
 
 ### Step 1: Enumerate the critical flows and surfaces
 Read `docs/IMPLEMENTATION_GUIDE.md`, the feature cards, the wireframe flows, and
-`docs/STATUS.md`. List the end-to-end flows a real user must be able to complete
-(sign up / log in, the 3–5 core jobs, payment if any, account deletion/privacy
-controls, key error paths). Prioritize critical-path over exhaustive.
+`docs/STATUS.md`. Read `docs/features/authentication.md` separately: auth is the
+intentionally exhaustive exception to the usual critical-path scope. List its
+separate Create account and Sign in flows for every enabled method, recovery,
+the specified account-management posture (including add/link/use/disconnect and
+last-method protection only if supported), every role/permission/ownership/
+tenant denial boundary, safe public failures, and fresh-auth step-up. Then list
+the 3–5 core jobs, payment if any, account deletion/privacy controls, and key
+error paths.
 
 Identify the app's surfaces: web (→ Playwright), iOS/Android (→ Maestro). A
 flow that exists on both surfaces gets covered on both.
@@ -65,7 +70,7 @@ present):
 
 **Web → Playwright** (e.g. `e2e/acceptance/*.spec.ts`):
 - One spec file per scenario (or tightly related group), named after it
-  (`01-auth.spec.ts` mirrors "Scenario 1: Sign in").
+  (`01-auth.spec.ts` covers the related auth scenarios).
 - Target staging via an env var (e.g. `STAGING_URL` / `BASE_URL`): never a
   hardcoded production URL; fail fast with a clear message if it's unset.
 - Prefer user-facing locators (`getByRole`, `getByLabel`, visible text) over
@@ -101,6 +106,9 @@ and every scenario must map to a Playwright spec, a Maestro flow, or an
 explicit `[manual]` marker. Backfill the flow for any done feature with no
 acceptance coverage (features done before the e2e gate existed won't have
 one); update its `E2E` cell in the STATUS features table once covered.
+Authentication must map every acceptance criterion in
+`docs/features/authentication.md` to automation or an honest `[manual]` marker;
+one happy-path login flow is not sufficient.
 
 ### Step 5: Update STATUS and route
 - Check **Launch → Acceptance tests written**.

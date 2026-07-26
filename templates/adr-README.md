@@ -20,7 +20,7 @@ explicit human call, not a silent drive-by.
 |------|--------|
 | `docs/adr/<NN>-<slug>.md` | one per feature, mirroring `docs/features/<NN>-<slug>.md` |
 | `docs/adr/scaffold.md` | cross-cutting scaffold decisions (topology, branch model, tooling, CI) |
-| `docs/adr/auth.md` | authentication decisions (provider, session strategy, threat model) |
+| `docs/adr/auth.md` | authentication decisions (enabled methods, optional account management, identity linking, role/permission/tenant authorization, session strategy, safe-response and step-up contract, threat model) |
 | `docs/adr/_TEMPLATE.md` | the per-feature template: copy it, don't edit it |
 
 Inside a file, decisions are numbered `D1, D2, …` and deliberate omissions

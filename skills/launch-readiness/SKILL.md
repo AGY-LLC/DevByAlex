@@ -275,9 +275,17 @@ applicability."
 Follow the same rigor as a pre-merge security review, but framed as
 "would I be comfortable exposing this to the open internet tomorrow?"
 
-- **Authentication**: password hashing algorithm and cost, account
-  lockout/throttling, session rotation on privilege change, secure cookie
-  flags (`HttpOnly`, `Secure`, `SameSite`), token expiry and revocation.
+- **Authentication**: compare the implementation and current auth regression
+  evidence to `docs/features/authentication.md` and `docs/adr/auth.md`; verify
+  only the specified password or passwordless methods exist; Create account
+  and Sign in remain separate; signup-only age/consent cannot bleed; optional
+  account management matches the spec; any linking requires proof and preserves
+  the last usable method; roles/permissions/ownership/tenant rules default to
+  deny and are enforced on every request; public failures resist enumeration;
+  recovery and step-up are replay-safe and return in context. If
+  passwords exist, verify hashing algorithm/cost and complete add/change/reset
+  behavior. In all cases verify throttling, session rotation, secure cookie
+  flags (`HttpOnly`, `Secure`, `SameSite`), token expiry, and revocation.
 - **Authorization**: every sensitive route has an explicit check; IDOR
   risks on any resource lookup that takes a user-supplied ID; admin
   routes gated; feature-flagged admin tooling not reachable by default.

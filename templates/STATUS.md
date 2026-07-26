@@ -40,7 +40,12 @@
 
 - [ ] Scaffold (one-time baseline)
 - [ ] Custom app loader (built per `docs/design/RESOURCES.md`, or override recorded with a reason: never silently skipped)
-- [ ] Authentication (built + validated)
+- [ ] Authentication (first feature; built + exhaustively validated from
+      `docs/features/authentication.md`)
+
+> Every later feature must keep the stable auth regression suite green and
+> preserve `docs/adr/auth.md`; integration validation rechecks both before the
+> feature can be marked done.
 
 ### Features
 

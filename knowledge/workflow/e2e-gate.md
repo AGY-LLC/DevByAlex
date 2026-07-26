@@ -43,8 +43,14 @@ both.
   and the capture share one session. Green is required before the feature
   row flips to done; the run is recorded in the STATUS features table's
   `E2E` column.
-- **Auth is the canonical case.** `/dev-auth` proves sign-up, login, and
-  logout as its golden-path flow before Authentication is checked off.
+- **Auth is the canonical and intentionally broader case.** `/dev-auth` proves
+  the app's actual separate Create account and Sign in flows, every enabled
+  method on its supported surfaces, logout/recovery, any specified account
+  management and role journeys, and fresh-auth step-up critical paths before
+  Authentication is checked off.
+  Automate what can run honestly; record and verify real provider/email/device
+  checks as `[manual]` instead of faking them. The stable auth regression suite
+  is then rerun by every later feature's integration gate.
 - **`e2e: n/a` is explicit.** A feature with no user-facing flow (internal
   API, background job, schema work) records `e2e: n/a` in its row: its
   behavior is the integration suite's job. Never silently skip the gate.

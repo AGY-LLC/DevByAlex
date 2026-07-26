@@ -1,6 +1,6 @@
 ---
 name: plan-wireframes
-description: "Stage 3 of the DevByAlex plan phase. It stands up the app's Penpot design sandbox: the file Alex explores design ideas in without touching code, then hands back to be implemented. Two modes. GENERATE mode (greenfield): drives a write-capable Penpot MCP to build a real-fidelity board per key screen (with empty/loading/error/onboarding/upgrade states) from the design/UX answers in docs/SPEC.md, registering the app's docs/DESIGN.md values as Penpot design tokens so one token edit restyles every board. CAPTURE mode (existing app with UI already built): inventories the app's EXISTING screens from the code and documents them. No Penpot MCP is required, so the wireframe gate can be satisfied for an integrated repo without re-designing UI that already exists. Either way writes docs/wireframes/README.md indexing screens, states, and the screen-to-feature mapping. Use after the implementation guide exists, when the user says 'wireframe the app', 'design the screens', 'create the wireframes', or 'document the existing screens'."
+description: "Stage 3 of the DevByAlex plan phase. Stands up the app's Penpot design sandbox for Alex to explore before implementation. GENERATE mode drives a write-capable Penpot MCP to build a real-fidelity board per key screen and state from docs/SPEC.md, using docs/DESIGN.md values as Penpot tokens. CAPTURE mode inventories and documents screens already present in an existing app; it needs no Penpot MCP and does not redesign the UI. Both modes write docs/wireframes/README.md with screens, states, and feature mappings, including the separate auth contract and only its specified account/role surfaces. Use after the implementation guide exists when asked to wireframe/design the app or document existing screens."
 argument-hint: "[optional: feature/screen; or 'capture' to inventory an existing app's screens]"
 license: MIT
 metadata:
@@ -117,7 +117,8 @@ in so later stages can reference them.
   Penpot file is open and connected (else switch to CAPTURE if the screens exist,
   or stop). `docs/SPEC.md` design/UX answers must exist: if missing, send the user
   back to `/plan-spec` rather than inventing tone/density.
-- `docs/IMPLEMENTATION_GUIDE.md` + feature cards exist (both modes).
+- `docs/IMPLEMENTATION_GUIDE.md`, `docs/features/authentication.md`, and the
+  ordinary feature cards exist (both modes).
 - **Read the committed style.** `docs/DESIGN.md` should carry a **Style choice**
   (PRIMARY × SECONDARY) from `/plan-design`: design the frames to that style,
   consult its recorded **real-world references** (open them: the frames should
@@ -143,6 +144,13 @@ in so later stages can reference them.
 Include the **legal/consent surfaces** the spec's compliance section requires,
 Terms of Service page, Privacy Policy page, and the **cookie consent banner**
 (web): as screens in their own right so the flow accounts for them.
+
+Treat authentication as its own screen family from
+`docs/features/authentication.md`: separate Create account and Sign in; only
+the enabled method/recovery/step-up screens; account settings only when the
+specified management posture includes them; and distinct role/admin/team views
+only where the authorization matrix produces a genuinely different user flow.
+Do not invent account-management screens for apps that omit them.
 
 Group screens by feature and by the end-to-end flow a user walks.
 

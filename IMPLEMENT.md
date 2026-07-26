@@ -20,7 +20,47 @@ we cannot move to this stage until i approve the wire framing designs and the im
 ### scaffold the app with all the basics
 this is a do once at the beginning of the dev cycle so we have a baseline to work from.
 ### build authentication
-this is the single most important feature of the app. we need to build a way for users to login and be able to use the app but prioritize security and privacy above everything else. lets get this set right away and make sure we have a solid foundation for the rest of the app to build on for authentication.
+this is the single most important feature of the app and the first feature
+after scaffold. we need to build a way for users to authenticate and use the
+app, prioritizing security and privacy above everything else. it needs
+exhaustive tests and independent validation at the beginning, plus a stable
+auth regression suite that every future feature reruns so the foundation is
+constantly checked as the app grows.
+
+password is not universally required. each app's spec must choose its methods:
+password, magic link or code, google, apple, passkey, or another appropriate
+method. create account and sign in must remain separate intents and operations,
+usually presented as tabs but open to a brand-appropriate treatment. any
+required unchecked 13+ affirmation belongs only to create account and cannot
+bleed into sign in.
+
+account management is app-specific too. some apps need no self-service account
+settings, while others need users to add, verify, use, and disconnect supported
+sign-in methods or add/change a password. do not invent management UI or
+endpoints when they are out of scope. when method management does exist, linking
+must not create duplicate accounts or rely only on an email match, and the last
+currently usable sign-in method can never be removed. forgot/reset password
+and a password-change path must always be available when passwords exist, even
+when the app does not need a broad account-settings surface.
+
+authorization can range from simple ownership to complex roles, permissions,
+organizations, attributes, or relationships. the spec must define what each
+role can do, tenant boundaries, who can grant or revoke access, and how active
+sessions react to changes. every protected operation must default to deny and
+enforce the policy server-side; hiding a button is never the authorization
+check.
+
+public errors must be helpful without revealing whether an account exists.
+wrong credentials or method, an existing-account create attempt, provider
+failure, and recovery each need safe next actions such as retrying, sign in,
+create account, another method, or recovery, without account-enumeration leaks
+through copy, status, response shape, or timing.
+
+dangerous actions that require a fresh sign-in must offer the user's eligible
+method in context, preserve a validated short-lived action/return state, and
+take the user back to the action's confirmation point. successful step-up must
+not automatically execute the dangerous action, and cancel/failure/expiry must
+leave state unchanged.
 ### build features
 this will be a loop where we build out each feature in the app in four steps that loop until the feature is fully implemented.
 there should be an agent assigned to the feature that will deploy the subagent steps listed below.

@@ -27,13 +27,14 @@
 
 | Feature | Screen | Frame link / source | States covered |
 |---------|--------|---------------------|----------------|
-| _auth_ | Login | _link or `src/...`_ | default, error |
-| _auth_ | Sign up | _link or `src/...`_ | default, loading, error |
+| _auth_ | Sign in | _link or `src/...`_ | default, loading, safe error |
+| _auth_ | Create account | _link or `src/...`_ | default, loading, safe error, signup-only age/consent if required |
+| _auth (if specified)_ | Recovery / account methods / step-up / role administration | _link or `src/...`_ | _only states and surfaces required by `docs/features/authentication.md`_ |
 | _…_ | _…_ | _…_ | _…_ |
 
 ## Primary user flow(s)
 
-1. _Landing → Sign up → Onboarding → <core screen> → <core job>_
+1. _Landing → Create account → Onboarding → <core screen> → <core job>_
 2. _…_
 
 ## Notes

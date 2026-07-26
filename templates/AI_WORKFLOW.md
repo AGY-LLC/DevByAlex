@@ -32,7 +32,9 @@ is the live control file; this file is the map.
      `web/` full-stack app on app.domain + optional `app/` mobile), branch model
      (protected `main` = production, `staging` = working line), skeleton, tooling,
      tests, and CI + deploy via Pipeline by Alex (`pba.yml` + thin caller).
-   - `/dev-auth`: authentication first; security & privacy prioritized.
+   - `/dev-auth`: authentication is the first and most important feature after
+     scaffold; build the app-specific password/passwordless contract and
+     exhaustively validate it. Every later feature reruns its regression suite.
    - `/feature-loop <id>`: per feature: parallel tests + implementation →
      feature validation → integration validation → align to guide/wireframes +
      golden-path E2E flow green against the running app (the e2e gate) →

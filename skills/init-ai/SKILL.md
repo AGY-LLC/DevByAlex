@@ -156,6 +156,7 @@ in the summary (offer to merge, don't overwrite silently):
 | `AI_WORKFLOW.md` | `docs/AI_WORKFLOW.md` | per-repo pointer to the process |
 | `SPEC.md` | `docs/SPEC.md` | stub if blank; keep if it exists |
 | `IMPLEMENTATION_GUIDE.md` | `docs/IMPLEMENTATION_GUIDE.md` | stub if blank |
+| `auth-feature-card.md` | `docs/features/authentication.md` | the first and most important feature contract; `/plan-guide` fills it before `/dev-auth` |
 | `feature-card.md` | `docs/features/_TEMPLATE.md` | copied per-feature later |
 | `adr-README.md` | `docs/adr/README.md` | the ADR contract: consult before change, confirm before breaking a decision |
 | `adr-feature.md` | `docs/adr/_TEMPLATE.md` | copied per-feature by `/plan-guide` (and during backfill) |
@@ -172,9 +173,12 @@ integrated before a workflow update, or with hand-written `docs/`, will have a
 file. Instead, check whether these specific additions are present and **append
 only the missing ones**, leaving every existing line and checkbox state exactly
 as found:
-- `docs/SPEC.md`: the **Legal, privacy & compliance** and **SEO &
-  discoverability** sections. Append them as stubs tagged `(needs review)` if
-  absent; if present, leave them.
+- `docs/SPEC.md`: the full **Auth & access** contract (password or
+  passwordless methods, separate Create account/Sign in, signup-only age
+  affirmation, optional account-management scope, ownership/role/permission/
+  tenant authorization, safe responses, recovery, and step-up), plus **Legal,
+  privacy & compliance** and **SEO & discoverability**. Append missing sections
+  as stubs tagged `(needs review)`; if present, leave them.
 - `docs/STATUS.md`: the two hard gates (`Legal & compliance passed`,
   `Accessibility (WCAG 2.2 AA) passed`), the `Brand foundation (docs/BRAND.md)`
   plan row, the `Feature ADRs seeded (docs/adr/)` plan row, the no-open-bugs/

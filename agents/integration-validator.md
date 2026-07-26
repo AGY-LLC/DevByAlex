@@ -22,7 +22,9 @@ You are given: the repo path and the feature that was just built. You return:
 ## What to do
 
 1. **Run the entire test suite** (unit, integration, E2E as configured), plus
-   typecheck/lint/build. Capture real output. A red suite is an automatic FAIL.
+   typecheck/lint/build. Read `docs/features/authentication.md` and run its
+   recorded stable auth regression command(s) separately when the default suite
+   omits them. Capture real output. A red suite is an automatic FAIL.
 2. **Review the whole codebase** for issues this feature's integration created
    or exposed: regressions, broken contracts between modules, security holes at
    seams, leaked abstractions, dead/duplicated code, inconsistent error handling,
@@ -52,8 +54,13 @@ You are given: the repo path and the feature that was just built. You return:
    recorded supersession **is** a finding (architecture drift).
 4. **Verify each finding** has real evidence (repro, failing test, citation)
    before reporting it. Prefer the highest-severity, highest-confidence issues.
-5. Check cross-cutting concerns hold: auth still enforced everywhere, no secret
-   leaks, migrations consistent, no over-fetching introduced, logging sane.
+5. Check cross-cutting concerns hold: the method, specified account-management
+   scope, identity-linking/last-usable-method rules where applicable,
+   role/permission/ownership/tenant matrix, safe-response, session/access, and
+   step-up invariants in `docs/features/authentication.md` and
+   `docs/adr/auth.md` still hold; auth is enforced everywhere; no secret leaks;
+   migrations are consistent; no over-fetching is introduced; logging is sane.
+   An auth or authorization regression is a FAIL, not a deferrable follow-up.
 
 ## What "FAIL" means
 
