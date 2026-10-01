@@ -105,9 +105,12 @@ or CLI is needed. Use credentials that may create S3 buckets and IAM roles.
 
    Outputs: `OperatorRoleArn`, `WorkerRoleArn`, `ReaderRoleArn`.
 
-3. **Your machine**: an IAM Identity Center (SSO) profile, e.g. `agy-media`
-   (`aws configure sso`), allowed to assume the operator role. No long-lived
-   key is stored anywhere.
+3. **Your machine**: preferably an IAM Identity Center (SSO) profile, e.g.
+   `agy-media` (`aws configure sso`), allowed to assume the operator role, so
+   no long-lived key is stored anywhere. Without Identity Center, update the
+   project stack with `CreateOperatorKeyUser=true` and put that user's access
+   key in `~/.aws/credentials` under the profile the config names: the key
+   can do nothing but assume the operator role, which cannot delete.
 
 4. **Workers outside AWS** (only if `CreateExternalWorkerUser=true`): create
    one access key for `agy-media-external-worker` (IAM console, Security

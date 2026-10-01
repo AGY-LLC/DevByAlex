@@ -151,3 +151,12 @@ test("the account-wide external worker user can only assume project worker roles
   assert.equal(assume("some-other-role"), false);
   assert.ok(!("ExternalWorkerUser" in roles), "no per-project worker user");
 });
+
+test("the optional operator key user can only assume its project's operator role", () => {
+  const user = roles.OperatorKeyUser;
+  assert.equal(user.Condition, "OperatorKeyUser");
+  assert.equal(user.Properties.UserName, "agy-media-nisatsu-operator-key");
+  const stmts = user.Properties.Policies[0].PolicyDocument.Statement;
+  assert.deepEqual(stmts.flatMap((s: any) => list(s.Action)).sort(), ["sts:AssumeRole", "sts:TagSession"]);
+  assert.equal(stmts[0].Resource, "<OperatorRole.Arn>");
+});

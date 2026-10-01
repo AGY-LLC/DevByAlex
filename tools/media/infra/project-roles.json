@@ -14,6 +14,15 @@
     "OperatorPrincipals": {
       "Type": "CommaDelimitedList",
       "Description": "ARNs allowed to assume the operator role: your IAM Identity Center (SSO) role ARN, or this account's root ARN to delegate to IAM policies."
+    },
+    "CreateOperatorKeyUser": {
+      "Type": "String",
+      "Default": "false",
+      "AllowedValues": [
+        "false",
+        "true"
+      ],
+      "Description": "true creates agy-media-<project>-operator-key: an IAM user whose ONLY permission is to assume this project's operator role, for a person's machine without IAM Identity Center. Its access key lives in that machine's ~/.aws/credentials."
     }
   },
   "Rules": {
@@ -461,6 +470,50 @@
           }
         ]
       }
+    },
+    "OperatorKeyUser": {
+      "Type": "AWS::IAM::User",
+      "Condition": "OperatorKeyUser",
+      "Properties": {
+        "UserName": {
+          "Fn::Sub": "agy-media-${ProjectPrefix}-operator-key"
+        },
+        "Policies": [
+          {
+            "PolicyName": "assume-operator-only",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "sts:AssumeRole",
+                    "sts:TagSession"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "OperatorRole",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": {
+              "Ref": "ProjectPrefix"
+            }
+          },
+          {
+            "Key": "managed-by",
+            "Value": "devbyalex-media"
+          }
+        ]
+      }
     }
   },
   "Outputs": {
@@ -487,6 +540,22 @@
           "Arn"
         ]
       }
+    },
+    "OperatorKeyUserName": {
+      "Condition": "OperatorKeyUser",
+      "Value": {
+        "Ref": "OperatorKeyUser"
+      }
+    }
+  },
+  "Conditions": {
+    "OperatorKeyUser": {
+      "Fn::Equals": [
+        {
+          "Ref": "CreateOperatorKeyUser"
+        },
+        "true"
+      ]
     }
   }
 }
