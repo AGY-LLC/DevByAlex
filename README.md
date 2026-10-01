@@ -72,10 +72,11 @@ the whole workflow with no MCP token or network brain.
 ```
 .claude-plugin/plugin.json   plugin manifest
 install.sh                   provision skills+agents+templates+knowledge into <app>/.claude; --update / --update-all re-vendor an onboarded app to the latest (version-stamped)
-skills/                      all 34 skills, the workflow stages (init-ai, plan-*, dev-*, launch-*, live-*) and the supporting skills they call (scout, fix-errors, seo-audit, marketer-*, …), full committed copies, no external brain
+skills/                      all 36 skills, the workflow stages (init-ai, plan-*, dev-*, launch-*, live-*) and the supporting skills they call (scout, fix-errors, seo-audit, marketer-*, …), full committed copies, no external brain
 agents/                      the 7 specialist agents the feature loop deploys, each carrying its model tier (incl. explorer: the fast-tier evidence collector, and design-critic: vets screenshots of every design change before it counts as done)
 knowledge/                   the vendored best-practice brain the skills read (practices/*.yaml, stack/*.md, checklists/*.md, workflow/model-routing.md, the model routing + verification policy the orchestrators route by, design/design-styles.md, the 50-style vocabulary /plan-design picks from, and design/universal-design-rules.md, the 31 style-independent rules every screen holds)
-templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, TWEAKS, TODO, FEEDBACK, SPEC, DECISIONS, adr/, …)
+templates/                   the docs/ files init-ai stamps into a target repo (STATUS, BUGS, TWEAKS, TODO, FEEDBACK, SPEC, DECISIONS, adr/, …), plus the media toolkit's media.config.json and MEDIA_HANDLING.md starting points
+tools/media/                 opt-in media toolkit (`./install.sh <app> --with-media` -> <app>/tools/media): project media in one private, shared S3 bucket, verified + resumable transfers, run manifests, approval-gated exports, render integration, CloudFormation for the bucket and per-project roles. See tools/media/README.md
 docs/WORKFLOW.md             the full architecture and invariants
 docs/AUTH-PORTFOLIO.md       audited account/auth posture across registered DBA apps, with each app's governing ADR and review gaps
 docs/LIVE-SYNC.md            the fully-vendored skill model (everything committed, nothing served live) + the --update pipeline

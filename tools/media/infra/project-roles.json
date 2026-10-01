@@ -1,0 +1,561 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Project-scoped access to the shared AGY media bucket: operator, worker and reader roles for one project prefix, each able to read <project>/ and shared/. Nobody can delete. Deploy one stack per project.",
+  "Parameters": {
+    "ProjectPrefix": {
+      "Type": "String",
+      "AllowedPattern": "^[a-z0-9][a-z0-9-]{0,62}$",
+      "Description": "The project's prefix in the bucket, e.g. nisatsu (never 'shared')."
+    },
+    "BucketName": {
+      "Type": "String",
+      "Default": "agyllc-marketing"
+    },
+    "OperatorPrincipals": {
+      "Type": "CommaDelimitedList",
+      "Description": "ARNs allowed to assume the operator role: your IAM Identity Center (SSO) role ARN, or this account's root ARN to delegate to IAM policies."
+    },
+    "CreateOperatorKeyUser": {
+      "Type": "String",
+      "Default": "false",
+      "AllowedValues": [
+        "false",
+        "true"
+      ],
+      "Description": "true creates agy-media-<project>-operator-key: an IAM user whose ONLY permission is to assume this project's operator role, for a person's machine without IAM Identity Center. Its access key lives in that machine's ~/.aws/credentials."
+    }
+  },
+  "Rules": {
+    "NotShared": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Equals": [
+                  {
+                    "Ref": "ProjectPrefix"
+                  },
+                  "shared"
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "ProjectPrefix cannot be 'shared'."
+        }
+      ]
+    }
+  },
+  "Resources": {
+    "OperatorRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": {
+          "Fn::Sub": "agy-media-${ProjectPrefix}-operator"
+        },
+        "Description": "Read the project and shared/; write shared/, brand, captures, campaign working and exports, and runs. Exports are written by `media promote` after a recorded approval.",
+        "MaxSessionDuration": 43200,
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "sts:AssumeRole",
+                "sts:TagSession"
+              ],
+              "Principal": {
+                "AWS": {
+                  "Ref": "OperatorPrincipals"
+                }
+              }
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "media",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Sid": "ListOwnProjectAndShared",
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:ListBucket",
+                    "s3:ListBucketVersions"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}"
+                  },
+                  "Condition": {
+                    "StringLike": {
+                      "s3:prefix": [
+                        {
+                          "Fn::Sub": "${ProjectPrefix}/"
+                        },
+                        {
+                          "Fn::Sub": "${ProjectPrefix}/*"
+                        },
+                        {
+                          "Fn::Sub": "shared/"
+                        },
+                        {
+                          "Fn::Sub": "shared/*"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "Sid": "BucketSettingsReadForDoctor",
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetBucketVersioning",
+                    "s3:GetBucketLocation"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}"
+                  }
+                },
+                {
+                  "Sid": "ReadOwnProjectAndShared",
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetObject",
+                    "s3:GetObjectVersion",
+                    "s3:GetObjectAttributes",
+                    "s3:GetObjectVersionAttributes"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}/${ProjectPrefix}/*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}/shared/*"
+                    }
+                  ]
+                },
+                {
+                  "Sid": "WriteOriginalsWorkingRunsExports",
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:PutObject",
+                    "s3:AbortMultipartUpload",
+                    "s3:ListMultipartUploadParts"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}/${ProjectPrefix}/brand/*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}/${ProjectPrefix}/captures/*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}/${ProjectPrefix}/campaigns/*/working/*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}/${ProjectPrefix}/campaigns/*/exports/*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}/${ProjectPrefix}/runs/*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}/shared/*"
+                    }
+                  ]
+                },
+                {
+                  "Sid": "NeverDelete",
+                  "Effect": "Deny",
+                  "Action": [
+                    "s3:DeleteObject",
+                    "s3:DeleteObjectVersion",
+                    "s3:PutLifecycleConfiguration",
+                    "s3:PutBucketPolicy",
+                    "s3:PutBucketVersioning",
+                    "s3:DeleteBucket"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}/*"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": {
+              "Ref": "ProjectPrefix"
+            }
+          },
+          {
+            "Key": "managed-by",
+            "Value": "devbyalex-media"
+          }
+        ]
+      }
+    },
+    "WorkerRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": {
+          "Fn::Sub": "agy-media-${ProjectPrefix}-worker"
+        },
+        "Description": "Read the project and shared/; write run folders only. Trusts this account: only identities granted sts:AssumeRole on this role (the account-wide agy-media-external-worker user from media-bucket.json, a cloud worker's role) can use it.",
+        "MaxSessionDuration": 43200,
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "sts:AssumeRole",
+                "sts:TagSession"
+              ],
+              "Principal": {
+                "AWS": {
+                  "Fn::Sub": "arn:${AWS::Partition}:iam::${AWS::AccountId}:root"
+                }
+              }
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "media",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Sid": "ListOwnProjectAndShared",
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:ListBucket",
+                    "s3:ListBucketVersions"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}"
+                  },
+                  "Condition": {
+                    "StringLike": {
+                      "s3:prefix": [
+                        {
+                          "Fn::Sub": "${ProjectPrefix}/"
+                        },
+                        {
+                          "Fn::Sub": "${ProjectPrefix}/*"
+                        },
+                        {
+                          "Fn::Sub": "shared/"
+                        },
+                        {
+                          "Fn::Sub": "shared/*"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "Sid": "BucketSettingsReadForDoctor",
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetBucketVersioning",
+                    "s3:GetBucketLocation"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}"
+                  }
+                },
+                {
+                  "Sid": "ReadOwnProjectAndShared",
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetObject",
+                    "s3:GetObjectVersion",
+                    "s3:GetObjectAttributes",
+                    "s3:GetObjectVersionAttributes"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}/${ProjectPrefix}/*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}/shared/*"
+                    }
+                  ]
+                },
+                {
+                  "Sid": "WriteRunsOnly",
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:PutObject",
+                    "s3:AbortMultipartUpload",
+                    "s3:ListMultipartUploadParts"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}/${ProjectPrefix}/runs/*"
+                    }
+                  ]
+                },
+                {
+                  "Sid": "NeverDelete",
+                  "Effect": "Deny",
+                  "Action": [
+                    "s3:DeleteObject",
+                    "s3:DeleteObjectVersion",
+                    "s3:PutLifecycleConfiguration",
+                    "s3:PutBucketPolicy",
+                    "s3:PutBucketVersioning",
+                    "s3:DeleteBucket"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}/*"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": {
+              "Ref": "ProjectPrefix"
+            }
+          },
+          {
+            "Key": "managed-by",
+            "Value": "devbyalex-media"
+          }
+        ]
+      }
+    },
+    "ReaderRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": {
+          "Fn::Sub": "agy-media-${ProjectPrefix}-reader"
+        },
+        "Description": "Read the project and shared/ only.",
+        "MaxSessionDuration": 43200,
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "sts:AssumeRole",
+                "sts:TagSession"
+              ],
+              "Principal": {
+                "AWS": {
+                  "Ref": "OperatorPrincipals"
+                }
+              }
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "media",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Sid": "ListOwnProjectAndShared",
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:ListBucket",
+                    "s3:ListBucketVersions"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}"
+                  },
+                  "Condition": {
+                    "StringLike": {
+                      "s3:prefix": [
+                        {
+                          "Fn::Sub": "${ProjectPrefix}/"
+                        },
+                        {
+                          "Fn::Sub": "${ProjectPrefix}/*"
+                        },
+                        {
+                          "Fn::Sub": "shared/"
+                        },
+                        {
+                          "Fn::Sub": "shared/*"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "Sid": "BucketSettingsReadForDoctor",
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetBucketVersioning",
+                    "s3:GetBucketLocation"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}"
+                  }
+                },
+                {
+                  "Sid": "ReadOwnProjectAndShared",
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetObject",
+                    "s3:GetObjectVersion",
+                    "s3:GetObjectAttributes",
+                    "s3:GetObjectVersionAttributes"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}/${ProjectPrefix}/*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}/shared/*"
+                    }
+                  ]
+                },
+                {
+                  "Sid": "NeverDelete",
+                  "Effect": "Deny",
+                  "Action": [
+                    "s3:DeleteObject",
+                    "s3:DeleteObjectVersion",
+                    "s3:PutLifecycleConfiguration",
+                    "s3:PutBucketPolicy",
+                    "s3:PutBucketVersioning",
+                    "s3:DeleteBucket"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:s3:::${BucketName}/*"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": {
+              "Ref": "ProjectPrefix"
+            }
+          },
+          {
+            "Key": "managed-by",
+            "Value": "devbyalex-media"
+          }
+        ]
+      }
+    },
+    "OperatorKeyUser": {
+      "Type": "AWS::IAM::User",
+      "Condition": "OperatorKeyUser",
+      "Properties": {
+        "UserName": {
+          "Fn::Sub": "agy-media-${ProjectPrefix}-operator-key"
+        },
+        "Policies": [
+          {
+            "PolicyName": "assume-operator-only",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "sts:AssumeRole",
+                    "sts:TagSession"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "OperatorRole",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": {
+              "Ref": "ProjectPrefix"
+            }
+          },
+          {
+            "Key": "managed-by",
+            "Value": "devbyalex-media"
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "OperatorRoleArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "OperatorRole",
+          "Arn"
+        ]
+      }
+    },
+    "WorkerRoleArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "WorkerRole",
+          "Arn"
+        ]
+      }
+    },
+    "ReaderRoleArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "ReaderRole",
+          "Arn"
+        ]
+      }
+    },
+    "OperatorKeyUserName": {
+      "Condition": "OperatorKeyUser",
+      "Value": {
+        "Ref": "OperatorKeyUser"
+      }
+    }
+  },
+  "Conditions": {
+    "OperatorKeyUser": {
+      "Fn::Equals": [
+        {
+          "Ref": "CreateOperatorKeyUser"
+        },
+        "true"
+      ]
+    }
+  }
+}
