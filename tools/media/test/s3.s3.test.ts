@@ -289,6 +289,25 @@ test("migration copies once per content hash and records every old reference", {
   assert.deepEqual(rerun.json.map((x: any) => x.result), ["duplicate", "duplicate"]);
 });
 
+test("migrated renders land in a run with a stored migration manifest naming their sources", { skip }, async () => {
+  const a = file("mig/teaser-1.mp4", randomBytes(30_000));
+  const b = file("mig/teaser-2.mp4", randomBytes(30_000));
+  const plan = join(repo, "plan-runs.json");
+  writeFileSync(plan, JSON.stringify([
+    { file: a, to: "runs/2026-10-01-migration-teasers/teaser-1.mp4", sources: ["local:~/Desktop/teaser-1.mp4"] },
+    { file: b, to: "runs/2026-10-01-migration-teasers/teaser-2.mp4", sources: ["drive:1XyZ"], note: "pre-launch teaser" },
+  ]));
+  const r = await cli(["migrate", "--plan", plan]);
+  assert.equal(r.code, EXIT.ok, r.text);
+  assert.equal((await versions("nisatsu/runs/2026-10-01-migration-teasers/manifest.json")).length, 1);
+  const m = JSON.parse(readFileSync(join(repo, ".media", "runs", "2026-10-01-migration-teasers", "manifest.json"), "utf8"));
+  assert.equal(m.kind, "migration");
+  assert.equal(m.status.upload, "verified");
+  assert.equal(m.status.approval, "draft");
+  assert.equal(m.sources["teaser-2.mp4"].ref, "drive:1XyZ");
+  assert.ok(m.outputs.every((o: any) => o.stored.verifiedBy.includes("s3-checksum")));
+});
+
 test("presigned links are refused while the bucket is locked down", { skip }, async () => {
   const r = await cli(["preview", "captures/roundtrip/logo.png", "--url"]);
   assert.equal(r.code, EXIT.denied, r.text);

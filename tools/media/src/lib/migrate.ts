@@ -5,9 +5,12 @@ import type { LoadedConfig } from "./config.ts";
 import { EXIT, MediaError } from "./errors.ts";
 import { digestFile } from "./hash.ts";
 import { assertWritable, parseKey, projectKey } from "./keys.ts";
+import { newManifest, saveManifest, type RunOutput } from "./manifest.ts";
+import { mimeFor, probe } from "./media-info.ts";
+import { storeManifest } from "./runs.ts";
 import type { Storage } from "./s3.ts";
 import { readJson, writeJsonAtomic } from "./state.ts";
-import { type ObjectRef, upload } from "./transfer.ts";
+import { type ObjectRef, upload, verifyStored } from "./transfer.ts";
 
 /** One entry of a migration plan: bytes on disk, where they came from, and
  *  their destination in the filing policy. */
@@ -88,6 +91,49 @@ export async function migrate(cfg: LoadedConfig, storage: Storage, plan: PlanEnt
       if (err instanceof MediaError && (err.code === EXIT.credentials || err.code === EXIT.denied)) break;
     }
   }
-  if (!dryRun) writeJsonAtomic(ledgerPath(cfg), ledger);
+  if (!dryRun) {
+    writeJsonAtomic(ledgerPath(cfg), ledger);
+    await writeMigrationRuns(cfg, storage, plan, results, ledger);
+  }
   return results;
+}
+
+/** Existing renders are drafts, so a plan files them under runs/<run-id>/.
+ *  Each such run gets a `migration` manifest (outputs, verified references,
+ *  and where every file came from), stored beside the outputs once all of
+ *  that run's entries are in. */
+async function writeMigrationRuns(cfg: LoadedConfig, storage: Storage, plan: PlanEntry[], results: MigrateOutcome[], ledger: Ledger) {
+  const groups = new Map<string, number[]>();
+  plan.forEach((e, i) => {
+    const parsed = parseKey(cfg.storage.prefix, projectKey(cfg.storage.prefix, e.to));
+    if (parsed.area === "runs" && parsed.runId) groups.set(parsed.runId, [...(groups.get(parsed.runId) ?? []), i]);
+  });
+  for (const [runId, idx] of groups) {
+    if (idx.some((i) => results[i]?.result === "failed" || !results[i])) continue;
+    const m = newManifest(cfg, { runId, environment: storage.envName, kind: "migration", command: { tool: "migrate", argv: [] } });
+    m.status.processing = "not-applicable";
+    m.sources = {};
+    for (const i of idx) {
+      const e = plan[i];
+      const file = expandPath(cfg.root, e.file);
+      const d = await digestFile(file);
+      const entry = ledger.entries.find((x) => x.sha256 === d.sha256)!;
+      const name = e.to.split("/").pop()!;
+      const out: RunOutput = {
+        name,
+        localPath: file,
+        mimeType: mimeFor(file),
+        size: d.size,
+        sha256: d.sha256,
+        media: probe(file),
+        upload: "verified",
+        stored: await verifyStored(storage, file, entry.stored.key, entry.stored.versionId, d),
+      };
+      m.outputs.push(out);
+      m.sources[name] = { kind: "migration", ref: entry.sources.join(", "), ...(e.note ? { note: e.note } : {}) };
+    }
+    saveManifest(cfg, m);
+    await storeManifest(cfg, storage, m);
+    saveManifest(cfg, m);
+  }
 }
