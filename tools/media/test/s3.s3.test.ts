@@ -200,6 +200,7 @@ test("a missing input fails before rendering, naming the fix, and starts no run"
   assert.equal(r.code, EXIT.missingInput, r.text);
   assert.match(r.json.error, /does not exist/);
   assert.match(r.json.error, /do not substitute/);
+  assert.match(r.json.error, /media push <file> --to captures\/test\/lost\.mp4/, "the hint must be a runnable command");
   const after = existsSync(join(repo, ".media", "runs")) ? readdirSync(join(repo, ".media", "runs")).length : 0;
   assert.equal(after, before);
 });

@@ -120,7 +120,7 @@ export async function resolveInputs(
         problems.push(
           `${rel} (${input.id}): s3://${cfg.storage.bucket}/${key}${input.versionId ? `@${input.versionId}` : ""} does not exist. ` +
             (input.note ? `${input.note} ` : "") +
-            `Upload the genuine original with \`media push ${input.ref} --from <file>\`; do not substitute other media.`,
+            `Upload the genuine original with \`media push <file> --to ${input.ref}\`; do not substitute other media.`,
         );
       }
       continue;
