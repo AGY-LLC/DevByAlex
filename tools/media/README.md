@@ -81,8 +81,13 @@ or CLI is needed. Use credentials that may create S3 buckets and IAM roles.
    ```bash
    aws cloudformation deploy --stack-name agy-media-bucket \
      --template-file tools/media/infra/media-bucket.json \
-     --region us-east-1
+     --capabilities CAPABILITY_NAMED_IAM --region us-east-1 \
+     --parameter-overrides CreateExternalWorkerUser=true
    ```
+
+   `CreateExternalWorkerUser=true` adds `agy-media-external-worker`, one IAM
+   user for every project's workers outside AWS; leave it `false` if no such
+   worker exists yet.
 
    Bucket names are global: if `agyllc-marketing` is taken, the stack fails
    cleanly; pass `--parameter-overrides BucketName=<another>` and put that name
@@ -95,8 +100,7 @@ or CLI is needed. Use credentials that may create S3 buckets and IAM roles.
      --template-file tools/media/infra/project-roles.json \
      --capabilities CAPABILITY_NAMED_IAM --region us-east-1 \
      --parameter-overrides ProjectPrefix=nisatsu \
-       OperatorPrincipals=<your SSO role ARN, or arn:aws:iam::<account>:root> \
-       CreateExternalWorkerUser=true
+       OperatorPrincipals=<your SSO role ARN, or arn:aws:iam::<account>:root>
    ```
 
    Outputs: `OperatorRoleArn`, `WorkerRoleArn`, `ReaderRoleArn`.
@@ -106,12 +110,16 @@ or CLI is needed. Use credentials that may create S3 buckets and IAM roles.
    key is stored anywhere.
 
 4. **Workers outside AWS** (only if `CreateExternalWorkerUser=true`): create
-   one access key for the `agy-media-<project>-external-worker` user (IAM
-   console, Security credentials) and store it with Passworder as
-   `AGY_MEDIA_AWS_ACCESS_KEY_ID` / `AGY_MEDIA_AWS_SECRET_ACCESS_KEY`. That
-   user can do nothing except assume the worker role, which can only read the
-   project and write its run folders. Workers inside AWS use their own role
-   instead (grant it `sts:AssumeRole` on the worker role).
+   one access key for `agy-media-external-worker` (IAM console, Security
+   credentials) and store it ONCE as a shared Passworder secret
+   (`"scope": "shared"` rows named `AGY_MEDIA_AWS_ACCESS_KEY_ID` /
+   `AGY_MEDIA_AWS_SECRET_ACCESS_KEY`, kept in the global `alexos/shared`
+   item). That user can do nothing except assume a project's worker role, and
+   each worker role only reads its project and writes its run folders. The
+   trade-off of one key: if it leaks, every project's media is readable and
+   every project's run folders writable, but nothing can be deleted or
+   overwritten and originals and exports are out of reach. Workers inside AWS
+   use their own role instead (grant it `sts:AssumeRole` on the worker role).
 
 5. Fill the app's `media.config.json`: `storage.accountId`, and each
    environment's `roleArn`. Then `media doctor` must pass, including

@@ -31,8 +31,9 @@ alias media="node tools/media/bin/media.mjs"
 media doctor          # must pass before any upload
 ```
 
-Credentials: an AWS SSO profile on a person's machine; a worker role or the
-Passworder-held `AGY_MEDIA_AWS_*` key on workers. Never paste keys anywhere.
+Credentials: an AWS SSO profile on a person's machine; a worker role, or the
+shared Passworder secret `AGY_MEDIA_AWS_*` (one key for every project), on
+workers. Never paste keys anywhere.
 AWS provisioning: `tools/media/README.md`.
 
 ## Everyday

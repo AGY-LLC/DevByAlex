@@ -14,15 +14,6 @@
     "OperatorPrincipals": {
       "Type": "CommaDelimitedList",
       "Description": "ARNs allowed to assume the operator role: your IAM Identity Center (SSO) role ARN, or this account's root ARN to delegate to IAM policies."
-    },
-    "CreateExternalWorkerUser": {
-      "Type": "String",
-      "Default": "false",
-      "AllowedValues": [
-        "false",
-        "true"
-      ],
-      "Description": "true creates an IAM user whose ONLY permission is to assume the worker role, for workers outside AWS (e.g. Codex Cloud). Create its access key by hand and store it with Passworder."
     }
   },
   "Rules": {
@@ -43,16 +34,6 @@
           },
           "AssertDescription": "ProjectPrefix cannot be 'shared'."
         }
-      ]
-    }
-  },
-  "Conditions": {
-    "WorkerUser": {
-      "Fn::Equals": [
-        {
-          "Ref": "CreateExternalWorkerUser"
-        },
-        "true"
       ]
     }
   },
@@ -219,7 +200,7 @@
         "RoleName": {
           "Fn::Sub": "agy-media-${ProjectPrefix}-worker"
         },
-        "Description": "Read the project and shared/; write run folders only. Trusts this account: only identities granted sts:AssumeRole on this role (the external worker user, a cloud worker's role) can use it.",
+        "Description": "Read the project and shared/; write run folders only. Trusts this account: only identities granted sts:AssumeRole on this role (the account-wide agy-media-external-worker user from media-bucket.json, a cloud worker's role) can use it.",
         "MaxSessionDuration": 43200,
         "AssumeRolePolicyDocument": {
           "Version": "2012-10-17",
@@ -480,50 +461,6 @@
           }
         ]
       }
-    },
-    "ExternalWorkerUser": {
-      "Type": "AWS::IAM::User",
-      "Condition": "WorkerUser",
-      "Properties": {
-        "UserName": {
-          "Fn::Sub": "agy-media-${ProjectPrefix}-external-worker"
-        },
-        "Policies": [
-          {
-            "PolicyName": "assume-worker-only",
-            "PolicyDocument": {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Action": [
-                    "sts:AssumeRole",
-                    "sts:TagSession"
-                  ],
-                  "Resource": {
-                    "Fn::GetAtt": [
-                      "WorkerRole",
-                      "Arn"
-                    ]
-                  }
-                }
-              ]
-            }
-          }
-        ],
-        "Tags": [
-          {
-            "Key": "project",
-            "Value": {
-              "Ref": "ProjectPrefix"
-            }
-          },
-          {
-            "Key": "managed-by",
-            "Value": "devbyalex-media"
-          }
-        ]
-      }
     }
   },
   "Outputs": {
@@ -549,12 +486,6 @@
           "ReaderRole",
           "Arn"
         ]
-      }
-    },
-    "ExternalWorkerUserName": {
-      "Condition": "WorkerUser",
-      "Value": {
-        "Ref": "ExternalWorkerUser"
       }
     }
   }

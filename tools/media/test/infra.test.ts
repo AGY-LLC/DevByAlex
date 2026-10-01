@@ -12,7 +12,7 @@ import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const load = (f: string) => JSON.parse(readFileSync(join(here, "..", "infra", f), "utf8"));
-const PARAMS: Record<string, string> = { ProjectPrefix: "nisatsu", BucketName: "agyllc-marketing", "AWS::Partition": "aws", "AWS::AccountId": "123456789012", AllowPresignedUrls: "false", AbortIncompleteMultipartDays: "7", NoncurrentVersionDays: "365", NewerNoncurrentVersionsKept: "5" };
+const PARAMS: Record<string, string> = { ProjectPrefix: "nisatsu", BucketName: "agyllc-marketing", "AWS::Partition": "aws", "AWS::AccountId": "123456789012", AllowPresignedUrls: "false", CreateExternalWorkerUser: "true", AbortIncompleteMultipartDays: "7", NoncurrentVersionDays: "365", NewerNoncurrentVersionsKept: "5" };
 
 function resolve(node: any, params = PARAMS): any {
   if (Array.isArray(node)) return node.map((n) => resolve(n, params)).filter((n) => n !== NO_VALUE);
@@ -138,9 +138,16 @@ test("nobody can delete objects, versions, or loosen the bucket", () => {
   }
 });
 
-test("the external worker user can only assume the worker role", () => {
-  const user = resolve(load("project-roles.json")).Resources.ExternalWorkerUser;
+test("the account-wide external worker user can only assume project worker roles", () => {
+  const user = bucketTpl.Resources.ExternalWorkerUser;
+  assert.equal(user.Condition, "WorkerUser");
   const stmts = user.Properties.Policies[0].PolicyDocument.Statement;
   assert.deepEqual(stmts.flatMap((s: any) => list(s.Action)).sort(), ["sts:AssumeRole", "sts:TagSession"]);
-  assert.equal(user.Condition, "WorkerUser");
+  const assume = (role: string) => decide(stmts, { action: "sts:AssumeRole", resource: `arn:aws:iam::123456789012:role/${role}` }) === "allow";
+  assert.equal(assume("agy-media-nisatsu-worker"), true);
+  assert.equal(assume("agy-media-otherapp-worker"), true);
+  assert.equal(assume("agy-media-nisatsu-operator"), false);
+  assert.equal(assume("agy-media-nisatsu-reader"), false);
+  assert.equal(assume("some-other-role"), false);
+  assert.ok(!("ExternalWorkerUser" in roles), "no per-project worker user");
 });

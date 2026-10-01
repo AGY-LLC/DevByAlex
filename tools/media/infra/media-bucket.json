@@ -34,6 +34,15 @@
         "true"
       ],
       "Description": "false = deny every query-string (presigned) request, so no shareable link can exist."
+    },
+    "CreateExternalWorkerUser": {
+      "Type": "String",
+      "Default": "false",
+      "AllowedValues": [
+        "false",
+        "true"
+      ],
+      "Description": "true creates agy-media-external-worker: an IAM user whose ONLY permission is to assume any project's agy-media-<project>-worker role, for workers outside AWS (e.g. Codex Cloud). One key for every project; store it once as a shared Passworder secret."
     }
   },
   "Conditions": {
@@ -43,6 +52,14 @@
           "Ref": "AllowPresignedUrls"
         },
         "false"
+      ]
+    },
+    "WorkerUser": {
+      "Fn::Equals": [
+        {
+          "Ref": "CreateExternalWorkerUser"
+        },
+        "true"
       ]
     }
   },
@@ -194,6 +211,43 @@
           ]
         }
       }
+    },
+    "ExternalWorkerUser": {
+      "Type": "AWS::IAM::User",
+      "Condition": "WorkerUser",
+      "Properties": {
+        "UserName": "agy-media-external-worker",
+        "Policies": [
+          {
+            "PolicyName": "assume-project-worker-roles-only",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "sts:AssumeRole",
+                    "sts:TagSession"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/agy-media-*-worker"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "owner",
+            "Value": "agy-llc"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "devbyalex-media"
+          }
+        ]
+      }
     }
   },
   "Outputs": {
@@ -216,6 +270,12 @@
     "Region": {
       "Value": {
         "Ref": "AWS::Region"
+      }
+    },
+    "ExternalWorkerUserName": {
+      "Condition": "WorkerUser",
+      "Value": {
+        "Ref": "ExternalWorkerUser"
       }
     }
   }
