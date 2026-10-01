@@ -1,0 +1,27 @@
+{
+  "schema": "devbyalex.media-config/1",
+  "project": "<project>",
+  "repository": "<owner>/<repo>",
+  "storage": {
+    "bucket": "agyllc-marketing",
+    "region": "us-east-1",
+    "accountId": null,
+    "prefix": "<project>",
+    "allowPresignedUrls": false
+  },
+  "defaultEnvironment": "local",
+  "environments": {
+    "local": { "access": "operator", "profile": "agy-media", "roleArn": null },
+    "worker": {
+      "access": "worker",
+      "roleArn": null,
+      "accessKeyIdEnv": "AGY_MEDIA_AWS_ACCESS_KEY_ID",
+      "secretAccessKeyEnv": "AGY_MEDIA_AWS_SECRET_ACCESS_KEY"
+    },
+    "aws-worker": { "access": "worker", "roleArn": null }
+  },
+  "stateDir": ".media",
+  "transfer": { "multipartThresholdMiB": 64, "partSizeMiB": 16, "concurrency": 4, "maxAttempts": 6 },
+  "dependencies": [],
+  "ledger": "media/ledger.json"
+}

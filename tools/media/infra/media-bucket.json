@@ -1,0 +1,222 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "AGY shared marketing media bucket (one per account). Private, versioned, encrypted, TLS-only; presigned links denied unless AllowPresignedUrls=true. Projects get access through project-roles.json stacks, never through this template.",
+  "Parameters": {
+    "BucketName": {
+      "Type": "String",
+      "Default": "agyllc-marketing",
+      "Description": "Globally unique; CloudFormation fails cleanly if it is taken."
+    },
+    "AbortIncompleteMultipartDays": {
+      "Type": "Number",
+      "Default": 7,
+      "MinValue": 1,
+      "Description": "Interrupted uploads can resume for this long; then their parts are deleted."
+    },
+    "NoncurrentVersionDays": {
+      "Type": "Number",
+      "Default": 365,
+      "MinValue": 30,
+      "Description": "Superseded or deleted versions are kept this long..."
+    },
+    "NewerNoncurrentVersionsKept": {
+      "Type": "Number",
+      "Default": 5,
+      "MinValue": 1,
+      "MaxValue": 100,
+      "Description": "...except the newest N superseded versions of each key, which are kept indefinitely."
+    },
+    "AllowPresignedUrls": {
+      "Type": "String",
+      "Default": "false",
+      "AllowedValues": [
+        "false",
+        "true"
+      ],
+      "Description": "false = deny every query-string (presigned) request, so no shareable link can exist."
+    }
+  },
+  "Conditions": {
+    "DenyPresigned": {
+      "Fn::Equals": [
+        {
+          "Ref": "AllowPresignedUrls"
+        },
+        "false"
+      ]
+    }
+  },
+  "Resources": {
+    "MediaBucket": {
+      "Type": "AWS::S3::Bucket",
+      "DeletionPolicy": "Retain",
+      "UpdateReplacePolicy": "Retain",
+      "Properties": {
+        "BucketName": {
+          "Ref": "BucketName"
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "OwnershipControls": {
+          "Rules": [
+            {
+              "ObjectOwnership": "BucketOwnerEnforced"
+            }
+          ]
+        },
+        "VersioningConfiguration": {
+          "Status": "Enabled"
+        },
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              },
+              "BucketKeyEnabled": true
+            }
+          ]
+        },
+        "LifecycleConfiguration": {
+          "Rules": [
+            {
+              "Id": "abort-incomplete-multipart",
+              "Status": "Enabled",
+              "Prefix": "",
+              "AbortIncompleteMultipartUpload": {
+                "DaysAfterInitiation": {
+                  "Ref": "AbortIncompleteMultipartDays"
+                }
+              }
+            },
+            {
+              "Id": "superseded-versions",
+              "Status": "Enabled",
+              "Prefix": "",
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": {
+                  "Ref": "NoncurrentVersionDays"
+                },
+                "NewerNoncurrentVersions": {
+                  "Ref": "NewerNoncurrentVersionsKept"
+                }
+              }
+            },
+            {
+              "Id": "orphaned-delete-markers",
+              "Status": "Enabled",
+              "Prefix": "",
+              "ExpiredObjectDeleteMarker": true
+            }
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "owner",
+            "Value": "agy-llc"
+          },
+          {
+            "Key": "purpose",
+            "Value": "marketing-media"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "devbyalex-media"
+          }
+        ]
+      }
+    },
+    "MediaBucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "MediaBucket"
+        },
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "DenyInsecureTransport",
+              "Effect": "Deny",
+              "Principal": "*",
+              "Action": "s3:*",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "MediaBucket",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Sub": "${MediaBucket.Arn}/*"
+                }
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              }
+            },
+            {
+              "Fn::If": [
+                "DenyPresigned",
+                {
+                  "Sid": "DenyPresignedUrls",
+                  "Effect": "Deny",
+                  "Principal": "*",
+                  "Action": "s3:*",
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "MediaBucket",
+                        "Arn"
+                      ]
+                    },
+                    {
+                      "Fn::Sub": "${MediaBucket.Arn}/*"
+                    }
+                  ],
+                  "Condition": {
+                    "StringEquals": {
+                      "s3:authType": "REST-QUERY-STRING"
+                    }
+                  }
+                },
+                {
+                  "Ref": "AWS::NoValue"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "BucketName": {
+      "Value": {
+        "Ref": "MediaBucket"
+      }
+    },
+    "BucketArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "MediaBucket",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "agy-media-bucket-arn"
+      }
+    },
+    "Region": {
+      "Value": {
+        "Ref": "AWS::Region"
+      }
+    }
+  }
+}

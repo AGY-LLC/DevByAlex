@@ -29,6 +29,8 @@
 #   ./install.sh <app-path> --update    # re-sync the managed files of an already-onboarded app to this repo's version
 #   ./install.sh --update-all           # --update every app in the onboarded-apps registry (no <app-path>)
 #   ./install.sh <app-path> --uninstall # remove only the DevByAlex-managed files from <app>/.claude
+#   ./install.sh <app-path> --with-media  # also vendor the media toolkit into <app>/tools/media
+#                                         # (opt-in; remembered in the stamp, so --update keeps it in sync)
 #
 # UPDATES (skills stay local/committed; updates are a manual command). Each
 # install stamps <app>/.claude/.devbyalex.json (this repo's version + git ref)
@@ -44,8 +46,10 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 TARGET=""
 MODE="copy"
+WITH_MEDIA="no"
 for arg in "$@"; do
   case "$arg" in
+    --with-media) WITH_MEDIA="yes" ;;
     --symlink)    MODE="link" ;;
     --copy)       MODE="copy" ;;
     --update)     MODE="update" ;;
@@ -109,6 +113,10 @@ if [ "$MODE" = "update" ]; then
     echo "cannot --update $TARGET: no .claude/ (not onboarded). Run a normal install first." >&2; exit 1
   fi
   PREV_REF="$(sed -n 's/.*"source_ref"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$STAMP" 2>/dev/null | head -1)"
+  # Tools are opt-in: an app that took one keeps getting it on --update.
+  case " $(sed -n 's/.*"managed_tools"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$STAMP" 2>/dev/null | head -1) " in
+    *" media "*) WITH_MEDIA="yes" ;;
+  esac
   IS_UPDATE="yes"; MODE="copy"
 fi
 
@@ -196,6 +204,28 @@ place_one "$REPO_DIR/templates" "$CLAUDE_DIR"
 # here and <app>/.claude/knowledge in a provisioned app.
 place_one "$REPO_DIR/knowledge" "$CLAUDE_DIR"
 
+# tools/media is the opt-in media toolkit (S3 filing, verified transfers, run
+# manifests, render integration). It is a runnable package, so it lands in the
+# app's tree at tools/media rather than under .claude/. Only the toolkit's own
+# files are managed: the app's media.config.json, dependency files and ledger
+# live outside tools/media and are never touched, and its node_modules survive
+# an update.
+MANAGED_TOOLS=""
+MEDIA_DST="$TARGET_DIR/tools/media"
+if [ "$MODE" = "uninstall" ]; then
+  if grep -q '"managed_tools"[^}]*media' "$STAMP" 2>/dev/null && [ -d "$MEDIA_DST" ]; then
+    rm -rf "$MEDIA_DST"; echo "removed $MEDIA_DST"
+  fi
+elif [ "$WITH_MEDIA" = "yes" ]; then
+  mkdir -p "$TARGET_DIR/tools"
+  if [ "$MODE" = "link" ]; then
+    rm -rf "$MEDIA_DST"; ln -s "$REPO_DIR/tools/media" "$MEDIA_DST"; echo "linked  tools/media -> $REPO_DIR/tools/media"
+  else
+    rsync -a --delete --exclude node_modules "$REPO_DIR/tools/media/" "$MEDIA_DST/"; echo "copied  tools/media (run: pnpm -C tools/media install)"
+  fi
+  MANAGED_TOOLS="media"
+fi
+
 # Stamp the app with this repo's version/ref and record it in the registry, so
 # `--update` can report old -> new and `--update-all` can find every onboarded
 # app. Uninstall removes the stamp; the registry is left (a stale path is just
@@ -212,7 +242,8 @@ else
   "source_path": "$REPO_DIR",
   "updated_at": "$now",
   "managed_skills": "$(echo $CUR_SKILLS)",
-  "managed_agents": "$(echo $CUR_AGENTS)"
+  "managed_agents": "$(echo $CUR_AGENTS)",
+  "managed_tools": "$MANAGED_TOOLS"
 }
 EOF
   # Record this app in the registry (dedup; create if absent).

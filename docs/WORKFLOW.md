@@ -143,6 +143,13 @@ The supporting skills (`scout`, `fix-errors`, `issue-checker`,
   (rejection preflight) and `launch-store-assets` (metadata/age-rating compliance).
 - `create-demo`: Maestro-driven capture of the real running app; `launch-store-assets`
   reuses it to pull real screenshots for the store listing.
+- `media`: files every image, video and audio asset through the opt-in media
+  toolkit (`tools/media`, installed with `./install.sh <app> --with-media`):
+  originals to `captures/`, renders into verified run folders with provenance
+  manifests, approved deliverables promoted to `exports/` only against a
+  recorded approval. One private S3 bucket shared by every AGY project, a
+  prefix per project plus `shared/`. `create-demo` and `launch-store-assets`
+  output is filed through it when the app has the toolkit.
 - `uiux-audit`: the native UI-alignment pass, it audits built screens against
   `docs/DESIGN.md` and applies `AUD-xxx` tweaks inline, judging against
   DevByAlex's own `knowledge/design/` + `knowledge/stack/uiux.md` +
