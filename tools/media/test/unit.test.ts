@@ -7,6 +7,7 @@ import { test } from "node:test";
 import { validateConfig } from "../src/lib/config.ts";
 import { EXIT, MediaError } from "../src/lib/errors.ts";
 import { compositeSha256, digestFile, partDigests } from "../src/lib/hash.ts";
+import { expandPath } from "../src/lib/migrate.ts";
 import { assertRunId, assertWritable, newRunId, parseKey, projectKey, runKey } from "../src/lib/keys.ts";
 
 const code = (fn: () => unknown) => {
@@ -101,4 +102,9 @@ test("hashing: streamed sha256 matches a one-shot hash; composite matches S3's d
   assert.equal(parts.length, 3);
   const manual = [body.subarray(0, 5 << 20), body.subarray(5 << 20, 10 << 20), body.subarray(10 << 20)].map((b) => createHash("sha256").update(b).digest());
   assert.equal(compositeSha256(parts), `${createHash("sha256").update(Buffer.concat(manual)).digest("base64")}-3`);
+});
+
+test("migration plan paths: ~/ expands to the home directory, others resolve in the repo", () => {
+  assert.equal(expandPath("/repo", "~/Desktop/a.mp4"), join(process.env.HOME ?? "", "Desktop/a.mp4"));
+  assert.equal(expandPath("/repo", "video/out/a.mp4"), "/repo/video/out/a.mp4");
 });

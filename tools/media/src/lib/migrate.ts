@@ -1,4 +1,5 @@
 import { existsSync } from "node:fs";
+import { homedir } from "node:os";
 import { join, resolve } from "node:path";
 import type { LoadedConfig } from "./config.ts";
 import { EXIT, MediaError } from "./errors.ts";
@@ -42,6 +43,10 @@ export function readLedger(cfg: LoadedConfig): Ledger {
   return readJson<Ledger>(ledgerPath(cfg)) ?? { schema: "devbyalex.media-ledger/1", entries: [] };
 }
 
+/** Plan paths may start with `~/` so a plan names files the same way on any
+ *  account; anything else resolves against the repo root. */
+export const expandPath = (root: string, p: string) => (p === "~" || p.startsWith("~/") ? join(homedir(), p.slice(1)) : resolve(root, p));
+
 export interface MigrateOutcome {
   file: string;
   to: string;
@@ -57,7 +62,7 @@ export async function migrate(cfg: LoadedConfig, storage: Storage, plan: PlanEnt
   const ledger = readLedger(cfg);
   const results: MigrateOutcome[] = [];
   for (const e of plan) {
-    const file = resolve(cfg.root, e.file);
+    const file = expandPath(cfg.root, e.file);
     try {
       if (!existsSync(file)) throw new MediaError(EXIT.missingInput, `No such file: ${e.file}`);
       const key = projectKey(cfg.storage.prefix, e.to);
