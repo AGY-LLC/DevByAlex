@@ -103,7 +103,7 @@ export async function resolveInputs(
     const key = projectKey(cfg.storage.prefix, input.ref!);
     if (offline || !storage) {
       if (!existsSync(local)) {
-        if (required) problems.push(`${rel} (${input.id}) is missing and storage is not available; fetch s3://${cfg.storage.bucket}/${key} with \`media pull ${target}\`.`);
+        if (required) problems.push(`${rel} (${input.id}) is missing and storage is not available; fetch s3://${cfg.storage.bucket}/${key} with \`media pull ${target}\`.${input.note ? ` Note: ${input.note}` : ""}`);
         continue;
       }
       const d = await digestFile(local);
