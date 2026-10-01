@@ -39,7 +39,13 @@ before acting. This skill is the generic procedure behind it.
    successful render with `upload: pending` is not stored; say so.
 6. **No links.** The bucket is private and refuses presigned URLs by default.
    Use `media preview <ref>` for a verified local copy.
-7. **Credentials never appear** in output, manifests, docs or chat. If they
+7. **File new media in the session that makes it.** Every render, re-render,
+   recording, screenshot set, music or sound take and generated asset worth
+   keeping is filed before the session ends (renders via `media render`, or
+   `media import` + `push --run`; originals and takes via `media push`), then
+   `media runs --pending` must be empty for the session's runs. Filing later
+   is how media ends up on one disk and lost.
+8. **Credentials never appear** in output, manifests, docs or chat. If they
    are missing, `doctor` names the variable or profile; ask the human to
    provision it (Passworder for keys), do not request values in chat.
 

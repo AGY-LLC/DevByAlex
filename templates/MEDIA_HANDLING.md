@@ -50,6 +50,16 @@ media promote <run> <output> --campaign <c> --name <file-v1.ext>
 Report render, upload and approval status separately. A render with
 `upload: pending` is not stored.
 
+## Every time new media is made
+
+File it in the same session, before it ends: renders with `media render`
+(or `media import <files> --label <slug>` + `media push --run <id>` for files
+made elsewhere), raw recordings and screenshots to `captures/`, takes and
+editable material to `campaigns/<c>/working/`, AGY-wide assets to `shared/`.
+Then `media runs --pending` must be empty for the session's runs. Re-filing
+the same bytes is a verified no-op, so when unsure, file again; a new version
+gets a new key or run, never the old one.
+
 ## Targets
 
 | Target | Inputs | State |
