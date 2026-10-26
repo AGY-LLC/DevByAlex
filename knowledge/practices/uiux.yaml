@@ -2,11 +2,11 @@ _meta:
   id: practice-uiux
   type: doc
   title: "Best practice, UI/UX"
-  summary: Build and review UI with intent, avoid the generic-AI-UI tells, pin the design-system dimensions, and hold the WCAG 2.2 AA accessibility floor. Outputs a docs/DESIGN.md like nisatsu's.
+  summary: Build and review UI with intent, choose useful contextual patterns, pin the design-system dimensions, and hold the WCAG 2.2 AA accessibility floor. Outputs a docs/DESIGN.md like nisatsu's.
   sensitivity: internal
   read_scope: brain.read
   tags: [practice, engineering, uiux, design, accessibility, feature, review]
-  updated: 2026-05-30
+  updated: 2026-10-25
 
 practice:
   id: uiux
@@ -35,6 +35,7 @@ practice:
     - Ground the pick in reality, /plan-design must pull 3–5 real-world references of the confirmed style via web search (live products/sites, gallery entries) and record them in docs/DESIGN.md; tokens are derived from those references, not from memory of the style name.
     - Validate design changes by looking, not by declaring, screenshot the running screens (key states, light + dark) and have the separate design-critic agent vet them against docs/DESIGN.md, the wireframes, and the universal rules; a design change is done only on a clean critic pass.
     - Pin the design-system dimensions as intent-based tokens, color (+ contrast), typography ramp, spacing scale, radius/shadow, motion (with a reduced-motion policy), iconography, and every interactive state (default/hover/focus/active/disabled/loading/error/empty).
+    - Select relevant interaction and perceived-performance patterns from the contextual catalog in knowledge/stack/uiux.md; record the affected surface, benefit, fallback/recovery and verification in docs/DESIGN.md Component patterns. These are contextual recommendations, not universal requirements or an instruction to retrofit every app; skip reasons are useful only for plausible alternatives with a meaningful tradeoff. Reuse the existing stack and auth/data contracts, without dependency mandates or changes to approval/security gates.
     - Hold the accessibility floor (WCAG 2.2 AA) on every customer-facing surface, focus visible, keyboard operable, contrast, hit targets, semantic structure, labels + error association, alternatives, reduced motion, zoom/reflow.
     - Don't skip empty, loading, and error states, they're where AI UI is laziest.
     - For a new project, run the /plan-design interview and write docs/DESIGN.md before building; audit against it with /uiux-audit.
@@ -62,6 +63,7 @@ practice:
     - Survives 200% zoom; no two-dimensional scroll at 400% except tables/maps (1.4.4, 1.4.10).
     - Color isn't the only signal (icon + text alongside).
     - Every component's states are visually distinct; empty/loading/error states exist.
+    - For selected catalog patterns, verify their promised behavior and fallback using appropriate interaction, accessibility, performance or data tests. Include failure/rollback, duplicate/reordered requests, stale-data and identity boundaries where applicable; screenshots alone cannot prove them. Missing an optional pattern is not itself a finding.
     - No generic-AI-UI tells (gradient-hero default, sparkle icons, templated corporate copy, unmodified component library).
 
   references:
@@ -109,6 +111,9 @@ practice:
 
       ## Component patterns
       <States: default/hover/focus/active/disabled/loading/error/empty.>
+      <For relevant catalog choices in knowledge/stack/uiux.md, record surface,
+      benefit, fallback/recovery and verification. Note meaningful skip tradeoffs;
+      do not require all 20 patterns or a row for every unused option.>
 
       ## Accessibility floor
       <The WCAG 2.2 AA checklist, committed for this project.>

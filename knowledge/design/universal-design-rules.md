@@ -3,7 +3,7 @@ id: design-universal-rules
 title: "Universal UI/UX Design Rules"
 summary: "Timeless design principles that apply regardless of visual style, branding, platform, or theme: 31 rules plus the pre-ship Universal Checklist. Every design decision, sweep, and critique in the workflow holds these; the named style (PRIMARY × SECONDARY) colors them, never overrides them."
 tags: ["design", "uiux", "principles", "checklist", "universal"]
-updated: 2026-07-11
+updated: 2026-10-25
 ---
 # Universal UI/UX Design Rules
 
@@ -275,6 +275,11 @@ Techniques:
 - instant feedback
 
 People judge quality by responsiveness.
+
+Choose techniques contextually from the [UI/UX baseline's design-pattern
+catalog](../stack/uiux.md#contextual-design-pattern-catalog), including their
+failure, recovery and freshness limits. These techniques support this rule;
+they are not mandatory additions to every screen.
 
 ## 22. Minimize Friction
 
