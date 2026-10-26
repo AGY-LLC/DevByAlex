@@ -86,6 +86,14 @@ mobile is in scope), visual quality, interaction states, forms (if present),
 navigation, and performance. Each clear failure is an `AUD-` item. Deep
 accessibility work is `/accessibility-critique`'s job; this is the inline pass.
 
+For relevant patterns selected in `docs/DESIGN.md`, use the baseline's
+[contextual catalog](../../knowledge/stack/uiux.md#contextual-design-pattern-catalog)
+to verify the promised behavior and fallback. Check interaction, recovery,
+freshness/identity boundaries and measured performance where applicable;
+screenshots alone cannot establish rollback, cache isolation or idempotency.
+Missing an optional technique is not an `AUD-` finding, and this sweep does not
+authorize adding dependencies or changing auth/data/approval contracts.
+
 ### Step 5: AI-UI tells pass
 Apply the **generic-AI-UI no-fly list** in
 [`../../knowledge/stack/uiux.md`](../../knowledge/stack/uiux.md) to every

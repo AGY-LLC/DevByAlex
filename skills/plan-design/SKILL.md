@@ -139,6 +139,15 @@ observed in the pulled references (never invented from memory):
 - **Component rules**: buttons, inputs, cards, modals, nav: shape, state, density.
 - **Empty / loading / error** state policy.
 
+Select relevant options from the baseline's [contextual design-pattern
+catalog](../../knowledge/stack/uiux.md#contextual-design-pattern-catalog).
+In `docs/DESIGN.md` Component patterns, record the surface, user benefit,
+fallback/recovery and verification for each chosen pattern. Note skip reasons
+only for plausible alternatives with material tradeoffs; this is not an
+all-20 checklist or a new approval gate. Prefer existing platform/stack support
+and preserve auth, data and destructive-action contracts. `/uiux-audit` and
+`/accessibility-critique` review the chosen behavior through the existing path.
+
 **Mine an existing repo (integrated apps).** If UI code already exists, inventory
 the recurring colors, type, spacing, radii, shadows, and motion durations and
 snap them to the scale; mark any token inferred (not explicit in code) as

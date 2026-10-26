@@ -26,6 +26,15 @@ execute without re-auditing.
 
 This skill does **not** modify code. It audits and reports.
 
+Read the [UI/UX baseline](../../knowledge/stack/uiux.md) and its
+[contextual design-pattern catalog](../../knowledge/stack/uiux.md#contextual-design-pattern-catalog)
+alongside `docs/DESIGN.md` when present. For chosen or implemented patterns,
+check status announcements, focus/keyboard access, reduced-motion fallbacks,
+gesture alternatives, target bounds and autofill/paste as relevant. Missing an
+optional pattern alone is not a finding. Keep source-inferred behavior distinct
+from verified device/assistive-technology behavior, and report coverage gaps
+through the existing audit format.
+
 ## Mindset
 
 - **Default inaccessible.** Every control, route, and state is assumed to
