@@ -3,66 +3,74 @@ id: stack-uiux
 title: "UI/UX Baseline"
 summary: "The cross-project design baseline: generic-AI-UI tells, design-system dimensions, the accessibility floor, and a contextual catalog of interaction and perceived-performance patterns selected through docs/DESIGN.md."
 tags: ["stack", "uiux", "design", "accessibility", "frontend"]
-updated: 2026-10-25
+updated: 2026-11-05
 ---
 # UI/UX Baseline
 
 How I want UI built and reviewed. Per-project specifics live in that project's `docs/DESIGN.md` (see nisatsu for the canonical example); this is the cross-project baseline the `/plan-design`, `/uiux-audit`, and `/accessibility-critique` skills operate against.
 
-Underneath everything here sit the **[universal design rules](../design/universal-design-rules.md)**: 31 style-independent principles (clarity above everything, one primary action, obvious hierarchy, immediate feedback, error prevention + recovery, show-don't-tell, …) plus the pre-ship Universal Checklist the `design-critic` agent runs over every screenshot. Every screen holds them regardless of the style chosen below.
+Underneath sit the **[universal design rules](../design/universal-design-rules.md)** and the Universal Checklist the `design-critic` agent runs over every screenshot; every screen holds them whatever the style.
 
 ## Anti-patterns: the generic-AI-UI no-fly list
 
 The biggest tell of AI-generated UI is defaulting to one "modern SaaS" aesthetic with no intent behind it. Do not introduce:
 
-- **Visual**: the default gradient hero, bento grid, and sparkle/star iconography; a palette that's safe-and-trendy but untied to the brand; uniform, featureless hierarchy; lazy whitespace (too much) or cramped layouts (too little); stock illustrations.
+- **Visual**: the default gradient hero, bento grid, and sparkle/star iconography; a small eyebrow or kicker label (tiny, often uppercase text) above a large heading; a palette that's safe-and-trendy but untied to the brand; uniform, featureless hierarchy; lazy whitespace (too much) or cramped layouts (too little); stock illustrations.
 - **Structural**: over-reliance on an unmodified component library; everything the same elevation; no considered focal point.
 - **Copy**, corporate/templated phrasing ("streamline your workflow", "unlock your potential"); neutral-to-inert voice with no personality; **internal-decision leakage**, spec/ADR rationale or design reasoning typed into the product, a descriptive paragraph under every section header. Show, don't tell: layout, hierarchy, and labels explain a section; if it needs a preamble, restructure it.
 - **Motion**: animation that feels automated rather than designed; motion on everything; center `transform-origin` on popovers; `transition: all`; durations over ~300ms on interruptible UI.
 
-Pick a direction with intent (premium editorial, calm, playful consumer, technical devtool, etc.) and commit to it. Name it as **PRIMARY × SECONDARY**, structure (one of the 12 product directions) × feeling (one of the 50 named styles), using the catalog, pairing map, and decision procedure in [`../design/design-styles.md`](../design/design-styles.md). `/plan-design` makes and records that pick in `docs/DESIGN.md` before wireframes; the primary always wins conflicts and governs usability.
+Pick a direction with intent and commit to it: `/plan-design` names it as PRIMARY × SECONDARY from [`../design/design-styles.md`](../design/design-styles.md) and records it in `docs/DESIGN.md` before wireframes.
 
 ## Design-system dimensions
 
 Every project pins these down in its `docs/DESIGN.md`, as intent-based tokens (Token | Value | Intent):
 
-- **Color**: palette + semantic mapping (brand, status, interactive states); light and dark; every pairing must hit contrast (below).
-- **Typography**: ramp (display → body → caption), weights, line-height, letter-spacing; supports text scaling / Dynamic Type.
-- **Spacing**: one base unit and a consistent scale across margin/padding/gap; responsive breakpoints.
-- **Radius / shadow / depth**: intent-based radius vocabulary and a shadow scale (subtle → prominent) with explicit elevation rules.
-- **Motion**: duration + easing tokens, a `prefers-reduced-motion` policy, and handling for parallax/auto-scroll.
+- **Color**: fixed slots per hue (Radix): 1 app background, 2 cards/sidebars, 3 component fill, 6–8 borders (8 = focus ring), 9 solid accent, 10 its hover, 11 muted text, 12 main text, both passing contrast on 2. Dark mode: base `#121212`, never pure black; elevation by a white overlay (2% cards up to 12% bars), not shadows; text white at 87 / 60 / 38% (main / secondary / disabled); accents lighter and desaturated, neon only for small highlights.
+- **Typography**: ramp (display → body → caption) with weights and tracking; body 16–18px on phones, 18–22px on desktop (dashboards low, editorial high); line height 1.5 body, 1.0–1.2 headings; text columns 45–75 characters (about 65ch, never past 80), never justified. Fluid headings: `clamp()` over 320–1440px viewports, rem bounds, max ≤ 2.5× min (survives 200% zoom); dashboard, table and form text stays fixed, and no element mixes `clamp()` with breakpoint steps or vw-only sizes. All caps get 5–12% extra tracking.
+- **Spacing**: default scale 2, 4, 8, 12, 16, 24, 32, 40, 48, 64, 80, 96, 160px; small steps inside components, large steps set density. Smaller screens step down the scale (16px at 1440px → 8px at 768px), never scale values.
+- **Radius / shadow / depth**: intent-based radius vocabulary and a shadow scale (subtle → prominent) with explicit elevation rules. Store one radius; nested radius = outer minus padding (16px card, 8px padding → 8px inside).
+- **Motion**: durations 70ms (buttons, toggles), 110 (fades), 150 (small moves), 240 (toasts, expands), 400 (page-level), 700 (background dims only); exits shorter than entrances, never linear. Easing (standard / enter / exit): productive `cubic-bezier(0.2, 0, 0.38, 0.9)` / `(0, 0, 0.38, 0.9)` / `(0.2, 0, 1, 0.9)` for everyday UI; expressive `(0.4, 0.14, 0.3, 1)` / `(0, 0, 0.3, 1)` / `(0.4, 0.14, 1, 1)` only for rare big moments, never on dense tables, settings or terminal themes. Card → detail grows its container, parent ↔ child slides on one axis, unrelated views cross-fade, overlays only fade. One motion language per theme: no springs or second duration scale beside these.
 - **Iconography**: one icon set + style, size vocabulary, fill-vs-stroke semantics, decorative vs meaningful.
-- **Interactive states**: every component defines default, hover, focus (visible!), active, disabled, loading, error, and empty.
+- **Interactive states**: every component defines default, hover, focus (visible!), active, disabled, loading, error, and empty. Hover / focus / press / drag = one overlay in the content color at 8 / 10 / 10 / 16%, not a darken per component. Each theme picks one press signal (that overlay, a 0.97 scale over 150ms, or a brutalist shadow collapse), never two. Hover lives in `@media (hover: hover)` with the same effect on `:focus-visible`; nothing key hides behind hover, and `(pointer: coarse)` gets bigger controls (never guess touch from width).
 
 ## Accessibility floor (WCAG 2.2 AA)
 
 Non-negotiable on every customer-facing surface:
 
-- [ ] **Focus visible**: every focusable control has a visible, high-contrast focus ring (2.4.7).
+- [ ] **Focus visible**: a solid outline ≥ 2px on `:focus-visible` (inset about 3px), ≥ 3:1 against the unfocused look; over photos, gradients or glass, a 2px light outline inside a 4px dark ring. Never a shadow alone (forced colors drop it), never faded in (2.4.7, 2.4.13).
+- [ ] **Focus not obscured**: sticky bars never hide the focused element: `scroll-padding-top` = bar height + 20px, kept in sync on resize; on phones banners sit in the page flow and a tall sticky header never pairs with a fixed bottom bar (2.4.11).
 - [ ] **Keyboard**: every action reachable and operable by keyboard; Tab order matches visual order; no traps (2.1.1, 2.4.3).
 - [ ] **Contrast**: body text ≥ 4.5:1, large text ≥ 3:1, non-text controls/state ≥ 3:1, against the *actual* rendered background (1.4.3, 1.4.11).
-- [ ] **Hit targets**: pointer targets ≥ 24px (mobile best practice 44px) (2.5.8).
+- [ ] **Hit targets**: pointer targets ≥ 24 × 24px, or a 24px circle centered on a smaller one touches no other target; links inside a sentence are exempt; main actions aim for 44 × 44px (2.5.8).
 - [ ] **Semantic structure**: one H1, no skipped heading levels, landmarks, real list markup, DOM order = visual order (1.3.1).
-- [ ] **Labels & errors**: every input has a visible persistent label; errors programmatically associated (`aria-describedby`, `aria-invalid`) and tell the user how to fix (2.4.6, 3.3.1, 3.3.3).
+- [ ] **Labels & errors**: every input has a visible persistent label; errors follow the form-error default below (2.4.6, 3.3.1, 3.3.3).
 - [ ] **Alternatives**: meaningful images have alt text; decorative images hidden; video captioned (1.1.1, 1.2.2).
-- [ ] **Reduced motion**: animations honor `prefers-reduced-motion`; no flashing > 3×/sec; large transitions have an opacity-only fallback (2.3.3).
-- [ ] **Zoom & reflow**: survives 200% zoom with no loss; no two-dimensional scroll at 400% except tables/maps (1.4.4, 1.4.10).
+- [ ] **Reduced motion**: under `prefers-reduced-motion`, motion that shows a status change or place becomes a dissolve, fade or color shift; parallax, animated blur, zooms, spins and shimmer stop; autoplaying carousels pause. Never a blanket no-animation reset that hides status changes. No flashing > 3×/sec (2.3.3).
+- [ ] **Zoom & reflow**: survives 200% zoom with no loss; no two-dimensional scroll at 400% except tables/maps; text survives 1.5 line height, 0.12em letter and 0.16em word spacing, so no fixed-height text boxes (1.4.4, 1.4.10, 1.4.12).
 - [ ] **Color not the only signal**: pair color with icon + text (e.g. red error gets an icon and a message).
-- [ ] **Modal focus management**: focus moves in, Tab is trapped, focus returns on close, `aria-modal`/inert applied.
+- [ ] **Modal focus management**: focus moves to the first field (or the primary button), Tab is trapped, Esc and the close icon close it, focus returns on close, `aria-modal`/inert applied.
+
+## Component defaults
+
+Exact rules every theme inherits; a theme may restyle these, never loosen them.
+
+- **Modals** only for required input, an urgent alert about the current task, or a confirmation; anything else is a toast, inline notice or page. Only the body scrolls; ≤ 3 buttons, primary rightmost, verb labels (never "OK"), danger style for destructive ones. A modal holding a form never closes on an outside click; never stack modals or use them for tasks people repeat often.
+- **Toasts** hold at most two lines with a close button, auto-hide after 5s (10s max), and pause on hover and focus. What a toast says also lives elsewhere in the app. A toast with an action (Undo, a link) never auto-hides; anything the user must act on is an inline notice that stays; field errors never go in toasts.
+- **Switches** only for an on/off setting that applies at once and can be undone; anything needing Save, a confirmation or more than two options uses checkboxes or radios, and switches never sit in a form with Submit. The label names what turns on (no questions), state text is only "On" or "Off", and a switch shows a loader while it waits on the server.
+- **Form errors**: check a field after its value changed and focus left it (new passwords may check live). The message sits beside the field with an icon, linked by `aria-describedby` and `aria-invalid`; on submit, a summary of links to each bad field goes under the page title and takes focus. Never clear fields or disable Submit up front; word messages as the fix ("Enter date as MM/DD/YYYY"), never "invalid" or "please". No tooltip-only, icon-only or modal errors, and error text never shakes.
 
 ## Contextual design-pattern catalog
 
-These 20 patterns from Alex's reference list are recommendations to consider
-when they help a real task. They extend Rules 8, 13–14, 17, 20–21, 23 and 25;
-they are not 20 new universal requirements or a retrofit checklist for every
-app. Prefer the platform's existing components and the project's established
-stack. A named technique does not require a dependency or a custom framework.
+These 20 patterns are recommendations for when they help a real task,
+extending Rules 8, 13–14, 17, 20–21, 23 and 25; not universal requirements or a
+retrofit checklist. Prefer the platform's components and the project's stack; a
+named technique never requires a new dependency.
 
 **Selection and review path:** [`/plan-design`](../../skills/plan-design/SKILL.md)
-records relevant choices in `docs/DESIGN.md` under Component patterns: affected
-surface, user benefit, fallback/recovery, and how to verify. Record a skip reason
-only for plausible alternatives where the tradeoff matters; do not fill out
-20 rows per project. [`/uiux-audit`](../../skills/uiux-audit/SKILL.md) reviews the
+records relevant choices in `docs/DESIGN.md` under Component patterns (surface,
+benefit, fallback, how to verify), with skip reasons only where the tradeoff
+matters. [`/uiux-audit`](../../skills/uiux-audit/SKILL.md) reviews the
 chosen behavior and observable gaps; [`/accessibility-critique`](../../skills/accessibility-critique/SKILL.md)
 checks keyboard, focus, assistive technology, motion and input access. Missing
 an optional pattern alone is not a finding. Actual UI changes still need the
@@ -80,13 +88,18 @@ payments and data contracts for sensitive operations.
 
 - **Useful when:** a content region has a predictable shape and noticeable
   first-load latency; reserve its final geometry to reduce layout shift.
-- **Build and verify:** follow Rule 21; replace the skeleton with real, empty
-  or error content. Test slow, failed and instant loads, text scaling and layout
-  shift; avoid flashes on fast responses and endless loading after failure.
+- **Build and verify:** loading ladder: show nothing extra under 1s; wait 300ms
+  before any loader and keep it at least 400ms once shown; a skeleton for page
+  loads and region filters, an inline loop for one busy control, a progress bar
+  (or step count) from 3s, and past 10s let people keep working. Skeletons draw
+  only layout and data text, never buttons, inputs, toggles, toasts, menus or
+  modals; images load as blank space of the same size. Shimmer is an 833ms pass
+  plus a 667ms pause. Replace the skeleton with real, empty or error content and
+  test slow, failed and instant loads, text scaling and layout shift.
 - **Caveats / skip:** hide decorative skeletons from assistive technology and
-  announce a concise loading/result status when needed. Disable shimmer for
-  reduced motion. Use simple progress for unknown shapes or long operations;
-  keep existing content during refresh rather than replacing it with skeletons.
+  announce a concise loading/result status when needed. Never a spinner and a
+  skeleton on one area, or a percent bar when the total is unknown; keep
+  existing content during refresh rather than replacing it with skeletons.
 
 ### 2. Optimistic updates
 
@@ -362,6 +375,6 @@ payments and data contracts for sensitive operations.
 
 ## Setting direction (the `/plan-design` interview)
 
-Before designing, answer: what the product does (one sentence); who the user is and their sophistication; the primary goal on the main screen; the business goal; emotional tone (2–3 adjectives); interaction density (low consumer / medium productivity / high dashboard); platform priority; existing brand assets; references loved and hated; and explicit anti-patterns to avoid.
+The questions live in [`../practices/uiux.yaml`](../practices/uiux.yaml) (`inputs_to_gather_first` and `questions`).
 
 *See also: [Tailwind](./tailwind.md) | `/plan-design`, `/uiux-audit`, `/accessibility-critique` skills*

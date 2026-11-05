@@ -3,7 +3,7 @@ id: design-styles
 title: "Design style vocabulary: 50 named styles + the structure×feeling model"
 summary: "The named-style vocabulary the /plan-design step picks from. A visual style is chosen as PRIMARY (structure/layout, one of 12 product directions) × SECONDARY (feeling/decoration, one of these 50 named styles). This file is the catalog, the structure→feeling mapping, and the decision procedure that turns an app's category + audience + tone into a recommended pairing. Feeds docs/DESIGN.md."
 tags: ["design", "uiux", "style", "branding", "plan"]
-updated: 2026-07-06
+updated: 2026-11-05
 ---
 # Design style vocabulary
 
@@ -12,11 +12,9 @@ updated: 2026-07-06
 > The output of a style pick lives in the app's **`docs/DESIGN.md`** ("Style
 > choice"), and the decision is recorded like any other (ADR / DECISIONS).
 
-A named style is a **shortcut for the visual world** a product should belong to.
-It answers *"what world does this design belong to?"*: then the design-system
-dimensions in [`../stack/uiux.md`](../stack/uiux.md) (color, type, spacing,
-radius, shadow, motion, iconography, states) answer *"what colors, layout,
-typography, textures, and mood does it have?"* A strong brief names **both**.
+A named style says what visual world a product belongs to; the design-system
+dimensions in [`../stack/uiux.md`](../stack/uiux.md) then set its exact tokens.
+A strong brief names **both**.
 
 ## The one rule: structure × feeling
 
@@ -89,7 +87,7 @@ Format, **Name**, essence · *mood* · best-for · `prompt keyword`.
 30. **Neo Frutiger Aero**: revived Y2K aqua UI · *clean, playful, nostalgic* · playful fintech, web3, app-store visuals · `aqua gradients, glossy bubbles, rounded UI, friendly icons`
 
 ### Bold / raw / different
-31. **Neo-Brutalism**: raw-but-usable brutalism · *confident, bold, functional* · agency sites, digital mags, Gen-Z brand · `bold color blocks, oversized type, strong borders, asymmetry`
+31. **Neo-Brutalism**: raw-but-usable brutalism · *confident, bold, functional* · agency sites, digital mags, Gen-Z brand · `bold color blocks, oversized type, strong borders, asymmetry` · press slides into the hard shadow (no overlay or scale press too); dark mode uses outlines, not shadows; no glass
 32. **Brutalism**: stark unpolished raw · *disruptive, honest, raw* · artist portfolios, counterculture · `monospace, grayscale blocks, harsh edges, default buttons`
 33. **Graffiti**: street spray-paint · *urban, defiant, expressive* · streetwear, festivals, youth · `spray texture, dripping letters, concrete, neon`
 34. **Cybercore**: dense hacker sci-fi · *chaotic, dystopian, intense* · cybersecurity, gaming, sci-fi · `neon, glitch, code texture, green/black, dense UI`
@@ -100,7 +98,7 @@ Format, **Name**, essence · *mood* · best-for · `prompt keyword`.
 ### Clean / structured / functional
 38. **Bauhaus**: form-follows-function geometry · *rational, structured, modern* · brand systems, posters, product · `grid, sans, red/blue/yellow, circle/triangle/square`
 39. **Bento UI**: modular compartment blocks · *organized, clean, friendly* · dashboards, SaaS landing, portfolios · `rounded modular cards, subtle shadow, icons+labels`
-40. **Glassmorphism**: frosted-glass depth · *sleek, elegant, futuristic* · apps, OS-style UI, AI interfaces · `frosted panels, blur, semi-transparent, neon tint`
+40. **Glassmorphism**: frosted-glass depth · *sleek, elegant, futuristic* · apps, OS-style UI, AI interfaces · `frosted panels, blur, semi-transparent, neon tint` · floating layers only (nav, sidebars, popovers, menus), never cards, tables, long text or page backgrounds; frosted under text (clear only over media, 35% dark scrim if bright); text passes contrast on every backdrop; faint 1px edge; solid under reduced transparency or more contrast; no glass on glass or moving backgrounds
 41. **Utilitarian**: function-first, no decoration · *practical, efficient, direct* · manuals, utility apps, dev tools · `strict grid, monospace/industrial, muted, clear hierarchy`
 42. **Modular Typography**: letters from grid systems · *structural, experimental* · posters, brand systems, editorial headers · `geometric letterforms, type grids, modular blocks`
 
@@ -144,7 +142,7 @@ pairing that fights the primary's job.
 | **finance dashboard** | Bento UI | Bauhaus, Utilitarian, Glassmorphism | Graffiti, Vaporwave, Coquette |
 | **luxury commerce** | Luxury Typography | Art Deco, Filigree, Neoclassical, Baroque | Brutalism, Pixel Art, Kitsch |
 | **wellness minimal** | Japandi | Wabi Sabi, Ethereal, Aurora | Cybercore, Memphis, Graffiti |
-| **brutalist experimental** | Neo-Brutalism | Brutalism, Graffiti, Modular Typography | Coquette, Ethereal, Shabby Chic |
+| **brutalist experimental** | Neo-Brutalism | Brutalism, Graffiti, Modular Typography | Coquette, Ethereal, Shabby Chic, Glassmorphism |
 | **mobile-native utility** | Bento UI | Utilitarian, Neo Frutiger Aero | Baroque, Surrealism, Tenebrism |
 | **creative studio** | Mixed Media | Neo-Brutalism, Surrealism, Memphis, Graffiti | Utilitarian, Nautical, Finance-clean |
 
@@ -166,14 +164,8 @@ pairing that fights the primary's job.
    temperament, a type register (serif/sans/mono/display), a texture/motif set,
    a radius/shadow feel, and a motion personality. `/plan-design` expands these
    into the full token system and component rules in `docs/DESIGN.md`.
-6. **Keep usability independent of aesthetic.** The accessibility floor
-   ([`../stack/uiux.md`](../stack/uiux.md), WCAG 2.2 AA) and the forms/interaction
-   rules hold regardless of style: a dramatic style never lowers contrast,
-   shrinks hit targets, or removes focus rings.
+6. **Keep usability independent of aesthetic.** The accessibility floor and
+   component defaults in [`../stack/uiux.md`](../stack/uiux.md) hold in every style.
 
-## Anti-patterns this vocabulary exists to prevent
-
-Naming a style is the antidote to the **#1 generic-AI-UI tell**: defaulting to
-one intentionless "modern SaaS" look (gradient hero + bento grid + sparkle icons
-+ templated copy). See the full no-fly list in [`../stack/uiux.md`](../stack/uiux.md).
-Picking `[PRIMARY] × [SECONDARY]` with a recorded reason **is** the intent.
+Naming a style with a recorded reason is the antidote to the generic-AI-UI
+look; the full no-fly list is in [`../stack/uiux.md`](../stack/uiux.md).
