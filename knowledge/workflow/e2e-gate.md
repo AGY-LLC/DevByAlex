@@ -23,8 +23,8 @@ E2E flow runs green against the running app**: Playwright for web surfaces,
 Maestro for iOS/Android. A flow that exists on both surfaces is proven on
 both.
 
-- **Who writes it:** the `test-author`, in step 1a of the feature loop, from
-  the feature card's acceptance criteria, spec-blind like every other test it
+- **Who writes it:** the `test-author`, for gate 1 of the feature loop, from
+  the feature card's Done when list, spec-blind like every other test it
   writes. The golden path is part of the feature's test contract, not an
   afterthought.
 - **What it covers:** the golden path through the feature's flow, plus the
@@ -38,7 +38,7 @@ both.
   `.maestro/acceptance/<id>-<slug>.yaml`. Target the base URL / API URL via
   env vars (never hardcoded), so the identical flow runs against the local
   dev build during the feature loop and against staging at launch.
-- **When it runs:** feature-loop step 4, against the running app: the same
+- **When it runs:** feature-loop gate 4, against the running app: the same
   boot the screenshot + design-critic gate already requires, so the E2E run
   and the capture share one session. Green is required before the feature
   row flips to done; the run is recorded in the STATUS features table's

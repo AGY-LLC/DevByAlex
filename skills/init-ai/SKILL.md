@@ -152,7 +152,7 @@ in the summary (offer to merge, don't overwrite silently):
 | `TWEAKS.md` | `docs/TWEAKS.md` | the cosmetic light lane (`/dev-tweak`) drained after bugs |
 | `TODO.md` | `docs/TODO.md` | the planned-change lane (`/dev-todo`) drained after tweaks; most post-stable iteration lives here |
 | `FEEDBACK.md` | `docs/FEEDBACK.md` | the post-launch inbox `/live-triage` converts into bug/tweak/todo entries |
-| `DECISIONS.md` | `docs/DECISIONS.md` | the local decision log stages append to (replaces the old brain write-back) |
+| `DECISIONS.md` | `docs/DECISIONS.md` | the project goal, hard rules and decision log every stage reads |
 | `AI_WORKFLOW.md` | `docs/AI_WORKFLOW.md` | per-repo pointer to the process |
 | `SPEC.md` | `docs/SPEC.md` | stub if blank; keep if it exists |
 | `IMPLEMENTATION_GUIDE.md` | `docs/IMPLEMENTATION_GUIDE.md` | stub if blank |

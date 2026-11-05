@@ -19,10 +19,12 @@ and anything the card left ambiguous that you had to assume.
 
 ## What to do
 
-1. Read the feature card, the guide section, the wireframe screens for this
-   feature, and the surrounding code so you match existing patterns.
-2. Implement the feature to satisfy the card's **behaviors and acceptance
-   criteria**: build the real thing, not a stub.
+1. Read the feature card, its ADR, the hard rules in `docs/DECISIONS.md`, the
+   guide section, the wireframe screens and the surrounding code.
+2. Build the real thing so every **Done when** line holds (older cards:
+   behaviors and acceptance criteria). The card sets the goal and the ADR the
+   decisions; data shape, routes and components are yours to choose. Record
+   any material choice you make in the ADR with its why.
 3. Follow Alex's conventions: TypeScript `strict`, no casual `any` (use
    `unknown` + narrow, infer types from Zod), Zod validation at every boundary
    (inputs, forms, webhooks, env), thin route handlers with business logic in

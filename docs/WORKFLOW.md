@@ -9,6 +9,17 @@ production. Staging itself deploys automatically via Pipeline by Alex on push to
 `init-ai` brings any repo (blank or existing) under the workflow; `docs/STATUS.md`
 is the live control file every skill reads and writes.
 
+## How guidance is written
+
+Skills, cards and templates state **end goals and decisions**, not scripts.
+Each skill gives its goal, a **Done when** list of observable outcomes, the
+decisions that bound the work (each with its why), and its hard rules. How to
+reach the goal inside those bounds is the agent's call. In an app, the project
+goal and the hard rules live at the top of `docs/DECISIONS.md`; per-feature
+decisions live in `docs/adr/`. A step-by-step instruction earns its place only
+where the order itself is the decision (a gate, an irreversible action). When
+editing this plugin, convert step lists to this shape rather than adding steps.
+
 ## Map of the stages
 
 ```
@@ -261,7 +272,7 @@ stamped `docs/adr/README.md`):
   recorded supersession is architecture drift: the record wins until a human
   retires it.
 - **Seeded at plan time, kept current by the loop.** `/plan-guide` writes each
-  feature's ADR with its card; `feature-loop` step 4 records what the build
+  feature's ADR with its card; `feature-loop` gate 4 records what the build
   decided. On an existing repo, `/plan-guide adr-backfill` must write an ADR for
   **every** feature: consolidating any scattered feature docs into them (or
   removing the irrelevant ones): before feature work proceeds.
@@ -339,7 +350,7 @@ app "done."
   agents never self-exempt an app.
 - **A feature's golden path is proven end to end before done**
   (`knowledge/workflow/e2e-gate.md`). Any feature with a user-facing flow runs
-  its golden-path flow green against the running app in feature-loop step 4:
+  its golden-path flow green against the running app in feature-loop gate 4:
   Playwright for web, Maestro for native, written spec-blind by `test-author`
   and stored where the launch acceptance suite lives, so that suite accretes
   per feature and `/launch-acceptance` reconciles instead of authoring at the

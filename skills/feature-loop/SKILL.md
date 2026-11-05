@@ -1,244 +1,118 @@
 ---
 name: feature-loop
-description: "The DevByAlex per-feature build engine. Takes one feature from its card to done through independent parallel test authoring and implementation, feature validation, whole-codebase integration validation, and final alignment to the guide and wireframes. Customer-facing UI requires running screenshots plus design-critic approval; user-facing flows require green Playwright/Maestro E2E. Every feature also preserves docs/features/authentication.md and reruns its stable auth regression suite before STATUS can move to done. On any finding, capture it with a failing test, fix, and repeat the relevant gate. Use to build one specific feature or as the unit dev-goal dispatches per feature."
+description: "The DevByAlex per-feature build engine. Use to build one specific feature from docs/features/, or as the unit dev-goal dispatches per feature. Takes the card's goal to done: tests written blind from the card, the code built, feature and whole-codebase validation clean, the auth regression suite green, UI vetted by design-critic from screenshots, golden-path E2E green, ADR and STATUS current, pushed to the working branch. How it gets there is its call within the decisions and hard rules."
 argument-hint: "[feature id or slug from docs/features/: e.g. 03-billing]"
 license: MIT
 metadata:
   author: alex-yoza
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # feature-loop: Build one feature to done
 
-The orchestrator for a single feature. It owns that feature end-to-end and
-deploys specialist subagents for each step. This is the "agent assigned to the
-feature that deploys the subagent steps" from the workflow spec; `dev-goal`
-dispatches it once per feature.
+## Goal
 
-> **Gate + order check.** Requires approval gates met, **Scaffold** and
-> **Authentication** done. If not, route to the right earlier stage.
+The feature's card goal is true in the running app, proven by tests that were
+written from the card rather than the code, and the codebase is no worse for
+it. `dev-goal` dispatches this once per feature; it can also run by hand.
 
-## How it runs
+Before starting: the approval gates are met and **Scaffold** and
+**Authentication** are done (else route to the earlier stage), and the feature
+has an ADR (else route to `/plan-guide adr-backfill`). Read the card, its ADR,
+`docs/DECISIONS.md`, `docs/features/authentication.md`, `docs/adr/auth.md`, the
+guide section, the feature's wireframes and `docs/STATUS.md`. Mark the row
+in-progress.
 
-Each step runs in its **own subagent** via the Agent tool, so the orchestrator's
-context stays clean and the roles stay independent. Brief every subagent to pick
-up cold: give it the target repo, paste the relevant feature card and acceptance
-criteria, and tell it exactly what to return. The named agent types live in this
-plugin's `agents/` dir; if they aren't registered, fall back to
-`subagent_type: general-purpose` and tell the subagent which skill to invoke.
+## Done when
 
-**Route models by reasoning difficulty, not importance**
-(`../../knowledge/workflow/model-routing.md`): each agent carries its tier in
-frontmatter, fast discovery feeds capable implementation, and the strong tier
-is spent on verification, not on re-searching the repo. Every brief that
-follows discovery includes the evidence package and the line "don't repeat
-completed searches unless the evidence appears incorrect or insufficient."
+All four gates hold on the same commit:
 
-The agents, their tiers, and the skills they lean on:
+1. **Built and tested.** Every **Done when** line on the card has a passing
+   test, and the feature works. For a feature with a user-facing flow, that
+   includes its golden-path E2E flow (`../../knowledge/workflow/e2e-gate.md`).
+2. **Feature validation clean.** `feature-validator` finds nothing open in the
+   feature's code.
+3. **Integration validation clean.** `integration-validator` passes on the
+   whole suite and repo, including the stable auth regression command(s)
+   recorded in `docs/features/authentication.md`. Every new protected
+   operation has allow and deny tests for its roles or policies, and a
+   changed auth flow or boundary re-runs its auth E2E flow.
+4. **Aligned and recorded.**
+   - The feature matches the guide and wireframes; intentional drift is
+     flagged for Alex, never silent.
+   - Customer-facing UI passed `design-critic` on screenshots of its key
+     states (`docs/visual-qa/<run-date>/`); otherwise `design vetting: n/a`.
+   - The golden path ran green against the running app; otherwise `e2e: n/a`.
+   - `docs/wireframes/README.md` lists the feature's screens and states, with
+     unbuilt states marked **(missing)**.
+   - The ADR describes the feature as built: material choices made during the
+     build are new `D`- or `O`-entries with their why.
+   - No orphans are left (`docs/WORKFLOW.md`, "Nothing is left orphaned").
+   - STATUS shows the row done with a log line, reconciled per
+     `../../knowledge/workflow/doc-maintenance.md`, and `## Next action` names
+     the next feature (or `/launch-observability`).
+   - The work is committed and pushed to the working branch with the suite
+     green.
 
-| Step | Agent | Tier | Leans on |
+A finding at any gate is a loop-back, not a stop: capture it as a failing
+test, fix it (`fix-errors` drives the queue to zero), and re-run that gate. An
+integration fix that reopens the feature re-runs gate 2.
+
+## Decisions (and why)
+
+- **Tests and code are written by separate agents, in parallel, blind to each
+  other** (`test-author` from the card, `feature-implementer` from the card,
+  ADR and guide). Why: tests written after or alongside visible code end up
+  certifying whatever the code does, not what the card asked for.
+- **Validators judge, they don't fix.** `feature-validator` and
+  `integration-validator` report; this loop turns findings into tests and
+  fixes. Why: a reviewer that fixes its own findings grades its own work.
+- **The builder never vets its own screenshots;** `design-critic` does. Why:
+  same reason, applied to UI.
+- **Existing code is hardened, not rebuilt.** When the feature already roughly
+  works (common after `init-ai`), skip the implementer: backfill blind tests
+  from the card and fix what they expose. Why: rewriting working code risks
+  regressions for no user-visible gain.
+- **Discovery runs once, on the fast tier.** When the feature touches existing
+  code, `explorer` builds an evidence package first and every later brief
+  carries it with "don't repeat completed searches unless the evidence appears
+  incorrect or insufficient" (`../../knowledge/workflow/model-routing.md`).
+  Why: the strong tier should verify, not re-search.
+- **One working branch, no per-feature branch or PR.** Use the branch you're
+  on or the one `dev-goal` passed. Why: the green suite is the gate, and a PR
+  per feature piles up unreviewed.
+- **Penpot is not touched while building** (`../../knowledge/workflow/penpot-wireframes.md`).
+  Why: Penpot writes need a live browser tab, which would stop unattended runs
+  finishing UI work; the text screen inventory carries current state instead.
+
+## Hard rules
+
+The hard rules in `docs/DECISIONS.md` apply. For this loop in particular:
+
+- Never weaken, skip or delete a test to make code pass, auth tests above all.
+- Never contradict an `active` ADR entry without Alex's explicit confirmation;
+  record the supersession before building on it. A validator finding that only
+  re-litigates a documented decision is rejected with a citation. Security,
+  legal and accessibility findings, and any ADR-challenge with concrete
+  evidence of harm, go to Alex.
+- Never mark done with red tests, open findings, an unvetted UI, or a stale
+  ADR.
+- Never delete substantial orphaned work silently: ask Alex keep-or-remove in
+  STATUS blockers and record a "keep".
+- Don't expand scope past the card; new ideas are proposals.
+
+## Who does what
+
+Each role runs as its own subagent (Agent tool) so contexts stay clean and the
+roles stay independent. Brief each one cold: the repo, the card, the ADR, and
+what to return. If the named agent types aren't registered, use
+`general-purpose` and name the skill to invoke.
+
+| Role | Agent | Tier | Leans on |
 |------|-------|------|----------|
-| 0 discovery (existing code) | `explorer` | 1 fast | Grep/Glob/Bash: evidence package |
-| 1a tests | `test-author` | 2 capable | `test-suite-developer` |
-| 1b code | `feature-implementer` | 2 capable | the feature card + guide + evidence package |
-| 2 feature validation | `feature-validator` | 3 strong | `scout` (feature-scoped), `issue-checker`, `fix-errors` |
-| 3 integration validation | `integration-validator` | 3 strong | `scout` (whole repo), `fix-errors` |
-| 4 design vetting (UI features) | `design-critic` | 2 capable | screenshots vs. `docs/DESIGN.md` + wireframes + universal rules |
-| 4 E2E gate (user-facing flows) | `explorer` (runs the flows) | 1 fast | `../../knowledge/workflow/e2e-gate.md` |
-
-## Workflow
-
-### Step 0: Load the feature
-Read the feature card `docs/features/<id>.md`, its acceptance criteria, **its
-ADR `docs/adr/<id>.md`**, plus the cross-cutting auth contract at
-`docs/features/authentication.md` and `docs/adr/auth.md` for every feature.
-Also read `docs/adr/scaffold.md` when the feature touches that seam, the relevant
-section of
-`docs/IMPLEMENTATION_GUIDE.md`, the wireframe screens for this feature, and
-`docs/STATUS.md`. Build on the **working branch**: the branch you're on, or
-the one `dev-goal` passed down; **don't create a per-feature branch.**
-Mark the feature row **in-progress** in STATUS.
-
-**The ADR is a gate on the work itself.** If the feature has no ADR, stop and
-route to `/plan-guide adr-backfill`: never build a feature with no decision
-record. If anything this loop is about to do would contradict an `active`
-decision or omission in the ADR, **stop and surface the conflict** (cite the
-entry, explain what the change needs and why): breaking an architecture
-decision is Alex's call, never the loop's. On explicit confirmation, record it
-before building: mark the old entry superseded, add the new decision with its
-why. Pass the ADR to every subagent brief alongside the card so none of them
-re-litigates a settled decision.
-
-First decide whether this feature is **greenfield** (no real implementation yet)
-or **existing** (already built: common when `init-ai` integrated an existing
-repo and marked the row impl-present-but-unvalidated). The check: does the
-feature's code already exist and roughly work?
-
-**Discovery is Tier 1 work.** When the feature touches existing code (the
-existing path, or a greenfield feature that integrates with built seams),
-spawn the **`explorer`** agent first to collect the evidence package: the
-relevant files, existing patterns, current tests, and observed behavior, with
-exact references. Paste that package into every subsequent brief so the
-implementer and validators start from findings instead of re-running
-repository-wide discovery. A purely greenfield feature on an empty seam can
-skip this: there is nothing to discover.
-
-**Greenfield: build:** Spawn **two separate subagents in the same message** so
-they run concurrently and independently:
-- **`test-author`**: writes tests purely from the feature card's acceptance
-  criteria and behaviors (success paths, failure paths, edge cases, security
-  boundaries). It must **not** read or shape itself around the implementation,
-  tests come from the spec, not the code. If the feature has a user-facing
-  flow, this includes its **golden-path E2E flow**
-  (`../../knowledge/workflow/e2e-gate.md`): a Playwright spec under the repo's
-  `e2e/acceptance/` dir for web, a Maestro flow under `.maestro/acceptance/`
-  for native, env-parameterized so the same flow later runs against staging.
-- **`feature-implementer`**: implements the feature from the card + guide,
-  following the project's conventions and Alex's stack rules (TS strict, Zod
-  boundaries, thin handlers + services, ORM with reviewed migrations).
-
-Keeping them apart is the point: it stops tests from being written just to pass
-whatever code happens to exist. Wait for both, then run the suite once to see
-where they meet (some failures are expected and good: they reveal real gaps).
-
-**Existing: harden, don't rebuild:** the code is already there, so do **not**
-re-implement it. Spawn `test-author` only, to **backfill tests from the card's
-acceptance criteria** (still blind to the implementation, so the tests certify
-the spec's behavior rather than rubber-stamping the current code), including
-the golden-path E2E flow if the acceptance suite doesn't cover this feature
-yet. Run them: any
-failure is a real gap between what's built and what the spec requires: those
-feed the validation loop below as fixes, not rewrites. Reserve a fresh
-implementation for a screen/behavior the card requires that genuinely doesn't
-exist yet.
-
-### Step 2: Feature validation
-Spawn the **`feature-validator`** agent. It:
-- runs the tests, and
-- inspects the **feature-related code** for quality, security, logic issues,
-  and best practices (via `scout` scoped to this feature, plus `issue-checker`
-  on any claim).
-
-If it passes, go to Step 3. **If it fails**, for each confirmed issue: write a
-test that captures the issue, then fix the code to resolve it (use `fix-errors`
-to drive the queue to zero), and re-run Step 2. Loop until clean.
-
-### Step 3: Integration validation
-Spawn the **`integration-validator`** agent. It:
-- runs the **entire** test suite, and
-- runs the stable auth regression command(s) recorded in
-  `docs/features/authentication.md` even if the project's default full-suite
-  command omits them, and
-- inspects the **whole codebase** for quality, security, logic issues, and best
-  practices introduced by integrating this feature (via `scout` over the repo).
-
-If it passes, go to Step 4. **If it fails**, same remedy: write a test that
-captures the issue, fix the code (`fix-errors` to zero), and re-run Step 3.
-Loop until clean. (If an integration fix reopens the feature, re-run Step 2.)
-Any auth regression, weakened identity/access invariant, role/permission/tenant
-matrix gap, or drift from `docs/adr/auth.md` fails the integration gate. Every
-new protected operation gets explicit allow and deny tests for its applicable
-roles/policies. If the feature changes an auth flow or boundary, update and
-rerun the affected auth Playwright/Maestro flow too. Never weaken an auth test
-to make the new feature pass.
-
-### Step 4: Align and update status
-With the feature fully built and both validations clean:
-- Confirm it **aligns with `docs/IMPLEMENTATION_GUIDE.md` and the wireframes**
-  for this feature: behavior, screens, and states all match. If something
-  drifted, fix it (or, if the drift is intentional and better, note it and flag
-  the guide/wireframe for Alex to update: don't silently diverge).
-- **Do not touch Penpot while building a feature** (see
-  [`../../knowledge/workflow/penpot-wireframes.md`](../../knowledge/workflow/penpot-wireframes.md)):
-  the boards are a plan-time artifact refreshed only on demand, so feature UI
-  ships code-only. No Penpot-first step, no sync debt, and nothing here requires
-  a browser connection, which is what keeps an unattended run able to finish UI
-  work. Instead keep the **text** current: add or update the feature's screens in
-  the inventory in `docs/wireframes/README.md` (screen → source → states
-  covered), marking states the code does not implement as **(missing)**.
-- **Screenshot + critic gate (any feature with customer-facing UI): required.**
-  Run the app and capture screenshots of the feature's screens in their key
-  states (populated, empty, loading, error; light + dark where supported),
-  web via Playwright, native via the simulator/Maestro capture flow from
-  `/launch-visual-qa`: saved under `docs/visual-qa/<run-date>/`. Spawn the
-  **`design-critic`** agent with the screenshot paths, `docs/DESIGN.md` (style
-  choice + tokens + real-world references), the feature's wireframes, and the
-  universal design rules (`knowledge/design/universal-design-rules.md`). Route
-  its `CRIT-xxx` findings to `fix-errors`, re-capture, and re-submit: **the
-  feature's design work is not done until the critic passes.** A feature with
-  no customer-facing UI records `design vetting: n/a` instead; never silently
-  skip the gate.
-- **E2E gate (any feature with a user-facing flow): required**
-  (`../../knowledge/workflow/e2e-gate.md`). Against the same running app the
-  screenshot capture uses, run the feature's golden-path flow(s) green: web
-  via the Playwright spec in `e2e/acceptance/`, native via the Maestro flow
-  in `.maestro/acceptance/`, both written by `test-author` in Step 1 and
-  targeted at the local build via env vars. A red flow is a loop-back like
-  any failed validation (capture, fix via `fix-errors`, re-run). Record the
-  result in the features table's `E2E` column; a feature with no user-facing
-  flow records `e2e: n/a` instead; never silently skip the gate. These flows
-  are the launch acceptance suite accreting one feature at a time:
-  `/launch-acceptance` reconciles and backfills, it no longer authors from
-  scratch.
-- **Bring the ADR current.** Record any material decision the build made that
-  the plan didn't (an approach chosen over a real alternative, a capability
-  consciously deferred → a new `O`-entry), and any confirmed supersessions from
-  Step 0. The ADR must leave this loop describing the feature as it now stands,
-  it's what the next change and the next automated review are checked against.
-- **Leave no orphans.** Sweep for what this feature's work superseded or left
-  dangling: scratch/debug scripts, temp files, dead code and unused
-  imports/exports, components/assets/styles nothing references anymore, stale
-  fixtures, `.bak`/`.old` copies, superseded doc fragments. Remove them in this
-  run: cleanliness is part of done. Two carve-outs: anything **explicitly
-  recorded as kept** (an ADR entry or `docs/DECISIONS.md` line) is not an
-  orphan and stays; and an orphan that is **substantial work** (a part-built
-  module, a whole screen, real content) is never silently deleted: punt it to
-  STATUS › `## Blockers / open questions` as a keep-or-remove question for
-  Alex, and record his "keep" so the next sweep doesn't re-flag it.
-- Mark every step for this feature ✅ and the row **done** in
-  `docs/STATUS.md`; add a log line (branch, commit, what shipped). The STATUS
-  write is a **reconcile pass** (`knowledge/workflow/doc-maintenance.md`):
-  also delete blockers this feature resolved and keep the log inside its
-  rotation cap: never a bare append above stale state.
-- Commit and **push to the working branch** (`git push origin HEAD:<branch>`),
-  no PR. Leave the suite green before pushing.
-- Set `## Next action` to the next not-done feature (or `/launch-observability`,
-  the first launch step, if this was the last).
-
-## Rules
-
-- **Step 1 is genuinely parallel and the two roles are blind to each other.**
-  Tests trace to the spec; never weaken a test to make code pass.
-- A failing validation is a loop-back, not a stop: capture it as a test, fix,
-  re-validate. Don't mark done with red tests or open findings.
-- **UI isn't done until it's been seen.** A feature with customer-facing
-  screens requires the screenshot + `design-critic` pass in Step 4; the builder
-  never vets its own screenshots, and a failed critique loops back like any
-  failed validation.
-- **A flow isn't done until it's been walked.** A feature with a user-facing
-  flow requires its golden-path E2E flow green against the running app in
-  Step 4 (`../../knowledge/workflow/e2e-gate.md`); `e2e: n/a` is recorded
-  explicitly for features with none. The gate rides the feature lane only:
-  tweaks are exempt by qualification, and light-lane changes just keep
-  existing flows green.
-- **The ADR governs.** Never contradict an `active` ADR entry without explicit
-  human confirmation + a recorded supersession; never mark done with the ADR
-  stale. A validator finding that just re-litigates a documented deliberate
-  decision is rejected with a citation, not fixed (security/legal/a11y
-  excepted: those go to Alex, as does any `ADR-challenge`: concrete evidence
-  a decision is causing real harm gets surfaced, never silently fixed or
-  silently dropped).
-- **Leave no orphans.** A feature isn't done while its work's leftovers
-  linger. Trivial orphans are removed in the same run; substantial orphaned
-  work goes to Alex as a keep-or-remove question: never silently deleted,
-  never silently kept.
-- Don't expand scope beyond the feature card; surface new ideas as proposals.
-- Keep STATUS the live source of truth: update it as you move through steps.
-- **Existing code is hardened, not rebuilt.** On a feature that's already built
-  (or partially built), resume: backfill spec-traced tests, validate, and fix,
-  don't re-implement working behavior or restart from scratch.
-
-## Output
-
-One feature built, tested, validated at the feature and integration level,
-aligned to guide + wireframes, with STATUS updated and the next feature queued.
+| Discovery (existing code) | `explorer` | 1 fast | evidence package |
+| Tests, incl. golden-path E2E | `test-author` | 2 capable | `test-suite-developer` |
+| Code | `feature-implementer` | 2 capable | card, ADR, guide, evidence |
+| Gate 2 | `feature-validator` | 3 strong | `scout` (feature), `issue-checker`, `fix-errors` |
+| Gate 3 | `integration-validator` | 3 strong | `scout` (repo), `fix-errors` |
+| UI vetting | `design-critic` | 2 capable | screenshots, `docs/DESIGN.md`, wireframes |

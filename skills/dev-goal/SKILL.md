@@ -77,7 +77,8 @@ default.
 
 ### Step 1: Load state
 Resolve the repo path (arg or cwd) and the goal (arg or default). Read
-`docs/STATUS.md`. If there's no STATUS file, stop and tell the user to run
+`docs/STATUS.md` and the Goal and Hard rules at the top of `docs/DECISIONS.md`,
+and pass both into every unit's brief. If there's no STATUS file, stop and tell the user to run
 `/init-ai` first.
 
 ### Step 2: Check the gates (hard stop)
