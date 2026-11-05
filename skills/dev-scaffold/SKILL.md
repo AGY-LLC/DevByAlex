@@ -1,6 +1,6 @@
 ---
 name: dev-scaffold
-description: "First dev stage of the DevByAlex workflow: a one-time pass that stands up the project baseline so every later feature has solid ground to build on. Decides the repo topology (for a user-facing product: a monorepo with marketing/ on the apex domain, web/ as the full-stack Next.js app on app.domain, and an optional app/ Expo mobile client), initializes the branch model (intentional protected main = production; staging = the working line all dev happens on until prod-ready), and creates the skeleton: dependencies, TypeScript-strict config, linting/formatting, the test runner + a green example test, the Prisma data layer in web/ wired to env via Zod, env handling, the design baseline, and the CI + deploy pipeline via Pipeline by Alex (pba.yml + a thin caller). Defaults to Alex's stack but adapts to whatever the spec/guide chose. Runs only once per project. Use after the implementation guide and wireframes are approved, when the user says 'scaffold the app', 'set up the project baseline', or the goal run reaches an unscaffolded repo."
+description: "One-time DevByAlex project baseline. Use when the user says 'scaffold the app' or 'set up the project baseline', after the guide and wireframes are approved, or when a goal run reaches an unscaffolded repo. Sets the monorepo topology (marketing/, web/ Next.js on app.domain, optional app/ Expo), the branch model (protected main = production, staging = working line), deps, strict TypeScript, lint, a green test, Prisma 7, Zod env, design baseline, and CI + deploy via Pipeline by Alex. Runs once per project."
 argument-hint: "[optional: stack overrides]"
 license: MIT
 metadata:
@@ -56,7 +56,8 @@ Decide the **repo topology** from the spec:
 Default stack unless the guide says otherwise: TypeScript `strict: true`, Next.js
 (web + marketing) / Expo (mobile), Zod at boundaries, thin route handlers with a
 `services/` layer, Prisma (review migration SQL before prod), Jest for
-unit/integration, Playwright for E2E, ESLint/Biome. pnpm workspaces tie the
+unit/integration, Playwright for E2E, ESLint/Biome, Stripe, Resend, Sentry,
+auth per `../../knowledge/stack/auth-decision.md`. pnpm workspaces tie the
 monorepo together.
 
 ### Step 2: Initialize the branch model
@@ -94,8 +95,10 @@ lives at the root and each workspace extends it.
      `request_secret` the `provided` ones (with obtain hints), and
      `write_env_file` the local tier so the scaffold boots without Alex
      touching a dashboard.
-   - Prisma init + an empty schema + first migration plumbing (don't model
-     features yet, that's per-feature work). A healthcheck route (`/api/health`).
+   - Prisma ORM 7, pinned (`prisma@7`, `@prisma/client@7`; npm `latest` is
+     the ORM 8 RC) and set up per `../../knowledge/stack/prisma.md`: an empty
+     schema + first migration plumbing (don't model features yet, that's
+     per-feature work). A healthcheck route (`/api/health`).
    - Test runner wired with **one green example test**.
    - **App-wide design resources** (per `docs/design/RESOURCES.md`): the custom
      **app loader**: **required**, wired to initial load / route transitions /

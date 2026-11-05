@@ -3,7 +3,7 @@ id: stack-stripe
 title: "Stripe"
 summary: "Payment processing. I've used it for subscriptions across multiple projects and have patterns well established at this point. The API is genuinely good; the webhook handling is where most bugs live."
 tags: ["stack", "stripe"]
-updated: 2026-05-28
+updated: 2026-11-05
 ---
 # Stripe
 
@@ -68,13 +68,12 @@ A few things I've landed on after setting up Stripe subscriptions across multipl
 ```ts
 // app/api/webhooks/stripe/route.ts
 import Stripe from 'stripe'
-import { headers } from 'next/headers'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 export async function POST(req: Request) {
   const body = await req.text() // must be raw text: not JSON.parse'd
-  const sig = headers().get('stripe-signature')!
+  const sig = req.headers.get('stripe-signature')!
 
   let event: Stripe.Event
   try {

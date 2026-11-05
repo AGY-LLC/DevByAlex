@@ -3,7 +3,7 @@ id: checklists-preparing-for-launch
 title: "Preparing for Launch"
 summary: "Launching is not a moment. It's a sequence: build → stage → verify → flip the switch → watch. The middle two steps are where I used to cut corners, and every time I did it I paid for it later: usu…"
 tags: ["checklists", "preparing-for-launch"]
-updated: 2026-05-28
+updated: 2026-11-05
 ---
 # Preparing for Launch
 
@@ -45,7 +45,7 @@ Staging is also the environment where I verify my **rollback path** works: deplo
 
 ### When to set it up
 
-Early. Not right before launch. The recurring regret I captured in [how-i-start-projects](./how-i-start-projects.md), "not setting up staging early, ends up testing against production longer than intended", is the single most consistent mistake I make. Now I set it up as soon as the app has real auth and a real database, even if the app itself is still half-built.
+Early. Not right before launch. Not setting up staging early is the single most consistent mistake I make. Now I set it up as soon as the app has real auth and a real database, even if the app itself is still half-built.
 
 ---
 
@@ -278,4 +278,4 @@ This is roughly the sequence I now follow, compressed:
 
 ---
 
-*See also: [Before Launch Checklist](./checklists/before-launch.md) | [Production Readiness](./checklists/production-readiness.md) | [Security Basics](./checklists/security-basics.md) | [How I Start Projects](./how-i-start-projects.md)*
+*See also: [Before Launch Checklist](./checklists/before-launch.md) | [Production Readiness](./checklists/production-readiness.md) | [Security Basics](./checklists/security-basics.md)*

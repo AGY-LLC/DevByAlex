@@ -2,7 +2,7 @@
 name: feature-builder
 description: >-
   Owns one feature end-to-end in the DevByAlex workflow. Spawned per feature (typically by dev-goal) to run the four-step feature loop: parallel test-author + feature-implementer, then feature-validator, then integration-validator, then align-and-update-status. Use when you want a single feature built, validated, and reconciled to the guide/wireframes in its own context.
-tools: Read, Write, Edit, Bash, Glob, Grep, Skill, Agent, TodoWrite, WebFetch
+tools: Read, Write, Edit, Bash, Glob, Grep, Skill, Agent, TaskCreate, TaskGet, TaskList, TaskUpdate, WebFetch
 model: inherit
 color: blue
 ---

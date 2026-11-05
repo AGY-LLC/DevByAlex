@@ -3,11 +3,11 @@ id: checklists-data-modeling
 title: "Data Modeling"
 summary: "Schema-design principles that sit above Prisma mechanics: design the model before the API, put audit/lifecycle fields on everything, index for the queries you're about to write, and decide soft-delete and many-to-many shape up front because retrofitting them is expensive."
 tags: ["checklists", "data-modeling", "database", "prisma", "schema"]
-updated: 2026-05-30
+updated: 2026-11-05
 ---
 # Data Modeling
 
-[Prisma](../stack/prisma.md) covers the tool. This is how to design the schema itself: the decisions that are cheap to make early and expensive to change once business logic sits on top of them. Pairs with Step 3 of [How I Start Projects](./how-i-start-projects.md).
+[Prisma](../stack/prisma.md) covers the tool. This is how to design the schema itself: the decisions that are cheap to make early and expensive to change once business logic sits on top of them.
 
 ## Principles
 
@@ -36,4 +36,3 @@ updated: 2026-05-30
 
 In serverless/edge runtimes, use a single Prisma client and a pooled connection (PgBouncer / provider pooler): a client per invocation exhausts connections. See [Prisma](../stack/prisma.md).
 
-*See also: [Prisma](../stack/prisma.md) | [How I Start Projects](./how-i-start-projects.md)*

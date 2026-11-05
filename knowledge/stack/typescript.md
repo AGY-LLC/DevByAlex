@@ -3,7 +3,7 @@ id: stack-typescript
 title: "TypeScript"
 summary: "My non-negotiable. Every project I write now is TypeScript. The question is just how strictly to configure it."
 tags: ["stack", "typescript"]
-updated: 2026-05-28
+updated: 2026-11-05
 ---
 # TypeScript
 
@@ -67,7 +67,7 @@ Zod schemas are the source of truth for types. Use `z.infer<>` rather than writi
 import { z } from 'zod'
 
 const CreateUserSchema = z.object({
-  email: z.string().email(),
+  email: z.email(), // Zod 4
   name: z.string().min(1),
 })
 
