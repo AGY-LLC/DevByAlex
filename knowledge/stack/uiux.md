@@ -3,7 +3,7 @@ id: stack-uiux
 title: "UI/UX Baseline"
 summary: "The cross-project design baseline: generic-AI-UI tells, design-system dimensions, the accessibility floor, and a contextual catalog of interaction and perceived-performance patterns selected through docs/DESIGN.md."
 tags: ["stack", "uiux", "design", "accessibility", "frontend"]
-updated: 2026-11-05
+updated: 2026-11-06
 ---
 # UI/UX Baseline
 
@@ -26,19 +26,19 @@ Pick a direction with intent and commit to it: `/plan-design` names it as PRIMAR
 
 Every project pins these down in its `docs/DESIGN.md`, as intent-based tokens (Token | Value | Intent):
 
-- **Color**: fixed slots per hue (Radix): 1 app background, 2 cards/sidebars, 3 component fill, 6–8 borders (8 = focus ring), 9 solid accent, 10 its hover, 11 muted text, 12 main text, both passing contrast on 2. Dark mode: base `#121212`, never pure black; elevation by a white overlay (2% cards up to 12% bars), not shadows; text white at 87 / 60 / 38% (main / secondary / disabled); accents lighter and desaturated, neon only for small highlights.
-- **Typography**: ramp (display → body → caption) with weights and tracking; body 16–18px on phones, 18–22px on desktop (dashboards low, editorial high); line height 1.5 body, 1.0–1.2 headings; text columns 45–75 characters (about 65ch, never past 80), never justified. Fluid headings: `clamp()` over 320–1440px viewports, rem bounds, max ≤ 2.5× min (survives 200% zoom); dashboard, table and form text stays fixed, and no element mixes `clamp()` with breakpoint steps or vw-only sizes. All caps get 5–12% extra tracking.
+- **Color**: fixed slots per hue (Radix): 1 app background, 2 cards/sidebars, 3 component fill, 6–8 borders (8 = focus ring), 9 solid accent (dark text on yellow, amber, lime, mint, sky), 10 its hover, 11 muted text, 12 main text, both passing contrast on 2. Dark mode: base `#121212`, never pure black; elevation by a white overlay (5% at 1dp, 7% at 2dp, 9% at 4dp, 12% at 8dp, 16% at 24dp), not shadows; text white at 87 / 60 / 38% (main / secondary / disabled); accents step to the 200 tone (600 in light), neon only for small highlights.
+- **Typography**: ramp (display → body → caption) with tracking +0.25% at 12px, 0 at 16, -0.5% at 20, -0.75% at 28, -1% at 35, -2.5% at 60+; weights under Regular only at display sizes; body 16–18px on phones, 18–22px on desktop (dashboards low, editorial high); line height 1.5 body, 1.0–1.2 headings; text columns 45–75 characters (about 65ch, never past 80), never justified. Fluid headings: `clamp()` over 320–1440px viewports, rem bounds, max ≤ 2.5× min (survives 200% zoom); dashboard, table and form text stays fixed, and no element mixes `clamp()` with breakpoint steps or vw-only sizes. All caps get 5–12% extra tracking.
 - **Spacing**: default scale 2, 4, 8, 12, 16, 24, 32, 40, 48, 64, 80, 96, 160px; small steps inside components, large steps set density. Smaller screens step down the scale (16px at 1440px → 8px at 768px), never scale values.
-- **Radius / shadow / depth**: intent-based radius vocabulary and a shadow scale (subtle → prominent) with explicit elevation rules. Store one radius; nested radius = outer minus padding (16px card, 8px padding → 8px inside).
-- **Motion**: durations 70ms (buttons, toggles), 110 (fades), 150 (small moves), 240 (toasts, expands), 400 (page-level), 700 (background dims only); exits shorter than entrances, never linear. Easing (standard / enter / exit): productive `cubic-bezier(0.2, 0, 0.38, 0.9)` / `(0, 0, 0.38, 0.9)` / `(0.2, 0, 1, 0.9)` for everyday UI; expressive `(0.4, 0.14, 0.3, 1)` / `(0, 0, 0.3, 1)` / `(0.4, 0.14, 1, 1)` only for rare big moments, never on dense tables, settings or terminal themes. Card → detail grows its container, parent ↔ child slides on one axis, unrelated views cross-fade, overlays only fade. One motion language per theme: no springs or second duration scale beside these.
-- **Iconography**: one icon set + style, size vocabulary, fill-vs-stroke semantics, decorative vs meaningful.
+- **Radius / shadow / depth**: radius scale 3, 4, 6, 8, 12, 16px times one factor per theme: 0 brutalist or terminal, 0.75 editorial, 1 neutral SaaS, 1.5 soft or playful. Pills only at 1.5 (a capsule is half its height), never across dense data UI; checkboxes never round. Nested radius = outer minus padding (16px card, 8px padding → 8px inside), never the same radius inside and out. A shadow scale (subtle → prominent) with explicit elevation rules.
+- **Motion**: durations 70ms (buttons, toggles), 110 (fades), 150 (small moves), 240 (toasts, expands), 400 (page-level), 700 (background dims only); exits shorter than entrances, never linear. Easing (standard / enter / exit): productive `cubic-bezier(0.2, 0, 0.38, 0.9)` / `(0, 0, 0.38, 0.9)` / `(0.2, 0, 1, 0.9)` for everyday UI; expressive `(0.4, 0.14, 0.3, 1)` / `(0, 0, 0.3, 1)` / `(0.4, 0.14, 1, 1)` only for rare big moments, never on dense tables, settings or terminal themes. Card → detail grows its container, parent ↔ child slides on one axis, unrelated views cross-fade, overlays only fade (150ms in, 70 out). The more often it happens, the less it moves: keyboard shortcuts and the command menu don't animate. Springs only for drags, sheets and moves people interrupt (bounce 0 to 0.15, never over 0.3, never on opacity); one motion language per theme, no second duration scale.
+- **Iconography**: one set and style, never mixed with a set of another stroke ratio; sizes 16, 20, 24, 32 only, stroke = size / 16; a 16px icon sits with 14px text, 20 with 16. Center icons on the text line, not the baseline, and pad the hit area to 44px rather than enlarge the glyph. Fill vs stroke has one meaning; decorative icons are hidden.
 - **Interactive states**: every component defines default, hover, focus (visible!), active, disabled, loading, error, and empty. Hover / focus / press / drag = one overlay in the content color at 8 / 10 / 10 / 16%, not a darken per component. Each theme picks one press signal (that overlay, a 0.97 scale over 150ms, or a brutalist shadow collapse), never two. Hover lives in `@media (hover: hover)` with the same effect on `:focus-visible`; nothing key hides behind hover, and `(pointer: coarse)` gets bigger controls (never guess touch from width).
 
 ## Accessibility floor (WCAG 2.2 AA)
 
 Non-negotiable on every customer-facing surface:
 
-- [ ] **Focus visible**: a solid outline ≥ 2px on `:focus-visible` (inset about 3px), ≥ 3:1 against the unfocused look; over photos, gradients or glass, a 2px light outline inside a 4px dark ring. Never a shadow alone (forced colors drop it), never faded in (2.4.7, 2.4.13).
+- [ ] **Focus visible**: a solid outline ≥ 2px on `:focus-visible` (inset about 3px), ≥ 3:1 against the unfocused look; over photos, gradients or glass, a 2px light outline inside a 4px dark ring. Never `outline: none` or a shadow alone without a transparent outline (forced colors drop shadows), never faded in (2.4.7, 2.4.13).
 - [ ] **Focus not obscured**: sticky bars never hide the focused element: `scroll-padding-top` = bar height + 20px, kept in sync on resize; on phones banners sit in the page flow and a tall sticky header never pairs with a fixed bottom bar (2.4.11).
 - [ ] **Keyboard**: every action reachable and operable by keyboard; Tab order matches visual order; no traps (2.1.1, 2.4.3).
 - [ ] **Contrast**: body text ≥ 4.5:1, large text ≥ 3:1, non-text controls/state ≥ 3:1, against the *actual* rendered background (1.4.3, 1.4.11).
@@ -55,10 +55,15 @@ Non-negotiable on every customer-facing surface:
 
 Exact rules every theme inherits; a theme may restyle these, never loosen them.
 
-- **Modals** only for required input, an urgent alert about the current task, or a confirmation; anything else is a toast, inline notice or page. Only the body scrolls; ≤ 3 buttons, primary rightmost, verb labels (never "OK"), danger style for destructive ones. A modal holding a form never closes on an outside click; never stack modals or use them for tasks people repeat often.
+- **Modals** only for required input, an urgent alert about the current task, or a confirmation; anything else is a toast, inline notice or page. Only the body scrolls; ≤ 3 buttons, primary rightmost, verb labels (never "OK"), danger style for destructive ones. A modal holding a form never closes on an outside click; never stack modals, open one unasked, or use them for tasks people repeat often. Width 512px with 24px padding (up to 72% of the viewport for data), full width less 16px a side on phones, black 50% backdrop.
 - **Toasts** hold at most two lines with a close button, auto-hide after 5s (10s max), and pause on hover and focus. What a toast says also lives elsewhere in the app. A toast with an action (Undo, a link) never auto-hides; anything the user must act on is an inline notice that stays; field errors never go in toasts.
-- **Switches** only for an on/off setting that applies at once and can be undone; anything needing Save, a confirmation or more than two options uses checkboxes or radios, and switches never sit in a form with Submit. The label names what turns on (no questions), state text is only "On" or "Off", and a switch shows a loader while it waits on the server.
-- **Form errors**: check a field after its value changed and focus left it (new passwords may check live). The message sits beside the field with an icon, linked by `aria-describedby` and `aria-invalid`; on submit, a summary of links to each bad field goes under the page title and takes focus. Never clear fields or disable Submit up front; word messages as the fix ("Enter date as MM/DD/YYYY"), never "invalid" or "please". No tooltip-only, icon-only or modal errors, and error text never shakes.
+- **Switches** only for an on/off setting that applies at once and can be undone; anything needing Save or a confirmation is a checkbox, 3 to 5 options are radios and more a select, two opposite views a segmented control; switches never sit in a form with Submit. The label names what turns on (no questions), state text is only "On" or "Off", and a switch shows a loader while it waits on the server.
+- **Form errors**: check a typed field when focus leaves it, never on focus; empty required fields wait for submit; once a field shows an error, recheck on each keystroke and clear it when valid (new passwords may check live). The message sits beside the field with an icon, linked by `aria-describedby` and `aria-invalid`; on submit, a summary of links to each bad field goes under the page title and takes focus, and the title starts with "Error: ". Never clear fields or disable Submit up front; word messages as the fix ("Enter date as MM/DD/YYYY"), never "invalid" or "please". No tooltip-only, icon-only or modal errors, and error text never shakes. Success ticks only on password, username and character-count fields.
+- **Tooltips** label icon-only controls or give a short hint: open after 700ms of hover (at once when moving between tooltips within 300ms) and at once on focus; close on Esc or 300ms after the pointer leaves, staying open while hovered. Never links, buttons or must-read text inside (use a popover); touch-first screens show visible labels instead.
+- **Tables**: rows 32, 40 (default) or 48px, header the same height, 16px side padding, 14px text with a semibold header. Compared numbers right-aligned in tabular figures, text and IDs left, headers follow their column, never centered text; a missing value shows "–". Zebra stripes or row dividers, never both; rows under 44px only on pointer layouts.
+- **Empty states** replace the element they stand for (an empty table drops its headers) and never show while loading. A title naming the next step, at most 3 lines of body, one primary action; no illustration in toasts, strips or tiles under 260px wide.
+- **Charts**: one series in the brand color; highlight by muting the rest; status colors only for status. Categorical colors in a fixed order, at most 6 plus "Other"; sequential scales put the darkest on the maximum in light mode, the lightest in dark. Never color alone, a gradient instead of a scale, or glass behind a chart.
+- **Drag and drop**: a grab cursor only on a handle of at least 24px; the original stays at 40% opacity, a 2px line marks the drop spot, and every move also sits in the item's menu for keyboard users.
 
 ## Contextual design-pattern catalog
 
@@ -187,17 +192,14 @@ payments and data contracts for sensitive operations.
 
 ### 8. BlurHash placeholders
 
-- **Useful when:** image-heavy feeds have delayed images and a compact preview
-  improves perceived loading. Reuse existing media metadata if available.
-- **Build and verify:** generate from small source images, decode at low
-  resolution, reserve aspect ratio, and swap to the real image or error state.
-  Measure metadata, decode and bundle cost against a solid-color placeholder;
-  see the [original BlurHash guidance](https://github.com/woltapp/blurhash).
-- **Caveats / skip:** the preview carries image-derived information, so give it
-  the same privacy/access boundaries as the image. It is not redaction. Hide
-  the decorative preview from assistive technology; retain the real image's
-  alt text and readable text overlays. Skip small/instant images, sensitive
-  previews or cases where decode work outweighs the benefit.
+- **Useful when:** image-heavy feeds load slowly and a compact preview beats a
+  solid color.
+- **Build and verify:** generate from small sources, reserve the aspect ratio,
+  swap to the image or its error state, and measure decode and bundle cost
+  against a solid color ([BlurHash](https://github.com/woltapp/blurhash)).
+- **Caveats / skip:** the preview leaks image content, so it gets the image's
+  access rules and is never redaction; hide it from assistive technology. Skip
+  small, instant or sensitive images.
 
 ### 9. View transitions
 
@@ -298,43 +300,33 @@ payments and data contracts for sensitive operations.
 
 ### 16. Tabular numbers
 
-- **Useful when:** changing counters, timers, prices or numeric columns would
-  otherwise jitter or become hard to compare.
-- **Build and verify:** use supported font features such as
-  [`font-variant-numeric: tabular-nums`](https://www.w3.org/TR/css-fonts-4/#font-variant-numeric-prop)
-  or the native equivalent. Test the actual font/fallback, localized digits,
-  currencies, signs, decimal alignment and large text; equal digit widths do
-  not by themselves align all punctuation or fix container width changes.
-- **Caveats / skip:** preserve semantic values and readable formatting; avoid
-  announcing every timer tick to screen readers. Skip blanket use in prose or
-  a font download solely for this effect when a stable layout suffices.
+- **Useful when:** counters, timers, prices or numeric columns would jitter or
+  be hard to compare.
+- **Build and verify:** [`font-variant-numeric: tabular-nums`](https://www.w3.org/TR/css-fonts-4/#font-variant-numeric-prop)
+  or the native equivalent; test the real font and fallback, localized digits,
+  signs and large text. Equal digit widths do not align decimals by themselves.
+- **Caveats / skip:** never announce every timer tick; skip prose and font
+  downloads made only for this.
 
 ### 17. Balanced headlines
 
-- **Useful when:** short multi-line headings have awkward final lines at
-  common viewport widths.
+- **Useful when:** short multi-line headings end on an awkward last line.
 - **Build and verify:** progressively enhance with
-  [`text-wrap: balance`](https://www.w3.org/TR/css-text-4/#text-wrap-style)
-  where supported. Check actual browser behavior, webfont/fallback loading,
-  localization, narrow widths and text zoom; balancing algorithms and limits
-  vary. Retain real heading semantics and natural reading order.
-- **Caveats / skip:** let normal wrapping remain a valid fallback; never
-  hard-code line breaks that break translations or shrink type to force a
-  silhouette. Skip body copy, editable text and large repeated blocks where
-  extra layout work or rewrapping harms reading/performance.
+  [`text-wrap: balance`](https://www.w3.org/TR/css-text-4/#text-wrap-style);
+  check fallback fonts, localization, narrow widths and text zoom.
+- **Caveats / skip:** normal wrapping stays a valid fallback; never hard-code
+  line breaks or shrink type to force a shape. Skip body and editable text.
 
 ### 18. Continuous corners
 
-- **Useful when:** the chosen design system calls for smoothly joining curved
-  corners on cards, sheets or controls.
-- **Build and verify:** prefer platform shapes, for example Apple's
-  [continuous corner curve](https://developer.apple.com/documentation/quartzcore/calayercornercurve/continuous),
-  and an ordinary radius fallback elsewhere. Inspect clipping, border/shadow,
-  nested radii, focus outlines, touch bounds and rendering cost across sizes.
-- **Caveats / skip:** preserve control recognition, contrast and focus rings;
-  visual clipping must not remove content or change the usable target. CSS
-  radius alone does not promise an identical native curve. Skip a new drawing
-  dependency, expensive masks or shape changes that conflict with project tokens.
+- **Useful when:** the design system calls for smooth (squircle) corners on
+  cards, sheets or controls.
+- **Build and verify:** use platform shapes such as Apple's
+  [continuous corner curve](https://developer.apple.com/documentation/quartzcore/calayercornercurve/continuous)
+  and a plain radius elsewhere; check clipping, borders, focus rings and touch
+  bounds.
+- **Caveats / skip:** CSS radius does not match the native curve; skip new
+  drawing dependencies or costly masks.
 
 ### 19. Idempotency keys
 

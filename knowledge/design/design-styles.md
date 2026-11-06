@@ -3,7 +3,7 @@ id: design-styles
 title: "Design style vocabulary: 50 named styles + the structure×feeling model"
 summary: "The named-style vocabulary the /plan-design step picks from. A visual style is chosen as PRIMARY (structure/layout, one of 12 product directions) × SECONDARY (feeling/decoration, one of these 50 named styles). This file is the catalog, the structure→feeling mapping, and the decision procedure that turns an app's category + audience + tone into a recommended pairing. Feeds docs/DESIGN.md."
 tags: ["design", "uiux", "style", "branding", "plan"]
-updated: 2026-11-05
+updated: 2026-11-06
 ---
 # Design style vocabulary
 
@@ -87,7 +87,7 @@ Format, **Name**, essence · *mood* · best-for · `prompt keyword`.
 30. **Neo Frutiger Aero**: revived Y2K aqua UI · *clean, playful, nostalgic* · playful fintech, web3, app-store visuals · `aqua gradients, glossy bubbles, rounded UI, friendly icons`
 
 ### Bold / raw / different
-31. **Neo-Brutalism**: raw-but-usable brutalism · *confident, bold, functional* · agency sites, digital mags, Gen-Z brand · `bold color blocks, oversized type, strong borders, asymmetry` · press slides into the hard shadow (no overlay or scale press too); dark mode uses outlines, not shadows; no glass
+31. **Neo-Brutalism**: raw-but-usable brutalism · *confident, bold, functional* · agency sites, digital mags, Gen-Z brand · `bold color blocks, oversized type, strong borders, asymmetry` · 2px black borders, a 4px 4px 0 shadow, press slides into it (no overlay or scale press too), never a blurred shadow, dense dashboard or long reading page; dark mode uses outlines, not shadows; no glass
 32. **Brutalism**: stark unpolished raw · *disruptive, honest, raw* · artist portfolios, counterculture · `monospace, grayscale blocks, harsh edges, default buttons`
 33. **Graffiti**: street spray-paint · *urban, defiant, expressive* · streetwear, festivals, youth · `spray texture, dripping letters, concrete, neon`
 34. **Cybercore**: dense hacker sci-fi · *chaotic, dystopian, intense* · cybersecurity, gaming, sci-fi · `neon, glitch, code texture, green/black, dense UI`
@@ -98,7 +98,7 @@ Format, **Name**, essence · *mood* · best-for · `prompt keyword`.
 ### Clean / structured / functional
 38. **Bauhaus**: form-follows-function geometry · *rational, structured, modern* · brand systems, posters, product · `grid, sans, red/blue/yellow, circle/triangle/square`
 39. **Bento UI**: modular compartment blocks · *organized, clean, friendly* · dashboards, SaaS landing, portfolios · `rounded modular cards, subtle shadow, icons+labels`
-40. **Glassmorphism**: frosted-glass depth · *sleek, elegant, futuristic* · apps, OS-style UI, AI interfaces · `frosted panels, blur, semi-transparent, neon tint` · floating layers only (nav, sidebars, popovers, menus), never cards, tables, long text or page backgrounds; frosted under text (clear only over media, 35% dark scrim if bright); text passes contrast on every backdrop; faint 1px edge; solid under reduced transparency or more contrast; no glass on glass or moving backgrounds
+40. **Glassmorphism**: frosted-glass depth · *sleek, elegant, futuristic* · apps, OS-style UI, AI interfaces · `frosted panels, blur, semi-transparent, neon tint` · floating layers only (nav, sidebars, popovers, menus), never cards, tables, charts, long text or page backgrounds; frosted under text (clear only over media, 35% dark scrim if bright); text passes contrast on every backdrop; faint 1px edge; solid under reduced transparency or more contrast; no glass on glass or moving backgrounds
 41. **Utilitarian**: function-first, no decoration · *practical, efficient, direct* · manuals, utility apps, dev tools · `strict grid, monospace/industrial, muted, clear hierarchy`
 42. **Modular Typography**: letters from grid systems · *structural, experimental* · posters, brand systems, editorial headers · `geometric letterforms, type grids, modular blocks`
 
@@ -162,7 +162,7 @@ pairing that fights the primary's job.
    is a taste call: **present, let Alex confirm or override.**
 5. **Translate the pick into starting tokens**: the style implies a palette
    temperament, a type register (serif/sans/mono/display), a texture/motif set,
-   a radius/shadow feel, and a motion personality. `/plan-design` expands these
+   a radius factor (0, 0.75, 1 or 1.5, see uiux.md) and shadow feel, and a motion personality. `/plan-design` expands these
    into the full token system and component rules in `docs/DESIGN.md`.
 6. **Keep usability independent of aesthetic.** The accessibility floor and
    component defaults in [`../stack/uiux.md`](../stack/uiux.md) hold in every style.
