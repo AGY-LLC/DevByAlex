@@ -1,7 +1,7 @@
 ---
 id: stack-typescript
 title: "TypeScript"
-summary: "My non-negotiable. Every project I write now is TypeScript. The question is just how strictly to configure it."
+summary: "Default language for every project. Pin 6.0 for now; strict mode always."
 tags: ["stack", "typescript"]
 updated: 2026-11-05
 ---
@@ -11,11 +11,15 @@ My non-negotiable. Every project I write now is TypeScript. The question is just
 
 ---
 
-## Why I don't have a "pros and cons" section here
+## Version: pin 6.0 for now
 
-Because at this point I'm not evaluating it. TypeScript is the default, the way a seatbelt is a default. The rest of this page is about how I use it, not whether to use it.
-
-If you want the argument for TypeScript, it's simple: catching a type error in your editor before it becomes a runtime exception in production is worth every second of the overhead.
+- Install `typescript@~6.0`, never unpinned. npm `latest` is TypeScript 7 (the
+  Go compiler), which has no programmatic API until 7.1, so typescript-eslint
+  (peer `<6.1`) and ts-jest (peer `<7`) break beside it. `tsgo --noEmit` is
+  fine as an optional fast type check.
+- Moving to 7 is a recorded decision in `docs/DECISIONS.md` once
+  typescript-eslint supports it. 7 turns `strict` on by default and makes 6.0
+  deprecations errors, so check tsconfig then.
 
 ---
 
