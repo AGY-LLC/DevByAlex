@@ -1,6 +1,6 @@
 ---
 name: launch-store-assets
-description: "Launch-readiness stage of the DevByAlex workflow. It generates the store-listing assets for BOTH stores, the way a native builder's 'App Store tab' does, but doubled for Apple App Store Connect and Google Play Console. Produces the app icon (all required sizes), device-framed screenshot sets (iOS required display sizes + Android phone/tablet), the Android feature graphic, an optional preview-video cut, and the full listing copy: app name, subtitle/short description, keyword field, promotional text, full description, and what's-new. Each is written to the exact field shapes and character limits ASC and Play require, and laid out under store/ios/ and store/android/ with a manifest. Pulls real screens from the running app (reuses create-demo's Maestro capture) rather than mockups, writes the copy with marketer-copywriting, and runs the metadata past ios-audit so the listing won't trip App Review's accurate-metadata / age-rating rules (2.3) or Play's equivalents. Needs docs/BRAND.md for voice/positioning (routes to /marketer-brand-generation if missing). Produces assets + copy; it does not upload (that's launch-submit). Use when the user says 'generate store assets', 'make the App Store / Play listing', 'app icon and screenshots', 'ASO copy', 'store metadata', or 'prep the store listing'."
+description: "Generates store-listing assets for both the App Store and Google Play. Use when the user says 'generate store assets', 'make the App Store / Play listing', 'app icon and screenshots', 'ASO copy', 'store metadata' or 'prep the store listing'. Produces icons, device screenshots from the running app, the Android feature graphic, an optional preview video, and listing copy to each store's field limits, under store/ios/ and store/android/ with a manifest. Checks metadata with ios-audit. Needs docs/BRAND.md. Does not upload (launch-submit does)."
 argument-hint: "[optional: store, ios | android | both (default both); or a specific asset, icon | screenshots | copy]"
 license: MIT
 metadata:
@@ -60,9 +60,9 @@ invent a new identity. Only design one when none exists, and keep it on-brand.
 ### Step 3: Screenshots (from the real app)
 Use `create-demo`'s Maestro capture to drive the running app to each hero screen
 and grab **real** screenshots (no fabricated UI). Then frame and caption:
-- **iOS**: provide the required App Store display sizes: 6.9" (or current
-  largest iPhone), 6.5", and 5.5" iPhone, plus 12.9"/13" iPad if the app is
-  universal. Correct pixel dimensions per Apple's current spec.
+- **iOS**: 6.9" iPhone (6.5" if no 6.9" set), plus 13" iPad if the app is
+  universal; App Store Connect scales these down to smaller devices. Correct
+  pixel dimensions per Apple's current spec.
 - **Android**: phone screenshots at Play's accepted ratios, a 7"/10" tablet set
   if the app supports tablets, and the **1024×500 feature graphic**.
 - Add short, benefit-led captions (from the brand voice) over device frames where

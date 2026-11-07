@@ -3,7 +3,7 @@
 > The governing decision record for this feature. Consult it before any change
 > that touches the feature; breaking an `active` entry requires explicit human
 > confirmation and a recorded supersession (see `docs/adr/README.md`). Seeded by
-> `/plan-guide`, kept current by `/feature-loop` step 4.
+> `/plan-guide`, kept current by `/feature-loop` gate 4.
 
 **Feature card:** `docs/features/{{NN}}-{{SLUG}}.md`
 **Record state:** current <!-- current | backfilled (needs review) -->

@@ -6,7 +6,7 @@ _meta:
   sensitivity: internal
   read_scope: brain.read
   tags: [practice, engineering, project-kickoff, spec, init]
-  updated: 2026-05-30
+  updated: 2026-11-05
 
 practice:
   id: project-kickoff
@@ -25,14 +25,14 @@ practice:
   inputs_to_gather_first:
     - Whatever already exists, a repo, a README, notes, screenshots, a half-built prototype. Read it before asking anything.
     - The one-sentence pitch and who it's for.
-    - Whether this is a throwaway prototype or a real project (changes how much rigor to apply, see how-i-start-projects "What I skip in prototypes").
+    - Whether this is a throwaway prototype or a real project (a prototype may skip migrations (schema push), CI, tests and config; a real project addresses all of them before any user sees it).
 
   methodology:
     - Read first, form a hypothesis. Before asking questions, state what you think the product is, who it serves, and the 3–5 core things a user must do. Vague questions waste the user's time.
     - Open the interview with that hypothesis ("here's what I think this is, correct me where I'm wrong"), then ask the questions below in order. Stop once you have enough to draft; don't ask all of them if the first few resolve the ambiguity.
     - Set the rigor from prototype_or_real. A throwaway prototype gets a lean one-pager (purpose, core loop, non-goals). A real project headed for users gets the extensive, launch-sufficient spec below, treat it as if it must contain everything needed to take the product from an empty repo to a launch-ready build with no further discovery. The "not building in v1" list is still the highest-value section; scope creep starts with things that feel small.
     - Deep-vet the draft before locking it (real projects). Re-read the spec adversarially as a pre-mortem, hunt for the unanswered question that, left implicit, forces an expensive redesign or quietly locks in a tradeoff later (see deep_vet below). Turn each hit into a concrete question for the user or a recorded decision, then fold the answer back into the spec. Anything still unresolved goes in the spec's "Risks & open questions" log rather than staying silent.
-    - Lock the stack from the defaults (see workflows/scaffolding) unless there's a real reason to deviate; novelty is a cost, not a feature.
+    - Lock the stack from the defaults (dev-scaffold) unless there's a real reason to deviate; novelty is a cost, not a feature.
     - Design the data model from the spec next (it's cheap to change now, expensive later), then skeleton routes, then the feature loop.
 
   questions:
@@ -93,9 +93,6 @@ practice:
     - Empty/error/partial-data states are specified for the core surfaces, not just the happy path.
     - The stack is chosen and justified (defaults unless a real reason to deviate).
     - Launch blockers are separated from polish items, and the finished-state definition reads as a go/no-go.
-
-  references:
-    - ../../knowledge/checklists/how-i-start-projects.md
 
   output:
     destination: "<repo>/docs/feature-spec.md (plus docs/architecture-spec.md and docs/data-model.md as the project grows)"
