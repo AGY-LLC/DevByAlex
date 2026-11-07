@@ -3,7 +3,7 @@ id: stack-nextjs
 title: "Next.js"
 summary: "Default web framework (App Router, Next 16) for web/ and marketing/; Rules, Next 16 changes, and where agents go wrong."
 tags: ["stack", "nextjs"]
-updated: 2026-11-05
+updated: 2026-11-07
 ---
 # Next.js
 
@@ -11,6 +11,7 @@ updated: 2026-11-05
 
 ## Next 16 changes agents get wrong
 
+- Install the latest 16.x patch, never older than 16.4.5 (the Nov 3, 2026 security release fixed cross-tenant `use cache` leaks). Next now ships a security release every month, so don't pin a patch.
 - `middleware.ts` is now **`proxy.ts`** (`export function proxy`), Node runtime only. Edge-only projects keep `middleware`.
 - `headers()`, `cookies()`, `draftMode()`, `params` and `searchParams` are async: `await` them. In route handlers, read request headers from `req.headers`.
 - Caching: Cache Components (`cacheComponents: true`, `"use cache"`, `cacheLife`, `cacheTag`) replace segment-level `revalidate` in apps that opt in; others keep ISR. `revalidateTag` takes a second argument (or use `updateTag`).

@@ -5,212 +5,120 @@ argument-hint: "[optional: auth provider/constraints, or 'validate' to audit+har
 license: MIT
 metadata:
   author: alex-yoza
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # dev-auth: Build authentication first (security & privacy first)
 
-Authentication is the single most important feature in the app. It's built
-right after scaffold and before any other feature, because everything else
-depends on a correct, secure identity and access foundation. Security and
-privacy take priority over speed and convenience here. Give it deeper coverage
-than an ordinary feature, then keep its contract green throughout future
-development.
+## Goal
 
-> **Gate + order check.** Requires approval gates met and **Dev → Scaffold**
-> done. If scaffold isn't done, run `/dev-scaffold` first.
+A correct, secure identity and access foundation that every later feature can
+rely on, proven by an auth regression suite future work reruns. Authentication
+is the most important feature in the app, so it is built right after scaffold
+and gets deeper coverage than any other. Security and privacy win over speed
+and convenience in every tradeoff here.
 
-## Two modes
+Before starting: approval gates met and **Dev → Scaffold** done (else run
+`/dev-scaffold`). Read `../../knowledge/practices/auth.yaml` (its build face),
+the spec's auth and privacy decisions, `docs/DECISIONS.md` and
+`docs/features/authentication.md`. The card must already decide the methods,
+whether passwords exist, account creation vs. sign-in, age or consent,
+recovery, account management, the authorization and tenant model, user-safe
+messages and step-up. If it is missing or leaves one open, stop and route to
+`/plan-guide`: never invent the identity contract while coding.
 
-Detect which one you're in before Step 3:
+## Done when
 
-- **Build mode** (no real auth exists yet): implement auth from scratch, then
-  validate. The default for a greenfield repo.
-- **Validate-existing mode** (a real auth implementation is already present, or
-  `validate` was passed): **do not re-implement or rip it out.** Audit the
-  existing auth, run it through the same security validation loop, and harden it
-  in place until it passes. This is the common case for an integrated/existing
-  repo where `init-ai` found auth but left **Dev → Authentication** unchecked
-  because it was never security-validated. Existing unvalidated auth is the
-  highest-risk code in a not-launch-ready app: treat it accordingly.
+- `docs/features/authentication.md` holds the approach (build mode) or the map
+  of what exists (provider, enabled methods, where sessions live, how
+  identities link to users, how routes are protected, the user and session
+  schema), and `docs/adr/auth.md` records provider, session strategy, threat
+  model, enabled methods, linking policy and step-up contract as `D`-entries
+  and anything not built as `O`-entries, with a pointer in `docs/DECISIONS.md`.
+- Every hard rule below holds in the code.
+- An auth regression suite, tested from the card rather than the code, has a
+  stable command or tag recorded in the card, and covers:
+  - every enabled method on every supported platform: separate Create account
+    and Sign in, verification, logout, expiry and refresh, recovery,
+    cancel and retry, return-to-origin;
+  - account management as specified: add, sign in with, link without
+    duplicating the user, disconnect, and refuse removal of the last usable
+    method; or proof that no self-service UI or endpoint exists. Password
+    change, forgot and reset only where passwords are enabled;
+  - safe messages and abuse paths: nonexistent account, existing account at
+    Create account, wrong password or provider, expired or replayed links and
+    codes, equivalent responses against enumeration, throttling, CSRF, session
+    fixation, privilege escalation, IDOR, cross-tenant access;
+  - signup-only affirmation never reaching Sign in, and step-up that succeeds,
+    fails, expires, can't open-redirect or replay, and returns to the action
+    without running it;
+  - allow and deny tests from the role, permission or policy matrix for every
+    protected operation: unauthenticated, wrong role, wrong owner, direct
+    endpoint, stale session, privilege change, cross tenant.
+  Real provider, email or device checks that can't be automated are marked
+  manual and verified, never faked.
+- `feature-validator` (with a security-focused review) and
+  `integration-validator` pass.
+- The E2E gate (`../../knowledge/workflow/e2e-gate.md`) is green against the
+  running app: Create account, Sign in, logout, recovery, any account
+  management, each role journey and step-up, in `e2e/acceptance/` (web) and
+  `.maestro/acceptance/` (native), parameterized to run against staging later.
+- The implementation matches the spec and any wireframed auth screens.
+- **Dev → Authentication** is checked with a log line (branch, commit, one-line
+  decision summary), `## Next action` is `/dev-goal` or the first feature, and
+  the work is pushed green to the working branch (no PR, no auth branch).
 
-## When to activate
+A failure anywhere loops back: capture it as a test, fix, re-run.
 
-- Scaffold is done and **Dev → Authentication** is unchecked in STATUS.
-- The user says "build auth," "add login," "set up authentication," or
-  "validate the existing auth."
-- `dev-goal` reaches a scaffolded repo without **validated** auth: whether
-  no auth exists (build) or auth exists but is unvalidated (validate-existing).
+## Decisions (and why)
 
-## Workflow
+- **Two modes.** Build mode implements auth from scratch. Validate-existing
+  mode (auth exists, or `validate` was passed) maps what's there and hardens it
+  in place, using the hard rules as the audit checklist and letting the test
+  findings decide the fixes. Replace wholesale only when validation proves the
+  approach unsafe. Why: existing unvalidated auth is the riskiest code in the
+  app, but rewriting working auth adds risk of its own.
+- **Auth existing is not auth validated.** Check the STATUS row only once the
+  code has passed the loop. Why: `init-ai` often finds auth that was never
+  security-tested.
+- **A well-audited provider over hand-rolled crypto.** Why: fewer ways to get
+  hashing, sessions or token handling wrong.
+- **One canonical user with several verified authenticators.** A password is
+  one optional authenticator; passwordless is valid. Why: linking and recovery
+  stay sound as methods are added.
+- **Auth runs through the feature loop's independent validators** with a wider
+  test matrix, using `test-suite-developer` for breadth and a real test
+  datastore for identity, linking and session tests where available. Why: it's
+  the code you most want double-checked.
 
-### Step 1: Load the auth playbook and requirements
-Read the auth playbook at `../../knowledge/practices/auth.yaml`, the auth/privacy
-requirements in `docs/SPEC.md`, and the required detailed auth card at
-`docs/features/authentication.md`. Follow the playbook's build face. The card
-must decide which methods exist, whether passwords exist at all, account
-creation vs. sign-in UX, age/consent, recovery, whether account management
-exists, the authorization/role/tenant model, user-safe messages, and step-up
-behavior. If the card is missing or leaves a security/product decision open,
-stop and route to `/plan-guide`: do not invent the identity contract while
-coding.
+## Hard rules
 
-### Step 2: Decide the approach (or map the existing one)
-- **Build mode:** pick provider vs. self-rolled per the spec and playbook,
-  favoring well-audited solutions over hand-rolled crypto. Decide session
-  strategy (cookies/JWT), storage, the threat model, and the canonical
-  user-to-authenticator/identity model. A password is one optional
-  authenticator, not a universal requirement.
-- **Validate-existing mode:** instead of deciding, **map what's there**, which
-  library/provider, enabled methods, where sessions live, how identities link
-  to users, how routes are protected, and the user/session schema. Reconcile
-  that map and the threat model with the auth card. Note any risky approach,
-  but don't rewrite it wholesale unless validation proves it unsafe.
+The hard rules in `docs/DECISIONS.md` apply, plus these for auth:
 
-Write the decision/map into `docs/features/authentication.md`, record it in
-`docs/adr/auth.md` (from `docs/adr/_TEMPLATE.md`: provider/session/threat-model
-choices, enabled methods, linking policy, and step-up contract as `D`-entries;
-anything consciously not built as `O`-entries). This is the governing record
-future auth changes are checked against. Append a one-line pointer to
-`docs/DECISIONS.md`.
-
-### Step 3: Implement or harden (security-first)
-On the working branch (the one you're on, or the one `dev-goal` passed down;
-do not create a separate auth branch).
-- **Build mode:** implement separate Create account and Sign in flows, logout,
-  session lifecycle, account recovery, any specified account/sign-in-method
-  management, step-up, and the specified ownership/role/permission/tenant
-  protection exactly as specified.
-- **Validate-existing mode:** do **not** re-implement. Read the existing auth and
-  close only the gaps validation surfaces (Step 4): add missing protections,
-  fix weaknesses, fill holes: keeping the working behavior intact.
-
-Either way, hold the line on the non-negotiables, and in validate-existing mode
-these double as the **audit checklist** for the existing code:
-- Keep **Create account** and **Sign in** as distinct user intents and routes or
-  modes. Tabs are a default presentation, not a requirement. Never silently
-  turn a sign-in attempt into account creation or vice versa.
-- Require any 13+ affirmation or signup consent only on Create account. Keep it
-  unchecked, explicit, and bound to that signup transaction so it cannot leak
-  into a later Sign in flow.
-- Use only the sign-in methods selected for this app. Passwordless is valid.
-  If passwords are enabled, always support change and forgot/reset, plus add
-  password when the spec allows method management; support paste and password
-  managers. Never make password UI appear in a passwordless app.
-- Model one canonical user with multiple verified authenticators/identities.
-  Link a new method only after proof from an authenticated account and the new
-  method; never auto-link solely because email strings match.
-- Treat account management as app-specific. If self-service method management
-  is specified, let users add and disconnect methods smoothly, but never remove
-  the last currently usable method; require recent authentication and notify
-  the user out of band. If it is not specified, do not invent a settings screen
-  or leave hidden mutation endpoints exposed.
-- Keep unauthenticated responses useful but non-enumerating. Sign-in, signup,
-  and recovery must not reveal through copy, status, response shape, or timing
-  whether an email/account exists. Give safe next actions such as trying Sign
-  in, Create account, another enabled method, or recovery.
-- For a sensitive action that needs fresh authentication, preserve a validated,
-  short-lived return/action context; offer the user's eligible method(s), then
-  return to the action's confirmation point. Never strand the user on a generic
-  login page, trust an open redirect, or execute the dangerous action merely
-  because reauthentication succeeded.
-- Secure session cookies (httpOnly, secure, sameSite); sane expiry + rotation.
-- Proper credential hashing if self-rolled (never store plaintext/secrets);
-  rely on the provider otherwise.
-- Authorization checks on every protected route/handler: default-deny.
-- Implement the spec's authorization model, from simple ownership to
-  roles/permissions, organizations, attributes, or relationships. Enforce it
-  server-side on every request and resource lookup; UI visibility is never the
-  only guard. Define privilege administration and rotate/revoke access when a
-  role or membership changes.
-- Zod-validated inputs at every auth boundary; rate-limit sensitive endpoints.
-- Minimal PII; privacy-respecting defaults; no secrets in logs.
-- The user/session data model via the ORM (reviewed migration).
-
-### Step 4: Validate through the standard loop
-Auth runs through the feature loop's independent validation structure, with a
-broader test matrix because it's the highest-stakes code in the app. This step
-is **identical in both modes**,
-build-mode validates what you just wrote; validate-existing mode validates (and
-drives the hardening of) what was already there. In validate-existing mode,
-backfill tests against the current behavior **and** the abuse paths, then let the
-findings dictate the fixes in Step 3:
-- **Write an auth-specific regression suite** with a stable command/tag that
-  future feature work can rerun. Test from `docs/features/authentication.md`,
-  not from the implementation.
-- **Exercise every enabled method** across every supported platform: separate
-  Create account and Sign in, verification, logout, expiry/refresh, recovery,
-  cancel/retry, and return-to-origin. Mark real provider/email/device checks
-  manual when they cannot be automated; never fake coverage.
-- **Exercise specified lifecycle combinations:** when account management is
-  supported, add each method, sign in with it, link it without creating a
-  duplicate user, disconnect it, and reject removal of the last usable method.
-  When it is unsupported, prove that no self-service UI or endpoint exists.
-  Change/forgot/reset a password only when passwords are enabled, and test
-  adding one only when the management posture supports it.
-- **Exercise safe messages and abuse paths:** nonexistent account, existing
-  account at Create account, wrong password, wrong/failed provider, expired or
-  replayed links/codes, equivalent response behavior against enumeration,
-  throttling, CSRF, session fixation, privilege escalation, IDOR, and
-  cross-tenant access.
-- **Exercise signup-only and step-up state:** 13+ affirmation cannot bleed into
-  Sign in; step-up succeeds, fails, expires, cannot open-redirect or replay,
-  and returns to the intended action without auto-executing it.
-- **Exercise authorization exhaustively:** generate allow and deny tests from
-  the role/permission/policy matrix for every protected operation, including
-  unauthenticated, wrong-role, wrong-owner, direct-endpoint, stale-session,
-  privilege mutation, and cross-tenant attempts.
-- Use `test-suite-developer` for breadth and a real test datastore for
-  identity/linking/session integration whenever available.
-- **Feature validation**: spawn the `feature-validator` agent (tests + a
-  security-focused review of the auth code; `scout`/`issue-checker`).
-- **Integration validation**: spawn the `integration-validator` agent (full
-  suite + whole-codebase review for how auth wires into everything).
-- **E2E gate**: auth is the canonical first journey
-  (`../../knowledge/workflow/e2e-gate.md`). Run the app's actual Create
-  account, Sign in, logout, recovery, any specified account management, each
-  distinct role journey, and step-up critical paths against the running app.
-  Use Playwright in `e2e/acceptance/`
-  for web and Maestro in `.maestro/acceptance/` for native, parameterized so
-  the same flows run against staging at launch. Scope cases to enabled methods
-  and supported surfaces. Auth is not done until automated flows are green and
-  every honest manual marker is verified.
-- On any failure: write a test that captures the issue, fix the code, re-run.
-  Loop until clean.
-
-### Step 5: Align, update STATUS, route
-- Confirm the auth implementation matches the spec's auth/privacy requirements
-  and any wireframed auth screens.
-- Record the stable auth regression command(s) in the auth card. Every later
-  feature's integration validation reruns them and checks the auth card plus
-  `docs/adr/auth.md`; an auth-touching change also reruns the affected auth E2E
-  flows. Do not weaken auth coverage to make a later feature pass.
-- Check **Dev → Authentication**; log branch + commit + a one-line decision
-  summary.
-- Commit and **push to the working branch** (`git push origin HEAD:<branch>`)
-  once green: no PR.
-- Set `## Next action` to `/dev-goal` (or `/feature-loop <first feature>`).
-
-## Rules
-
-- **Security and privacy win** over convenience in every tradeoff here.
-- Passwords are app-specific and optional. Do not introduce one by default.
-- Separate account creation from sign-in in behavior even when the visual
-  design uses tabs on one screen.
-- Test the full method/optional-management/authorization/message/step-up matrix,
-  not just a happy path.
-- Don't skip the validation loop: auth is the one feature you most want
-  double-checked.
-- Auth validation is continuous: every future feature must keep the auth
-  regression suite and identity/access invariants green.
-- **Auth existing ≠ auth validated.** In validate-existing mode, only check
-  **Dev → Authentication** done once the existing code has actually passed the
-  security loop. Finding an auth implementation is not a reason to check the box.
-- In validate-existing mode, preserve working behavior: harden, don't gratuitously
-  rewrite. Replace wholesale only when validation proves the approach unsafe.
-- Never log or commit secrets/tokens.
-
-## Output
-
-A validated authentication foundation pushed to the working branch, STATUS auth
-checked, next action into the feature loop.
+- **Create account and Sign in are distinct intents.** Tabs are a default look,
+  not a requirement. Never turn a sign-in into account creation or the reverse.
+- **Signup affirmation (13+ or consent)** appears only on Create account,
+  unchecked, explicit and bound to that signup.
+- **Only the methods the app selected.** No password UI in a passwordless app.
+  Where passwords exist: change and forgot/reset always, add-password only when
+  method management allows it, and paste and password managers work.
+- **Link a method only after proof** from both the signed-in account and the
+  new method; never because email strings match.
+- **Account management as specified, no more.** Never remove the last usable
+  method; require recent auth and notify out of band for method changes. No
+  invented settings screen or hidden mutation endpoint.
+- **No enumeration.** Copy, status, response shape and timing never reveal
+  whether an account exists; responses still offer a safe next action.
+- **Step-up returns to the action's confirmation point** through a validated,
+  short-lived context; never a generic login page, an open redirect, or an
+  action run just because reauthentication succeeded.
+- **Default-deny authorization on every protected route and lookup,**
+  enforced server-side; UI visibility is never the only guard. Access is
+  rotated or revoked when a role or membership changes.
+- Session cookies httpOnly, secure and sameSite, with sane expiry and
+  rotation; credentials hashed properly if self-rolled.
+- Zod at every auth boundary; rate limits on sensitive endpoints.
+- Minimal PII; no secrets or tokens in logs or commits; the user and session
+  schema goes through a reviewed migration.
+- Every later feature reruns the auth regression suite; never weaken it to
+  make another feature pass.

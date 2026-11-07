@@ -87,7 +87,7 @@ decisions, the spec (user-facing? mobile?), `docs/DECISIONS.md`, and
   establishes `main`; everything after happens on `staging` (or the branch
   `dev-goal` passed). Why: production only ever receives a reviewed promotion.
 - **Default stack** unless the guide decides otherwise: TypeScript pinned to
-  6.0.x (`typescript@~6.0`), Next.js 16, Expo SDK 58, Zod at boundaries, thin
+  6.0.x (`typescript@~6.0`), Next.js 16 (latest patch, 16.4.5 at least), Expo SDK 58, Zod at boundaries, thin
   handlers over `services/`, Prisma ORM 7 pinned per
   `../../knowledge/stack/prisma.md`, Jest and Playwright, ESLint 10 flat
   config, Stripe, Resend, Sentry, auth per
