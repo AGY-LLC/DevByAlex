@@ -174,7 +174,7 @@ relationship, or a spacing rhythm cannot be judged on it. So:
 - **Use the app's real copy** where it exists (captured from code) and concrete
   written copy where it does not. Never lorem ipsum.
 - **Draw the actual composition**: the real sections in the real order, at real
-  proportions. If a screen has an eyebrow, two CTAs, and a stats band, the board
+  proportions. If a screen has a headline, two CTAs, and a stats band, the board
   has those, not one generic hero block.
 - **Name every layer semantically** (`prompt-card / field-label`, not `Rect 12`),
   because those names are how a change made in Penpot gets read back and turned
