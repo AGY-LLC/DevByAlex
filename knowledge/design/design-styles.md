@@ -3,7 +3,7 @@ id: design-styles
 title: "Design style vocabulary: 50 named styles + the structure×feeling model"
 summary: "The named-style vocabulary the /plan-design step picks from. A visual style is chosen as PRIMARY (structure/layout, one of 12 product directions) × SECONDARY (feeling/decoration, one of these 50 named styles). This file is the catalog, the structure→feeling mapping, and the decision procedure that turns an app's category + audience + tone into a recommended pairing. Feeds docs/DESIGN.md."
 tags: ["design", "uiux", "style", "branding", "plan"]
-updated: 2026-11-06
+updated: 2026-11-07
 ---
 # Design style vocabulary
 
@@ -97,7 +97,7 @@ Format, **Name**, essence · *mood* · best-for · `prompt keyword`.
 
 ### Clean / structured / functional
 38. **Bauhaus**: form-follows-function geometry · *rational, structured, modern* · brand systems, posters, product · `grid, sans, red/blue/yellow, circle/triangle/square`
-39. **Bento UI**: modular compartment blocks · *organized, clean, friendly* · dashboards, SaaS landing, portfolios · `rounded modular cards, subtle shadow, icons+labels`
+39. **Bento UI**: modular compartment blocks · *organized, clean, friendly* · dashboards, SaaS landing, portfolios · `rounded modular cards, subtle shadow, icons+labels` · only where the content really is separate widgets, never the page-wide default (reading and landing sections flow)
 40. **Glassmorphism**: frosted-glass depth · *sleek, elegant, futuristic* · apps, OS-style UI, AI interfaces · `frosted panels, blur, semi-transparent, neon tint` · floating layers only (nav, sidebars, popovers, menus), never cards, tables, charts, long text or page backgrounds; frosted under text (clear only over media, 35% dark scrim if bright); text passes contrast on every backdrop; faint 1px edge; solid under reduced transparency or more contrast; no glass on glass or moving backgrounds
 41. **Utilitarian**: function-first, no decoration · *practical, efficient, direct* · manuals, utility apps, dev tools · `strict grid, monospace/industrial, muted, clear hierarchy`
 42. **Modular Typography**: letters from grid systems · *structural, experimental* · posters, brand systems, editorial headers · `geometric letterforms, type grids, modular blocks`
