@@ -3,7 +3,7 @@ id: stack-uiux
 title: "UI/UX Baseline"
 summary: "The cross-project design baseline: generic-AI-UI tells, design-system dimensions, the accessibility floor, and a contextual catalog of interaction and perceived-performance patterns selected through docs/DESIGN.md."
 tags: ["stack", "uiux", "design", "accessibility", "frontend"]
-updated: 2026-11-07
+updated: 2026-11-08
 ---
 # UI/UX Baseline
 
@@ -57,14 +57,23 @@ Exact rules every theme inherits; a theme may restyle these, never loosen them.
 
 - **Modals** only for required input, an urgent alert about the current task, or a confirmation; anything else is a toast, inline notice or page, and anything wider than 640px is a page. Only the body scrolls; ≤ 3 buttons, primary rightmost, verb labels (never "OK"), danger style for destructive ones. A modal holding a form never closes on an outside click; never stack modals, open one unasked, or use them for tasks people repeat often. Widths 320, 480 (default) or 640px with 24px padding, a bottom sheet on phones, black 50% backdrop.
 - **Toasts** hold at most two lines with a close button, auto-hide after 5s (10s max), and pause on hover and focus. What a toast says also lives elsewhere in the app. A toast with an action (Undo, a link) never auto-hides; anything the user must act on is an inline notice that stays; field errors never go in toasts.
-- **Switches** only for an on/off setting that applies at once and can be undone; anything needing Save or a confirmation is a checkbox, 3 to 5 options are radios and more a select, two opposite views a segmented control (2 to 5 nouns or 6 icons, applies at once, never navigates, becomes a menu when narrow); switches never sit in a form with Submit. The label names what turns on (no questions), state text is only "On" or "Off", and a switch shows a loader while it waits on the server.
+- **Switches** only for an on/off setting that applies at once and can be undone; anything needing Save or a confirmation is a checkbox, 3 to 5 options are radios and more a select, two opposite views a segmented control (2 to 5 nouns or 6 icons, applies at once, never navigates, becomes a menu when narrow); switches never sit in a form with Submit. The label names what turns on (no questions), state text is only "On" or "Off", and a switch shows a loader while it waits on the server. Track 48×24px with an 18px handle; in table rows 32×16px with a 10px handle and a check when on.
 - **Form errors**: check a typed field when focus leaves it, never on focus; empty required fields wait for submit; once a field shows an error, recheck on each keystroke and clear it when valid (new passwords may check live). The message sits beside the field with an icon, linked by `aria-describedby` and `aria-invalid`; on submit, a summary of links to each bad field goes under the page title and takes focus, and the title starts with "Error: ". Never clear fields or disable Submit up front; empty fields get an instruction ("Enter your name"), broken rules a description ("Name must be 35 characters or less"), never "please", "sorry", "invalid", "oops" or "This field is required". The summary is headed "There is a problem" and shows even for one error. A character count appears at 75% of the limit and never blocks typing or pasting. No tooltip-only, icon-only or modal errors, and error text never shakes. Success ticks only on password, username and character-count fields.
-- **Tooltips** label icon-only controls or give a short hint: open after 100ms of hover for an icon label, 400 to 700ms for a description (at once when moving between tooltips within 300ms), at once on keyboard focus, never on click; close on Esc or 300ms after the pointer leaves, staying open while hovered. Never links, buttons or must-read text inside (use a popover); touch-first screens show visible labels instead.
-- **Tables**: rows 32, 40 (default) or 48px, header the same height, 16px side padding, 14px text with a semibold header. Compared numbers right-aligned in tabular figures, text and IDs left, headers follow their column, never centered text; a missing value shows "–". Zebra stripes or row dividers, never both; rows under 44px only on pointer layouts.
-- **Empty states** replace the element they stand for (an empty table drops its headers) and never show while loading. A title naming the next step, at most 3 lines of body, one primary action; no illustration in toasts, strips or tiles under 260px wide.
-- **Charts**: one series in the brand color; highlight by muting the rest; status colors only for status. Categorical colors in a fixed order, at most 6 plus "Other"; sequential scales put the darkest on the maximum in light mode, the lightest in dark. Never color alone, a gradient instead of a scale, or glass behind a chart.
-- **Drag and drop**: a grab cursor only on a handle of at least 24px; the original stays at 40% opacity, a 2px line marks the drop spot, and every move also sits in the item's menu for keyboard users.
-- **Flows and paging**: a stepper only for fixed-order flows of 3 to 6 steps; any-order or multi-sitting flows get a task list page. Pagination always shows the first and last page plus 2 either side of the current (1 on phones) with ellipses, hides on one page, and resets to page 1 on any sort or filter; never auto-loading infinite scroll above a footer. Breadcrumbs end at the parent, never the current page.
+- **Tooltips** label icon-only controls or give a short hint: open after 100ms of hover for an icon label, 400 to 700ms for a description (at once when moving between tooltips within 300ms), at once on keyboard focus, never on click; close on Esc or 300ms after the pointer leaves, staying open while hovered. One line, above the trigger by default. Never links, buttons or must-read text inside (use a popover); touch-first screens show visible labels instead. Hover panels and top-nav menus open after 300 to 500ms and close 500ms after the pointer leaves both trigger and panel.
+- **Tables**: one row height per table, 24, 32, 40 (default), 48 or 64px (64 only for two-line rows), with header, toolbar and pagination the same height; 16px side padding, 14px text with a semibold header, and a caption. Compared numbers right-aligned in tabular figures with thousands separators and the same decimals down the column, text and IDs left, headers follow their column, never centered text; a missing value shows "–"; the sort icon shows only on the sorted column. Zebra stripes (from 4 rows and 3 columns) or faint row dividers, never both; rows under 44px only on pointer layouts and never in pastel, clay or editorial themes; no display fonts in numeric cells.
+- **Empty states** are left-aligned (centered only in tiles) and replace the element they stand for (an empty table drops its headers) and never show while loading. A title naming the next step, at most 3 lines of body, one primary action; no illustration in toasts, strips or tiles under 260px wide.
+- **Charts**: one series in the brand color; highlight by muting the rest; status colors only for status. Categorical colors in a fixed order, at most 6 plus "Other"; sequential scales are one hue in up to 10 steps, darkest on the maximum in light mode, lightest in dark; pastel themes use tints of the series hues. Never color alone, a gradient instead of a scale, or glass behind a chart.
+- **Drag and drop**: a grab cursor only on a handle of at least 24px (a card holding buttons drags only by it); the original stays at 40% opacity, the preview sits 16px right and 8px down, at most 280px square, never tilted; a 2px line with an 8px dot, centered in the gap, marks the drop spot, and the dropped item flashes for 700ms. Every move also sits in the item's menu for keyboard users.
+- **Flows and paging**: a stepper only for fixed-order flows of 3 to 6 steps; any-order or multi-sitting flows get a task list page. Pagination always shows the first and last page plus 2 either side of the current (1 on phones) with ellipses, hides on one page, and resets to page 1 on any sort or filter; never auto-loading infinite scroll above a footer. Breadcrumbs start at home and end at the parent, never the current page, and never wrap or carry icons; from 5 levels show the first and last 3 with a "…" menu between, on phones only a back link; none on flat sites or single-page layouts.
+- **Disclosure**: accordions when several sections may be open at once ("Open all" from 3), tabs to switch between equal sections, a disclosure for one or two minor bits; all start closed, and a header is one click target of 5 to 10 parallel words with one chevron style. Hide closed panels with `<details>` or `hidden="until-found"` so find-in-page reaches them, never `display: none`, with `aria-expanded` in sync. Never nested, never controls in headers, never hiding what everyone needs. A full tab row drops its icons, then moves its last tabs into More (never just one; the current tab swaps with the last visible).
+- **Truncation** cuts at the end, or the middle for file names, hashes and paths, keeping at least 4 characters and a "…"; full text in a tooltip up to about 150 characters, past that a Show more. Never truncate titles, labels, column headers, navigation, errors or notifications, and never fade or scroll text inside a box instead.
+- **Search suggestions**: at most 10 on desktop, 4 to 8 on phones, no scrollbar, the untyped part bold, the active row shaded, on a solid surface without separators or zebra rows; arrows loop and copy the row into the field, Return submits.
+- **Copy and upload**: a copy button stays visible beside its value, is named for it ("Copy branch name"), and only after a real success shows a success-colored check and "Copied!" for 2s, no toast; where copying can't work, remove it. Uploads get an always-visible drop zone around a secondary "Choose file" button and one specific error per failure ("The selected file must be smaller than 2MB").
+- **Range inputs**: sliders only for relative values with 4 or more stops (fewer are radios), snapping to real stops with the value and unit under the thumb; never for prices, quantities or progress. Number steppers only for small whole numbers near a default: a typable field between minus (left) and plus (right) of at least 44px, long press repeats, the end button disables at the limit; never for prices, ages, dates or decimals, never paired with a slider.
+- **Carousels** hold 2 to 5 self-contained slides of one height, controls under them at 44px and "2 of 5" text over dots alone; autoplay turns every 5s behind a visible stop button that comes first, pauses on hover and focus, and stays off under reduced motion. Never calls to action, pricing or comparisons, never in dashboards or terminal themes.
+- **Inline edit**: Enter saves and Esc cancels; single-line fields also save on blur, multi-line ones stay open; save and cancel icons stay visible, one table row edits at a time, and read and edit share type and alignment. Never in forms with Save or for new entries.
+- **Sticky headers** only for items used often: opaque (never glass), at most 5 items, hidden on scroll down and back with a 300ms slide on scroll up; never over phone forms. **Drawers** come from the right, pushing content on wide screens or overlaying it, with a resize handle on the inner edge; phones get a sheet, marketing pages neither.
+- **Pricing**: plans run simplest (left) to priciest (right), the most popular in the middle with the only filled button; the monthly or annual toggle sits above and states the saving in words ("2 months free"); about 4 key features per plan, a comparison table only past about 20, with plan names and buttons pinned. Never Bento or a carousel.
 - **Dates**: relative under a month ("5 minutes ago"), then "on Nov 18" (year only if not this year); deadlines, bookings and invoices always absolute. Known dates (a birthday) are Day, Month, Year text fields that never auto-jump; dates people look up get a picker.
 - **Badges and avatars**: a badge holds only a number (16px pill, 99+ cap) or is a 6px dot; words go in a tag. People are circles, projects and bots rounded squares; stacks show up to 5, then a +N that names the rest.
 
@@ -104,8 +113,9 @@ payments and data contracts for sensitive operations.
   modals; images load as blank space of the same size. Shimmer is an 833ms pass
   plus a 667ms pause, static on dense repeated lists. Text bars are 16 or 24px tall, 8px apart, 4px radius; icons, badges and tiny text get no placeholder, and loaded titles stay. Replace the skeleton with real, empty or error content and
   test slow, failed and instant loads, text scaling and layout shift.
-- **Caveats / skip:** hide decorative skeletons from assistive technology and
-  announce a concise loading/result status when needed. Never a spinner and a
+- **Caveats / skip:** hide skeletons from assistive technology; one
+  always-present status region announces start, finish and failure, once per
+  group. Never a spinner and a
   skeleton on one area, or a percent bar when the total is unknown; keep
   existing content during refresh rather than replacing it with skeletons.
 
@@ -124,29 +134,32 @@ payments and data contracts for sensitive operations.
 
 ### 3. Command menu
 
-- **Useful when:** a dense productivity app has many repeatable actions or
-  destinations that benefit from search and keyboard access.
-- **Build and verify:** provide a visible entry point and keep core actions
-  discoverable elsewhere. Use appropriate dialog and search/combobox semantics,
-  selection keys, Escape, focus entry and focus return; verify no-results,
-  keyboard-only and screen-reader paths. See [APG dialog](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/)
-  and [combobox](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/).
-- **Caveats / skip:** filter results by context and permissions, and recheck
-  authorization at execution; the menu is no bypass for confirmations. Avoid
-  indexing sensitive content unnecessarily. Skip for a small, obvious action
-  set where a menu adds another layer and maintenance cost.
+- **Useful when:** a dense app has many repeatable actions or destinations.
+- **Build and verify:** ⌘K on Mac, Ctrl+K elsewhere, never reused for an
+  in-page filter, plus a visible entry point; core actions stay findable
+  elsewhere. Empty input shows recents; items are verb phrases with their
+  shortcut ("Deploy project"), the placeholder ends in "…", group headings are
+  1 or 2 words. Past about 30 items or mixed types, split into pages;
+  Backspace in an empty input goes back one, keeping the query. Dialog and
+  combobox semantics ([APG](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/)),
+  focus trapped and returned, result count announced politely.
+- **Caveats / skip:** filter by context and permissions and recheck
+  authorization on run; never a bypass for confirmations or the only
+  navigation. Skip on pages with few actions (marketing, editorial, toy).
 
 ### 4. Shortcut hints
 
-- **Useful when:** frequent desktop actions already have shortcuts; show the
-  actual platform/keymap binding beside the action or in accessible help.
-- **Build and verify:** keep hints synchronized with handlers and remapping.
-  Test keyboard layouts, text editing, IME composition and browser/OS/assistive
-  technology conflicts. Preserve a pointer/touch and keyboard navigation path.
-- **Caveats / skip:** character-only shortcuts must be switchable, remappable
-  or active only when their component has focus ([WCAG 2.1.4](https://www.w3.org/WAI/WCAG22/Understanding/character-key-shortcuts.html)).
-  Do not rely on hover-only hints or intercept reserved combinations. Skip
-  invented shortcuts and noisy badges for rare actions or touch-only contexts.
+- **Useful when:** frequent desktop actions already have shortcuts.
+- **Build and verify:** show a hint only where the shortcut works now, at the
+  end of the button or menu row or in an icon button's tooltip, at body text
+  size in the text's own color. Modifiers in the order ⌃⌥⇧⌘, one Mod key (⌘ on
+  Mac, Ctrl elsewhere), "+" for keys held together (Mod+Shift+P), a space for
+  sequences (g i). Keep hints in sync with handlers and remapping; test
+  keyboard layouts and IME composition.
+- **Caveats / skip:** never reuse a standard binding (⌘Z) or add a modifier to
+  one for something unrelated; character-only shortcuts must be switchable or
+  focus-scoped ([WCAG 2.1.4](https://www.w3.org/WAI/WCAG22/Understanding/character-key-shortcuts.html)).
+  Skip on touch-first layouts, toy themes and marketing buttons.
 
 ### 5. Undo toasts
 
@@ -180,18 +193,15 @@ payments and data contracts for sensitive operations.
 
 ### 7. Pre-rendering
 
-- **Useful when:** stable public pages benefit from build/server rendering, or
-  a likely next navigation benefits from speculative browser rendering. Name
-  which approach is intended; prefetching alone does not render a page.
-- **Build and verify:** keep personalized output out of shared/static caches.
-  For speculation, choose likely safe destinations, respect support/resource
-  limits, and defer analytics and side effects until activation. Verify actual
-  navigation latency, hydration, freshness and wasted bytes on target devices.
-  See [Chrome's prerender lifecycle](https://developer.chrome.com/docs/web-platform/prerender-pages).
-- **Caveats / skip:** links and normal navigation must work without speculation.
-  Do not speculate routes that mutate state, log out, consume single-use links
-  or expose sensitive data. Skip low-probability routes or heavy work that
-  competes with the current task; avoid a rendering migration for tiny gains.
+- **Useful when:** stable public pages gain from build or server rendering, or
+  a likely next page from speculative rendering (prefetching alone renders
+  nothing).
+- **Build and verify:** keep personalized output out of shared caches; defer
+  analytics and side effects until activation; measure real latency, hydration
+  and wasted bytes ([Chrome](https://developer.chrome.com/docs/web-platform/prerender-pages)).
+- **Caveats / skip:** never speculate routes that mutate, log out, consume
+  single-use links or expose sensitive data; skip unlikely routes and tiny
+  gains.
 
 ### 8. BlurHash placeholders
 
@@ -206,43 +216,38 @@ payments and data contracts for sensitive operations.
 
 ### 9. View transitions
 
-- **Useful when:** a short transition clarifies continuity between related
-  states or destinations (Rule 17).
-- **Build and verify:** progressively enhance an otherwise correct state or
-  navigation update. Keep real DOM semantics, focus destination, history and
-  scroll behavior deliberate. Test unsupported browsers, rapid navigation,
-  cancellation and reduced motion; skip nonessential motion when requested.
-  See [CSS View Transitions](https://www.w3.org/TR/css-view-transitions-1/).
-- **Caveats / skip:** a visual snapshot does not manage focus or announce a
-  route. Avoid capturing sensitive content in shared transition visuals and
-  measure snapshot memory/paint cost. Skip large decorative movements, slow
-  transitions or anything that delays access to the next action.
+- **Useful when:** a short transition shows continuity between related states
+  (Rule 17).
+- **Build and verify:** enhance an update that already works without it; focus,
+  history and scroll stay deliberate. Test unsupported browsers, rapid
+  navigation and reduced motion ([spec](https://www.w3.org/TR/css-view-transitions-1/)).
+- **Caveats / skip:** a snapshot neither moves focus nor announces a route, and
+  may capture sensitive content. Skip large, slow or decorative moves that
+  delay the next action.
 
 ### 10. Swipe-to-dismiss sheets
 
-- **Useful when:** a mobile sheet contains temporary, dismissible context and
-  swiping matches the platform's conventions.
-- **Build and verify:** prefer the existing native sheet behavior; distinguish
-  scrolling from dismissal and test partial/cancelled drags, keyboard-open
-  layouts, nested scrolling and unsaved input. Apply the modal focus contract
-  only to modal sheets; return focus logically on close.
-- **Caveats / skip:** provide a visible close/cancel control and platform
-  keyboard/assistive dismissal path. Respect reduced motion and protect drafts
-  with save/discard recovery. Skip gesture-only dismissal, forced workflows or
-  destructive effects on dismiss; do not override system edge gestures.
+- **Useful when:** a phone sheet holds temporary, dismissible context; desktop
+  pointer layouts use a modal or side panel instead.
+- **Build and verify:** prefer the native sheet. Dismiss on a flick faster
+  than 0.4px per ms or a drag past 25% of the visible height; an upward drag
+  resists and snaps back; open and close take 500ms on
+  `cubic-bezier(0.32, 0.72, 0, 1)`. Tell scrolling from dismissal and test
+  cancelled drags, the open keyboard and nested scrolling; modal sheets get the
+  modal focus contract.
+- **Caveats / skip:** keep a visible close control and a keyboard path. A sheet
+  holding a long form or unsaved input never drag-dismisses; skip in
+  brutalist, terminal and print themes.
 
 ### 11. Interruptible animations
 
 - **Useful when:** users can reverse a toggle, dismiss an overlay or change
   direction before motion ends.
-- **Build and verify:** retarget from the current visual position and keep
-  semantic state authoritative; cancellation/completion must not fire stale
-  callbacks or commit an action twice. Test rapid reversal, unmount/navigation
-  and background/resume. Native support includes [UIViewPropertyAnimator](https://developer.apple.com/documentation/uikit/uiviewpropertyanimator/isinterruptible).
-- **Caveats / skip:** keyboard and assistive actions must remain responsive;
-  reduced motion must reach the same correct state immediately. Prefer cheap
-  animation properties and measure on slower devices. Skip custom animation
-  machinery for static changes; never lock input until decorative motion ends.
+- **Build and verify:** retarget from the current position with semantic state
+  authoritative; no stale callbacks or double commits. Test rapid reversal,
+  unmount and background/resume.
+- **Caveats / skip:** reduced motion reaches the same state at once; never lock
+  input until decorative motion ends.
 
 ### 12. Predictive back
 
@@ -256,16 +261,13 @@ payments and data contracts for sensitive operations.
 
 ### 13. Hit slop
 
-- **Useful when:** a small visible icon needs a larger, forgiving touch target
-  without changing its visual weight. Prefer real padding/minimum size first.
-- **Build and verify:** inspect the effective hit region, accessibility bounds,
-  focus ring and adjacent controls on devices. Test edge taps and overlaps;
-  React Native [Pressable hitSlop](https://reactnative.dev/docs/pressable#hitslop)
-  cannot extend beyond parent bounds and overlapping siblings have precedence.
-- **Caveats / skip:** retain labels and keyboard access. Target sizing follows
-  each platform's units and guidance; web [WCAG 2.5.8](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html)
-  uses CSS pixels and has spacing/exceptions. Skip overlapping invisible
-  regions or hit slop used to excuse cramped layout; enlarge/re-space controls.
+- **Useful when:** a small icon needs a larger touch target without more visual
+  weight; real padding or minimum size comes first.
+- **Build and verify:** inspect the hit region, accessibility bounds and focus
+  ring on devices; React Native [hitSlop](https://reactnative.dev/docs/pressable#hitslop)
+  can't pass parent bounds and loses to overlapping siblings.
+- **Caveats / skip:** never overlapping invisible regions or slop excusing a
+  cramped layout; re-space the controls.
 
 ### 14. Safe area insets
 
@@ -281,13 +283,15 @@ payments and data contracts for sensitive operations.
 ### 15. One-time code autofill
 
 - **Useful when:** an existing sign-in already sends an OTP.
-- **Build and verify:** `autocomplete="one-time-code"` ([HTML](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofill))
-  or Apple's `oneTimeCode` with [domain-bound SMS](https://developer.apple.com/documentation/security/enabling-autofill-for-domain-bound-sms-codes);
-  keep one labeled field with manual entry and paste (full-code paste into any
-  segmented UI). Test real devices, expired and wrong codes, and resend.
-- **Caveats / skip:** the server enforces expiry, single use, attempts and
-  session binding; never log codes or ask for broad SMS or clipboard access,
-  and never auto-submit consequential actions on fill.
+- **Build and verify:** one native text field with `inputmode="numeric"`,
+  `autocomplete="one-time-code"` ([HTML](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofill))
+  and `maxlength` at the code's length; large monospaced digits with wide
+  tracking, a label naming the length and where it went, "Try another way"
+  under it. Split boxes, if a theme insists, take a full paste and step back on
+  Backspace. Test real devices, expired and wrong codes, and resend.
+- **Caveats / skip:** never `type="number"` or auto-submit beside a Submit
+  button; the server enforces expiry, single use and attempts, and codes are
+  never logged.
 
 ### 16. Tabular numbers
 
@@ -336,18 +340,15 @@ payments and data contracts for sensitive operations.
 
 ### 20. Amazon safe triangle
 
-- **Useful when:** a pointer user travels diagonally from a parent menu item
-  into a nested submenu and would accidentally cross sibling items.
-- **Build and verify:** use a bounded hover-intent corridor toward the open
-  submenu to delay sibling activation while intent is plausible, then switch
-  promptly when direction changes. Test diagonal/slow movement, exit/re-entry,
-  left/right placement, zoom and viewport edges. See the [original explanation](https://bjk5.com/post/44698559168/breaking-down-amazons-mega-dropdown)
-  and [menu-aim implementation](https://github.com/kamens/jQuery-menu-aim).
-- **Caveats / skip:** this is pointer interaction geometry, not a security
-  feature. Keep click/tap, keyboard navigation, visible focus and Escape
-  independent of the corridor; support hoverable/dismissible submenu content.
-  Do not add jQuery just for this pattern. Skip simple menus and touch-first
-  navigation, or fix an unnecessarily deep hierarchy before adding heuristics.
+- **Useful when:** a pointer user moves diagonally from a menu item into its
+  submenu.
+- **Build and verify:** no fixed open delay. Lines from the pointer to the
+  submenu's top and bottom inner corners, each widened 15°, form a wedge that
+  keeps it open; close only after two wrong-way moves in a row, and ignore
+  touch and pen. Test slow moves, re-entry, both sides and viewport edges
+  ([original](https://bjk5.com/post/44698559168/breaking-down-amazons-mega-dropdown)).
+- **Caveats / skip:** click, keyboard, focus and Escape work without it; no
+  jQuery for it. Skip touch-first navigation; flatten deep menus first.
 
 ## Setting direction (the `/plan-design` interview)
 
