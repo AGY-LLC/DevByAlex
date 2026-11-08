@@ -87,14 +87,16 @@ decisions, the spec (user-facing? mobile?), `docs/DECISIONS.md`, and
   establishes `main`; everything after happens on `staging` (or the branch
   `dev-goal` passed). Why: production only ever receives a reviewed promotion.
 - **Default stack** unless the guide decides otherwise: TypeScript pinned to
-  6.0.x (`typescript@~6.0`), Next.js 16 (latest patch, 16.4.5 at least), Expo SDK 58, Zod at boundaries, thin
-  handlers over `services/`, Prisma ORM 7 pinned per
-  `../../knowledge/stack/prisma.md`, Jest and Playwright, ESLint 10 flat
-  config, Stripe, Resend, Sentry, auth per
+  6.0.x (`typescript@~6.0`), Next.js 16 (latest patch, 16.4.5 at least), Expo
+  SDK 58, Zod at boundaries, thin handlers over `services/`, Prisma ORM 7
+  pinned per `../../knowledge/stack/prisma.md`, Jest and Playwright, ESLint 10
+  flat config, Stripe, Resend, Sentry, auth per
   `../../knowledge/stack/auth-decision.md`, pnpm workspaces, Node 24 LTS
-  (`engines` and `.nvmrc`). Why for the pins: npm `latest` is TypeScript 7,
-  which typescript-eslint (`<6.1`) and ts-jest (`<7`) don't support yet;
-  Vercel no longer deploys Node 20; ESLint 10 ignores `.eslintrc.*`.
+  (`"engines": { "node": "24.x" }` exactly, not an open range, plus `.nvmrc`).
+  Why for the pins: npm `latest` is TypeScript 7, which typescript-eslint
+  (`<6.1`) and ts-jest (`<7`) don't support yet; Vercel no longer deploys Node
+  20 and resolves an open range to its newest Node; ESLint 10 ignores
+  `.eslintrc.*`.
 - **Pipeline by Alex owns CI and deploy;** edit `pba.yml`, never generated
   workflow YAML. Why: one pipeline across apps, and Vercel's own git deploys
   would bypass the gated chain.
