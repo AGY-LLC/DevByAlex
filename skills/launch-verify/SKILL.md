@@ -28,7 +28,9 @@ env vars.
 
 - Each in-scope surface (default web and mobile, or the one passed) ran
   against staging: Playwright for web, Maestro on a simulator or emulator with
-  the staging build for mobile. A surface with no runner is marked
+  the staging release build for mobile (Android release builds are
+  R8-minified, so stripped code only fails there; fix it with keep rules, per
+  `../../knowledge/stack/react-native.md`). A surface with no runner is marked
   `[skipped]` with the reason.
 - Run artifacts (reporter output, results, traces, screenshots) are under
   `docs/acceptance-runs/<run-date>/` by surface.

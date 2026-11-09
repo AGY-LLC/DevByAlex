@@ -1,22 +1,19 @@
 ---
 id: stack-nextjs
 title: "Next.js"
-summary: "Default web framework (App Router, Next 16) for web/ and marketing/; Rules, Next 16 changes, and where agents go wrong."
+summary: "Default web framework (App Router, Next 16) for web/ and marketing/: version floor, where API docs come from, rules and preferences."
 tags: ["stack", "nextjs"]
-updated: 2026-11-07
+updated: 2026-11-09
 ---
 # Next.js
 
 **Default for web: App Router, current major (16).** Used for `web/` (full-stack: UI plus route handlers) and `marketing/` in the monorepo `dev-scaffold` sets up. Not for long-running processes or persistent sockets that outgrow Vercel functions: split those into a service.
 
-## Next 16 changes agents get wrong
+## Version and API docs
 
-- Install the latest 16.x patch, never older than 16.4.5 (the Nov 3, 2026 security release fixed cross-tenant `use cache` leaks). Next now ships a security release every month, so don't pin a patch.
-- `middleware.ts` is now **`proxy.ts`** (`export function proxy`), Node runtime only. Edge-only projects keep `middleware`.
-- `headers()`, `cookies()`, `draftMode()`, `params` and `searchParams` are async: `await` them. In route handlers, read request headers from `req.headers`.
-- Caching: Cache Components (`cacheComponents: true`, `"use cache"`, `cacheLife`, `cacheTag`) replace segment-level `revalidate` in apps that opt in; others keep ISR. `revalidateTag` takes a second argument (or use `updateTag`).
-- Turbopack is the default for dev and build. `next lint` is gone: run ESLint directly.
-- Use `next/og` (`ImageResponse`) for OG images, not `@vercel/og`.
+- Install the latest 16.x patch, never older than 16.4.5 (the Nov 3, 2026 security release fixed cross-tenant `use cache` leaks). Next ships a security release every month, so don't pin a patch.
+- API details (async request APIs, `proxy.ts`, caching, `revalidateTag`) come from the installed version's bundled docs: `next dev` keeps a managed block in `AGENTS.md` pointing at `node_modules/next/dist/docs/`. Read the relevant doc before writing Next code; don't restate those APIs here or edit between the block's markers.
+- Run ESLint directly (`next lint` is gone). Use `next/og` (`ImageResponse`) for OG images, not `@vercel/og`.
 
 ## Rules
 
@@ -34,4 +31,3 @@ updated: 2026-11-07
 - Zod for all form and request validation.
 - Server actions for mutations unless the UI needs complex optimistic state (`./server-actions-vs-api-routes.md`).
 - Content-heavy pages: cached/static rendering over full SSR per request.
-- Always say "App Router, Next 16" when prompting for Next code; older training data produces Pages Router or pre-16 APIs.

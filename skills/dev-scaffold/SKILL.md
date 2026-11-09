@@ -57,7 +57,9 @@ decisions, the spec (user-facing? mobile?), `docs/DECISIONS.md`, and
   has `vercel.json` `"git": {"deploymentEnabled": false}`. `pba check` passes
   where available. A target whose secrets don't exist yet stays commented.
 - Install, lint, typecheck, test and build pass in every workspace.
-- `CLAUDE.md` documents the workspace layout and conventions.
+- `CLAUDE.md` documents the workspace layout and conventions. `web/` and
+  `marketing/` keep Next's managed `AGENTS.md` block as generated, committed
+  and imported from their `CLAUDE.md` (`@AGENTS.md`).
 - `docs/adr/scaffold.md` records the topology and what it ruled out, the
   branch model, any stack pick that diverged from the defaults, and anything
   skipped as `O`-entries, with a one-line pointer in `docs/DECISIONS.md`.
