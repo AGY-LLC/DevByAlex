@@ -3,7 +3,7 @@ id: stack-uiux
 title: "UI/UX Baseline"
 summary: "The cross-project design baseline: generic-AI-UI tells, design-system dimensions, the accessibility floor, and a contextual catalog of interaction and perceived-performance patterns selected through docs/DESIGN.md."
 tags: ["stack", "uiux", "design", "accessibility", "frontend"]
-updated: 2026-11-09
+updated: 2026-11-10
 ---
 # UI/UX Baseline
 
@@ -40,15 +40,15 @@ Non-negotiable on every customer-facing surface:
 
 - [ ] **Focus visible**: a solid outline ≥ 2px on `:focus-visible` (inset about 3px), ≥ 3:1 against the unfocused look; over photos, gradients or glass, a 2px light outline inside a 4px dark ring. In menus, list rows, `overflow: hidden` boxes and at page edges the ring goes inside (negative offset). Never `outline: none` or a shadow alone without a transparent outline (forced colors drop shadows), never faded in (2.4.7, 2.4.13).
 - [ ] **Focus not obscured**: sticky bars never hide the focused element: `scroll-padding-top` = bar height + 20px, kept in sync on resize; on phones banners sit in the page flow and a tall sticky header never pairs with a fixed bottom bar (2.4.11).
-- [ ] **Keyboard**: every action reachable and operable by keyboard; Tab order matches visual order; no traps (2.1.1, 2.4.3).
+- [ ] **Keyboard**: every action reachable and operable by keyboard; Tab order matches visual order; no traps; a plain "Skip to main content" link is the first focusable element, hidden until focused, top left (2.1.1, 2.4.1, 2.4.3).
 - [ ] **Contrast**: body text ≥ 4.5:1, large text ≥ 3:1, non-text controls/state ≥ 3:1, against the *actual* rendered background (1.4.3, 1.4.11).
 - [ ] **Hit targets**: pointer targets ≥ 24 × 24px, or a 24px circle centered on a smaller one touches no other target; links inside a sentence are exempt; main actions aim for 44 × 44px (2.5.8).
 - [ ] **Semantic structure**: one H1, no skipped heading levels, landmarks, real list markup, DOM order = visual order (1.3.1).
 - [ ] **Labels & errors**: every input has a visible persistent label; errors follow the form-error default below (2.4.6, 3.3.1, 3.3.3).
-- [ ] **Alternatives**: meaningful images have alt text; decorative images hidden; video captioned (1.1.1, 1.2.2).
+- [ ] **Alternatives**: meaningful images have alt text; decorative images hidden; video captioned, on by default with custom controls; video autoplays only muted, opt-in and with controls always shown (1.1.1, 1.2.2).
 - [ ] **Reduced motion**: under `prefers-reduced-motion`, motion that shows a status change or place becomes a dissolve, fade or color shift; parallax, animated blur, zooms, decorative spins and shimmer stop (loading spinners keep turning, since a still one reads as frozen); autoplaying carousels pause. Never a blanket no-animation reset that hides status changes. No flashing > 3×/sec (2.3.3).
 - [ ] **Zoom & reflow**: survives 200% zoom with no loss; no two-dimensional scroll at 400% except tables/maps; text survives 1.5 line height, 0.12em letter and 0.16em word spacing, so no fixed-height text boxes (1.4.4, 1.4.10, 1.4.12).
-- [ ] **Color not the only signal**: pair color with icon + text (e.g. red error gets an icon and a message).
+- [ ] **Color not the only signal**: pair color with icon + text (e.g. red error gets an icon and a message). Body links stay underlined, 1px about 0.1em below the text, thickening to 2 to 3px in place on hover, with visited in its own hue in both modes; never hover by color alone.
 - [ ] **Modal focus management**: focus moves to the first field (or the primary button), Tab is trapped, Esc and the close icon close it, focus returns on close, `aria-modal`/inert applied.
 
 ## Component defaults
@@ -58,28 +58,30 @@ Exact rules every theme inherits; a theme may restyle these, never loosen them.
 - **Modals** only for required input, an urgent alert about the current task, or a confirmation; anything else is a toast, inline notice or page, and anything wider than 640px is a page. Only the body scrolls; ≤ 3 buttons, primary rightmost, verb labels (never "OK"), danger style for destructive ones. A modal holding a form never closes on an outside click; never stack modals, open one unasked, or use them for tasks people repeat often. Widths 320, 480 (default) or 640px with 24px padding, a bottom sheet on phones, black 50% backdrop.
 - **Toasts** hold at most two lines with a close button, auto-hide after 5s (10s max), and pause on hover and focus. What a toast says also lives elsewhere in the app. A toast with an action (Undo, a link) never auto-hides; anything the user must act on is an inline notice that stays; field errors never go in toasts.
 - **Switches** only for an on/off setting that applies at once and can be undone; anything needing Save or a confirmation is a checkbox, 3 to 5 options are radios and more a select, two opposite views or named options (Monthly or Yearly) a segmented control (2 to 5 nouns or 6 icons, never mixed, picks a state and never runs actions, applies at once, never navigates, becomes a menu when narrow); switches never sit in a form with Submit. The label is a noun phrase true in both states ("Notifications", never a question or verb), state text is only "On" or "Off", and a switch shows a loader while it waits on the server. Track 48×24px with an 18px handle; in table rows 32×16px with a 10px handle and a check when on.
-- **Form errors**: check a typed field when focus leaves it, never on focus; empty required fields wait for submit; once a field shows an error, recheck on each keystroke and clear it when valid (new passwords may check live). The message sits beside the field with an icon, linked by `aria-describedby` and `aria-invalid`; on submit, a summary of links to each bad field goes under the page title and takes focus, and the title starts with "Error: ". Never clear fields or disable Submit up front; empty fields get an instruction ("Enter your name"), broken rules a description ("Name must be 35 characters or less"), never "please", "sorry", "invalid", "oops" or "This field is required". The summary is headed "There is a problem" and shows even for one error. A character count exists only for a real limit, appears at 75% of it, is announced once typing pauses, and never blocks typing or pasting. Passwords are hidden behind a text "Show" toggle (no eye icon alone) that resets on submit, allow paste, have no confirm field or maxlength, use `autocomplete` new-password or current-password with spellcheck off, and a failed sign-in never says which field was wrong. No tooltip-only, icon-only or modal errors, and error text never shakes. Success ticks only on password, username and character-count fields.
+- **Form errors**: check a typed field when focus leaves it, never on focus; empty required fields wait for submit; once a field shows an error, recheck on each keystroke and clear it when valid (new passwords may check live). The message sits beside the field with an icon, linked by `aria-describedby` and `aria-invalid`; on submit, a summary of links to each bad field goes under the page title and takes focus, and the title starts with "Error: ". Never clear fields or disable Submit up front; empty fields get an instruction ("Enter your name"), broken rules a description ("Name must be 35 characters or less"), never "please", "sorry", "invalid", "oops" or "This field is required". The summary is headed "There is a problem" and shows even for one error. A character count exists only for a real limit, appears at 75% of it, is announced once typing pauses, and never blocks typing or pasting; past the limit it says "You have 3 characters too many" and only then turns the border red. Passwords are hidden behind a text "Show" toggle (no eye icon alone) that resets on submit, allow paste, have no confirm field or maxlength, use `autocomplete` new-password or current-password with spellcheck off, and a failed sign-in never says which field was wrong. No tooltip-only, icon-only or modal errors, and error text never shakes. Success ticks only on password, username and character-count fields.
 - **Tooltips** label icon-only controls or give a short hint: open after 100ms of hover for an icon label, 400 to 700ms for a description (at once when moving between tooltips within 300ms), at once on keyboard focus, never on click; close on Esc or 300ms after the pointer leaves, staying open while hovered. One line, above the trigger by default. Never links, buttons or must-read text inside (use a popover); touch-first screens show visible labels instead. Hover panels and top-nav menus open after 300 to 500ms and close 500ms after the pointer leaves both trigger and panel.
 - **Tables**: one row height per table, 24, 32, 40 (default), 48 or 64px (64 only for two-line rows), with header, toolbar and pagination the same height; 16px side padding, 14px text with a semibold header, and a caption. Compared numbers right-aligned in tabular figures with thousands separators and the same decimals down the column, text and IDs left, headers follow their column, never centered text; a missing value shows "–"; the sort icon shows only on the sorted column. Zebra stripes (from 4 rows and 3 columns) or faint row dividers, never both; rows under 44px only on pointer layouts and never in pastel, clay or editorial themes; no display fonts in numeric cells.
 - **Empty states** are left-aligned (centered only in tiles) and replace the element they stand for (an empty table drops its headers) and never show while loading. A title naming the next step, at most 3 lines of body, one primary action; no illustration in toasts, strips or tiles under 260px wide.
 - **Charts**: one series in the brand color; highlight by muting the rest; status colors only for status. Categorical colors in a fixed order, at most 6 plus "Other"; sequential scales are one hue in up to 10 steps, darkest on the maximum in light mode, lightest in dark; pastel themes use tints of the series hues. Never color alone, a gradient instead of a scale, or glass behind a chart.
 - **Drag and drop**: a grab cursor only on a handle of at least 24px (a card holding buttons drags only by it); the original stays at 40% opacity, the preview sits 16px right and 8px down, at most 280px square, never tilted; a 2px line with an 8px dot, centered in the gap, marks the drop spot, and the dropped item flashes for 700ms. The dotted handle sits on the left, and Move up, down, to top and to bottom sit in the item's menu for keyboard users.
-- **Flows and paging**: a stepper only for fixed-order flows of 3 to 7 steps (24px icons, 4px lines, vertical on phones); any-order or multi-sitting flows get a task list page. Pagination always shows the first and last page plus 2 either side of the current (1 on phones) with ellipses, hides on one page, and resets to page 1 on any sort or filter; never auto-loading infinite scroll above a footer. Breadcrumbs start at home and end at the parent, never the current page, and never wrap or carry icons; from 5 levels show the first and last 3 with a "…" menu between, truncate at most one label, and below 992px show only a back link to the parent; none on flat sites or single-page layouts.
+- **Flows and paging**: a stepper only for fixed-order flows of 3 to 7 steps (24px icons, 4px lines, vertical on phones); any-order or multi-sitting flows get a task list page (the whole row is the link, "Completed" in plain text, open tasks tagged). Activity timelines run newest first on a 2px muted rail, 32px badges ringed 2px in the page color, 16px entry padding, minor runs as 16px unfilled badges; never as progress or navigation. Pagination always shows the first and last page plus 2 either side of the current (1 on phones) with ellipses, hides on one page, and resets to page 1 on any sort or filter; never auto-loading infinite scroll above a footer. Breadcrumbs start at home and end at the parent, never the current page, and never wrap or carry icons; from 5 levels show the first and last 3 with a "…" menu between, truncate at most one label, and below 992px show only a back link to the parent; none on flat sites or single-page layouts.
 - **Disclosure**: accordions when several sections may be open at once ("Open all" from 3), tabs to switch between equal sections, a disclosure for one or two minor bits; all start closed, and a header is one click target of 5 to 10 parallel words with one chevron style. Hide closed panels with `<details>` or `hidden="until-found"` so find-in-page reaches them, never `display: none`, with `aria-expanded` in sync. Never nested, never controls in headers, never hiding what everyone needs. A full tab row drops its icons, then moves its last tabs into More (never just one; the current tab swaps with the last visible).
-- **Truncation** cuts at the end, or the middle for file names, hashes and paths, keeping at least 4 characters and a "…"; full text in a tooltip up to about 150 characters, past that a Show more. Never truncate titles, labels, column headers, navigation, errors or notifications, and never fade or scroll text inside a box instead.
+- **Truncation** cuts at the end, or the middle for file names, hashes and paths, keeping at least 4 characters and a "…"; full text in a tooltip up to about 150 characters, past that a Show more on its own line; previews clamp at 2 to 3 lines, and a Show more never hides just one item. Never truncate titles, labels, column headers, navigation, errors or notifications, and never fade or scroll text inside a box instead.
 - **Search suggestions**: at most 10 on desktop, 4 to 8 on phones, no scrollbar, the untyped part bold, the active row shaded, on a solid surface without separators or zebra rows; they start after 3 characters and a 100ms pause and hide when nothing matches; arrows loop and copy the row into the field, Return submits, Esc closes.
 - **Copy and upload**: a copy button stays visible beside its value, is named for it ("Copy branch name"), and only after a real success shows a success-colored check and "Copied!" for 2s, no toast; a failed copy shows an error icon; where copying can't work, remove it. Uploads get an always-visible drop zone the width of the form fields around a secondary "Choose file" button (phones get only the button), state accepted types and size up front, list each file with its size and progress, and put one specific error on the file that failed ("The selected file must be smaller than 2MB").
 - **Range inputs**: sliders only for relative values with 4 or more stops (fewer are radios), snapping to real stops with the value and unit under the thumb (read out with the unit), a 20px thumb (24px on touch) on a 3px track, Home and End to the ends; never for exact values or progress. Number steppers only for small whole numbers near a default: a typable field between minus (left) and plus (right) of at least 44px, long press repeats, the end button disables (never hides) at the limit with no wrap, and the field reserves width for the longest value; never for prices, ages, dates or decimals, never paired with a slider.
-- **Carousels** come after a static row or scroll-snap has failed: 2 to 5 self-contained slides of one height, Prev and Next always shown under them at 44px, "2 of 5" text over dots alone; autoplay turns every 5s behind a visible stop button that comes first, pauses on hover and focus, stops for good once touched, and stays off under reduced motion. Never calls to action, pricing or comparisons, never in dashboards or terminal themes.
-- **Inline edit** only for data that changes often and fits its row (linked fields get a form): Enter saves and Esc cancels; single-line fields also save on blur, multi-line ones stay open; save and cancel icons stay visible, one table row edits at a time, and read and edit share type and alignment. Never in forms with Save or for new entries.
-- **Sticky headers** only for items used often: opaque (never glass), at most 5 items, hidden on scroll down and back with a 300ms slide on scroll up; never over phone forms. **Drawers** come from the right, pushing content on wide screens or overlaying it, with a resize handle on the inner edge; phones get a sheet, marketing pages neither.
-- **Pricing**: plans run simplest (left) to priciest (right), the most popular in the middle with the only filled button; the monthly or annual toggle sits above and states the saving in words ("2 months free"); about 4 key features per plan, a comparison table only past about 20, with plan names and buttons pinned. Never Bento or a carousel.
+- **Carousels** come after a static row or scroll-snap has failed: 2 to 5 self-contained slides of one height, Prev and Next always shown under them at 44px, "2 of 5" text over dots alone; autoplay turns every 5s behind a visible stop button that comes first, pauses on hover and focus, stops for good once touched, and stays off under reduced motion; off-screen slides take no focus. Never calls to action, pricing or comparisons, never in dashboards or terminal themes.
+- **Inline edit** only for data that changes often and fits its row (linked fields get a form): Enter or the check saves and Esc cancels, with save and cancel icons always visible and nothing saved on blur beside them; an empty value reverts, a failed save stays open with the text and a retry, an edited row holds its place under sort, filter or paging until refresh, one row edits at a time, and read and edit share type and alignment. Never in forms with Save or for new entries.
+- **Sticky headers** only for items used often: opaque (never glass), at most 5 items, hidden on scroll down and back with a 300ms slide on scroll up; never over phone forms. "On this page" only on long pages with 2 or more H2s, listing just them: sticky left on desktop, a pinned dropdown on phones. **Drawers** come from the right, pushing content on wide screens or overlaying it, 260px by default with a resize handle on the inner edge, at most 80% of a phone screen; phones get a sheet, marketing pages neither. **Split panes** show a 1px divider with a 44px drag target, accent on hover and drag (`role="separator"`, 0 to 100); panes sized in percent with minimums, Arrow steps 5%, Shift+Arrow 10%, Home and End to the limits, Enter collapses and restores; never on phones or between cards.
+- **Pricing**: plans run simplest (left) to priciest (right), the most popular in the middle with the only filled button; the monthly or annual toggle sits above and states the saving in words ("2 months free"); about 4 key features per plan, a comparison table only past about 20, with plan names and buttons pinned. A sale shows the old price struck through at the same size with a hidden "Instead of", in a red that isn't the error red. "Added to cart" shows the item's image, name, options and price with Keep shopping, View cart and Checkout, never a bare toast. Never Bento or a carousel.
 - **Filter chips**: one row, 32px tall, 16px side padding, 56 to 296px wide, 1 to 3 nouns with a count when multi-select ("Price (1)"), scrolling sideways on phones, never wrapping; applied filters show above the results with a remove on each and "Clear all". Single chips filter at once, panels and multi-select use Apply. Never as navigation (tabs) or beside a side panel of the same filters.
-- **Menus**: context menus hold the item's likeliest actions, at most 12 in about 3 groups, 160 to 288px wide with 32px rows (24 dense), submenus one level deep; inapplicable actions are hidden, destructive ones last in red behind a divider, and each also lives somewhere visible. A split button has a clear default plus 1 to 4 variants, its label matching the first menu item, an always-visible divider, an arrow named for the set ("More deploy options") and halves of 44px on touch; never destructive as the default. Toolbars of 3 or more related icon buttons are one tab stop with arrows, Home and End, overflow into More, and no slider or segmented control inside.
+- **Menus**: context menus hold the item's likeliest actions, at most 12 in about 3 groups, 160 to 288px wide with 32px rows (24 dense), submenus one level deep; inapplicable actions are hidden, destructive ones last in red behind a divider, and each also lives somewhere visible. A split button has a clear default plus 1 to 4 variants, its label matching the first menu item, an always-visible divider, an arrow named for the set ("More deploy options") and halves of 44px on touch; never destructive as the default. Toolbars of 3 or more related icon buttons are one tab stop with arrows, Home and End, move whole groups into More, and no slider or segmented control inside.
 - **Picking widgets**: tag inputs make a tag on Enter, Tab, blur or a comma, split pastes the same way, and Backspace in the empty field reopens the last tag. Tree views only for hierarchies over one level deep: 32px rows (24 dense), every node with an icon or none, the chevron only toggles, the row selects, Left and Right move between parent and child; never site navigation or FAQs. Star ratings always show 5 stars rounded to a quarter with the review count, grey outlines at zero; as input, whole stars in one tab stop. Selectable cards only when options need an image or description: 2 to 6, control on the right, 16px padding and gaps, stacked or in one row, never a tile grid.
-- **Helpers**: pull to refresh only on touch lists beside a visible refresh button: it fires at 60px, stops at 120px and springs back in 280ms. Back to top is one button lower right, only past 2 screens on desktop or 4 on phones, shown once people scroll up. Coach marks explain one thing each, sit beside the element without covering it, show once, and use OK, or Next, Finish and a quiet "Skip tour"; never on editorial or marketing pages.
-- **Dates**: relative under a month ("5 minutes ago"), then "on Nov 18" (year only if not this year); deadlines, bookings and invoices always absolute. Known dates (a birthday) are Day, Month, Year text fields (2, 2 and 4 characters wide) that never auto-jump and accept "jan"; a calendar only where the weekday or nearness matters, typing still allowed, opening on today. Times follow the locale's clock with a sensible min and max, rounding to fixed slots on blur rather than erroring.
-- **Badges and avatars**: a badge holds only a number (16px pill, 99+ cap) or is a 6px dot; words go in a tag. People are circles, projects and bots rounded squares; stacks show up to 5, then a +N that names the rest.
+- **Helpers**: pull to refresh only at the top of touch lists, beside a refresh button disabled while refreshing: it fires at 60px, stops at 120px and springs back in 280ms. Back to top is one button lower right, only past 2 screens on desktop or 4 on phones, shown once people scroll up. Coach marks are offered, never started unasked, and restartable from help: one thing each, 300 to 600px wide on every step, beside the element and 16px from the screen edge, with OK, or Next, Finish and a quiet "Skip tour"; a step asking for an action moves on once it's done; never on editorial or marketing pages. Swipe actions: 1 to 3 per side, destructive on the trailing side, a full swipe runs only the first, a swiped delete gets Undo, and each also sits in the row menu; never inside carousels or paged views.
+- **Dates and numbers**: relative under a month ("5 minutes ago"), then "on Nov 18" (year only if not this year); deadlines, bookings and invoices always absolute. Known dates (a birthday) are Day, Month, Year text fields (2, 2 and 4 characters wide) that never auto-jump and accept "jan"; a calendar only where the weekday or nearness matters, typing still allowed, opening on today. Times follow the locale's clock with a sensible min and max, rounding to fixed slots on blur rather than erroring. Ranges offer presets (Today, Last 7 days, This month) beside one month narrow or two wide, pending until Apply. Numbers get separators from 4 digits (1,024), a leading zero (0.92), at most 2 decimals and no trailing ".0"; abbreviate (50.2k) only where space is tight, with the full value on hover, never in checkouts or invoices. Prices are stored as a number with currency and locale, drop ".00" and never wrap from their sign; smaller cents never in tables or ledger themes.
+- **Badges and avatars**: a badge holds only a number (16px pill, 99+ cap) or is a 6px dot; words go in a tag. People are circles, projects and bots rounded squares; stacks show up to 5, then a +N that names the rest. A count badge hides at zero and sits after its link with hidden text ("(5 unread)"); its tray opens on Unread, urgent items first, one action each, a one-tap "Mark all as read", and is a full page on phones; critical alerts are banners or dialogs.
+- **Consent and timeouts**: a cookie banner sits in the page flow above the skip link, never fixed, floating or glass, with two same-style buttons named for the cookies ("Accept analytics cookies", "Reject analytics cookies") and a "View cookies" link; the choice lasts 12 months and its confirmation's "Hide cookie message" takes focus; essential-only sites show none. Sessions warn at least 2 minutes before ending (a dialog at 25 idle minutes counting down 5), announced on open, every 15s and assertively in the last 20s, never in a toast; at zero a page says what to redo; none on signed-out pages.
+- **Print**: content pages (articles, docs, receipts; never app shells or live dashboards) print only main, black on white with borders for fills, 12pt body at 1.5, 2cm margins, link addresses after links, orphans and widows of 3, table headers repeated and no row, figure or code block split; every theme prints plain.
 
 ## Contextual design-pattern catalog
 
@@ -197,14 +199,11 @@ payments and data contracts for sensitive operations.
 
 ### 8. BlurHash placeholders
 
-- **Useful when:** image-heavy feeds load slowly and a compact preview beats a
-  solid color.
-- **Build and verify:** generate from small sources, reserve the aspect ratio,
-  swap to the image or its error state, and measure decode and bundle cost
-  against a solid color ([BlurHash](https://github.com/woltapp/blurhash)).
-- **Caveats / skip:** the preview leaks image content, so it gets the image's
-  access rules and is never redaction; hide it from assistive technology. Skip
-  small, instant or sensitive images.
+- **Useful when:** slow image-heavy feeds gain from a preview over a solid color.
+- **Build and verify:** reserve the aspect ratio, swap to the image or its error
+  state, and weigh decode cost ([BlurHash](https://github.com/woltapp/blurhash)).
+- **Caveats / skip:** the preview leaks content, so it takes the image's access
+  rules and is hidden from assistive technology; skip small or sensitive images.
 
 ### 9. View transitions
 
@@ -245,12 +244,10 @@ payments and data contracts for sensitive operations.
 ### 12. Predictive back
 
 - **Useful when:** Android's back gesture can preview the real destination.
-- **Build and verify:** use the system navigation APIs for the target SDK
-  ([guide](https://developer.android.com/guide/navigation/custom-back/predictive-back-gesture));
-  preview without committing, restore on cancel, navigate once on completion.
-  Test cancel, button Back, nested stacks, sheets and unsaved drafts.
-- **Caveats / skip:** skip a custom handler when the navigator already does
-  it, and never imitate the gesture on other platforms.
+- **Build and verify:** the system [navigation APIs](https://developer.android.com/guide/navigation/custom-back/predictive-back-gesture):
+  preview, restore on cancel, navigate once; test nested stacks, sheets and drafts.
+- **Caveats / skip:** no custom handler where the navigator does it; never
+  imitate the gesture elsewhere.
 
 ### 13. Hit slop
 
@@ -288,33 +285,28 @@ payments and data contracts for sensitive operations.
 
 ### 16. Tabular numbers
 
-- **Useful when:** counters, timers, prices or numeric columns would jitter or
-  be hard to compare.
-- **Build and verify:** [`font-variant-numeric: tabular-nums`](https://www.w3.org/TR/css-fonts-4/#font-variant-numeric-prop)
-  or the native equivalent; test the real font and fallback, localized digits,
-  signs and large text. Equal digit widths do not align decimals by themselves.
-- **Caveats / skip:** never announce every timer tick; skip prose and font
-  downloads made only for this.
+- **Useful when:** numbers people compare or that change live (table cells,
+  totals, timers, file sizes) would jitter.
+- **Build and verify:** [`font-variant-numeric: tabular-nums`](https://www.w3.org/TR/css-fonts-4/#font-variant-numeric-prop);
+  test the real font, localized digits and signs; it doesn't align decimals.
+- **Caveats / skip:** never on labels, words or display numbers; never announce
+  every timer tick.
 
 ### 17. Balanced headlines
 
 - **Useful when:** short multi-line headings end on an awkward last line.
-- **Build and verify:** progressively enhance with
-  [`text-wrap: balance`](https://www.w3.org/TR/css-text-4/#text-wrap-style);
-  check fallback fonts, localization, narrow widths and text zoom.
-- **Caveats / skip:** normal wrapping stays a valid fallback; never hard-code
-  line breaks or shrink type to force a shape. Skip body and editable text.
+- **Build and verify:** [`text-wrap: balance`](https://www.w3.org/TR/css-text-4/#text-wrap-style)
+  as an enhancement; check narrow widths, localization and zoom.
+- **Caveats / skip:** never hard-coded breaks or shrunk type; skip body and
+  editable text.
 
 ### 18. Continuous corners
 
 - **Useful when:** the design system calls for smooth (squircle) corners on
   cards, sheets or controls.
-- **Build and verify:** use platform shapes such as Apple's
-  [continuous corner curve](https://developer.apple.com/documentation/quartzcore/calayercornercurve/continuous)
-  and a plain radius elsewhere; check clipping, borders, focus rings and touch
-  bounds.
-- **Caveats / skip:** CSS radius does not match the native curve; skip new
-  drawing dependencies or costly masks.
+- **Build and verify:** platform shapes such as Apple's [continuous curve](https://developer.apple.com/documentation/quartzcore/calayercornercurve/continuous),
+  a plain radius elsewhere; check clipping, borders and focus rings.
+- **Caveats / skip:** CSS radius can't match it; no new drawing dependencies.
 
 ### 19. Idempotency keys
 
