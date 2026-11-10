@@ -268,8 +268,8 @@ Write `docs/wireframes/README.md` from `../../templates/wireframes-README.md`:
   composition) so a design idea can actually be tried in them. Grey placeholder
   boxes with text labels are not an acceptable board.
 - Cover the non-happy states (empty/loading/error) they're where flows break.
-- Don't unlock the dev stage; that's Alex's approval to give (he approves a
-  captured inventory the same way he'd approve generated boards).
+- Don't unlock the dev stage; that's Alex's approval to give (a captured
+  inventory is approved the same way as generated boards).
 
 ## Output
 

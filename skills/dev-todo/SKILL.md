@@ -5,95 +5,63 @@ argument-hint: "[path to the app repo: defaults to cwd] [--branch <name>]"
 license: MIT
 metadata:
   author: alex-yoza
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # dev-todo: Drain the planned-change lane
 
-The third lane. `docs/BUGS.md` holds what's broken, `docs/TWEAKS.md` holds what's
-cosmetic, and `docs/TODO.md` holds what you've **decided to change**: bounded
-adjustments to behavior, structure, or flows that don't add new scope. Once an
-app is stable, this lane is where most of the iteration happens: you keep
-jotting changes, the loop keeps draining them.
+## Goal
 
-## When to activate
+`docs/TODO.md` has no open entries: every bounded, decided change to existing
+behavior, structure or flows is applied and proven, or routed to the lane it
+belongs in. `BUGS.md` holds what's broken, `TWEAKS.md` what's cosmetic, and
+`TODO.md` what Alex decided to change without new scope; once an app is
+stable, most iteration happens here.
 
-- `docs/TODO.md` has open entries (`dev-goal` calls this after the bug log and
-  the tweak lane are clear).
-- The user asks for a one-off planned change by name, or says "drain the todos",
-  "work the todo lane".
+`dev-goal` calls this after bugs and tweaks are clear; it also runs by hand
+("drain the todos"). Work on the branch you're on or the one `dev-goal`
+passed, never a per-entry branch. Read `docs/TODO.md`, `docs/STATUS.md` and
+the ADRs of whatever each entry touches.
 
-## Step 1: Load and route (qualification first)
+## Done when
 
-Read `docs/TODO.md`, `docs/STATUS.md`, and the ADRs of whatever each entry
-touches. Route every `## Open` entry before doing any work:
+- Every open entry was routed before any work: broken behavior to
+  `docs/BUGS.md`; cosmetic-only (passes `/dev-tweak`'s qualification test) to
+  `docs/TWEAKS.md`; feature-sized (a new capability, data model, API surface,
+  substantial dependency, or anything needing a spec conversation) to Alex as
+  a feature proposal in STATUS blockers; a conflict with an `active` ADR entry
+  as a blocker citing it. Each moved entry notes where it went.
+- Each qualified entry, in listed order and respecting dependencies:
+  - a behavior change has a test for the new behavior that failed first and
+    now passes; a change with no behavior change proves itself by the
+    existing suite;
+  - typecheck, lint and the full suite are green;
+  - changed copy passed a prose pass, and anything visual passed
+    `design-critic` on screenshots under `docs/visual-qa/<run-date>/`;
+  - a reshaped user-facing flow covered by an acceptance flow
+    (`knowledge/workflow/e2e-gate.md`) has its Playwright or Maestro flow
+    updated and re-run green;
+  - a material decision is recorded (that feature's `docs/adr/<id>.md`, or
+    `docs/DECISIONS.md` when cross-cutting);
+  - the entry is in `## Done` with branch, commit and date, not deleted.
+- An entry that failed its gate twice is a STATUS blocker with what was
+  tried.
+- Nothing the batch superseded is left orphaned. STATUS has a log line naming
+  the IDs drained, rerouted and punted, with a visual pulse if UI changed, and
+  the work is pushed to the working branch with the suite green.
 
-- **Behavior is broken** (something doesn't work as already intended) →
-  reclassify to `docs/BUGS.md`, note the move in the entry, and leave it for the
-  bug drain. Bugs get the bug lane's worst-first discipline, not this one.
-- **Cosmetic-only** (copy, tokens, spacing, assets, ordering: passes
-  `/dev-tweak`'s qualification test) → reclassify to `docs/TWEAKS.md`: the
-  lighter gate is cheaper and just as safe.
-- **Feature-sized** (a new user-facing capability, a new data model or API
-  surface, a substantial new dependency, or anything that needs a spec
-  conversation) → surface it to Alex in STATUS `## Blockers / open questions` as
-  a **feature proposal**. Scope stays human; the todo lane is never a back door
-  around the plan gates or the feature loop.
-- **Contradicts an `active` ADR decision** → blocker, not a change. Cite the
-  entry; only Alex may supersede it.
-- Everything else, a bounded change to existing behavior or structure, is a
-  **qualified todo**: keep it.
+## Decisions (and why)
 
-## Step 2: Apply the qualified batch
+- **Route before work.** Why: qualification first is what keeps this lane
+  from becoming a way around the feature loop and the plan gates.
+- **Drain the whole open list in one run;** rerouted and punted entries count
+  as drained. Why: a half-drained lane hides what is still pending.
+- **Open todos block the launch stage**, like open bugs and tweaks. Why: a
+  known planned change never ships unaddressed.
 
-Work entries in listed order (respect any dependency between them), on the
-working branch (the one you're on, or the one `dev-goal` passed down; no
-per-entry branches). For each entry:
+## Hard rules
 
-1. **Failing test first where behavior changes.** Write or adjust the test that
-   captures the *new* expected behavior, watch it fail, then implement until it
-   passes. A todo that changes no behavior (e.g. a structural refactor) instead
-   proves itself by the existing suite staying green.
-2. **The gate, proportional but real:** typecheck + lint + **full suite green**;
-   prose pass on any changed user-facing copy; **screenshot + design-critic
-   pass on anything visual** (same standard as every design change, saved under
-   `docs/visual-qa/<run-date>/`); and if the change **reshapes a user-facing
-   flow covered by an acceptance flow** (`knowledge/workflow/e2e-gate.md`),
-   update the affected Playwright/Maestro flow and re-run it green: a todo
-   that leaves flow shapes intact owes nothing beyond the suite.
-3. Record any material decision the change makes: feature-scoped → that
-   feature's `docs/adr/<id>.md`; cross-cutting → `docs/DECISIONS.md`.
-4. **Move the entry to `## Done`** with a one-line summary (branch · commit ·
-   date). Don't just delete it.
-5. Commit. Push after the batch (or per entry if entries are independent and
-   large).
+The hard rules in `docs/DECISIONS.md` apply, plus:
 
-If a fix fails its gate twice, punt the entry to STATUS blockers with what was
-tried: same two-strikes rule as everywhere else.
-
-## Step 3: Record and stop
-
-- Update `docs/STATUS.md`: log entry naming the TODO IDs drained (and anything
-  reclassified or punted), with a visual pulse if UI changed.
-- Leave no orphans: remove anything the batch superseded.
-- Commit and push to the working branch. Report: entries applied, entries
-  rerouted (and to where), blockers filed.
-
-## Rules
-
-- **Drain the whole open list in one run**: a half-drained lane is worse than
-  none. Reclassified and punted entries count as drained (they left `## Open`).
-- **Route before work.** Every entry is qualified first; nothing feature-sized
-  is ever quietly built from here.
-- **ADRs govern.** An entry contradicting an `active` decision is a blocker.
-- **Never a back door.** The qualification routing is what keeps this lane from
-  becoming a way around the feature loop or the plan gates.
-- **Open todos block the launch stage**, same as open bugs and open tweaks: a
-  known planned change never ships unaddressed and unacknowledged.
-- Suite green at every stop; leave no orphans.
-
-## Output
-
-`docs/TODO.md` with an empty `## Open` section (every entry applied, reclassified,
-or punted to a named blocker), entries in `## Done` with their commits, STATUS
-updated with the drain log entry, and a green suite pushed to the working branch.
+- Nothing feature-sized is built from this lane.
+- Suite green at every stop.

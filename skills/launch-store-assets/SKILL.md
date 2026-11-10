@@ -1,138 +1,77 @@
 ---
 name: launch-store-assets
-description: "Generates store-listing assets for both the App Store and Google Play. Use when the user says 'generate store assets', 'make the App Store / Play listing', 'app icon and screenshots', 'ASO copy', 'store metadata' or 'prep the store listing'. Produces icons, device screenshots from the running app, the Android feature graphic, an optional preview video, and listing copy to each store's field limits, under store/ios/ and store/android/ with a manifest. Checks metadata with ios-audit. Needs docs/BRAND.md. Does not upload (launch-submit does)."
+description: "Generates store-listing assets for both the App Store and Google Play. Use when the user says 'generate store assets', 'make the App Store / Play listing', 'app icon and screenshots', 'ASO copy', 'store metadata' or 'prep the store listing'. Produces icons, device screenshots from the running app, the Android feature graphic and listing copy to each store's field limits, under store/ios/ and store/android/ with a manifest. Checks metadata with ios-audit. Needs docs/BRAND.md. Does not upload (launch-submit does)."
 argument-hint: "[optional: store, ios | android | both (default both); or a specific asset, icon | screenshots | copy]"
 license: MIT
 metadata:
   author: alex-yoza
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # launch-store-assets: Generate the listing for Apple and Google
 
-The "App Store tab," doubled. A native iOS builder generates your icon,
-screenshots, and description for one store; this generates them for **both**,
-App Store Connect and Google Play Console: from the **real running app**, in the
-**exact field shapes and image specs each store demands**, so the listing is
-ready to paste/upload and won't bounce on a metadata technicality.
+## Goal
 
-It **produces assets and copy: it does not upload.** Uploading/submitting is
-`launch-submit`. It reuses `create-demo` (real-screen capture via Maestro),
-`marketer-copywriting` (listing copy), and `ios-audit` (metadata compliance).
+Both store listings, App Store Connect and Google Play, are ready to upload:
+icons, screenshots of the real running app and listing copy, each in the exact
+image specs and field limits its store enforces, with no metadata that would
+bounce in review. This generates; `launch-submit` uploads.
 
-## When to activate
+Before starting: the app builds and runs, and `docs/BRAND.md` exists (else
+stop and route to `/marketer-brand-generation`). Read it with `docs/SPEC.md`,
+the feature cards, `docs/STATUS.md` and the app config (`app.json` /
+`app.config.*`, `Info.plist`, `AndroidManifest.xml`) for the name, bundle or
+package id and version. An argument narrows scope by store (`ios`, `android`,
+`both`, default both) or asset (`icon`, `screenshots`, `copy`).
 
-- Features are built and the app runs; you're preparing the store presence.
-- The user says "generate store assets," "make the App Store / Play listing,"
-  "app icon and screenshots," "ASO copy," "store metadata," or "prep the store
-  listing."
-- Scope can be narrowed by store (`ios` / `android` / `both`) or by asset
-  (`icon` / `screenshots` / `copy`).
+## Done when
 
-## Prerequisites
-
-- **`docs/BRAND.md`**: voice, positioning, audience, value prop drive the copy
-  and the screenshot captions. If missing, **stop and route to
-  `/marketer-brand-generation`**, then resume.
-- The app builds/runs (for real screenshots). Read `app.json` / `app.config.*` /
-  `Info.plist` / `AndroidManifest.xml` for the app name, bundle/package id, and
-  current version.
-
-## Workflow
-
-### Step 1: Read the product and brand
-Read `docs/BRAND.md`, `docs/SPEC.md`, the feature cards, and `docs/STATUS.md`.
-Identify: the positioning and primary value prop, the 3–6 hero features worth a
-screenshot each, the target audience/locale(s), the category, and the age-rating-
-relevant content (UGC, AI, data collection). This is the substance the copy and
-screenshots must convey.
-
-### Step 2: App icon
-Produce the app icon and export every required size:
-- **iOS**: a 1024×1024 App Store icon plus the in-app set (or the single
-  1024 source if the project uses an asset-catalog/`Contents.json` that generates
-  the rest); no alpha/transparency, no rounded corners baked in.
-- **Android**: the 512×512 Play Store icon plus adaptive-icon foreground/
-  background layers where the project uses them.
-If a brand mark already exists, *use it*: render at the required sizes; don't
-invent a new identity. Only design one when none exists, and keep it on-brand.
-
-### Step 3: Screenshots (from the real app)
-Use `create-demo`'s Maestro capture to drive the running app to each hero screen
-and grab **real** screenshots (no fabricated UI). Then frame and caption:
-- **iOS**: 6.9" iPhone (6.5" if no 6.9" set), plus 13" iPad if the app is
-  universal; App Store Connect scales these down to smaller devices. Correct
-  pixel dimensions per Apple's current spec.
-- **Android**: phone screenshots at Play's accepted ratios, a 7"/10" tablet set
-  if the app supports tablets, and the **1024×500 feature graphic**.
-- Add short, benefit-led captions (from the brand voice) over device frames where
-  that fits the category; keep the first 2–3 screenshots carrying the core value
-  (most users never scroll further).
-- Capture **light and dark** variants if the app ships both and the category
+- **Icons:** iOS 1024x1024 (no alpha, no baked-in corners) plus the in-app set
+  or the asset-catalog source; Android 512x512 plus adaptive foreground and
+  background layers where the project uses them. An existing brand mark is
+  rendered, not redesigned.
+- **Screenshots** of 3 to 6 hero features, captured from the running app with
+  `create-demo`'s Maestro capture on seed data: iOS 6.9" iPhone (6.5" if no
+  6.9" set) plus 13" iPad for universal apps; Android phone at Play's accepted
+  ratios, tablet sets if supported, and the 1024x500 feature graphic. Short
+  benefit-led captions in the brand voice, the core value in the first 2 or 3,
+  and light and dark variants when the app ships both and the category
   benefits.
-Seed/test data only: never real user data; no placeholder/lorem text in anything
-a reviewer or user will see.
+- **Copy** (`marketer-copywriting`) within each store's limits: App Store name
+  and subtitle 30, promotional text 170, description 4000, keywords 100
+  (comma-separated, no spaces, no competitor trademarks), what's new,
+  support and marketing URLs, categories; Play title 30, short description 80,
+  full description 4000, what's new 500. One primary locale, with a note on
+  locales worth adding.
+- **Compliance:** `ios-audit` ran over the copy and the app (accurate metadata
+  with no undelivered claims, age and content rating answers that match real
+  content such as UGC, AI and data use, privacy and data-safety disclosures
+  consistent with the listing) and its findings are folded in or listed as
+  `[manual]` decisions for Alex.
+- **Layout:** `store/ios/` and `store/android/` each hold `icon/`,
+  `screenshots/<size>/`, per-field `copy.md` and a `metadata.json` that
+  `launch-submit` or Fastlane `deliver`/`supply` can consume (plus
+  `feature-graphic.png` for Android), and `store/README.md` maps each file to
+  its place in App Store Connect or Play Console.
+- STATUS has **Launch → Store listing assets generated** checked for the
+  in-scope stores with a log line, `## Next action` is `/launch-submit`, and
+  any `[manual]` decisions are noted for Alex.
 
-### Step 4: Listing copy (both stores, exact shapes)
-With `marketer-copywriting`, write copy to each store's fields and limits:
-- **App Store Connect**: app name (≤30 chars), subtitle (≤30), promotional text
-  (≤170), description (≤4000), keywords field (≤100, comma-separated, no spaces
-  wasted, no competitor trademarks), what's-new, support/marketing URLs,
-  primary/secondary category.
-- **Google Play**: title (≤30), short description (≤80), full description
-  (≤4000), what's-new (≤500).
-Lead with the value prop, mirror real features (no claims the app doesn't
-deliver, that's both an ASO and a review-rejection issue), and weave keywords
-naturally. Provide one primary locale by default; note where additional locales
-are worth adding.
+## Decisions (and why)
 
-### Step 5: Metadata compliance check
-Run `ios-audit` over the drafted metadata and the app to catch listing-level
-rejection risks **before** they reach review: accurate metadata and no undelivered
-claims (Apple 2.3 / Play equivalent), correct **age rating / content rating**
-answers given the app's real content (UGC, AI-generated content, data use),
-required privacy/data-safety disclosures consistent with the listing, and no
-prohibited keyword/competitor-trademark usage. Fold any findings back into the
-copy/metadata (or list them as `[manual]` decisions for Alex where they need a
-human call, e.g. category choice).
+- **Both stores by default, each to its own specs.** Why: wrong dimensions or
+  over-limit copy is a guaranteed bounce, and the two stores differ.
+- **Real screens, real claims.** Why: mockups passed as real and undelivered
+  features are review rejections (Apple 2.3) as well as bad ASO.
+- **Brand from `docs/BRAND.md` and the repo.** Why: the listing is the first
+  impression of an identity that already exists.
+- **Reuse `create-demo`, `marketer-copywriting` and `ios-audit`.** Why: one
+  owner per check keeps them from drifting apart.
 
-### Step 6: Lay out and manifest
-Write everything in a paste-/upload-ready structure:
-```
-store/
-  ios/      icon/  screenshots/<size>/  copy.md (per-field)  metadata.json
-  android/  icon/  screenshots/<size>/  feature-graphic.png  copy.md  metadata.json
-  README.md   ← what each file is, where it goes in ASC / Play Console
-```
-`metadata.json` holds the structured fields (name, subtitle, keywords, etc.) in a
-shape `launch-submit` / Fastlane `deliver`/`supply` can later consume.
+## Hard rules
 
-### Step 7: Update STATUS and route
-- Check **Launch → Store listing assets generated** when both stores' assets +
-  copy exist (or the in-scope store, if narrowed).
-- Recommend `launch-submit` as the next step (it uploads these), and note any
-  `[manual]` metadata decisions for Alex.
-- Add a log line; set `## Next action`.
+The hard rules in `docs/DECISIONS.md` apply, plus:
 
-## Rules
-
-- **Both stores by default**, each to its **own exact field shapes and image
-  specs**: wrong dimensions or over-limit copy is a guaranteed bounce.
-- **Real screens, real claims.** Screenshots come from the running app; copy
-  describes features the app actually has. No mockups passed as real, no
-  undelivered promises (ASO *and* review risk).
-- **Reuse the brand.** Voice, positioning, and any existing mark come from
-  `docs/BRAND.md` and the repo: don't invent a new identity.
-- **Generate, don't upload.** This skill stops at ready-to-submit assets;
-  `launch-submit` does the upload.
-- **No real user data or secrets** in any captured screenshot.
-- Reuse `create-demo`, `marketer-copywriting`, and `ios-audit`; don't reimplement
-  their work here.
-
-## Output
-
-A `store/` tree with iOS + Android icons, device-framed screenshot sets, the
-Android feature graphic, per-field listing copy and a structured `metadata.json`
-per store, a `README.md` mapping each asset to its ASC/Play destination, the
-metadata compliance findings folded in, the Store-assets launch row in
-`docs/STATUS.md` checked, and a pointer to `launch-submit`.
+- Generate, never upload or submit.
+- Seed or test data only in every screenshot: no real user data, secrets or
+  placeholder text.
