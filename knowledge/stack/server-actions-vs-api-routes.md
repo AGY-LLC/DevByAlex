@@ -3,7 +3,7 @@ id: stack-server-actions-vs-api-routes
 title: "Server Actions vs API Routes"
 summary: "One of the first structural decisions in any Next.js App Router project: where does mutation logic live?"
 tags: ["stack", "server-actions-vs-api-routes"]
-updated: 2026-11-05
+updated: 2026-11-11
 ---
 # Server Actions vs API Routes
 
@@ -131,7 +131,3 @@ This avoids duplicating business logic while allowing both clients to use the ap
 - Default to server actions for in-app mutations on web; move to an API route only when there's a reason
 - Keep the service layer as the shared logic core: actions and routes are thin wrappers
 - Name service functions clearly: `updateProfile`, `cancelSubscription`, not `handleFormSubmit`
-
----
-
-*See also: [Architecture Patterns index](./index.md) | [AI Directives](../ai/directives.md)*

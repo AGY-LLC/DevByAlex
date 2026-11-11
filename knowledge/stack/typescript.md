@@ -3,7 +3,7 @@ id: stack-typescript
 title: "TypeScript"
 summary: "Default language for every project. Pin 6.0 for now; strict mode always."
 tags: ["stack", "typescript"]
-updated: 2026-11-05
+updated: 2026-11-11
 ---
 # TypeScript
 
@@ -205,4 +205,4 @@ Useful instruction to add to prompts: *"TypeScript strict mode. No `any`. Use `u
 
 ---
 
-*See also: [Zod](./zod.md) | [AI Directives](../ai/directives.md)*
+*See also: [Zod](./zod.md)*
