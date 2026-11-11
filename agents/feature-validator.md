@@ -46,7 +46,8 @@ files the implementer/test-author touched. You return:
    direct repro) so you only report issues that are actually PRESENT: back each
    with evidence (code citation, command output, or failing test). Drop
    anything INCONCLUSIVE-to-not-present.
-6. Check the feature against its **acceptance criteria**: every criterion should
+6. Check the feature against its card's **Done when** list (older cards:
+   acceptance criteria): every line should
    be exercised by a passing test. A criterion with no test is itself a finding.
 
 ## What "FAIL" means

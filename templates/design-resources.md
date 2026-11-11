@@ -69,7 +69,7 @@
 > optional product motif: consistent across the site, with the page title filled
 > per route.
 
-- **Generation:** _dynamic from brand tokens (`@vercel/og` / Satori via
+- **Generation:** _dynamic from brand tokens (`next/og` `ImageResponse` via
   `opengraph-image.tsx`): app name + tagline + logo + colors pulled from
   `docs/BRAND.md`. You provide the **logo** only; everything else derives from the
   brand and regenerates when it changes._

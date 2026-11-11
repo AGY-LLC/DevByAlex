@@ -138,6 +138,11 @@ about it" per image), the **SEO &
 discoverability** section, integrations, constraints, and the success definition.
 Convert relative dates to absolute.
 
+Then fill the **Goal** in `docs/DECISIONS.md` from the problem, user and
+launch-success answers: two or three sentences plus what done looks like.
+Add any app-specific non-negotiable the user stated to its **Hard rules**.
+Every later stage works toward that goal within those rules.
+
 ### Step 5: Update STATUS and route
 - Check the **Plan → SPEC.md written** row in `docs/STATUS.md`.
 - Set `## Next action`: if the app is **public-facing and `docs/BRAND.md` does
@@ -159,8 +164,9 @@ in the **Legal, privacy & compliance** and **SEO & discoverability** sections,
 tagged `(inferred: needs review)`; don't invent requirements the app clearly
 doesn't need (e.g. cookie consent for a private internal tool). Then ask the user
 only the questions the code can't answer (intent, audience, out-of-scope,
-success, which regimes apply). Don't block the workflow on a perfect backfill,
-but flag the gaps.
+success, which regimes apply). Fill the Goal in `docs/DECISIONS.md` the same
+way, tagged `(inferred: needs review)`. Don't block the workflow on a perfect
+backfill, but flag the gaps.
 
 ## Rules
 

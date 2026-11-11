@@ -1,6 +1,6 @@
 ---
 name: ios-audit
-description: Audits a mobile app codebase against Apple App Store Review Guidelines and Google Play policy to predict and prevent store-review rejections before submission. Checks the high-rejection areas, app completeness and demo-account/reviewer notes (2.1), accurate metadata and age rating (2.3), privacy manifest and required-reason APIs (2.5), in-app purchase and subscription disclosures (3.1.1/3.1.2), minimum functionality (4.2), Sign in with Apple alongside social login (4.8), privacy policy + in-app account deletion (5.1.1), third-party and AI data-sharing consent (5.1.2 incl. the Nov 2025 AI rule), App Tracking Transparency, user-generated/AI content moderation with report+block+filter+EULA (1.2), kids/COPPA handling (5.1.4), and the Google Play parallels (Data safety form, web deletion URL, target API level, Play Billing, Families). Emits a prioritized, IDed IOS-xxx fix queue with file:line evidence, ready for fix-errors. Use when the user asks for an App Store review audit, an iOS/Play submission readiness check, "will this get rejected?", a pre-submission compliance pass, or App Review guideline conformance review. Read-only, produces a report, does not fix.
+description: "App Store and Google Play review audit. Use when the user asks 'will this get rejected?', for an App Store review audit, an iOS or Play submission readiness check, or a pre-submission compliance pass. Checks the high-rejection areas (completeness and reviewer notes, metadata and age rating, privacy manifest, IAP disclosures, minimum functionality, Sign in with Apple, account deletion, data-sharing and AI consent, ATT, UGC moderation, kids) plus the Google Play parallels. Read-only: emits an IDed IOS-xxx fix queue with file:line evidence for fix-errors."
 ---
 
 # iOS / App Store Review Audit
@@ -94,6 +94,8 @@ Missing report **or** block **or** filter on a public-UGC app = Blocker.
 
 ### 2.5: Software requirements & privacy manifest (Performance)
 
+- **Build SDK**: uploads must be built with Xcode 26 / the iOS 26 SDK (since
+  2026-04-28). Check the EAS image or CI Xcode version.
 - **`PrivacyInfo.xcprivacy` present** (app target) and for each bundled SDK on
   Apple's required-manifest list. Search the repo for `PrivacyInfo.xcprivacy`.
   Absent on iOS = Blocker (auto-rejection since May 2024).
@@ -198,8 +200,8 @@ paywall = Blocker.
 - **Data safety form** matches real collection/sharing (manual-verification).
 - **Account deletion**: in-app path **plus a web-accessible deletion URL**
   declared in Play Console (manual). Note both are required.
-- **Target API level** recent enough (check `targetSdkVersion`/`compileSdk` in
-  `build.gradle` / `app.json` against Play's current floor).
+- **Target API level** at Play's floor (API 36 for new apps and updates since
+  2026-08-31; check `targetSdkVersion` in `build.gradle` / `app.json`).
 - **Play Billing** for digital goods (same as 3.1.1).
 - **Sensitive permissions** justified; high-risk ones declared.
 - **Families policy / IARC content rating** if child-appealing (manual).

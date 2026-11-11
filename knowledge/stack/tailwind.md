@@ -3,7 +3,7 @@ id: stack-tailwind
 title: "Tailwind CSS"
 summary: "The utility-first CSS framework I use on nearly every web project. I was skeptical at first. I'm a convert."
 tags: ["stack", "tailwind"]
-updated: 2026-05-28
+updated: 2026-11-11
 ---
 # Tailwind CSS
 
@@ -15,9 +15,9 @@ The utility-first CSS framework I use on nearly every web project. I was skeptic
 
 - Constraints make design faster: you're not inventing a spacing system every project
 - Colocated styles with components is genuinely better than jumping between CSS files once you're used to it
-- Excellent purging means production bundles are small
+- v4 detects sources automatically: no `purge`/`content` config, production CSS stays small
 - Dark mode support is clean
-- The config file is easy enough to extend for custom brand tokens
+- v4 config is CSS-first: brand tokens go in `@theme` in the CSS, not a `tailwind.config.js` extend
 - `@apply` exists as an escape valve when you need it
 - Great IDE integration with the official VS Code plugin
 
@@ -55,7 +55,7 @@ The utility-first CSS framework I use on nearly every web project. I was skeptic
 
 ## Rules
 
-- Extend Tailwind config with project brand tokens before writing custom inline styles
+- Define project brand tokens in `@theme` before writing custom inline styles
 - Don't use arbitrary values (`w-[327px]`) unless truly necessary: it usually means rethinking the layout
 - Use `cn()` (clsx + tailwind-merge) for conditional class concatenation. Don't string-concat class names.
 

@@ -1,6 +1,6 @@
 ---
 name: plan-guide
-description: "Stage 2 of the DevByAlex plan phase. It expands an approved docs/SPEC.md into a granular implementation guide. Authentication is the first and most important feature after scaffold: it always gets a dedicated docs/features/authentication.md contract and docs/adr/auth.md before ordinary product features. For every feature, write behavior, data/API/UI, edge cases, security, and acceptance criteria, then order dependencies as scaffold, authentication, and the rest. Emits docs/IMPLEMENTATION_GUIDE.md, feature cards under docs/features/, ADRs under docs/adr/, and seeds STATUS. The 'adr-backfill' mode writes missing records for an existing repo. Use after spec approval, when asked to expand the spec, plan the build order, or backfill ADRs."
+description: "Stage 2 of the DevByAlex plan phase. It expands an approved docs/SPEC.md into a granular implementation guide. Authentication is the first and most important feature after scaffold: it always gets a dedicated docs/features/authentication.md contract and docs/adr/auth.md before ordinary product features. For every feature, write the end goal and outcome-based done-when list in its card and the decisions that bound it in its ADR, then order dependencies as scaffold, authentication, and the rest. Emits docs/IMPLEMENTATION_GUIDE.md, feature cards under docs/features/, ADRs under docs/adr/, and seeds STATUS. The 'adr-backfill' mode writes missing records for an existing repo. Use after spec approval, when asked to expand the spec, plan the build order, or backfill ADRs."
 argument-hint: "[optional: specific area to expand, or 'adr-backfill' for an existing repo]"
 license: MIT
 metadata:
@@ -11,8 +11,8 @@ metadata:
 # plan-guide: Expand the spec into a build-ready guide
 
 The second plan stage. Turns the approved `docs/SPEC.md` into a detailed,
-ordered implementation guide plus one feature card per feature. This is what the
-dev stage builds against and validates against, so it must be concrete.
+ordered implementation guide plus one feature card and ADR per feature. Cards
+state goals and outcomes concretely; they leave the how to the dev stage.
 
 > Requires an **approved** spec. If the spec gate isn't checked in
 > `docs/STATUS.md`, confirm with the user before proceeding.
@@ -55,39 +55,27 @@ cookies/analytics until consent, and an **account deletion / data-export** path
 where GDPR/CCPA applies. This feature is what `/launch-compliance` verifies
 against the legal hard gate.
 
-### Step 3: Detail each feature
-First write the dedicated auth card and ADR above. For every remaining product
-feature, write a feature card from `../../templates/feature-card.md`
-at `docs/features/<NN>-<slug>.md` containing:
-- **Purpose**: one paragraph, traceable to a spec core-job.
-- **User stories / behaviors**: the observable outcomes (what success looks
-  like), including error and edge-case behavior.
-- **Data model**: entities/fields/relations/indexes this feature adds or
-  touches (follow `data-modeling`: `select` not over-fetch, transactions for
-  multi-step writes).
-- **API / server surface**: routes/handlers/services, with Zod boundaries.
-- **UI / screens**, which wireframe screens, and their empty/loading/error/
-  onboarding/upgrade states.
-- **Acceptance criteria**: the concrete checklist the `feature-validator` and
-  the acceptance test will hold the feature to. **This is what the test-author
-  writes tests from**: make it outcome-based, not implementation-based. For any
-  feature with UI, **include accessibility criteria** (WCAG 2.2 AA: semantic
-  structure + name/role, keyboard + visible focus, contrast, target size, labeled
-  inputs/errors), and for public pages an **SEO** line (title/description,
-  headings, alt text).
-- **Security & privacy notes**: authz rules, PII handling, validation.
-- **Dependencies**, which other features/scaffold/auth must exist first.
+### Step 3: Write each feature as a goal plus its decisions
+First write the dedicated auth card and ADR above. For every other feature,
+write a card from `../../templates/feature-card.md` at
+`docs/features/<NN>-<slug>.md` and an ADR from `../../templates/adr-feature.md`
+at `docs/adr/<NN>-<slug>.md` (same number and slug).
 
-**Seed the feature's ADR alongside its card.** Copy
-`../../templates/adr-feature.md` to `docs/adr/<NN>-<slug>.md` (same number and
-slug as the card) and record, as `D`-entries, every material choice the card
-just made: data-model shape, API approach, provider picks, anything chosen
-over a real alternative, and record the card's **Out of scope**
-items plus any capability consciously deferred. The ADR is the governing record
-the dev stage consults before changing the feature and the reason automated
-reviews won't flag deliberate omissions later (see `docs/adr/README.md`).
-Skip trivia: if reversing a choice wouldn't need a conversation, it doesn't
-need an entry.
+- **The card is the end goal**: what a user can do once it ships, a **Done
+  when** list of observable outcomes (success, failure and edge paths, the
+  security boundary, screens and their states, accessibility for UI, SEO for
+  public pages), constraints and out of scope. `test-author` writes tests from
+  it blind, so keep every line outcome-based, never implementation-based.
+- **The ADR holds the decisions**: only choices that constrain the build and
+  that reversing would need a conversation (a data-model shape the spec
+  implies, a provider, an approach chosen over a real alternative), each with
+  its why, plus the card's out-of-scope lines as `O`-entries. Don't restate a
+  decision in the card.
+- **Leave the rest to the builder.** Don't spec tables, routes, components or
+  file layout the spec doesn't force: the implementer chooses them within the
+  guide, the ADR and the hard rules in `docs/DECISIONS.md`, and records any
+  material choice it makes. Over-specifying here is what stops a capable agent
+  finding the better design.
 
 ### Step 4: Decide the build order
 Order features by dependency and risk: **scaffold → authentication → core jobs →
@@ -166,8 +154,6 @@ For **every** feature in the STATUS table missing `docs/adr/<NN>-<slug>.md`:
 
 - Don't invent features the spec doesn't justify; trace every feature to a spec
   core-job or mark it a proposal for the user to confirm.
-- Acceptance criteria must be **outcome-based** so tests aren't written just to
-  match an implementation.
 - Keep the guide the source of build order; keep per-feature detail in cards.
 - The guide is **Alex's to approve**: flag it; don't self-approve the gate.
 

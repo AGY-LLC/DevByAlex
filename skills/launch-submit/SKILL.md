@@ -1,135 +1,77 @@
 ---
 name: launch-submit
-description: "Launch-readiness stage of the DevByAlex workflow: the dual-store delivery lane that closes the loop 10x-style builders leave open: it actually builds and submits the React Native app to BOTH Apple TestFlight and Google Play internal testing, not just 'up to review'. Human-triggered only. It is an outward-facing publish, so it never runs unattended from a cron and never auto-promotes to public/production (that stays Alex's manual call in App Store Connect / Play Console). Detects the project's RN flavor (Expo → EAS build + eas submit; bare RN → Fastlane pilot/supply) and the release lane, then preflights HARD before doing anything irreversible: confirms the launch-readiness audit and ios-audit/launch-compliance are clean, the Legal & Accessibility hard gates are signed off, the acceptance suite is green, store assets exist (launch-store-assets), and version/build numbers are bumped and not already used. Only when every gate passes does it build, upload to TestFlight + Play internal, and record the build/submission in STATUS. Use when the user says 'submit to the stores', 'ship to TestFlight', 'push to Play internal testing', 'eas submit', 'run the release lane', or 'deliver the build'. Run it only when they explicitly ask, never on a schedule."
+description: "Builds and submits the React Native app to TestFlight and Google Play internal testing. Use only when the user explicitly says 'submit to the stores', 'ship to TestFlight', 'push to Play internal testing', 'eas submit', 'run the release lane' or 'deliver the build'; never on a schedule. Detects Expo (EAS) or bare RN (Fastlane), then hard-preflights: audits clean, legal and accessibility gates signed off, acceptance green, store assets present, version and build bumped. Records the submission in STATUS. Never promotes to production; that stays Alex's call."
 argument-hint: "[optional: target: ios | android | both (default both); --dry-run to preflight without submitting]"
 license: MIT
 metadata:
   author: alex-yoza
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # launch-submit: Build and submit to TestFlight + Play internal
 
-The lane a native iOS builder *doesn't* give you: an actual push to **both**
-stores. It takes the React Native app from a green, compliant build to **Apple
-TestFlight** and **Google Play internal testing** in one gated run: the
-cross-platform payoff of RN over a single-store native generator.
+## Goal
 
-It is **human-triggered and outward-facing.** Submitting a build is a real
-publish (it reaches reviewers and testers, and a build/version number is burned
-forever), so this skill **never runs from a cron, never self-triggers, and never
-promotes to public release**: TestFlight/internal only; the public-production
-rollout stays Alex's manual decision in App Store Connect / Play Console.
+A green, compliant React Native build is on **Apple TestFlight** and **Google
+Play internal testing** in one gated run, with the human steps that remain
+spelled out. Runs only when the user explicitly asks ("submit to the stores",
+"ship to TestFlight", "push to Play internal", "eas submit", "run the release
+lane", "deliver the build"). `--dry-run` reports go or no-go per gate and
+builds nothing, so it is safe any time.
 
-## When to activate
+## Done when
 
-- **Only when the user explicitly asks**: "submit to the stores," "ship to
-  TestFlight," "push to Play internal," "eas submit," "run the release lane,"
-  "deliver the build."
-- `--dry-run` runs the full preflight and reports go/no-go **without** building or
-  submitting anything: safe to run anytime.
-- **Never** invoke this from `dev-goal` or any automated action. If the dev
-  loop reaches "ready to submit," it sets the next action to *suggest* this skill
-  for a human to run: it does not run it.
+- **Preflight passed**, every gate confirmed before anything irreversible:
+  - STATUS hard gates *Legal & compliance passed* and *Accessibility (WCAG 2.2
+    AA) passed* are checked by Alex;
+  - no open entries in `docs/BUGS.md` or `docs/TWEAKS.md`;
+  - `launch-readiness` is clean and current (run it if stale);
+  - `ios-audit` / `launch-compliance` predict no App Review or Play policy
+    rejection (run `ios-audit` if stale);
+  - the **Acceptance suite passed against staging** row is checked, from a real
+    `/launch-verify` run, with any `[manual]` or `[skipped]` surfaces named;
+  - `store/ios/` and `store/android/` from `launch-store-assets` exist for the
+    targets with complete `metadata.json`;
+  - marketing version and build numbers are bumped, consistent across
+    platforms and not already used on either store;
+  - signing credentials, the ASC API key and the Play service-account JSON are
+    reachable from the environment or secret store.
+  A failed gate ends the run with a report naming it; a missing secret is
+  named, never worked around.
+- **Built** with the store profile for each target: EAS (`eas build`,
+  store-submission profile) when `eas.json` or Expo config exists, else
+  Fastlane (`gym`/`build_app` for iOS, `gradle bundleRelease` AAB for
+  Android). A failed build stops the run. With neither EAS nor Fastlane set up,
+  stop and recommend the one that fits rather than half-configuring a release
+  pipeline.
+- **Submitted**: iOS to TestFlight's internal group (`eas submit` or `pilot`),
+  Android to the `internal` track (`eas submit` or `supply`), store metadata
+  uploaded where the lane supports it or flagged for a manual paste, and
+  store-side processing notes surfaced.
+- STATUS has **Launch → Submitted to TestFlight + Play internal (manual)**
+  checked with version, build numbers, date and build links, plus a log line;
+  material decisions are in `docs/DECISIONS.md`.
+- The report lists what stays human: export compliance, tester invites,
+  promotion past internal, and App Review submission.
 
-## Workflow
+## Decisions (and why)
 
-### Step 1: Detect the toolchain and target
-Read `package.json`, `app.json` / `app.config.*`, `eas.json`, and any `fastlane/`
-dir to determine the path:
-- **Expo / EAS** (`eas.json` or Expo config present) → `eas build` + `eas submit`.
-- **Bare RN** (native `ios/` + `android/` projects, Fastlane present or addable)
-  → Fastlane `pilot` (TestFlight) + `supply` (Play). If neither EAS nor Fastlane
-  is set up, **stop** and report what's needed (don't half-configure a release
-  pipeline mid-run): recommend the one that fits the project.
-- Resolve the target (`ios` / `android` / `both`, default both) and which
-  credentials/lanes exist.
+- **Human-triggered, every time.** Never from a cron, a schedule or `dev-goal`;
+  when the dev loop reaches "ready to submit", it suggests this skill. Why: a
+  submission reaches reviewers and testers and burns a build number for good.
+- **Stop at TestFlight and Play internal.** Promotion to closed, open or
+  production tracks, App Review submission and public release are left to
+  Alex. Why: the public release is Alex's call in the store consoles.
+- **Preflight before build.** Why: everything after the build is irreversible,
+  and a duplicate build number is the most common avoidable failure.
 
-### Step 2, Preflight the gates (HARD stop, nothing irreversible before this passes)
-Confirm, and **abort with a clear report if any fails**:
-- **`docs/STATUS.md` hard gates**: *Legal & compliance passed* and *Accessibility
-  (WCAG 2.2 AA) passed* are **checked**. These are Alex's to sign; if either is
-  unchecked, stop: not ship-ready. Never self-check them.
-- **No open bugs** in `docs/BUGS.md` and **no open tweaks** in `docs/TWEAKS.md`
-  (soft launch gates: known misses, functional or cosmetic, never ship).
-- **launch-readiness** audit is clean (run it, or confirm its STATUS row is green
-  and current).
-- **ios-audit / launch-compliance** is clean: no predicted App Review / Play
-  policy rejections (privacy manifest, required-reason APIs, account deletion,
-  IAP disclosure, ATT, UGC moderation, age rating, Play Data safety). Run
-  `ios-audit` if its result is stale.
-- **Acceptance suite green**: `launch-verify` has run the `launch-acceptance`
-  Playwright/Maestro suite against staging and the **Acceptance suite passed
-  against staging** STATUS row is checked (or note explicitly which surfaces are
-  `[manual]`/`[skipped]`). A suite that was written but never run does not satisfy
-  this gate: run `/launch-verify` if its result is missing or stale.
-- **Store assets present**: `store/ios/` + `store/android/` from
-  `launch-store-assets` exist for the target(s); metadata.json is complete.
-- **Version & build numbers**: the marketing version and build/version-code are
-  bumped, consistent across iOS/Android, and **not already used** on the store
-  (a duplicate build number is the most common avoidable submit failure). Bump
-  them if needed and record the new values.
-- **Credentials & secrets** present (signing certs/provisioning or EAS-managed
-  credentials; ASC API key; Play service-account JSON): referenced from the
-  environment/secret store, **never** read into or written to the repo. If a
-  required secret is missing, stop and name it.
+## Hard rules
 
-If `--dry-run`, report the full preflight result (go/no-go per gate) and **stop
-here** without building.
+The hard rules in `docs/DECISIONS.md` apply, plus:
 
-### Step 3: Build
-For each target, produce a **release/store** build:
-- **EAS**: `eas build --platform <ios|android|all> --profile <production-ish
-  store profile>`. Use the store-submission profile, not a dev/preview one.
-- **Fastlane / bare**: `gym`/`build_app` for iOS (release config, store export),
-  `gradle bundleRelease` (AAB) for Android.
-Capture the resulting artifact paths and build numbers. If a build fails, stop and
-report the error: do not attempt to submit a failed or stale artifact.
-
-### Step 4: Submit (TestFlight + Play internal)
-- **iOS → TestFlight**: `eas submit --platform ios` or Fastlane `pilot`. Upload
-  to TestFlight; attach the build to the internal testing group. Do **not** submit
-  for App Store review or public release here unless Alex explicitly asked in this
-  invocation: default is TestFlight delivery only.
-- **Android → Play internal testing**: `eas submit --platform android` or
-  Fastlane `supply` with `track: internal` (AAB). Do **not** promote to
-  closed/open/production tracks.
-- Upload the store metadata/assets where the lane supports it (Fastlane
-  `deliver`/`supply` from `store/.../metadata.json`), or note that the listing
-  fields still need a manual paste in the console.
-- Surface store-side processing notes (e.g. "build is processing on TestFlight;
-  export-compliance answer may be required").
-
-### Step 5: Record and route
-- Update `docs/STATUS.md`: check **Launch → Submitted to TestFlight + Play
-  internal (manual)**, record the version + build numbers, the date, and the
-  artifact/build links. Add a log entry.
-- State clearly **what remains a human action**: accepting export-compliance,
-  inviting testers, promoting from internal → production, and submitting for App
-  Review when ready. This skill stops at internal/TestFlight on purpose.
-- Append any material decision to `docs/DECISIONS.md`.
-
-## Rules
-
-- **Explicit human trigger only.** Never run from a cron, a schedule, or
-  `dev-goal`. Outward-facing publish requires a person asking, each time.
-- **TestFlight / internal only: never auto-promote to production.** Public
-  release is Alex's manual decision in the store consoles.
-- **Gates are hard.** Don't build or submit while a hard gate is unchecked, a bug
-  is open, readiness/compliance is dirty, the acceptance suite is red, or assets
-  are missing. Abort with a clear report instead.
-- **Never self-check a gate** (Legal, Accessibility): confirm Alex did.
-- **Secrets stay out of the repo.** Signing keys, API keys, and service-account
-  JSON come from the environment/secret store and are never written to disk in the
-  project or echoed.
-- **No duplicate/incorrect build numbers**: verify and bump before submitting.
-- `--dry-run` must never build or submit; it only reports go/no-go.
-
-## Output
-
-For a real run: release builds for the target platform(s), an upload to
-**TestFlight** and **Play internal testing**, version/build numbers and artifact
-links recorded in `docs/STATUS.md` with the submission row checked, and an
-explicit list of the human steps that remain (export compliance, tester invites,
-production promotion, App Review submission). For `--dry-run`: a per-gate go/no-go
-preflight report and nothing submitted.
+- Never self-check the Legal or Accessibility gate.
+- Signing keys, API keys and service-account JSON never touch the repo, disk
+  in the project, or logs.
+- Never submit a failed or stale artifact.
+- `--dry-run` never builds or submits.
+- Never promote past TestFlight or Play `internal`.

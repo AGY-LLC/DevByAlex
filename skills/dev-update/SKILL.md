@@ -1,77 +1,54 @@
 ---
 name: dev-update
-description: "DevByAlex ops skill for pulling the latest DevByAlex workflow into the CURRENT app's project scope. The whole workflow, including native skills, reused library skills, agents, templates, and the best-practice knowledge/, is vendored (copied) into each app's .claude/ on purpose, so it survives clone/CI and stays 'part of the project' with no external brain or MCP; the trade-off is that improving a skill doesn't reach an already-onboarded app until it's re-vendored. This skill does that re-vendor for the current app: it reads the .claude/.devbyalex.json stamp to find the DevByAlex checkout, optionally refreshes it, and runs install.sh --update so the app's managed files match the latest version. Does NOT touch docs/STATUS.md or any non-managed .claude entry. Use when the user says 'update the workflow', 'pull the latest DevByAlex skills', 'refresh the skills', or after DevByAlex itself has been improved and an onboarded app is stale."
+description: "Re-vendors the latest DevByAlex (skills, agents, templates, knowledge/) into the current app's .claude/ with install.sh --update, using the .claude/.devbyalex.json stamp to find the checkout, and reports old to new version. Never touches docs/ or non-managed .claude entries. Use when the user says 'update the workflow', 'pull the latest DevByAlex skills' or 'refresh the skills', or after DevByAlex improved and an onboarded app is stale."
 argument-hint: "[optional: path to the DevByAlex checkout, if the stamp is missing]"
 license: MIT
 metadata:
   author: alex-yoza
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # dev-update: Re-vendor the latest DevByAlex into this app
 
-DevByAlex skills (native + reused), agents, templates, and `knowledge/` are
-**committed copies** in each app's `.claude/`: fully self-contained, with no
-external brain or MCP. That keeps them portable (a clone or CI checkout carries
-the whole workflow) but means an improvement upstream doesn't reach this app until
-it's re-vendored. This skill performs that re-vendor for the **current app**: a
-manual, explicit update, never automatic.
+## Goal
 
-## When to activate
+The current app's DevByAlex-managed files in `.claude/` match the latest
+DevByAlex, and the user knows which version it moved from and to. The
+workflow is vendored (committed copies) so a clone or CI checkout carries it
+with no external brain or MCP; the cost is that an upstream improvement only
+reaches an app when it is re-vendored, which is what this does.
 
-- The user says "update the workflow", "pull the latest skills", "refresh DevByAlex".
-- DevByAlex itself was just improved and this onboarded app is on an older version.
+## Done when
 
-## Workflow
+- The DevByAlex checkout is found from `.claude/.devbyalex.json`
+  (`source_path`, with `source_ref` / `version` as the current lineage), or
+  from the argument or the user when the stamp is missing (the app predates
+  stamping).
+- The checkout was refreshed with `git -C "<source_path>" pull --ff-only`, or,
+  when that fails (local edits, detached, offline), used as-is with the ref
+  noted.
+- `"<source_path>/install.sh" "<app-root>" --update` ran: it re-syncs only
+  managed files, prunes ones this version no longer ships, rewrites the stamp
+  and prints `old_ref -> new_ref`.
+- The report gives the old and new version (or says it was already current),
+  flags skill changes that could shift an in-flight build, and, if
+  `docs/secrets.manifest.json` is missing, flags the one-time passworder
+  migration (`knowledge/stack/secrets-passworder.md`, run through
+  `/init-ai`'s additive backfill); if `docs/DECISIONS.md` has no
+  `## Hard rules` section, it flags that `/init-ai` should be re-run to
+  backfill the Goal and Hard rules.
 
-### Step 1: Find this app's DevByAlex lineage
-Read `.claude/.devbyalex.json` at the app root. It records:
-- `source_ref` / `version`: what this app was last vendored from.
-- `source_path`: the DevByAlex checkout that installed it.
+## Decisions (and why)
 
-If the stamp is missing, the app predates stamping (or was hand-copied). Ask the
-user for the DevByAlex checkout path, or take it from the skill argument.
+- **Manual and per app only; goal runs never self-update.** Why: a build
+  should not shift underfoot mid-run. Updating every onboarded app is the
+  operator command `install.sh --update-all`, not this skill.
+- **The secrets migration is flagged, never run here.** Why: it registers the
+  project and imports env files, which needs a deliberate step.
 
-### Step 2: Refresh the DevByAlex checkout (optional but recommended)
-So "latest" really is latest:
-```bash
-git -C "<source_path>" pull --ff-only
-```
-If the pull fails (local edits, detached, offline), don't force it: update from
-the checkout as-is and note the ref the app lands on.
+## Hard rules
 
-### Step 3: Re-vendor into this app
-```bash
-"<source_path>/install.sh" "<app-root>" --update
-```
-`--update` requires the app to already be onboarded (it refuses to first-time
-install), re-syncs only the DevByAlex-managed files, rewrites the stamp, and
-prints `old_ref -> new_ref`. It never touches `docs/`, `STATUS.md`, or any
-`.claude` entry the workflow doesn't own.
+The hard rules in `docs/DECISIONS.md` apply, plus:
 
-### Step 4: Report
-State the version/ref the app moved from and to. If nothing changed (already
-current), say so. If skill bodies changed in ways that affect an in-flight build,
-flag it so the user knows behavior may shift on the next run.
-
-## Notes
-
-- **One app at a time.** To refresh every app this operator has onboarded, run
-  `"<source_path>/install.sh" --update-all` from the DevByAlex checkout: it walks
-  the onboarded-apps registry and updates each. That's an operator command, not
-  this per-app skill.
-- **No auto-update.** Goal runs do **not** self-update: updates
-  are deliberate so a build can't shift underfoot mid-run. Run this when you want
-  the new version, not before.
-- **One-time secrets migration.** If the app has no `docs/secrets.manifest.json`
-  after the update, it predates the passworder integration. Flag it in the
-  report: the one-time migration (register the project, write the manifest,
-  `import_env_file` existing env files) is described in
-  `knowledge/stack/secrets-passworder.md` and runs via `/init-ai`'s additive
-  backfill; it is **not** performed by this skill, and never automatically.
-
-## Output
-
-The current app's `.claude/` skills, agents, templates, and knowledge re-vendored
-to the latest DevByAlex, the stamp rewritten, and a one-line old → new version
-report.
+- Never force the checkout pull.
+- Never touch `docs/`, `STATUS.md` or a `.claude` entry DevByAlex doesn't own.

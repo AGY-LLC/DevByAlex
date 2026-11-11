@@ -3,7 +3,7 @@ id: checklists-auth-setup
 title: "Auth Setup Checklist"
 summary: "What I go through every time I set up authentication on a new project. Informed by real experience across cross-platform (web + mobile) and admin-only projects."
 tags: ["checklists", "auth-setup"]
-updated: 2026-07-26
+updated: 2026-11-11
 ---
 # Auth Setup Checklist
 
@@ -102,10 +102,8 @@ return NextResponse.redirect(new URL(`/auth/login?return_to=${returnTo}`, req.ur
 
 // After successful auth
 const returnTo = searchParams.get('return_to')
-// Validate it's a relative path before using it
-const destination = returnTo && returnTo.startsWith('/')
-  ? decodeURIComponent(returnTo)
-  : '/dashboard'
+// Same-origin relative paths only: '//evil.com' and '/\evil.com' are open redirects
+const destination = returnTo && /^\/(?![\/\\])/.test(returnTo) ? returnTo : '/dashboard'
 redirect(destination)
 ```
 
@@ -212,7 +210,3 @@ redirect as readable by a hostile app.
 | Sending step-up to generic login | Carry a validated short-lived action context and return to confirmation |
 | Session token in the mobile deep link | Redirect carries a single-use code; token comes back in the HTTPS exchange response (RFC 8252) |
 | PKCE verifier sent through the redirect | Verifier stays in app memory; only the challenge leaves the app, or PKCE protects nothing |
-
----
-
-*See also: [Firebase / Auth Tools](../integrations/firebase.md)*

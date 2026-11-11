@@ -6,7 +6,7 @@ _meta:
   sensitivity: internal
   read_scope: brain.read
   tags: [practice, engineering, data-modeling, database, prisma, init, feature, review]
-  updated: 2026-05-30
+  updated: 2026-11-05
 
 practice:
   id: data-modeling
@@ -55,7 +55,6 @@ practice:
   references:
     - ../../knowledge/checklists/data-modeling.md
     - ../../knowledge/stack/prisma.md
-    - ../../knowledge/checklists/how-i-start-projects.md
 
   output:
     destination: "<repo>/docs/data-model.md"
