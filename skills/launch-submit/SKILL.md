@@ -59,9 +59,9 @@ builds nothing, so it is safe any time.
 - **Human-triggered, every time.** Never from a cron, a schedule or `dev-goal`;
   when the dev loop reaches "ready to submit", it suggests this skill. Why: a
   submission reaches reviewers and testers and burns a build number for good.
-- **Stop at TestFlight and Play internal.** Promotion to production, other
-  tracks or App Review happens only if Alex asked in this invocation. Why: the
-  public release is Alex's call in the store consoles.
+- **Stop at TestFlight and Play internal.** Promotion to closed, open or
+  production tracks, App Review submission and public release are left to
+  Alex. Why: the public release is Alex's call in the store consoles.
 - **Preflight before build.** Why: everything after the build is irreversible,
   and a duplicate build number is the most common avoidable failure.
 
@@ -74,3 +74,4 @@ The hard rules in `docs/DECISIONS.md` apply, plus:
   in the project, or logs.
 - Never submit a failed or stale artifact.
 - `--dry-run` never builds or submits.
+- Never promote past TestFlight or Play `internal`.

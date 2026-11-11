@@ -3,7 +3,7 @@ id: stack-react-native
 title: "React Native"
 summary: "Default for mobile: Expo (SDK 58, New Architecture only) under app/ in the monorepo, consuming web/'s API."
 tags: ["stack", "react-native"]
-updated: 2026-11-05
+updated: 2026-11-11
 ---
 # React Native
 
@@ -14,7 +14,7 @@ updated: 2026-11-05
 - Target the current Expo SDK. The legacy architecture is gone (SDK 55+ is New Architecture only), so pick libraries that support it.
 - Expo Go runs only the latest SDK and is a learning tool: develop and test on **development builds** (`expo-dev-client`).
 - Expo Router no longer depends on React Navigation (SDK 56+): don't import `@react-navigation/*` in a Router app; migrate with `npx expo-codemod sdk-56-expo-router-react-navigation-replace <src>`.
-- SDK 58 turns on strict TypeScript types and Android R8 by default: fix the type errors and check release builds for stripped code, don't switch either off.
+- SDK 58 turns on strict TypeScript types and Android R8 by default: fix the type errors and check release builds for stripped code and fix it with keep rules (`expo-build-properties` `android.extraProguardRules`), don't switch either off.
 - Budget time for each SDK upgrade; they break things.
 
 ## Rules

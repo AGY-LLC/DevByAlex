@@ -73,8 +73,10 @@ that is the posture to verify against. An argument (`legal`, `a11y`, `seo`,
 - **Reuse the existing skills** (`launch-readiness`,
   `accessibility-critique`, `seo-audit`, `prose-check`); don't reimplement
   their checks. Why: one owner per check keeps them from drifting apart.
-- **Auto-renewal checks are legal requirements, not polish** (FTC ROSCA and
-  click-to-cancel, California ARL, EU consumer rules). Why: they are the most
+- **Auto-renewal checks are legal requirements, not polish** (FTC ROSCA,
+  California ARL and other state auto-renewal laws, EU consumer rules; the
+  FTC's 2024 click-to-cancel rule was vacated in 2025, so ROSCA and state law
+  carry the easy-cancel requirement). Why: they are the most
   common way a subscription app gets sued or fined.
 - **Legal and accessibility block launch; SEO and prose don't.** Why: the
   first two carry legal exposure, the last two cost growth, not liability.

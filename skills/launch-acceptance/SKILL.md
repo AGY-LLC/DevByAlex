@@ -42,7 +42,8 @@ Read `docs/IMPLEMENTATION_GUIDE.md`, the feature cards, the wireframe flows,
   STATUS has at least one scenario, and its `E2E` cell is current.
 - Every scenario maps to a Playwright spec, a Maestro flow, or `[manual]` (DB
   inspection, third-party dashboards, real inboxes), automated through an API
-  equivalent where one exists.
+  equivalent where one exists, and every expected result in the doc maps to an
+  assertion or an explicit `[manual]` marker.
 - The suites are runnable: `npx playwright test --list` discovers every spec,
   each Maestro flow passes a syntax check, and `test:acceptance:web` /
   `test:acceptance:mobile` are in package.json and documented in

@@ -38,7 +38,7 @@ criteria map to which tests.
    the golden path plus the top 1-2 failure paths only where the card marks
    them critical. Parameterize the target (base URL / API URL) via env vars so
    the same flow runs against the local dev build now and staging at launch.
-   The orchestrator runs it in step 4; the feature can't be marked done until
+   The orchestrator runs it in gate 4; the feature can't be marked done until
    it's green.
 5. Write tests that will **fail until the behavior exists**, that's correct and
    useful; it reveals real gaps when the suite runs.
