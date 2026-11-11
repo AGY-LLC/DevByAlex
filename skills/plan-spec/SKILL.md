@@ -164,8 +164,9 @@ in the **Legal, privacy & compliance** and **SEO & discoverability** sections,
 tagged `(inferred: needs review)`; don't invent requirements the app clearly
 doesn't need (e.g. cookie consent for a private internal tool). Then ask the user
 only the questions the code can't answer (intent, audience, out-of-scope,
-success, which regimes apply). Don't block the workflow on a perfect backfill,
-but flag the gaps.
+success, which regimes apply). Fill the Goal in `docs/DECISIONS.md` the same
+way, tagged `(inferred: needs review)`. Don't block the workflow on a perfect
+backfill, but flag the gaps.
 
 ## Rules
 

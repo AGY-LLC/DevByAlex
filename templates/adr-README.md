@@ -1,9 +1,9 @@
 # Architecture Decision Records (ADRs)
 
 One file per feature, holding the decisions that govern it: what it has, what
-it deliberately does **not** have, and why. `docs/DECISIONS.md` is the
-chronological log of *what happened when*; this folder is the per-feature record
-of *what holds now*. A feature's ADR is the contract future changes are checked
+it deliberately does **not** have, and why. `docs/DECISIONS.md` holds the
+project Goal, the Hard rules and the project-wide decisions; this folder is the
+per-feature record of *what holds now*. A feature's ADR is the contract future changes are checked
 against.
 
 ## Why this exists

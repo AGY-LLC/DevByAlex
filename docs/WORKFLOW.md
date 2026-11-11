@@ -180,8 +180,8 @@ at `../../knowledge/...`, the same idiom as `../../templates/`):
 `uiux`, plus `knowledge/stack/*.md` and `knowledge/checklists/*.md`. Best
 practices are read from these files, not fetched from a brain; decisions are
 recorded in the repo: feature-scoped ones in `docs/adr/` (the governing
-per-feature records), cross-cutting ones appended to `docs/DECISIONS.md` (the
-chronological log). A committed checkout is fully self-sufficient: no MCP
+per-feature records), project-wide ones in `docs/DECISIONS.md` (with the
+project Goal and Hard rules). A committed checkout is fully self-sufficient: no MCP
 token or network brain.
 
 ## The control file: `docs/STATUS.md`
@@ -249,8 +249,9 @@ signal this loop feeds on.
 One ADR file per feature (mirroring `docs/features/<NN>-<slug>.md`, plus
 `scaffold.md` and `auth.md` for the cross-cutting stages), holding the decisions
 that govern it: what it has, what it deliberately does **not** have, and why.
-`docs/DECISIONS.md` stays the chronological log of *what happened when*; the ADR
-is the per-feature record of *what holds now*. The contract (spelled out in the
+`docs/DECISIONS.md` holds the project Goal, the Hard rules and the
+project-wide decisions (newest first); the ADR is the per-feature record of
+*what holds now*. The contract (spelled out in the
 stamped `docs/adr/README.md`):
 
 - **Consult before change.** Every skill/agent that touches a feature reads its

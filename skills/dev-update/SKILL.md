@@ -34,7 +34,9 @@ reaches an app when it is re-vendored, which is what this does.
   flags skill changes that could shift an in-flight build, and, if
   `docs/secrets.manifest.json` is missing, flags the one-time passworder
   migration (`knowledge/stack/secrets-passworder.md`, run through
-  `/init-ai`'s additive backfill).
+  `/init-ai`'s additive backfill); if `docs/DECISIONS.md` has no
+  `## Hard rules` section, it flags that `/init-ai` should be re-run to
+  backfill the Goal and Hard rules.
 
 ## Decisions (and why)
 

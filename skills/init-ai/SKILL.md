@@ -61,8 +61,10 @@ the provisioner is `install.sh` at the source repo root (`../../`).
   discoverability** sections as `(needs review)` stubs; in `STATUS.md`, the two
   hard gates, the brand and feature-ADR plan rows, the no-open-bugs/tweaks,
   observability, legal, accessibility, SEO and prose launch rows and
-  `## Live (post-launch)`, all unchecked. A section that may exist under
-  other wording is flagged, not duplicated.
+  `## Live (post-launch)`, all unchecked; in `DECISIONS.md`, the `## Goal`
+  (from the approved spec, else tagged `(needs review)`) and `## Hard rules`
+  sections from the template, above the existing log. A section that may
+  exist under other wording is flagged, not duplicated.
 - **Secrets:** a repo without a real `docs/secrets.manifest.json` gets the
   one-time passworder migration when that MCP is connected
   (`register_project` with components matching `pba.yml`, the manifest from
@@ -72,7 +74,9 @@ the provisioner is `install.sh` at the source repo root (`../../`).
 - **STATUS reconciled from reality** per the rules under Decisions.
 - **Next action and queues seeded:** `## Next action` is the one step from the
   routing table; `## Blockers / open questions` holds whatever needs a human;
-  `docs/BUGS.md` has one `[show-dont-tell]` entry per leaking screen (or the
+  `docs/BUGS.md` has one `[show-dont-tell]` entry per leaking screen, fixed by
+  restructuring so layout, hierarchy and labels carry the meaning (not by
+  shortening the copy) and passing design-critic on screenshots (or the
   summary calls for a redesign pass, `/uiux-audit` or a scoped `fix-errors`
   plus design-critic sweep, when leakage is pervasive) and one `[orphan]`
   entry per cluster of trivial orphans; substantial orphaned work is a
@@ -124,6 +128,7 @@ the provisioner is `install.sh` at the source repo root (`../../`).
 
   | Repo state | Next action |
   |------------|-------------|
+  | launched with real users | `/live-triage`, then `/dev-goal` |
   | blank, no spec | `/plan-spec` |
   | code, no spec | `/plan-spec reverse`, then `/plan-guide`, then re-run |
   | spec, public-facing, no `docs/BRAND.md` | `/marketer-brand-generation`, then `/plan-guide` |
@@ -138,7 +143,6 @@ the provisioner is `install.sh` at the source repo root (`../../`).
   | any feature missing its ADR | `/plan-guide adr-backfill` |
   | auth validated, ADRs complete, features remain | `/dev-goal` (validate existing features first, then build) |
   | all features built and validated | `/launch-observability`, `/launch-acceptance`, `/launch-verify`, then `/launch-compliance` and `/launch-readiness` |
-  | launched with real users | `/live-triage`, then `/dev-goal` |
 
 ## Hard rules
 

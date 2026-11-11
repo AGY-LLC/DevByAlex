@@ -24,9 +24,10 @@ expected to cover many units.
   lanes", "get auth validated"); the run stops when that goal is met.
 
 Before starting: resolve the repo (arg or cwd), the goal and the working
-branch (`--branch`, else the current branch; never a protected default).
-Read `docs/STATUS.md` (missing: tell the user to run `/init-ai`) and the Goal
-and Hard rules in `docs/DECISIONS.md`, and pass both into every unit's brief.
+branch (`--branch`, checked out; else the current branch; never a protected
+default). Read `docs/STATUS.md` (missing: tell the user to run `/init-ai`) and
+the Goal and Hard rules in `docs/DECISIONS.md`, and pass the working branch,
+the Goal and the Hard rules into every unit's brief.
 If the spec, guide or wireframe gate is unchecked, stop and report what awaits
 Alex's approval.
 

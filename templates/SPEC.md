@@ -4,7 +4,7 @@
 > other section records a **decision and its why**, not an implementation.
 > Leave the how to the guide and the dev stage. **Needs Alex's approval** (gate
 > in `docs/STATUS.md`) before the guide. Tag inferred items `(needs review)`.
-> The Goal is copied to the top of `docs/DECISIONS.md` once approved.
+> `/plan-spec` copies the Goal to the top of `docs/DECISIONS.md` when it writes the spec.
 
 **Status:** draft <!-- draft | approved -->
 **Updated:** {{DATE}}

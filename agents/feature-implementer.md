@@ -23,8 +23,10 @@ and anything the card left ambiguous that you had to assume.
    guide section, the wireframe screens and the surrounding code.
 2. Build the real thing so every **Done when** line holds (older cards:
    behaviors and acceptance criteria). The card sets the goal and the ADR the
-   decisions; data shape, routes and components are yours to choose. Record
-   any material choice you make in the ADR with its why.
+   decisions; data shape, routes and components are yours to choose. Surface
+   any material choice you make, with its why, in your summary so the
+   orchestrator records it in the ADR; a new architecture decision is
+   escalated per the rules below.
 3. Follow Alex's conventions: TypeScript `strict`, no casual `any` (use
    `unknown` + narrow, infer types from Zod), Zod validation at every boundary
    (inputs, forms, webhooks, env), thin route handlers with business logic in

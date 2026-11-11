@@ -27,9 +27,10 @@ in-progress.
 
 All four gates hold on the same commit:
 
-1. **Built and tested.** Every **Done when** line on the card has a passing
-   test, and the feature works. For a feature with a user-facing flow, that
-   includes its golden-path E2E flow (`../../knowledge/workflow/e2e-gate.md`).
+1. **Built and tested.** Every **Done when** line (older cards: acceptance
+   criteria) on the card has a passing test, and the feature works. For a
+   feature with a user-facing flow, that includes its golden-path E2E flow
+   (`../../knowledge/workflow/e2e-gate.md`).
 2. **Feature validation clean.** `feature-validator` finds nothing open in the
    feature's code.
 3. **Integration validation clean.** `integration-validator` passes on the
@@ -47,8 +48,13 @@ All four gates hold on the same commit:
      unbuilt states marked **(missing)**.
    - The ADR describes the feature as built: material choices made during the
      build are new `D`- or `O`-entries with their why.
-   - No orphans are left (`docs/WORKFLOW.md`, "Nothing is left orphaned").
-   - STATUS shows the row done with a log line, reconciled per
+   - No orphans are left: scratch and debug scripts, temp files, dead code,
+     unused imports and exports, unreferenced components, assets and styles,
+     stale fixtures, `.bak`/`.old` copies and superseded doc fragments this
+     work left are removed; anything recorded as kept (an ADR entry or a
+     `docs/DECISIONS.md` line) stays.
+   - STATUS shows the row's step columns ✅ (E2E `n/a` where there's no
+     user-facing flow) and the row done, with a log line, reconciled per
      `../../knowledge/workflow/doc-maintenance.md`, and `## Next action` names
      the next feature (or `/launch-observability`).
    - The work is committed and pushed to the working branch with the suite
