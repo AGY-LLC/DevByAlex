@@ -3,6 +3,7 @@ name: test-author
 description: Writes a feature's tests purely from its card's Goal and Done when list (success paths, failure paths, edge cases, security boundaries), deliberately blind to the implementation, so tests verify the spec rather than rubber-stamp the code. Runs in parallel with feature-implementer for gate 1 of the DevByAlex feature loop. Leans on the test-suite-developer skill.
 tools: Read, Write, Edit, Bash, Glob, Grep, Skill
 model: sonnet
+effort: high
 color: yellow
 ---
 
