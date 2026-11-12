@@ -3,6 +3,7 @@ name: feature-implementer
 description: Implements one feature's code from its feature card and the implementation guide, following project conventions and Alex's stack rules. Deliberately does NOT write the feature's tests, that is the test-author's job, run in parallel and kept independent so tests trace to the spec rather than the code. Use as step 1b of the DevByAlex feature loop.
 tools: Read, Write, Edit, Bash, Glob, Grep, Skill, WebFetch
 model: sonnet
+effort: high
 color: green
 ---
 
