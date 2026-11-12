@@ -95,13 +95,13 @@ decisions, the spec (user-facing? mobile?), `docs/DECISIONS.md`, and
   flat config, Stripe, Resend, Sentry, auth per
   `../../knowledge/stack/auth-decision.md`, pnpm workspaces, Node 24 LTS
   (`"engines": { "node": "24.x" }` exactly, not an open range, plus `.nvmrc`;
-  `app/`'s `eas.json` base build profile, which the others extend, sets
-  `"node"` to an exact 24.x version). Why for the pins: npm `latest` is
-  TypeScript 7, which typescript-eslint (`<6.1`) and ts-jest (`<7`) don't
-  support yet; Vercel no longer deploys Node
-  20 and resolves an open range to its newest Node; EAS `sdk-58` images
-  default to Node 22 and take only an exact version; ESLint 10 ignores
-  `.eslintrc.*`.
+  `app/eas.json` gets a `base` build profile that `development`, `preview`
+  and `production` extend, with `"node"` set to the exact version in
+  `.nvmrc`). Why for the pins: npm `latest` is TypeScript 7, which
+  typescript-eslint (`<6.1`) and ts-jest (`<7`) don't support yet; Vercel no
+  longer deploys Node 20 and resolves an open range to its newest Node; EAS
+  `sdk-58` images default to Node 22 and take only an exact version; ESLint
+  10 ignores `.eslintrc.*`.
 - **Pipeline by Alex owns CI and deploy;** edit `pba.yml`, never generated
   workflow YAML. Why: one pipeline across apps, and Vercel's own git deploys
   would bypass the gated chain.

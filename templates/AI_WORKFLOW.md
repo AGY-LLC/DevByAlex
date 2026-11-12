@@ -64,12 +64,12 @@ This project is built with the **DevByAlex** autonomous workflow.
      web surface (`marketing/` + `web/`), Maestro flows for iOS/Android. A
      reconcile pass: the feature loop's e2e gate accreted a flow per feature;
      this maps them to scenarios and backfills only the gaps.
+   - `/launch-verify` runs the acceptance suites against staging and drives
+     them green; `/launch-visual-qa` checks the screens on iOS and Android.
    - `/launch-compliance`: legal scan (ToS, privacy policy, cookie consent),
      `accessibility-critique` (WCAG 2.2 AA), `seo-audit`, and `prose-check`;
      reconciles a fix queue and the two **hard gates** (Legal & compliance,
      Accessibility) that block ship-ready in `docs/STATUS.md`.
-   - `/launch-verify` runs the acceptance suites against staging and drives
-     them green; `/launch-visual-qa` checks the screens on iOS and Android.
    - Companions: `/staging-smoke-test`, `/launch-readiness`.
    - `/launch-store-assets` builds both store listings; `/launch-submit`
      (human-triggered only) ships to TestFlight and Play internal.
@@ -86,8 +86,9 @@ This project is built with the **DevByAlex** autonomous workflow.
 ## Rules of the road
 
 The Hard rules in `docs/DECISIONS.md` apply everywhere (no secrets, gates are
-Alex's, suite green at every commit, auth contract intact, active decisions
-change only on Alex's confirmation, no new scope without Alex). On top of them:
+Alex's, suite green at every commit without skipping or weakening tests, auth
+contract intact, active decisions change only on Alex's confirmation, no new
+scope without Alex). On top of them:
 
 - Dev work commits and pushes **straight to the working branch**: the branch you
   call the skill on, or one passed explicitly. No per-unit branches, no

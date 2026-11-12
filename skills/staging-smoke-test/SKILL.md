@@ -36,7 +36,8 @@ the operator's job.
   between staging and prod (keys, webhook, callback and OAuth redirect URLs,
   database URLs, CDN and sender domains, allowed origins, flag values).
 - `docs/staging-smoke-test.md` exists with run metadata (operator, time,
-  staging SHA, release link), sections in the order below, `- [ ]` items each
+  staging SHA, release link), an opening line that a failed item stops the
+  run until it is ticketed, sections in the order below, `- [ ]` items each
   ending "→ Expected: ..." with an outcome the operator can observe (UI,
   dashboard, DB row, log line, inbox), and a sign-off block: every item checked
   or ticketed, no new staging errors beyond deliberate ones, no traffic hit
@@ -49,28 +50,45 @@ the operator's job.
      a finding), `robots.txt` disallows, build SHA matches, staging DB is not
      prod.
   2. **Auth**, from `docs/features/authentication.md` (password is optional):
-     Create account and Sign in separately for each enabled method (signup-only
-     13+ affirmation, no silent sign-in or mutation of an existing account),
-     logout invalidation, recovery and password lifecycle only where specified,
-     each OAuth provider against staging's app and callback, magic link or
-     OTP expiry, the safe-response contract (no account enumeration), account
-     management and last-method protection if specified, every role,
-     ownership and tenant denial, fresh-auth step-up, MFA, session expiry and
-     refresh, deletion and export actually purging or exporting.
+     for each enabled method, Create account (one account, verification
+     completes, any required 13+ affirmation unchecked and signup-only, never
+     signs in or changes an existing account) and Sign in (never creates an
+     account, lands on the post-login surface, session cookie flags correct)
+     separately; logout invalidation; recovery as specified, and password
+     reset and change whenever passwords exist (old password stops working),
+     add only where specified; each OAuth provider against staging's app and
+     callback; magic link or OTP delivery and expiry; the safe-response
+     contract (nonexistent account, wrong credential or method,
+     existing-account Create account and recovery reveal nothing through copy,
+     status or response shape, and each offers a next action); account
+     management as specified (one user per method, change notices, last usable
+     method protected) and its UI and mutation endpoints absent when out of
+     scope; each role allowed only its operations, with wrong-role,
+     wrong-owner, direct-endpoint, stale-access and cross-tenant attempts
+     denied and grants and revokes taking effect; fresh-auth step-up returning
+     to the confirmation point without auto-executing, and rejecting cancel,
+     failure, expiry, tampering and replay; MFA; session expiry and refresh
+     rotation; deletion and export actually purging or exporting.
   3. **Core flows**, one per real journey, named for it.
-  4. **Role-based access:** anonymous, wrong role, admin, cross-tenant.
+  4. **Role-based access:** anonymous redirected with no data in HTML or
+     JSON, wrong role gets 403 or 404 not a partial render, admin sees staging
+     data, cross-tenant read by ID denied.
   5. **Persistence:** create, reload, re-login, second browser, delete.
   6. **Uploads and media:** served from staging's bucket or CDN, type and
      size limits, signed URL expiry, transforms.
   7. **One block per integration actually shipped**, proving it lands in the
-     staging or test project, never live (payments in test mode, email,
-     SMS, analytics, error reporting, search, AI, storage, auth provider,
-     flags, push, CDN).
-  8. **Webhooks:** outbound signed to staging, inbound with signature
-     enforced.
+     staging or test project, never live: payments in test mode end to end
+     (webhook fires, order marked paid in the staging DB); email and SMS from
+     staging's sender with every link pointing at staging; error reports
+     tagged with the staging release; then analytics, search, AI, storage,
+     auth provider, flags (prod unaffected), push (staging bundle), CDN.
+  8. **Webhooks:** outbound signed to staging's receiver; inbound sent from
+     the provider's staging dashboard returns 2xx with its side effect
+     visible, and a bad signature is rejected.
   9. **Jobs, queues and cron:** processed on the staging worker, no
      unexpected dead letters, recent last runs.
-  10. **Realtime**, where it exists.
+  10. **Realtime**, where it exists: two browsers update each other; drop
+      and reconnect reconciles.
   11. **Search, filters, pagination, sorting**, including empty and
       past-the-end.
   12. **Error and edge states:** branded 404 and 500 (reported to
@@ -79,8 +97,8 @@ the operator's job.
       localhost, prod or 404ing assets.
   14. **Observability:** the run's requests, errors and events appear in the
       staging projects; uptime green.
-  15. **Legal and plumbing:** policy links, consent banner persists,
-      unsubscribe works, support routes to staging.
+  15. **Legal and plumbing:** policy links load real, current versions,
+      consent banner persists, unsubscribe works, support routes to staging.
   16. **Mobile:** about 375px web, and the mobile build pointing at the
       staging API.
   17. **Accessibility sniff:** keyboard focus and order, landmarks and labels
@@ -110,4 +128,5 @@ the operator's job.
   call staging or production.
 - Read an existing `docs/staging-smoke-test.md` first and keep operator notes
   outside the generated structure; a clean rewrite only when asked.
-- A smoke test that touches production data has failed.
+- No item points the operator at production or a live-mode account; every
+  external account it names is the staging or test one.
