@@ -54,7 +54,7 @@ the provisioner is `install.sh` at the source repo root (`../../`).
   | `feature-card.md` | `docs/features/_TEMPLATE.md` |
   | `adr-README.md`, `adr-feature.md` | `docs/adr/README.md`, `docs/adr/_TEMPLATE.md` |
   | `wireframes-README.md` | `docs/wireframes/README.md` |
-  | `verify-SKILL.md` | `.claude/skills/verify/SKILL.md` (app-owned; Claude Code runs it before each commit, enforcing the green-suite hard rule) |
+  | `verify-SKILL.md` | `.claude/skills/verify/SKILL.md` (app-owned; Claude Code runs it before each code commit, backing the green-suite hard rule) |
 
 - **Backfilled additively** into files that already exist, appending only
   what is missing and leaving every line and checkbox as found: in

@@ -32,16 +32,17 @@ covers the deployed environment.
   launch-relevant files (legal copy, auth and session, data access, payments
   and PII, logging, rate limiting, error handling, workers, launch flags). The
   map also names app-specific concerns worth their own section.
-- **Every section below was audited** by its own `general-purpose` subagent,
-  all launched in one message, each given the target (whole repo, or the
-  subset or diff the user named), the map, the scope rules, the Materiality
-  bar, the severity rubric, the finding fields and its own section's coverage
-  list verbatim. Each one audits only its section (issues elsewhere come back
-  as cross-references), fixes nothing, and returns findings with placeholder
-  ids (`LEG-`, `DATA-`, `SEC-`, `PERF-`, `APP-`, `COPY-`), passes with a
-  one-line why, non-blocking observations, out-of-scope prerequisites, coverage
-  gaps and cross-references. A scoped run still runs every section against the
-  subset and says a full pass is still needed before launch.
+- **Every section below was audited** by its own `general-purpose` subagent, all
+  launched in one message, each given the target (whole repo, or the subset or
+  diff the user named), the map, the Goal's scope line and, verbatim, the Out of
+  scope, Materiality bar, Documented decisions and Severity bullets, the finding
+  fields and its own section's coverage list. Each one audits only its section
+  (issues elsewhere come back as cross-references), fixes nothing, and returns
+  findings with placeholder ids (`LEG-`, `DATA-`, `SEC-`, `PERF-`, `APP-`,
+  `COPY-`), passes with a one-line why, non-blocking observations, out-of-scope
+  prerequisites, coverage gaps and cross-references. A scoped run still runs
+  every section against the subset and its verdict says a full pass is still
+  needed before launch.
   1. **Legal and policy:** the privacy policy exists, is linked from signup,
      footer and consent flows, and matches the code on data collected
      (including analytics, device info, IP, cookies, session replay),
@@ -53,75 +54,75 @@ covers the deployed environment.
      excludes an age group; marketing claims in the repo match what ships;
      open-source licenses and attribution kept; an accessibility statement if
      promised.
-  2. **Data-protection law,** for the regimes that apply (others flagged
-     "verify applicability"): GDPR and UK GDPR (lawful basis per purpose;
-     access, rectification, deletion that actually purges, portability and
-     objection; consent freely given and revocable on server and UI; a
-     sub-processor list if claimed; the transfer mechanism if data leaves the
-     EU); CCPA and CPRA (Do Not Sell or Share honored in the code paths that
-     share data, sensitive data); COPPA (age gate and parental consent, or an
-     explicit exclusion); health data (access logs, encryption, least
-     access); payments (card data tokenized by the processor, never on the
-     app's server or in logs); data residency if claimed; a `SECURITY.md` or
-     equivalent contact and some way to detect and log unauthorized access.
+  2. **Data-protection law,** for the regimes that apply (others flagged "verify
+     applicability"): GDPR and UK GDPR (lawful basis per purpose; access,
+     rectification, deletion that actually purges, portability and objection;
+     consent freely given and revocable on server and UI; a sub-processor list
+     if claimed; the transfer mechanism if data leaves the EU); CCPA and CPRA (a
+     Do Not Sell or Share link whose opt-out every code path sharing data with
+     ad or analytics partners honors; sensitive-data limits); COPPA (age gate
+     and parental consent, or an explicit exclusion); health data (access logs,
+     encryption, least access); payments (card data tokenized by the processor,
+     never on the app's server or in logs); data residency if claimed; a
+     `SECURITY.md` or equivalent contact and some way to detect and log
+     unauthorized access.
   3. **Security**, as "exposed to the open internet tomorrow": authentication
      against `docs/features/authentication.md` and `docs/adr/auth.md` and the
      current auth regression evidence (only the specified methods; Create
      account and Sign in separate; signup-only age or consent can't bleed;
-     optional account management as specified; linking needs proof and keeps
-     the last usable method; roles, ownership and tenant rules deny by default
-     on every request; public failures resist enumeration; recovery and
-     step-up replay-safe and returning in context; where passwords exist,
-     hashing algorithm and cost and complete add, change and reset; always
-     throttling, session rotation, `HttpOnly`, `Secure`, `SameSite`, token
-     expiry and revocation); an explicit authorization check on every
-     sensitive route, no IDOR on user-supplied ids, admin and flagged admin
-     tooling gated; parameterized queries, autoescaping, uploads validated
-     and stored outside the web root, allowlisted redirects, safe
-     deserialization; no PII or secrets in logs, errors or analytics, no
-     production stack traces; no committed secrets, `.env.example` names
-     only, real env files gitignored; HTTPS with HSTS, no mixed content; CSP,
-     `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`; CSRF
-     protection on state changes; rate limits on auth, reset, signup and
-     anything that costs money (LLM, outbound APIs, email); a current
-     lockfile with no critical advisories or abandoned critical-path
-     packages; no homegrown crypto, no reused nonces, constant-time
+     optional account management as specified; linking needs proof and keeps the
+     last usable method; roles, ownership and tenant rules deny by default on
+     every request; public failures resist enumeration; recovery and step-up
+     replay-safe and returning in context; where passwords exist, hashing
+     algorithm and cost and complete add, change and reset; always throttling,
+     session rotation, `HttpOnly`, `Secure`, `SameSite`, token expiry and
+     revocation); an explicit authorization check on every sensitive route, no
+     IDOR on user-supplied ids, admin and flagged admin tooling gated;
+     parameterized queries, autoescaping, uploads validated and stored outside
+     the web root, allowlisted redirects, safe deserialization; no PII or
+     secrets in logs, errors or analytics, no production stack traces; no
+     committed secrets, `.env.example` names only, real env files gitignored;
+     HTTPS with HSTS, no mixed content; CSP, `X-Content-Type-Options`,
+     `Referrer-Policy`, `Permissions-Policy`; CSRF protection on state changes;
+     rate limits on auth, reset, signup, expensive endpoints and anything that
+     costs money (LLM, outbound APIs, email); a current lockfile with no
+     critical advisories or abandoned critical-path packages; no homegrown
+     crypto or weak algorithms and modes, no reused nonces, constant-time
      comparison; verified, replay-protected webhooks.
   4. **Performance and reliability:** no N+1, full scans, sync calls in loops,
      unbounded pagination or request-thread work that belongs in a job; no
-     leaked handles, connections, listeners or timers on any path; a timeout
-     on every outbound call; bounded retries and idempotent retried handlers
+     leaked handles, connections, listeners or timers on any path; a timeout on
+     every outbound call; bounded retries and idempotent retried handlers
      (webhooks, jobs, payments); cache keys cover every varying dimension and
-     mutations invalidate; failures surfaced, user errors actionable, logs
-     structured; sane bundles and lazy or optimized images; fail fast on
-     invalid config and a health endpoint where the host expects one;
-     structured logs and error reporting; no races on shared state,
-     transactions around multi-step writes.
-  5. **App-specific,** from the map (skipped only when the map found none):
-     for example payment idempotency, refunds and tax; LLM cost caps,
-     prompt injection, PII in prompts and system-prompt leakage; UGC
-     moderation or a report flow, quotas, malicious files; tenant isolation
-     with no client-trusted tenant id; realtime auth on connect and per
-     message, backpressure; offline sync conflicts, local migrations, secure
-     token storage; job delivery semantics, failure alerts, lateness; email,
-     SMS and push unsubscribe, send limits, no leaking merge variables;
-     analytics that respects consent, captures no raw PII and matches the
-     policy.
-  6. **Copy quality** of everything a user can see (UI and i18n strings,
-     errors and validation, emails, push and SMS, legal copy for grammar
-     only, marketing, user-facing docs, titles, meta, OG and alt text):
-     spelling (product, brand and service names too), grammar and
-     homophones, punctuation and quote consistency, broken interpolation
-     (unbalanced braces, missing args, ICU and plural branches), placeholder
-     leakage (`TODO`, `FIXME`, Lorem ipsum, `test@test.com`, debug copy),
-     inconsistent casing, naming and tone, dates, units and currency,
-     untranslated keys, and the copy side of accessibility (meaningful
-     `alt`, real `aria-label`s, link text). Code comments, internal docs,
-     fixtures and design are out of scope. Severity: Blocker for errors in
-     legal or payment copy and any shipping placeholder; High for the
-     landing hero, signup, transactional email and error pages; Medium for
-     secondary copy; Low for casing or voice; Note to confirm a choice like
-     British vs American spelling.
+     mutations invalidate; failures surfaced and user errors actionable; sane
+     bundles and lazy or optimized images; fail fast on invalid config and a
+     health endpoint where the host expects one; structured logs and error
+     reporting; no races on shared state, transactions around multi-step writes.
+  5. **App-specific,** from the map (skipped only when the map found none): for
+     example payment idempotency, refunds and tax; LLM cost caps, prompt
+     injection, PII in prompts, system-prompt leakage and output filtering where
+     the output is user-visible; UGC moderation or a report flow, quotas,
+     malicious files; tenant isolation with no client-trusted tenant id;
+     realtime auth on connect and per message, backpressure; offline sync
+     conflicts, local migrations, secure token storage; job delivery semantics,
+     failure alerts, lateness; email, SMS and push unsubscribe, send limits, no
+     leaking merge variables; analytics that respects consent, captures no raw
+     PII and matches the policy.
+  6. **Copy quality** of everything a user can see (UI and i18n strings, errors
+     and validation, emails, push and SMS, legal copy for grammar only,
+     marketing, user-facing docs, titles, meta, OG and alt text): spelling
+     (product, brand and service names too), grammar and homophones, punctuation
+     and quote consistency, broken interpolation (unbalanced braces, missing
+     args, ICU and plural branches), placeholder leakage (`TODO`, `FIXME`, Lorem
+     ipsum, `test@test.com`, debug copy), inconsistent casing, naming and tone,
+     dates, units and currency, untranslated keys, and the copy side of
+     accessibility (meaningful `alt`, real `aria-label`s, link text). Code
+     comments, internal docs, fixtures and design are out of scope. Severity:
+     Blocker for errors in legal or payment copy and any shipping placeholder;
+     High for the landing hero, signup, transactional email and error pages;
+     Medium for secondary copy; Low for casing or voice; Note for a mixed
+     convention like British and American spelling (flag the inconsistency, not
+     the choice).
 - **Merged:** findings deduplicated (the more specific one kept, the other's
   id cited), final `LR-001...` ids in severity then dependency order,
   `Depends on` resolved, every cross-reference either covered, filed or
@@ -164,25 +165,27 @@ covers the deployed environment.
   and each audits in its own context and returns only a summary, so the
   orchestrator stays free to brief, merge and report.
 - **Materiality bar: a finding must earn its slot.** A competent engineer told
-  only the finding agrees it is worth fixing near launch because it connects
-  to a real consequence: a user notices or is harmed (user-visible copy
-  errors and policy-versus-code mismatches always qualify), legal or privacy
-  exposure, an exploitable or meaningfully wider attack surface, a wrong
-  result or corrupted state or money, a measurable cost or reliability
-  problem at realistic load, or a next change made materially riskier. Not
-  filed (at most a non-blocking observation): micro-optimizations,
-  redundant-but-harmless work, behavior-identical refactors, re-arguing an
-  adequate mitigation, threats the architecture precludes, and anything whose
+  only the finding agrees it is worth fixing near launch because it connects to
+  a real consequence: a user notices or is harmed (user-visible copy errors and
+  policy-versus-code mismatches always qualify), legal or privacy exposure, an
+  exploitable or meaningfully wider attack surface, a wrong result or corrupted
+  state or money, a measurable cost or reliability problem at realistic load, or
+  a next change made materially riskier. Not filed (at most a non-blocking
+  observation): micro-optimizations, redundant-but-harmless work,
+  behavior-identical refactors, re-arguing an adequate mitigation, threats the
+  architecture precludes or that have no realistic trigger, and anything whose
   fix note has to argue the impact is negligible. When unsure, file at the
   lowest severity with Confidence hypothesis and a one-line impact; never
   manufacture a consequence. Why: actionable signal, not completeness, is the
   point.
-- **Documented decisions are settled.** An `active` entry or deliberate
-  omission in `docs/adr/` is cited, not refiled, except: legal, privacy,
-  security and accessibility items are still filed tagged `ADR-conflict` (the
-  hard launch gates are never overridable by an ADR); concrete evidence a
-  decision causes real harm is filed tagged `ADR-challenge` for Alex; and code
-  that contradicts an `active` entry with no supersession is a drift finding.
+- **Documented decisions are settled.** An `active` entry or deliberate omission
+  in `docs/adr/` is cited, not refiled, except: legal, privacy, security and
+  accessibility items are still filed tagged `ADR-conflict` (the two hard launch
+  gates are never overridable by an ADR); concrete evidence a decision causes
+  real harm is filed tagged `ADR-challenge`, citing the entry and the evidence,
+  for Alex only; and code that contradicts an `active` entry with no
+  supersession is a drift finding. Why: an ADR blocks blind change, not
+  criticism.
 - **Severity only after the bar.** Blocker: must be fixed before launch
   (legal exposure, exploitable security, guaranteed outage, policy that lies).
   High: should be fixed before launch, likely incident, complaint or rework.
