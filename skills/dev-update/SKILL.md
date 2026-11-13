@@ -35,8 +35,8 @@ reaches an app when it is re-vendored, which is what this does.
   `docs/secrets.manifest.json` is missing, flags the one-time passworder
   migration (`knowledge/stack/secrets-passworder.md`, run through
   `/init-ai`'s additive backfill); if `docs/DECISIONS.md` has no
-  `## Hard rules` section, it flags that `/init-ai` should be re-run to
-  backfill the Goal and Hard rules.
+  `## Hard rules` section or `.claude/skills/verify/` is missing, it flags
+  that `/init-ai` should be re-run to backfill them.
 
 ## Decisions (and why)
 
