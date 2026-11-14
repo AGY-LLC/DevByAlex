@@ -10,102 +10,65 @@ metadata:
 
 # live-triage: Turn production signal into workflow state
 
-The workflow used to end at TestFlight. This closes the loop: production
-errors and user feedback become `docs/BUGS.md` / `docs/TWEAKS.md` /
-`docs/TODO.md` entries: the same lanes `dev-goal` already drains with full
-verification, so a live app keeps improving through the pipeline that built it,
-not through ad-hoc hotfixes beside it.
+## Goal
 
-**Triage routes; it never fixes.** The separation is the point: this skill has
-no opinion about code, so its judgments about *what* users reported stay honest,
-and every fix still goes through the drain loops' verify machinery.
+Production errors and user feedback become entries in the lanes `dev-goal`
+already drains with full verification (`docs/BUGS.md`, `TWEAKS.md`,
+`TODO.md`), so a live app improves through the pipeline that built it, not
+through hotfixes beside it. Runs after launch, as often as wanted.
 
-## When to activate
+## Done when
 
-- Post-launch (the app has real users on staging-promoted production or
-  TestFlight/Play internal), and `docs/FEEDBACK.md` has inbox entries.
-- Run it as often as you like; a run with an empty inbox and no new error
-  signal is a clean no-op.
-- The user asks "what are users reporting?" or "process the feedback."
+- Every `docs/FEEDBACK.md` Inbox entry (pasted emails, support messages, store
+  reviews, observations; verbatim beats summarized) and every new or
+  unresolved error-monitor issue since the last triage run (the STATUS log)
+  is triaged: deduped against open and fixed lane entries and earlier
+  triage, then routed:
+  - **Functional problem** (wrong behavior, error, crash, data issue): a
+    `docs/BUGS.md` entry tagged `[prod]` with severity, repro quoting the user
+    or the stack trace, and its source. Error events carry message and stack
+    top, frequency, route or screen, first and last seen.
+  - **Cosmetic miss:** a `docs/TWEAKS.md` entry, only if it passes the tweak
+    qualification test.
+  - **Small improvement, no new scope** (bounded, unambiguous, for example
+    "sort newest first"): a `docs/TODO.md` entry, which `/dev-todo`
+    re-qualifies before any work.
+  - **Feature request or scope change:** quoted in STATUS `## Blockers / open
+    questions` for Alex.
+  - **Noise:** marked not actionable with a one-line reason.
+- Each entry moved from Inbox to Triaged with what it became (`→ BUG-014
+  [prod]`, `→ TWK-007`, `→ TODO-004`, `→ blocker (feature request)`,
+  `duplicate of BUG-009`).
+- A STATUS log line gives items triaged, ids created and anything escalated,
+  and says the next `/dev-goal` run starts with a bug drain when any `[prod]`
+  bug was filed; the work is committed and pushed to the working branch.
+- With no `docs/FEEDBACK.md`, it is stamped from the template and the run
+  stops. An empty inbox and no new signal is a clean no-op.
 
-## Inputs
+## Decisions (and why)
 
-1. **`docs/FEEDBACK.md` › Inbox**: the human-fed channel: pasted emails,
-   support messages, store reviews, observations. Verbatim beats summarized.
-2. **The error monitor** (wired by `/launch-observability`): if the session
-   can reach it (CLI/API/MCP), pull the new/unresolved issues since the last
-   triage run. If it can't, say so and triage the inbox only: never invent
-   error signal; the human can paste an export into the inbox instead.
+- **Route, never fix,** not even a one-liner. Why: with no stake in the code,
+  triage reports what users said honestly, and every fix still goes through
+  the drain loops' verification.
+- **A recurrence of a fixed bug is a regression, not a duplicate:** a fresh
+  `[prod]` entry citing the original id and its fixing commit. Why: closing it
+  as a duplicate hides that the fix broke.
+- **When in doubt, a cosmetic report is a bug and a "small change" is a
+  feature request.** Why: the cheaper lanes skip verification or scope review
+  that the work may need.
+- **Security-smelling reports** (auth bypass, data leakage, injection) are
+  blocker severity and also a STATUS blocker in the same run. Why: they must
+  not wait quietly in a log.
+- **The error monitor is read only when this session can reach it** (wired by
+  `/launch-observability`); otherwise triage the inbox and say so. Why:
+  invented signal is worse than none, and a human can paste an export into
+  the inbox.
 
-## Workflow
+## Hard rules
 
-### Step 1: Load state
-Read `docs/FEEDBACK.md`, `docs/BUGS.md`, `docs/TWEAKS.md`, `docs/TODO.md`, and
-`docs/STATUS.md`.
-Note the last triage run (STATUS log). If there's no FEEDBACK.md, stamp it from
-the template and stop: nothing to triage yet.
+The hard rules in `docs/DECISIONS.md` apply, plus:
 
-### Step 2: Gather
-Collect the inbox entries and (if reachable) new error-monitor issues. For
-error events, capture what makes a bug entry actionable: the error message +
-stack top, frequency, affected route/screen, first/last seen.
-
-### Step 3: Triage each item
-For every item, in order:
-
-1. **Dedupe**: against open *and* fixed entries in BUGS/TWEAKS and
-   already-triaged feedback. A recurrence of a **fixed** bug is not a duplicate.
-   It is a regression, so file a fresh `[prod]` bug entry that cites the original
-   ID and its fixing commit.
-2. **Classify and route:**
-   - **Functional problem** (wrong behavior, error, crash, data issue) → a new
-     `docs/BUGS.md` entry tagged `[prod]`, with severity, repro (from the
-     report/event: quote the user or the stack trace), and the FB/monitor
-     source. Security-smelling reports (auth bypass, data leakage, injection)
-     are **severity: blocker** and additionally surfaced in STATUS blockers,
-     never left to wait quietly in a log.
-   - **Cosmetic miss** (copy, spacing, visual polish) → a new `docs/TWEAKS.md`
-     entry: it must genuinely pass the tweak qualification test; when in
-     doubt, it's a bug.
-   - **Small improvement, no new scope** (existing behavior users want adjusted,
-     bounded and unambiguous: e.g. "sort newest first") → a new `docs/TODO.md`
-     entry; `/dev-todo`'s routing re-qualifies it before any work. When in doubt
-     about scope, it's a feature request for Alex, not a todo.
-   - **Feature request / scope change** → STATUS › `## Blockers / open
-     questions`, quoting the request. **Scope is Alex's call**: triage never
-     converts a wish into a feature card.
-   - **Not actionable / noise** → triaged with a one-line reason. Never
-     silently dropped.
-3. **Mark it**: move the FEEDBACK entry from Inbox to Triaged with a pointer
-   to what it became (`→ BUG-014 [prod]`, `→ TWK-007`, `→ TODO-004`,
-   `→ blocker (feature request)`, `duplicate of BUG-009`).
-
-### Step 4: Record and stop
-- Add a STATUS log line: items triaged, IDs created, anything escalated.
-- If this run filed any `[prod]` bugs, note in the log that the next `/dev-goal`
-  run starts with a bug drain (the existing bugs-first rule does the rest: no
-  new mechanism needed).
-- Commit and push to the working branch. **Stop**: fixing is `/dev-goal`'s
-  job on its next run.
-
-## Rules
-
-- **Route, never fix.** Not even a one-liner: the drain loops own fixes so
-  every change gets verified.
-- **Scope changes go to Alex.** A feature request becomes a blocker/question,
-  never a feature card or a "small addition."
-- **Never invent signal.** Unreachable error monitor → triage the inbox only
-  and say so.
-- **Security reports jump the queue**: blocker severity + a STATUS blocker
-  line, same run.
-- **Nothing vanishes.** Every inbox item leaves as a routed ID, a duplicate
-  citation, or a reasoned not-actionable: the Triaged section is the audit
-  trail.
-- Idempotent: empty inbox + no new signal = clean no-op run.
-
-## Output
-
-`docs/FEEDBACK.md` inbox drained to Triaged, new `[prod]` bug / tweak / todo
-entries filed for `/dev-goal` to drain, scope requests surfaced to Alex, and a
-STATUS log line: with the app's improvement loop now running on production
-signal.
+- Never turn a wish into a feature card; scope is Alex's call.
+- Nothing vanishes: every inbox item leaves as a routed id, a duplicate
+  citation or a reasoned not-actionable.
+- Stop after triage; fixing is the next `/dev-goal` run.
