@@ -13,11 +13,11 @@ description: >-
 
 ## Goal
 
-Drive a list of errors (lint, typecheck, test or build output, or a
-`FIND-xxx`, `LR-xxx` or other fix queue) to zero, one minimal verified fix at
-a time, without cascading regressions. Done means every input item has a
-terminal disposition and the originally failing checks pass on a full re-run,
-not "fixed the main ones".
+Drive a list of errors (lint, typecheck, test or build output, or a `FIND-xxx`,
+`LR-xxx` or other IDed fix queue) to zero, one minimal verified fix at a time,
+without cascading regressions. Done means every input item has a terminal
+disposition and the originally failing checks pass on a full re-run, not "fixed
+the main ones".
 
 ## Done when
 
@@ -26,12 +26,13 @@ not "fixed the main ones".
 - **Every item has a record,** written as soon as the item is settled, with a
   disposition of Fixed, Duplicate of FIX-YYY, Invalid (with evidence) or
   Deferred (with the specific blocker: missing access, an ambiguous spec or a
-  user decision). Each `### FIX-XXX: title` record, numbered in execution
-  order, gives Source (raw error or the `FIND-`/`LR-` id), Disposition,
-  Severity if known, the narrowest Location, Symptom, Change (or n/a), Verify
-  (the command actually run and its exit status, or n/a), Doc updated (or
-  n/a), Regressions, Depends on, and a Reason for anything not Fixed. A
-  hypothesis fix (unclear root cause) is noted and confirmed before moving on.
+  user decision). Each `### FIX-XXX: title` record, numbered in execution order,
+  gives Source (raw error or the source queue id: `FIND-`, `LR-`, `CRIT-`,
+  `BUG-` and the like), Disposition, Severity if known, the narrowest Location,
+  Symptom, Change (or n/a), Verify (the command actually run and its exit
+  status, or n/a), Doc updated (or n/a), Regressions, Depends on, and a Reason
+  for anything not Fixed. A hypothesis fix (unclear root cause) is noted in its
+  record and confirmed before moving on.
 - **Final full re-run:** the original failing checks (for example `pnpm lint`,
   `pnpm test`, `tsc --noEmit`, `pnpm build`) ran over the whole scope that
   produced the input and pass, or the only failures left are Deferred items.
@@ -52,12 +53,13 @@ not "fixed the main ones".
 ## Decisions (and why)
 
 - **One error, one coherent change, one verification,** with no drive-by
-  refactors; the narrowest check that proves the error is gone runs before the
-  next item. Why: batching unrelated edits hides which change broke what.
-- **Order by dependency, then severity** (Critical, High, Medium, Low and
-  Note, the code-review scale), with a lower item first only when it unblocks
-  many others; types before tests that failed only because of types. Why:
-  upstream fixes clear downstream noise.
+  refactors; the item's own Verify field when its queue gives one, else the
+  narrowest check that proves the error is gone, runs before the next item.
+  Why: batching unrelated edits hides which change broke what.
+- **Order by the queue's Depends on, then severity** (Critical, High, Medium,
+  Low and Note, the code-review scale), with a lower item first only when it
+  unblocks many others; types before tests that failed only because of types.
+  Why: upstream fixes clear downstream noise.
 - **Trace the blast radius before editing** (imports, shared types, callers,
   public API, schemas). New diagnostics after a fix are resolved, or the fix
   reverted, before the queue advances; genuinely separate new errors join the

@@ -5,7 +5,7 @@ argument-hint: "[path to the app repo: defaults to cwd]"
 license: MIT
 metadata:
   author: alex-yoza
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # live-triage: Turn production signal into workflow state
@@ -26,10 +26,11 @@ through hotfixes beside it. Runs after launch, as often as wanted.
   triage, then routed:
   - **Functional problem** (wrong behavior, error, crash, data issue): a
     `docs/BUGS.md` entry tagged `[prod]` with severity, repro quoting the user
-    or the stack trace, and its source. Error events carry message and stack
-    top, frequency, route or screen, first and last seen.
-  - **Cosmetic miss:** a `docs/TWEAKS.md` entry, only if it passes the tweak
-    qualification test.
+    or the stack trace, and its source (the FB id or monitor issue). Error
+    events carry message and stack top, frequency, route or screen, first and
+    last seen.
+  - **Cosmetic miss:** a `docs/TWEAKS.md` entry, only if it passes
+    `/dev-tweak`'s qualification test.
   - **Small improvement, no new scope** (bounded, unambiguous, for example
     "sort newest first"): a `docs/TODO.md` entry, which `/dev-todo`
     re-qualifies before any work.
@@ -42,8 +43,8 @@ through hotfixes beside it. Runs after launch, as often as wanted.
 - A STATUS log line gives items triaged, ids created and anything escalated,
   and says the next `/dev-goal` run starts with a bug drain when any `[prod]`
   bug was filed; the work is committed and pushed to the working branch.
-- With no `docs/FEEDBACK.md`, it is stamped from the template and the run
-  stops. An empty inbox and no new signal is a clean no-op.
+- With no `docs/FEEDBACK.md`, it is stamped from the template and the run stops.
+  An empty inbox and no new signal is a clean no-op: no log line, no commit.
 
 ## Decisions (and why)
 
@@ -59,16 +60,15 @@ through hotfixes beside it. Runs after launch, as often as wanted.
 - **Security-smelling reports** (auth bypass, data leakage, injection) are
   blocker severity and also a STATUS blocker in the same run. Why: they must
   not wait quietly in a log.
-- **The error monitor is read only when this session can reach it** (wired by
-  `/launch-observability`); otherwise triage the inbox and say so. Why:
-  invented signal is worse than none, and a human can paste an export into
-  the inbox.
 
 ## Hard rules
 
 The hard rules in `docs/DECISIONS.md` apply, plus:
 
 - Never turn a wish into a feature card; scope is Alex's call.
+- Never invent signal: read the error monitor (wired by
+  `/launch-observability`) only when this session can reach it; otherwise
+  triage the inbox only and say so, and a human can paste an export there.
 - Nothing vanishes: every inbox item leaves as a routed id, a duplicate
   citation or a reasoned not-actionable.
 - Stop after triage; fixing is the next `/dev-goal` run.
