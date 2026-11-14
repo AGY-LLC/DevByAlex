@@ -6,7 +6,7 @@ _meta:
   sensitivity: internal
   read_scope: brain.read
   tags: [practice, engineering, uiux, design, accessibility, feature, review]
-  updated: 2026-10-25
+  updated: 2026-11-05
 
 practice:
   id: uiux
@@ -31,10 +31,10 @@ practice:
   methodology:
     - Hold the universal design rules (knowledge/design/universal-design-rules.md) on every screen, clarity above everything, one primary action, obvious hierarchy, feedback on every action, error prevention + recovery, predictable navigation. They are style-independent; a style choice never trades them away.
     - Pick a visual direction with intent and commit to it; do not default to the generic "modern SaaS" look (gradient hero, bento grid, sparkle icons, templated copy), that's the #1 tell of AI-generated UI.
-    - Name the style as PRIMARY × SECONDARY, PRIMARY is the structure/layout (one of the 12 product directions, fixed by category + density; wins every conflict and governs usability), SECONDARY is the feeling/decoration (one of the 50 named styles, chosen from the tone adjectives). Use the catalog, pairing map, and decision procedure in knowledge/design/design-styles.md; /plan-design runs this and records the pick + reason in docs/DESIGN.md before wireframes.
+    - Name the style as PRIMARY × SECONDARY with the decision procedure in knowledge/design/design-styles.md; /plan-design records the pick + reason in docs/DESIGN.md before wireframes.
     - Ground the pick in reality, /plan-design must pull 3–5 real-world references of the confirmed style via web search (live products/sites, gallery entries) and record them in docs/DESIGN.md; tokens are derived from those references, not from memory of the style name.
     - Validate design changes by looking, not by declaring, screenshot the running screens (key states, light + dark) and have the separate design-critic agent vet them against docs/DESIGN.md, the wireframes, and the universal rules; a design change is done only on a clean critic pass.
-    - Pin the design-system dimensions as intent-based tokens, color (+ contrast), typography ramp, spacing scale, radius/shadow, motion (with a reduced-motion policy), iconography, and every interactive state (default/hover/focus/active/disabled/loading/error/empty).
+    - Pin the design-system dimensions as intent-based tokens, starting from the default scales and component defaults in knowledge/stack/uiux.md (color slots, type, spacing, radius, motion, state overlay); a theme restyles them, never loosens them.
     - Select relevant interaction and perceived-performance patterns from the contextual catalog in knowledge/stack/uiux.md; record the affected surface, benefit, fallback/recovery and verification in docs/DESIGN.md Component patterns. These are contextual recommendations, not universal requirements or an instruction to retrofit every app; skip reasons are useful only for plausible alternatives with a meaningful tradeoff. Reuse the existing stack and auth/data contracts, without dependency mandates or changes to approval/security gates.
     - Hold the accessibility floor (WCAG 2.2 AA) on every customer-facing surface, focus visible, keyboard operable, contrast, hit targets, semantic structure, labels + error association, alternatives, reduced motion, zoom/reflow.
     - Don't skip empty, loading, and error states, they're where AI UI is laziest.
