@@ -16,8 +16,8 @@ description: >-
 ## Goal
 
 Every observable outcome of the target surface (a module, route, feature,
-package or the whole app) is asserted by a test that would fail if the
-behavior regressed, and the suite passes for the right reason. Coverage
+package or the whole app) is asserted by a test that would fail if the behavior
+regressed, and every test passes or fails for the right reason. Coverage
 percentage is not the measure.
 
 ## Done when
@@ -40,10 +40,10 @@ percentage is not the measure.
   mass assignment, secrets in logs or responses); and regression anchors from
   past bugs in code, git log or context.
 - **A plan precedes any test code,** even for a small target: `### TEST-XXX:
-  "entry: outcome under condition"` entries, foundational first, each with
-  Level, Entry point, Given, When, Then, the outcome rows it covers, Depends
-  on and File, plus optional notes on mocks, nondeterminism and fixtures, and
-  a `yaml` summary (id, level, entry, outcome, file).
+  entry: outcome under condition` entries, foundational first, each with Level,
+  Entry point, Given, When, Then, the outcomes it covers, Depends on and File,
+  plus optional notes on mocks, nondeterminism and fixtures, and a `yaml`
+  summary (id, level, entry, outcome, file).
 - **Tests written and run:** each passes for the right reason (a test that
   would also pass against a broken implementation is rewritten, with a brief
   why for any non-trivial one), flakes fixed at the cause (unmocked time or
@@ -58,15 +58,22 @@ percentage is not the measure.
   outcome list for its surface and maps to its `TEST-xxx`. For each security,
   logic, contract or reliability finding, a test is written that fails on the
   current code for the reason the finding predicts (run to confirm) and will
-  pass once its Fix intent lands, recorded as `TEST-xxx reveals FIND-yyy`;
-  notes, maintainability-only and docs-only findings are skipped with a reason.
-  Gaps the queue didn't name are covered too, and bugs found on the way become
-  new findings in the same `FIND` shape with fresh ids and a failing test
-  each. The output is the plan with pass or fail status on current code and
-  the merged queue, each finding cross-referenced to its revealing test.
-- **Partial visibility** (a diff, a snippet, external dependencies): mapping
-  and the plan go as far as the visible surface allows, and the report names
-  the files, fixtures, services or credentials needed to finish.
+  pass once its Fix intent lands, recorded as `TEST-xxx reveals FIND-yyy`; one
+  that passes on current code hasn't pinned the finding: fix the test, or send
+  the finding to `issue-checker` if it may be phantom; notes,
+  maintainability-only and docs-only findings are skipped with a reason. Gaps
+  the queue didn't name are covered too, and bugs found on the way become new
+  findings in the same `FIND` shape with fresh ids and a failing test each. The
+  output is the plan with pass or fail status on current code and the merged
+  queue, each finding cross-referenced to its revealing test.
+- **Partial visibility** (a diff, a snippet, external dependencies): mapping and
+  the plan go as far as the visible surface allows, and the report names  the
+  files, fixtures, services or credentials needed to finish.
+- **Blind to the implementation** (the feature loop's `test-author`): the
+  card's Goal and Done when are the surface, and the plan is written straight
+  through, not held for review. Tests run and may fail until the code lands,
+  each failing on the missing behavior, never on the test itself (import,
+  fixture, setup).
 
 ## Decisions (and why)
 
@@ -97,7 +104,8 @@ percentage is not the measure.
 
 The hard rules in `docs/DECISIONS.md` apply, plus:
 
-- A test that fails on a real bug is never weakened to pass; the bug is
-  surfaced, and never silently fixed here (the user decides, or `fix-errors`
-  owns it).
+- A test that fails on a real bug surfaces it as a finding and is never
+  fixed here (`fix-errors` or the orchestrator owns fixes; the user decides
+  when run directly). A deliberately failing test is handed off, not
+  committed, until its fix lands.
 - No retry loops around flakes, and no test kept only for coverage.

@@ -1,17 +1,13 @@
 ---
 name: issue-checker
 description: >-
-  Verifies whether a claimed issue is real and/or still present. Bidirectional:
-  use it to validate that a reported bug, finding, or vulnerability actually
-  exists before fixing it (avoid wasted work on phantom issues), and to confirm
-  that a fix truly resolved an issue afterwards (avoid declaring victory on a
-  fix that didn't land). Each claim gets a verdict: PRESENT, NOT-PRESENT, or
-  INCONCLUSIVE: backed by reproducible evidence (code citations, command
-  output, test result), never by "looks fine" or "looks fixed". Use when the
-  user asks to verify a bug report, double-check a fix, audit FIND-xxx items
-  before remediation, regression-check after a merge, or when they say "is
-  this actually broken?", "did that fix work?", "is this finding real?", or
-  "confirm this is/isn't an issue".
+  Verifies whether a claimed issue is real or still present, before a fix
+  (validate a bug report, finding or vulnerability) or after one (confirm it
+  landed). Each claim gets a verdict (PRESENT, NOT-PRESENT, PARTIALLY-PRESENT,
+  MISDIAGNOSED or INCONCLUSIVE) backed by reproducible evidence, never "looks
+  fine". Use to verify a bug report, double-check a fix, audit FIND-xxx items
+  before remediation or regression-check after a merge, or when asked "is this
+  actually broken?", "did that fix work?" or "is this finding real?".
 ---
 
 # Issue checker
@@ -83,9 +79,11 @@ fix is declared done that didn't land.
 ## Hard rules
 
 - One claim, one record, one verdict; never bundle.
-- Conflicting evidence (a test passes, a repro fails) is INCONCLUSIVE with the
-  next check that would break the tie, never the friendlier reading.
+- Conflicting evidence (a test passes, a repro fails) is INCONCLUSIVE, with
+  both results in the record and the next check that would break the tie,
+  never the friendlier reading.
 - Don't fix while checking: log a real issue and leave it to `fix-errors`. The
   one exception is a one-line unblocker (a missing fixture) needed to run the
   check, noted in the record.
-- Missing access or context never turns a hunch into PRESENT or NOT-PRESENT.
+- Missing access or context: run the partial checks you can and mark the
+  rest INCONCLUSIVE; a hunch never becomes PRESENT or NOT-PRESENT.
