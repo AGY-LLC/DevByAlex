@@ -3,7 +3,7 @@ id: design-styles
 title: "Design style vocabulary: 50 named styles + the structure×feeling model"
 summary: "The named-style vocabulary the /plan-design step picks from. A visual style is chosen as PRIMARY (structure/layout, one of 12 product directions) × SECONDARY (feeling/decoration, one of these 50 named styles). This file is the catalog, the structure→feeling mapping, and the decision procedure that turns an app's category + audience + tone into a recommended pairing. Feeds docs/DESIGN.md."
 tags: ["design", "uiux", "style", "branding", "plan"]
-updated: 2026-11-07
+updated: 2026-11-16
 ---
 # Design style vocabulary
 
@@ -138,12 +138,12 @@ pairing that fights the primary's job.
 | **calm Japanese** | Japandi | Wabi Sabi, Ethereal, Light Academia | Cybercore, Memphis, Graffiti |
 | **technical devtool** | Utilitarian | Bauhaus, Brutalism, Cybercore (dark) | Coquette, Shabby Chic, Baroque |
 | **AI-native productivity** | Glassmorphism | Aurora, Bento UI, Modular Typography | Victorian, Farmhouse, Kitsch |
-| **social mobile** | Bento UI | Neo Frutiger Aero, Pop Art, Y2K | Neoclassical, Utilitarian, Gothic |
-| **finance dashboard** | Bento UI | Bauhaus, Utilitarian, Glassmorphism | Graffiti, Vaporwave, Coquette |
+| **social mobile** | Neo Frutiger Aero | Pop Art, Y2K, Bento UI | Neoclassical, Utilitarian, Gothic |
+| **finance dashboard** | Utilitarian | Bauhaus, Bento UI, Glassmorphism | Graffiti, Vaporwave, Coquette |
 | **luxury commerce** | Luxury Typography | Art Deco, Filigree, Neoclassical, Baroque | Brutalism, Pixel Art, Kitsch |
 | **wellness minimal** | Japandi | Wabi Sabi, Ethereal, Aurora | Cybercore, Memphis, Graffiti |
 | **brutalist experimental** | Neo-Brutalism | Brutalism, Graffiti, Modular Typography | Coquette, Ethereal, Shabby Chic, Glassmorphism |
-| **mobile-native utility** | Bento UI | Utilitarian, Neo Frutiger Aero | Baroque, Surrealism, Tenebrism |
+| **mobile-native utility** | Utilitarian | Neo Frutiger Aero, Bento UI | Baroque, Surrealism, Tenebrism |
 | **creative studio** | Mixed Media | Neo-Brutalism, Surrealism, Memphis, Graffiti | Utilitarian, Nautical, Finance-clean |
 
 ## Decision procedure (what `/plan-design` runs)

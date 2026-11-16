@@ -6,7 +6,7 @@ _meta:
   sensitivity: internal
   read_scope: brain.read
   tags: [practice, engineering, uiux, design, accessibility, feature, review]
-  updated: 2026-11-05
+  updated: 2026-11-16
 
 practice:
   id: uiux
@@ -84,7 +84,7 @@ practice:
       <Who it's for, the feeling, the direction chosen.>
 
       ## Style choice
-      <**Direction:** PRIMARY × SECONDARY (e.g. finance dashboard × Bento UI),
+      <**Direction:** PRIMARY × SECONDARY (e.g. finance dashboard × Utilitarian),
       chosen by /plan-design from knowledge/design/design-styles.md. **Why:** the
       reason tied to category/audience/tone. Alternatives considered.
       **Real-world references**, 3–5 web-searched real instances of the style
