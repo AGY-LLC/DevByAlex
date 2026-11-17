@@ -123,8 +123,8 @@ against. Work from the design-system dimensions in
 [`../../knowledge/stack/uiux.md`](../../knowledge/stack/uiux.md) and the
 `docs/DESIGN.md` output template in
 [`../../knowledge/practices/uiux.yaml`](../../knowledge/practices/uiux.yaml).
-Define each as `Token | Value | Intent`, every value traceable to something
-observed in the pulled references (never invented from memory):
+Define each as `Token | Value | Intent`, every value traceable to a pulled
+reference:
 
 - **Color**: palette + semantic roles (bg / surface / text / border / primary /
   positive / warning / danger), light and dark, each meeting the WCAG 2.2 AA
@@ -176,11 +176,8 @@ adjectives: the reason is mandatory, like every DevByAlex decision.>
 - <Name>, <URL>, <…>
 - <Name>, <URL>, <…>
 - <Name>, `docs/design/references/<file>` `(user-supplied)`, <what to borrow, from the user's own note>
-<!-- 3–5 real instances of the style; live products first. User-supplied images
-     from docs/design/references/ join the list marked (user-supplied): when
-     they disagree with the pulled references, the user's images win.
-     Anti-reference optional. Downstream stages design toward these, not toward
-     memory. -->
+<!-- 3–5 real instances, live products first; user-supplied images win any
+     disagreement. Anti-reference optional. -->
 
 **Design tokens (the full system from Step 5):**
 - Color: palette + semantic roles (light + dark), all meeting WCAG 2.2 AA contrast
