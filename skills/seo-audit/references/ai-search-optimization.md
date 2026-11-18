@@ -35,7 +35,7 @@ The single most consequential code-side AEO mistake is blocking the wrong bot. B
 |---|---|---|
 | OpenAI / ChatGPT | `GPTBot` | `OAI-SearchBot`, `ChatGPT-User` |
 | Anthropic / Claude | `ClaudeBot`, `anthropic-ai` | `Claude-SearchBot`, `Claude-User` |
-| Google / Gemini & AI Overviews | `Google-Extended` | `Google-Extended` governs Gemini/AI-Overviews grounding; standard `Googlebot` still crawls |
+| Google / Gemini | `Google-Extended` (a token, no separate crawler: Gemini training and grounding) | `Googlebot`; Search and AI Overviews ignore `Google-Extended` |
 | Perplexity | Not applicable | `PerplexityBot`, `Perplexity-User` |
 | Apple | `Applebot-Extended` (training opt-out) | `Applebot` |
 | Common Crawl (feeds many models) | `CCBot` | Not applicable |
