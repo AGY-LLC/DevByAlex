@@ -3,239 +3,119 @@ name: ios-audit
 description: "App Store and Google Play review audit. Use when the user asks 'will this get rejected?', for an App Store review audit, an iOS or Play submission readiness check, or a pre-submission compliance pass. Checks the high-rejection areas (completeness and reviewer notes, metadata and age rating, privacy manifest, IAP disclosures, minimum functionality, Sign in with Apple, account deletion, data-sharing and AI consent, ATT, UGC moderation, kids) plus the Google Play parallels. Read-only: emits an IDed IOS-xxx fix queue with file:line evidence for fix-errors."
 ---
 
-# iOS / App Store Review Audit
+# iOS / App Store review audit
 
-You are auditing a mobile app codebase to **predict and prevent App Store and
-Google Play review rejections** before submission. Output is a prioritized,
-IDed findings queue another agent (or `fix-errors`) can work through: not a
-set of edits. **Do not modify code.**
+## Goal
 
-Apple rejects ~25% of submissions, overwhelmingly for preventable reasons:
-crashes/incompleteness, privacy gaps, payment/subscription mistakes, missing
-account deletion, missing Sign in with Apple, and unmoderated user/AI content.
-This skill walks the codebase against each high-rejection guideline.
+Predict and prevent App Store and Google Play rejections before submission:
+an `IOS-xxx` queue `fix-errors` can work, and a list of what only a person can
+confirm in the store consoles. Apple is the default bar (stricter); Play
+divergences are called out. A platform is skipped only when that target
+clearly doesn't exist.
 
-## Operating principles
+## Done when
 
-- **Read before judging.** Inspect actual code, config, and store metadata.
-  Never infer behavior from names alone: open the file and confirm.
-- **Evidence over assertion.** Every finding cites `file:line` or a concrete
-  observation (a missing config key, an absent flow). No hand-waving.
-- **Verdict per check: PRESENT / MISSING / PARTIAL / N/A.** "N/A" only with a
-  stated reason (e.g. "no accounts, so 5.1.1 deletion does not apply").
-- **Severity-ranked.** Blocker (will be rejected) / High (likely) / Medium
-  (possible / depends on reviewer) / Low (polish). Lead with blockers.
-- **Actionable.** Each finding states the fix and the guideline number.
-- **No false confidence.** If something can't be verified from the code (e.g.
-  the App Store Connect metadata fields, the privacy nutrition label answers),
-  say so explicitly and add it as a manual-verification item.
-- **Both stores.** Default to Apple (stricter) and call out Google Play
-  divergences. Skip a platform only if that target clearly doesn't exist.
+- **Stack and targets are known:** native iOS, native Android, React Native,
+  Expo, Flutter or Capacitor; the manifests (`Info.plist`, `project.pbxproj`,
+  `AndroidManifest.xml`, `app.json` or `app.config.*`, `Podfile`,
+  `build.gradle`, `pubspec.yaml`); the stores it ships to; and the third-party
+  SDKs (analytics, crash, ads, auth, payments, AI) that drive the privacy,
+  ATT, disclosure and IAP checks. For Expo and other cross-platform apps,
+  native config is read from `app.json`, plugin config or generated projects.
+- **Every check below has a verdict,** PRESENT, MISSING, PARTIAL or N/A (N/A
+  only with a reason, e.g. "no accounts, so 5.1.1 deletion does not apply"),
+  with evidence from the opened file:
+  - *1.2 UGC and AI content* (users post, share or discover content, or the
+    app shows AI output): pre-publish filtering, a report flow, a block flow,
+    published support contact, terms with a zero-tolerance clause accepted
+    before contributing, guards against on-demand objectionable AI output,
+    and in creator or feed apps 1.2.1 age gating for content above the app's
+    rating. Missing report, block or filtering on a public-UGC app is a
+    Blocker.
+  - *2.1 Completeness:* no shipped placeholders (`lorem`, `TODO`, `FIXME`,
+    `coming soon`, `test@`, `localhost`, `127.0.0.1`, `http://`, staging
+    hosts), no dead links, no crash-prone or unfinished flows behind login or
+    paywall.
+  - *2.3 Metadata and age rating:* the rating reflects real content; UGC, AI
+    output or mature themes with an apparently low rating is flagged. Listing
+    copy in the repo (`store/ios/`, `store/android/`) claims only shipped
+    features and fits the rating; with none in the repo it is a manual item.
+  - *2.5 Software requirements:* built with Xcode 26 and the iOS 26 SDK
+    (required since 2026-04-28; check the EAS image or CI Xcode);
+    `PrivacyInfo.xcprivacy` in the app target and for each bundled SDK on
+    Apple's list (absent is a Blocker); required-reason APIs declared
+    (UserDefaults, file timestamps, disk space, boot time, active keyboard);
+    tracking domains listed when an SDK tracks; no remote code that changes
+    the app's purpose (`eval`, feature-changing bundle updates, dynamic native
+    loading); public APIs only; 2.5.14 consent and a visible indicator when
+    recording camera, mic or screen.
+  - *3.1.1 Payments:* digital unlocks use Apple IAP on iOS and Play Billing on
+    Android. A Stripe or web checkout reachable from the iOS app, or unlocking
+    by license key, QR or crypto, is a Blocker.
+  - *3.1.2 Subscriptions:* the purchase screen itself shows price and period
+    per plan, the auto-renew terms and how to cancel, working Terms (EULA)
+    and Privacy links, and Restore Purchases. Any one missing is a Blocker.
+  - *4.2 Minimum functionality:* not a bare webview wrapper, link list or
+    marketing-only app.
+  - *4.8 Login services:* any third-party login (Google, Facebook, X,
+    LinkedIn, Amazon, WeChat) is matched by Sign in with Apple on iOS, else a
+    Blocker; N/A for first-party accounts only or education, enterprise or
+    government identity.
+  - *5.1.1 Privacy and accounts:* a privacy policy link in the app; for apps
+    with account creation, an in-app flow that deletes (not deactivates) the
+    account and its data, a web link only alongside an in-app start, no
+    needless friction, and, when auto-renewing subscriptions exist, a warning
+    that Apple keeps billing (missing deletion is a Blocker); a specific,
+    non-empty purpose string for every requested permission (empty or
+    generic is High); no declared but unused permissions (High); no forced
+    account when core features don't need one (Medium).
+  - *5.1.2 Data use:* third-party sharing (analytics, ads, crash) disclosed
+    and consented; personal data sent to a third-party AI only after a
+    consent surface naming the provider (5.1.2(i), High or Blocker by data
+    sensitivity); no feature gated on enabling push, location or tracking.
+  - *ATT:* any cross-app tracking (ad SDKs, IDFA, attribution) waits for the
+    `requestTrackingAuthorization` prompt, with
+    `NSUserTrackingUsageDescription`; a tracking SDK with no prompt, or a
+    privacy label that disagrees with the code, is flagged.
+  - *5.1.4 Kids:* an app directed at children or collecting a child's name,
+    age or birth date carries COPPA and GDPR-K obligations; any third-party
+    analytics or ad SDK in such an app is flagged, and a Kids-category app
+    also gates links out and purchases.
+  - *Google Play:* in-app deletion plus a web deletion URL declared in Play
+    Console; `targetSdkVersion` at Play's floor (API 36 for new apps and
+    updates since 2026-08-31); Play Billing for digital goods; sensitive
+    permissions justified and high-risk ones declared.
+- **The report** opens with a one-line verdict (ready or not, the Blocker
+  count, the single biggest risk), then the stack, stores and key SDKs, then
+  the queue as a table ordered Blocker, High, Medium, Low with stable ids
+  (`IOS-001` …), each row giving the guideline (`4.8`, `Play Billing`), the
+  verdict, the finding with `file:line` evidence and the concrete fix. Then
+  manual-verification items as a checklist, a short list of what already
+  complies, and an offer to run `fix-errors` on the code-fixable items.
 
-## Process
+## Decisions (and why)
 
-1. **Detect the stack & targets.** Is this iOS native (Swift/SwiftUI/UIKit),
-   Android native (Kotlin/Java), React Native, Expo, Flutter, Capacitor/
-   Cordova, or a hybrid? Find the manifest(s): `Info.plist`,
-   `*.xcodeproj`/`project.pbxproj`, `AndroidManifest.xml`, `app.json` /
-   `app.config.(js|ts)` (Expo), `Podfile`, `build.gradle`, `pubspec.yaml`.
-   Identify which stores it ships to.
-2. **Build the integration inventory.** List third-party SDKs (analytics,
-   crash, ads, auth, payments, AI) from the dependency manifests: these drive
-   privacy-manifest, ATT, data-disclosure, and IAP checks.
-3. **Run every audit dimension below**, one at a time, searching for the
-   patterns listed and recording PRESENT/MISSING/PARTIAL with evidence.
-4. **Synthesize** the IOS-xxx queue and a go/no-go verdict.
+- **Severity is the rejection odds:** Blocker (will be rejected), High
+  (likely), Medium (depends on the reviewer), Low (polish). Why: the user
+  needs to know what stops submission first.
+- **Store-side facts are manual-verification items, never silent passes:**
+  the demo account and enabled backend (or an approved demo mode), reviewer
+  notes for gated features, IAP products submitted with the build,
+  screenshots and preview showing real UI, an accurate name, subtitle,
+  keywords and description with no keyword stuffing, Terms and Privacy links
+  in the listing, the privacy nutrition label and tracking answers, a Play
+  Data safety form matching real collection and sharing, the web deletion
+  URL, and Families or IARC ratings for child-appealing apps. Why: a missing
+  demo account and reviewer notes are among the top rejection causes and the
+  repo can't show them.
+- **Thresholds drift:** when a current requirement is uncertain (the Xcode
+  SDK floor, Play's target API level), state it and flag it for the user to
+  confirm against the live docs. Why: a stale floor reads as a pass.
 
-For React Native/Expo/Flutter, remember native config may live in `app.json` /
-`app.config.ts`, plugin configs, or generated native projects rather than a
-hand-edited `Info.plist`.
+## Hard rules
 
-## Audit dimensions
+The hard rules in `docs/DECISIONS.md` apply, plus:
 
-For each: confirm whether the requirement applies, then verify the
-implementation in code/config. Cite evidence.
-
-### 1.2: User-generated / AI-generated content moderation (Safety)
-
-Applies if users can post, share, publish, or discover content, OR the app
-surfaces AI-generated content/chat. If so, **all** must be PRESENT:
-- **Pre-publish filtering / moderation** of content before it's visible.
-  Search: `moderat`, `filter`, `flag`, `preModerate`, profanity/safety calls.
-- **Report content** flow. Search: `report`, `Report`, `/report`, abuse.
-- **Block user** flow. Search: `block`, `/block`, `mute`.
-- **Published contact info** for support (in-app and/or listing).
-- **EULA / terms with a zero-tolerance clause** the user accepts before
-  contributing. Search: `terms`, `eula`, `community-guidelines`, `agree`.
-- For AI output: evidence the app prevents on-demand objectionable generation.
-- **1.2.1 age restriction** for content exceeding the app's age rating, if a
-  creator/feed app.
-Missing report **or** block **or** filter on a public-UGC app = Blocker.
-
-### 2.1: App completeness (Performance)
-
-- **No placeholder content** shipping: search `lorem`, `ipsum`, `TODO`,
-  `FIXME`, `coming soon`, `placeholder`, `test@`, dummy URLs, `localhost`,
-  `127.0.0.1`, `http://` (non-TLS), hardcoded staging endpoints.
-- **No dead/empty links** in user-facing surfaces.
-- **Crash risk / unfinished flows** behind login or paywall.
-- **Demo account + reviewer notes**: there is no code artifact, so flag as a
-  **manual-verification item**: the submitter must provide demo credentials
-  (and enable the backend) or an approved demo mode, plus review notes for any
-  gated feature. Missing this is a top rejection cause.
-- All referenced **IAP products** must be submitted with the build (manual).
-
-### 2.3: Accurate metadata & age rating (Performance)
-
-- Screenshots/preview reflect real UI (manual-verification item).
-- App name/subtitle/keywords/description accurate, no keyword stuffing (manual).
-- **Age rating** must reflect actual content: UGC, AI output, mature themes
-  raise it. Flag if the app has UGC/AI but you can infer a too-low rating.
-
-### 2.5: Software requirements & privacy manifest (Performance)
-
-- **Build SDK**: uploads must be built with Xcode 26 / the iOS 26 SDK (since
-  2026-04-28). Check the EAS image or CI Xcode version.
-- **`PrivacyInfo.xcprivacy` present** (app target) and for each bundled SDK on
-  Apple's required-manifest list. Search the repo for `PrivacyInfo.xcprivacy`.
-  Absent on iOS = Blocker (auto-rejection since May 2024).
-- **Required-reason APIs** declared: UserDefaults, file timestamps, disk space,
-  system boot time, active keyboard. Search: `UserDefaults`, `NSFileManager`/
-  `FileManager` attributes, `systemUptime`.
-- **Tracking domains** listed in the manifest if any SDK tracks.
-- **No remote code execution** that changes app purpose (JS-bundle hot updates
-  changing features, `eval`, dynamic native loading).
-- **Public APIs only**; no private API symbols.
-- **2.5.14**: explicit consent + visible indicator when recording camera/mic/
-  screen. Search: `AVCaptureSession`, `ReplayKit`, `screen record`, `microphone`.
-
-### 3.1.1: In-app purchase routing (Business)
-
-- Any unlock of digital features/content on **iOS must use Apple IAP**; on
-  Android, **Google Play Billing**. Search for off-platform payment paths
-  reachable from the app: `stripe`, `checkout`, `paypal`, `braintree`,
-  external `Linking.openURL(...checkout...)`, web-payment buttons.
-- A reachable Stripe/web checkout from inside the iOS app = Blocker.
-- License keys / QR / crypto to unlock = Blocker.
-
-### 3.1.2: Subscription disclosures (Business)
-
-On the **purchase screen itself**, verify all are PRESENT:
-- **Price + billing period** per plan.
-- **Auto-renew disclosure** ("renews until cancelled", how to cancel).
-- **Functional Terms of Use (EULA) link** AND **functional Privacy Policy
-  link** (tappable, open real docs). Search the paywall component for `terms`,
-  `privacy`, `Linking.openURL`, `<a href`.
-- **Restore Purchases** action. Search: `restore`, `restorePurchases`,
-  `restoreCompletedTransactions`.
-- These links must also exist in store metadata (manual-verification item).
-Any of price/auto-renew/Terms/Privacy/Restore missing on a subscription
-paywall = Blocker.
-
-### 4.2: Minimum functionality (Design)
-
-- Flag pure webview wrappers with no native value: a single `WebView`/
-  `react-native-webview` as the whole app, link-list apps, marketing-only apps.
-
-### 4.8: Login services (Design)
-
-- If **any** third-party/social login exists (Google, Facebook, X, LinkedIn,
-  Amazon, WeChat), **Sign in with Apple must also be offered** on iOS. Search:
-  `GoogleSignIn`, `FacebookLogin`, `signInWithOAuth`, `expo-auth-session`,
-  then confirm `AppleAuthentication` / `SignInWithApple` /
-  `expo-apple-authentication` exists too.
-- Social login without Apple = Blocker (iOS). N/A if only first-party accounts
-  or only education/enterprise/government identity.
-
-### 5.1.1: Privacy policy & account deletion (Legal)
-
-- **Privacy policy link** reachable in-app (and in metadata: manual). Search:
-  `/privacy`, `privacy-policy`, `Privacy Policy`.
-- **In-app account deletion** if the app supports account creation:
-  - Must be an **in-app flow** that **deletes** (not just deactivates) the
-    account + personal data. Search: `delete account`, `deleteAccount`,
-    `/account/delete`, `DELETE /users`, "danger zone".
-  - A web link is acceptable only if deletion also starts in-app.
-  - Confirmation/reauth steps OK; must not be unnecessarily hard.
-  - If auto-renew subs exist, the flow should warn billing continues via Apple.
-- Missing account deletion on an account-based app = Blocker.
-- **Permission purpose strings**: every requested permission has a **specific,
-  non-empty** usage description. Search `Info.plist` / `app.json` infoPlist for
-  `NSCameraUsageDescription`, `NSPhotoLibraryUsageDescription`,
-  `NSLocationWhenInUseUsageDescription`, `NSMicrophoneUsageDescription`,
-  `NSUserTrackingUsageDescription`, etc. Empty/generic strings = High.
-- **Unused permissions** declared but not used = High (remove them).
-- **Account creation forced** when core features don't need it = Medium.
-
-### 5.1.2: Data use, sharing & third-party AI (Legal)
-
-- **Third-party data sharing** disclosed + consented (analytics/ads/crash).
-- **AI data-sharing rule (Nov 13 2025, 5.1.2(i))**: if personal data is sent
-  to a third-party AI (OpenAI, Anthropic, Gemini, etc.), there must be a
-  **consent surface naming the provider** before data is sent. Search the AI
-  call sites (`openai`, `anthropic`, `gemini`, model endpoints) and check for a
-  disclosure/consent gate. Missing = High/Blocker depending on data sensitivity.
-- App must not gate functionality on enabling push/location/tracking.
-
-### App Tracking Transparency (5.1.1 / privacy label)
-
-- If any SDK tracks across apps/sites (ad SDKs, IDFA, attribution), the **ATT
-  prompt** must fire before tracking. Search: `AppTrackingTransparency`,
-  `requestTrackingAuthorization`, `NSUserTrackingUsageDescription`, `IDFA`,
-  `AdSupport`.
-- The **mismatch trap**: privacy label says tracking but no prompt, or a
-  tracking SDK is present while the app claims no tracking. Flag inconsistency
-  and add the nutrition-label answer as a manual-verification item.
-
-### 5.1.4: Kids & COPPA (Legal)
-
-- If the app is directed to children, or collects a child's name/age/DOB:
-  flag COPPA/GDPR-K obligations. Search: `child`, `kid`, `age`, `birth`,
-  `parent`, `coppa`, `family`.
-- Kids-Category apps: **no third-party analytics or ads**; parental gates for
-  links-out/purchases. Flag any analytics/ad SDK in a kids-targeted app.
-
-### Google Play parallels
-
-- **Data safety form** matches real collection/sharing (manual-verification).
-- **Account deletion**: in-app path **plus a web-accessible deletion URL**
-  declared in Play Console (manual). Note both are required.
-- **Target API level** at Play's floor (API 36 for new apps and updates since
-  2026-08-31; check `targetSdkVersion` in `build.gradle` / `app.json`).
-- **Play Billing** for digital goods (same as 3.1.1).
-- **Sensitive permissions** justified; high-risk ones declared.
-- **Families policy / IARC content rating** if child-appealing (manual).
-
-## Output format
-
-Produce a report:
-
-1. **Verdict**: one line: ready / not ready, with the Blocker count and the
-   single biggest risk.
-2. **Context**: detected stack, target stores, key SDKs.
-3. **Findings queue**: a table, severity-ordered (Blocker → High → Medium →
-   Low), each row:
-   - **ID**: `IOS-001`, `IOS-002`, …
-   - **Guideline**: e.g. `4.8` / `Play Billing`.
-   - **Verdict**: MISSING / PARTIAL / etc.
-   - **Finding**: what's wrong, with `file:line` evidence.
-   - **Fix**: the concrete change required.
-4. **Manual-verification items**: things not checkable from code (demo
-   account, reviewer notes, screenshots, nutrition label / Data safety answers,
-   ASC metadata links, web deletion URL). List as a checklist.
-5. **What's already compliant**: brief, so the user sees covered ground.
-
-Keep IDs stable and sequential so `fix-errors` can consume the queue. End by
-offering to run `fix-errors` against the actionable (code-fixable) IOS-xxx
-items.
-
-## Scope notes
-
-- Read-only audit. Do not edit code.
-- Store-side configuration (App Store Connect / Play Console fields, nutrition
-  label, Data safety form, demo account, screenshots) cannot be verified from
-  the repo: always surface these as explicit manual-verification items rather
-  than passing them silently.
-- Guidelines change; when uncertain about a current threshold (e.g. Play's
-  target API level this year), state the requirement and flag it for the user
-  to confirm against the live docs.
+- Read-only: the audit never edits code or config.
+- Behavior is confirmed in the file, never inferred from a name, and every
+  finding cites `file:line` or a concrete absence (a missing key or flow).

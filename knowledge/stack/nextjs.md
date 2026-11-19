@@ -3,7 +3,7 @@ id: stack-nextjs
 title: "Next.js"
 summary: "Default web framework (App Router, Next 16) for web/ and marketing/: version floor, where API docs come from, rules and preferences."
 tags: ["stack", "nextjs"]
-updated: 2026-11-09
+updated: 2026-11-18
 ---
 # Next.js
 
@@ -13,6 +13,7 @@ updated: 2026-11-09
 
 - Install the latest 16.x patch, never older than 16.4.5 (the Nov 3, 2026 security release fixed cross-tenant `use cache` leaks). Next ships a security release every month, so don't pin a patch.
 - API details (async request APIs, `proxy.ts`, caching, `revalidateTag`) come from the installed version's bundled docs: `next dev` keeps a managed block in `AGENTS.md` pointing at `node_modules/next/dist/docs/`. Read the relevant doc before writing Next code; don't restate those APIs here or edit between the block's markers.
+- Cache Components is the model. New apps set `cacheComponents: true` and `partialPrefetching: true` in `next.config.ts` (`create-next-app` does from 16.4); an existing app switches only by a `docs/DECISIONS.md` decision, migrating with `npx next@canary upgrade --agent=latest`. Cache Components becomes the default in Next 17, and both options are removed.
 - Run ESLint directly (`next lint` is gone). Use `next/og` (`ImageResponse`) for OG images, not `@vercel/og`.
 
 ## Rules
@@ -30,4 +31,4 @@ updated: 2026-11-09
 - Thin route handlers; logic in `services/`.
 - Zod for all form and request validation.
 - Server actions for mutations unless the UI needs complex optimistic state (`./server-actions-vs-api-routes.md`).
-- Content-heavy pages: cached/static rendering over full SSR per request.
+- Content-heavy pages: cached (`'use cache'`) or static, not rendered per request.
