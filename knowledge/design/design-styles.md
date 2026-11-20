@@ -3,7 +3,7 @@ id: design-styles
 title: "Design style vocabulary: 50 named styles + the structure×feeling model"
 summary: "The named-style vocabulary the /plan-design step picks from. A visual style is chosen as PRIMARY (structure/layout, one of 12 product directions) × SECONDARY (feeling/decoration, one of these 50 named styles). This file is the catalog, the structure→feeling mapping, and the decision procedure that turns an app's category + audience + tone into a recommended pairing. Feeds docs/DESIGN.md."
 tags: ["design", "uiux", "style", "branding", "plan"]
-updated: 2026-11-16
+updated: 2026-11-20
 ---
 # Design style vocabulary
 
@@ -46,73 +46,73 @@ budgeting app is a `finance dashboard` whether its feeling is calm or playful.
 
 ## The 50 SECONDARY styles (feeling)
 
-Format, **Name**, essence · *mood* · best-for · `prompt keyword`.
+Format, **Name**, essence · *mood* · fits (the feel of project it suits, feelings only, never a named product, brand or industry) · `prompt keyword`.
 
 ### Premium / luxury / heritage
-1. **Neoclassical**: Greco-Roman order & authority · *formal, timeless, noble* · museums, heritage, premium editorial · `serif, symmetry, marble, laurel, muted+gold`
-2. **Baroque**: ornate 17th-c. drama · *regal, theatrical* · premium packaging, lavish campaigns · `flourishes, gold leaf, deep shadow, high contrast`
-3. **Filigree**: delicate metallic lace ornament · *luxurious, ceremonial* · luxury packaging, wedding, invitations · `metallic linework, monogram, fine borders`
-4. **Acanthus**: classical leaf/vine ornament · *regal, organic, refined* · museum branding, luxury packaging · `leaf motifs, symmetric vines, stone, green+gold`
-5. **Luxury Typography**: type carries the brand · *elegant, elite* · luxury fashion, premium landing · `refined serif, wide spacing, monochrome, gold foil`
-6. **Art Deco**: 1920s geometry & glamour · *glamorous, jazzy* · luxury, event posters · `symmetry, sunbursts, angular, jewel tones, gold`
-7. **Victorian**: ornate 19th-c. Britain · *opulent, romantic* · book covers, tea, heritage · `ornate serif, damask, deep red/green, gilded`
-8. **Gothic**: dark medieval romance · *dramatic, mysterious* · fantasy, alt fashion, dark storytelling · `blackletter, stained glass, stone, deep purple/black`
-9. **Tenebrism**: extreme chiaroscuro lighting · *intense, moody, cinematic* · dark-mode premium, dramatic posters · `black bg, spotlight, deep shadow, oil-paint`
+1. **Neoclassical**: Greco-Roman order & authority · *formal, timeless, noble* · fits projects that should feel settled, trusted and built to last · `serif, symmetry, marble, laurel, muted+gold`
+2. **Baroque**: ornate 17th-c. drama · *regal, theatrical* · fits big moments that want grandeur and a sense of occasion · `flourishes, gold leaf, deep shadow, high contrast`
+3. **Filigree**: delicate metallic lace ornament · *luxurious, ceremonial* · fits rare, celebratory things where every detail feels precious · `metallic linework, monogram, fine borders`
+4. **Acanthus**: classical leaf/vine ornament · *regal, organic, refined* · fits refined things that want quiet growth and old-world care · `leaf motifs, symmetric vines, stone, green+gold`
+5. **Luxury Typography**: type carries the brand · *elegant, elite* · fits pieces where restraint and taste are the whole message · `refined serif, wide spacing, monochrome, gold foil`
+6. **Art Deco**: 1920s geometry & glamour · *glamorous, jazzy* · fits nights out and launches that want sparkle and swagger · `symmetry, sunbursts, angular, jewel tones, gold`
+7. **Victorian**: ornate 19th-c. Britain · *opulent, romantic* · fits cosy, storied things with a love of the past · `ornate serif, damask, deep red/green, gilded`
+8. **Gothic**: dark medieval romance · *dramatic, mysterious* · fits dark tales and anything that should feel a little forbidden · `blackletter, stained glass, stone, deep purple/black`
+9. **Tenebrism**: extreme chiaroscuro lighting · *intense, moody, cinematic* · fits dramatic, high-stakes moments best seen in the dark · `black bg, spotlight, deep shadow, oil-paint`
 
 ### Organic / natural / calm
-10. **Japandi**: Japanese min. × Scandi function · *calm, intentional, grounded* · wellness, calm productivity, decor · `beige/gray, light wood, clean sans, soft curves`
-11. **Wabi Sabi**: beauty in imperfection · *humble, contemplative* · wellness, tea, mindful UI · `earthy tones, rough texture, asymmetry, organic`
-12. **Art Nouveau**: flowing nature lines · *romantic, poetic, organic* · natural cosmetics, artisan, posters · `curving lines, floral, hand-letter, stained-glass`
-13. **Bohemian**: eclectic earthy free-spirit · *soulful, artistic* · handmade, travel, festival · `layered texture, mandalas, jewel tones, global print`
-14. **Farmhouse / Cottagecore**: romanticized rural · *cozy, wholesome, rustic* · recipe, slow-living, handmade · `florals, gingham, wood, antique, hand-drawn`
-15. **Ethereal**: misty, weightless light · *calm, mystical, romantic* · mindfulness, beauty, soft onboarding · `pastels, gauzy overlays, airy, low contrast`
-16. **Aurora**: glowing gradient light · *dreamy, futuristic, cosmic* · wellness, AI products, ambient · `iridescent gradients, glow, translucent, wave forms`
-17. **Light Academia**: sunlit scholarship · *scholarly, calm, poetic* · study apps, reading, education · `creamy neutrals, serif, books, linen, sunlight`
+10. **Japandi**: Japanese min. × Scandi function · *calm, intentional, grounded* · fits calm, everyday tools that should feel uncluttered and kind · `beige/gray, light wood, clean sans, soft curves`
+11. **Wabi Sabi**: beauty in imperfection · *humble, contemplative* · fits slow, reflective things that welcome imperfection · `earthy tones, rough texture, asymmetry, organic`
+12. **Art Nouveau**: flowing nature lines · *romantic, poetic, organic* · fits handmade, poetic things that flow rather than march · `curving lines, floral, hand-letter, stained-glass`
+13. **Bohemian**: eclectic earthy free-spirit · *soulful, artistic* · fits free-spirited, collected things with lots of personality · `layered texture, mandalas, jewel tones, global print`
+14. **Farmhouse / Cottagecore**: romanticized rural · *cozy, wholesome, rustic* · fits homely, slow-paced things that feel made with love · `florals, gingham, wood, antique, hand-drawn`
+15. **Ethereal**: misty, weightless light · *calm, mystical, romantic* · fits gentle first steps and anything that should feel weightless · `pastels, gauzy overlays, airy, low contrast`
+16. **Aurora**: glowing gradient light · *dreamy, futuristic, cosmic* · fits hopeful, forward-looking things with a touch of wonder · `iridescent gradients, glow, translucent, wave forms`
+17. **Light Academia**: sunlit scholarship · *scholarly, calm, poetic* · fits reading and learning that should feel unhurried and bright · `creamy neutrals, serif, books, linen, sunlight`
 
 ### Playful / youthful / friendly
-18. **Kawaii**: Japanese cuteness · *sweet, joyful, friendly* · stationery, kids, friendly onboarding · `pastels, rounded, cute faces, handwritten`
-19. **Anthropomorphic**: human traits on objects · *fun, quirky, relatable* · mascots, gamified UX, kids · `expressive eyes, friendly rounded, mascot`
-20. **Pop Art**: mass-media comic bold · *loud, energetic, commercial* · retail, fashion, launch ads · `Ben-Day dots, bold outlines, primary colors, speech bubbles`
-21. **Memphis**: 1980s clashing geometry · *youthful, rebellious* · creative brands, youth, events · `bright primaries, squiggles, blocks, clashing`
-22. **Coquette**: ultra-feminine flirty · *delicate, girly, romantic* · beauty, fashion reels, feminine packaging · `baby pink, ribbons, pearls, dainty serif, lace`
-23. **Kitsch**: ironic "bad taste" · *campy, exaggerated* · parody, Gen-Z, nostalgic remix · `clashing prints, outdated fonts, plastic gloss, saturated`
-24. **Shabby Chic**: soft distressed vintage · *romantic, cozy, nostalgic* · weddings, vintage boutique, decor · `whitewash, faded floral, cursive, soft pink/blue`
+18. **Kawaii**: Japanese cuteness · *sweet, joyful, friendly* · fits friendly, low-stakes things that should make people smile · `pastels, rounded, cute faces, handwritten`
+19. **Anthropomorphic**: human traits on objects · *fun, quirky, relatable* · fits playful things that want a character people warm to · `expressive eyes, friendly rounded, mascot`
+20. **Pop Art**: mass-media comic bold · *loud, energetic, commercial* · fits loud, attention-grabbing moments that want instant energy · `Ben-Day dots, bold outlines, primary colors, speech bubbles`
+21. **Memphis**: 1980s clashing geometry · *youthful, rebellious* · fits young, rule-breaking things that like a clash · `bright primaries, squiggles, blocks, clashing`
+22. **Coquette**: ultra-feminine flirty · *delicate, girly, romantic* · fits soft, dainty things that lean sweet and romantic · `baby pink, ribbons, pearls, dainty serif, lace`
+23. **Kitsch**: ironic "bad taste" · *campy, exaggerated* · fits tongue-in-cheek things that love excess and irony · `clashing prints, outdated fonts, plastic gloss, saturated`
+24. **Shabby Chic**: soft distressed vintage · *romantic, cozy, nostalgic* · fits gentle, nostalgic things with a worn-in softness · `whitewash, faded floral, cursive, soft pink/blue`
 
 ### Retro / nostalgic
-25. **Y2K**: early-2000s cyber gloss · *futuristic-nostalgic, edgy* · fashion, tech revival, youth ads · `chrome, pixel type, metallic, iridescent, matrix`
-26. **Synthwave**: 1980s neon sci-fi · *retro-futuristic, cinematic* · music visuals, arcade, nightlife · `neon grid horizon, VHS, purple/cyan, chrome 3D`
-27. **Vaporwave**: surreal 80s/90s consumer irony · *ironic, dreamy, surreal* · indie music, art zines, experimental · `pastel pink/purple, VHS glitch, Greek busts, lo-fi`
-28. **Pixel Art**: visible-pixel retro game · *nostalgic, playful, geeky* · indie games, retro events, game UI · `pixel grid, 8/16-bit, limited palette, blocky`
-29. **Mid-Century**: 1940s–60s warm modernism · *nostalgic, optimistic, warm* · furniture, decor, retro product · `clean lines, retro palette, boomerang, mod, sans`
-30. **Neo Frutiger Aero**: revived Y2K aqua UI · *clean, playful, nostalgic* · playful fintech, web3, app-store visuals · `aqua gradients, glossy bubbles, rounded UI, friendly icons`
+25. **Y2K**: early-2000s cyber gloss · *futuristic-nostalgic, edgy* · fits edgy, shiny things looking back at the future · `chrome, pixel type, metallic, iridescent, matrix`
+26. **Synthwave**: 1980s neon sci-fi · *retro-futuristic, cinematic* · fits after-dark, cinematic things with a neon pulse · `neon grid horizon, VHS, purple/cyan, chrome 3D`
+27. **Vaporwave**: surreal 80s/90s consumer irony · *ironic, dreamy, surreal* · fits dreamy, ironic side projects that like the surreal · `pastel pink/purple, VHS glitch, Greek busts, lo-fi`
+28. **Pixel Art**: visible-pixel retro game · *nostalgic, playful, geeky* · fits playful, nostalgic things that reward a bit of geekiness · `pixel grid, 8/16-bit, limited palette, blocky`
+29. **Mid-Century**: 1940s–60s warm modernism · *nostalgic, optimistic, warm* · fits warm, optimistic things with a sunny retro calm · `clean lines, retro palette, boomerang, mod, sans`
+30. **Neo Frutiger Aero**: revived Y2K aqua UI · *clean, playful, nostalgic* · fits bubbly, friendly things that want gloss and good cheer · `aqua gradients, glossy bubbles, rounded UI, friendly icons`
 
 ### Bold / raw / different
-31. **Neo-Brutalism**: raw-but-usable brutalism · *confident, bold, functional* · agency sites, digital mags, Gen-Z brand · `bold color blocks, oversized type, strong borders, asymmetry` · 2px black borders, a 4px 4px 0 shadow, press slides into it (no overlay or scale press too), never a blurred shadow, dense dashboard or long reading page; dark mode uses outlines, not shadows; no glass
-32. **Brutalism**: stark unpolished raw · *disruptive, honest, raw* · artist portfolios, counterculture · `monospace, grayscale blocks, harsh edges, default buttons`
-33. **Graffiti**: street spray-paint · *urban, defiant, expressive* · streetwear, festivals, youth · `spray texture, dripping letters, concrete, neon`
-34. **Cybercore**: dense hacker sci-fi · *chaotic, dystopian, intense* · cybersecurity, gaming, sci-fi · `neon, glitch, code texture, green/black, dense UI`
-35. **Steampunk**: Victorian × industrial · *adventurous, imaginative* · games, books, fantasy products · `copper, cogwheels, leather, steam, serif`
-36. **Mystical Western**: cowboy × occult · *rugged, spiritual, folklore* · crystal/tarot, indie, desert · `tarot symbols, cacti, western serif, sun/moon, leather`
-37. **South West / Wild West**: desert cowboy heritage · *rugged, warm, nostalgic* · ranch, outdoor gear, festivals · `terracotta, cacti, denim, western serif, desert`
+31. **Neo-Brutalism**: raw-but-usable brutalism · *confident, bold, functional* · fits confident, opinionated things that want to stand out · `bold color blocks, oversized type, strong borders, asymmetry` · 2px black borders, a 4px 4px 0 shadow, press slides into it (no overlay or scale press too), never a blurred shadow, dense dashboard or long reading page; dark mode uses outlines, not shadows; no glass
+32. **Brutalism**: stark unpolished raw · *disruptive, honest, raw* · fits raw, honest work that refuses to be polished · `monospace, grayscale blocks, harsh edges, default buttons`
+33. **Graffiti**: street spray-paint · *urban, defiant, expressive* · fits loud, defiant things with street-level energy · `spray texture, dripping letters, concrete, neon`
+34. **Cybercore**: dense hacker sci-fi · *chaotic, dystopian, intense* · fits intense, technical things that thrive on density · `neon, glitch, code texture, green/black, dense UI`
+35. **Steampunk**: Victorian × industrial · *adventurous, imaginative* · fits adventurous, inventive things with a tinkerer's spirit · `copper, cogwheels, leather, steam, serif`
+36. **Mystical Western**: cowboy × occult · *rugged, spiritual, folklore* · fits mystical, rugged things steeped in folklore · `tarot symbols, cacti, western serif, sun/moon, leather`
+37. **South West / Wild West**: desert cowboy heritage · *rugged, warm, nostalgic* · fits warm, rugged things with wide-open-sky nostalgia · `terracotta, cacti, denim, western serif, desert`
 
 ### Clean / structured / functional
-38. **Bauhaus**: form-follows-function geometry · *rational, structured, modern* · brand systems, posters, product · `grid, sans, red/blue/yellow, circle/triangle/square`
-39. **Bento UI**: modular compartment blocks · *organized, clean, friendly* · dashboards, SaaS landing, portfolios · `rounded modular cards, subtle shadow, icons+labels` · only where the content really is separate widgets, never the page-wide default (reading and landing sections flow)
-40. **Glassmorphism**: frosted-glass depth · *sleek, elegant, futuristic* · apps, OS-style UI, AI interfaces · `frosted panels, blur, semi-transparent, neon tint` · floating layers only (nav, sidebars, popovers, menus), never cards, tables, charts, long text or page backgrounds; frosted under text (clear only over media, 35% dark scrim if bright); text passes contrast on every backdrop; faint 1px edge; solid under reduced transparency or more contrast; no glass on glass or moving backgrounds
-41. **Utilitarian**: function-first, no decoration · *practical, efficient, direct* · manuals, utility apps, dev tools · `strict grid, monospace/industrial, muted, clear hierarchy`
-42. **Modular Typography**: letters from grid systems · *structural, experimental* · posters, brand systems, editorial headers · `geometric letterforms, type grids, modular blocks`
+38. **Bauhaus**: form-follows-function geometry · *rational, structured, modern* · fits principled, idea-led things that want clear geometry · `grid, sans, red/blue/yellow, circle/triangle/square`
+39. **Bento UI**: modular compartment blocks · *organized, clean, friendly* · fits many small, separate pieces seen together at a glance · `rounded modular cards, subtle shadow, icons+labels` · only where the content really is separate widgets, never the page-wide default (reading and landing sections flow)
+40. **Glassmorphism**: frosted-glass depth · *sleek, elegant, futuristic* · fits airy, forward-looking tools with layers that float · `frosted panels, blur, semi-transparent, neon tint` · floating layers only (nav, sidebars, popovers, menus), never cards, tables, charts, long text or page backgrounds; frosted under text (clear only over media, 35% dark scrim if bright); text passes contrast on every backdrop; faint 1px edge; solid under reduced transparency or more contrast; no glass on glass or moving backgrounds
+41. **Utilitarian**: function-first, no decoration · *practical, efficient, direct* · fits no-nonsense tools where speed and clarity come first · `strict grid, monospace/industrial, muted, clear hierarchy`
+42. **Modular Typography**: letters from grid systems · *structural, experimental* · fits experimental, structural things where type is the image · `geometric letterforms, type grids, modular blocks`
 
 ### Artistic / expressive / textured
-43. **Conceptual Sketch**: raw hand-drawn ideation · *experimental, unfinished* · portfolios, brainstorming, concept art · `pencil lines, crosshatch, sketch paper, annotations`
-44. **Pointillism**: image from dots · *artistic, tranquil, impressionistic* · fine-art branding, editorials, museum · `dot clusters, optical mix, soft palette, grain`
-45. **Mixed Media**: collage of photo+illustration · *eclectic, avant-garde, tactile* · magazines, experimental branding · `cutouts, overlays, paper texture, collage`
-46. **Surrealism**: dreamlike juxtaposition · *dreamy, strange, thought-provoking* · concept art, editorial campaigns · `melting forms, disjointed objects, unexpected scale`
-47. **Scrapbook**: handmade memory collage · *sentimental, warm, personal* · journaling, memory, photo apps · `paper, washi tape, Polaroid, hand-letter, stickers`
-48. **Dark Magic Academia**: gothic scholarship × occult · *mysterious, scholarly, magical* · fantasy games, witchy brands · `candles, spellbooks, black+gold, calligraphy, symbols`
+43. **Conceptual Sketch**: raw hand-drawn ideation · *experimental, unfinished* · fits early, exploratory things that should feel unfinished · `pencil lines, crosshatch, sketch paper, annotations`
+44. **Pointillism**: image from dots · *artistic, tranquil, impressionistic* · fits quiet, artful things that reward a closer look · `dot clusters, optical mix, soft palette, grain`
+45. **Mixed Media**: collage of photo+illustration · *eclectic, avant-garde, tactile* · fits eclectic, tactile things with an avant-garde streak · `cutouts, overlays, paper texture, collage`
+46. **Surrealism**: dreamlike juxtaposition · *dreamy, strange, thought-provoking* · fits strange, thought-provoking things that bend reality · `melting forms, disjointed objects, unexpected scale`
+47. **Scrapbook**: handmade memory collage · *sentimental, warm, personal* · fits personal, sentimental things about memories · `paper, washi tape, Polaroid, hand-letter, stickers`
+48. **Dark Magic Academia**: gothic scholarship × occult · *mysterious, scholarly, magical* · fits mysterious, scholarly things with a hint of magic · `candles, spellbooks, black+gold, calligraphy, symbols`
 
 ### Themed / structured-decorative
-49. **Nautical**: maritime coastal · *fresh, structured, classic* · seafood, resorts, summer, sailing · `navy/white, anchors, rope, stripes, brass`
-50. **Rebus**: symbols-as-words visual wit · *witty, playful, intellectual* · education, puzzles, logo concepts, campaigns · `pictograms, visual puns, image-type hybrids`
+49. **Nautical**: maritime coastal · *fresh, structured, classic* · fits fresh, breezy things that want crisp dependability · `navy/white, anchors, rope, stripes, brass`
+50. **Rebus**: symbols-as-words visual wit · *witty, playful, intellectual* · fits witty, clever things that like a puzzle · `pictograms, visual puns, image-type hybrids`
 
 ## Selection cheat sheet (feeling buckets)
 
