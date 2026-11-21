@@ -1,9 +1,9 @@
 ---
 id: design-universal-rules
 title: "Universal UI/UX Design Rules"
-summary: "Timeless design principles that apply regardless of visual style, branding, platform, or theme: 31 rules plus the pre-ship Universal Checklist. Every design decision, sweep, and critique in the workflow holds these; the named style (PRIMARY × SECONDARY) colors them, never overrides them."
+summary: "Style-independent design principles: 31 rules plus the pre-ship Universal Checklist the design-critic runs. A named style colors them, never overrides them."
 tags: ["design", "uiux", "principles", "checklist", "universal"]
-updated: 2026-10-25
+updated: 2026-11-05
 ---
 # Universal UI/UX Design Rules
 
@@ -34,16 +34,8 @@ If something requires explanation, redesign it first.
 
 Users don't read. They scan.
 
-Create obvious hierarchy through:
-
-- Size
-- Weight
-- Color
-- Position
-- Contrast
-- Spacing
-
-The eye should naturally know what to look at first.
+Create obvious hierarchy through size, weight, color, position, contrast and
+spacing. The eye should naturally know what to look at first.
 
 ## 3. One Primary Action
 
@@ -59,46 +51,21 @@ Users shouldn't have to decide what matters.
 
 Every decision costs mental energy.
 
-Remove unnecessary:
-
-- buttons
-- words
-- icons
-- settings
-- choices
-
-Good design feels obvious.
+Remove unnecessary buttons, words, icons, settings and choices. Good design feels obvious.
 
 ## 5. Consistency
 
 Identical things should behave identically.
 
-Use consistent:
-
-- spacing
-- typography
-- button styles
-- animations
-- iconography
-- colors
-- terminology
-
-Predictability builds confidence.
+Use consistent spacing, typography, button styles, animations, iconography,
+colors and terminology. Predictability builds confidence.
 
 ## 6. Recognition Over Memory
 
 Never force users to remember information.
 
-Show:
-
-- previous choices
-- recent items
-- suggestions
-- history
-- autocomplete
-- visible navigation
-
-Humans recognize faster than they recall.
+Show previous choices, recent items, suggestions, history, autocomplete and
+visible navigation. Humans recognize faster than they recall.
 
 ## 7. Progressive Disclosure
 
@@ -110,15 +77,8 @@ Reveal advanced controls gradually. Simple first. Power later.
 
 Every action should produce feedback.
 
-Examples:
-
-- loading state
-- animation
-- vibration
-- success checkmark
-- progress indicator
-
-Never leave users wondering if something happened.
+Examples: a loading state, animation, vibration, a success checkmark, a
+progress indicator ([loading ladder](../stack/uiux.md#1-skeleton-loaders)). Never leave users wondering if something happened.
 
 ## 9. Every Element Needs a Purpose
 
@@ -130,15 +90,7 @@ Everything should justify its existence.
 
 Whitespace is not empty.
 
-It creates:
-
-- grouping
-- focus
-- hierarchy
-- readability
-- elegance
-
-Crowded interfaces feel difficult.
+It creates grouping, focus, hierarchy, readability and elegance. Crowded interfaces feel difficult.
 
 ## 11. Group Related Things
 
@@ -150,52 +102,27 @@ Use spacing before borders. Distance communicates relationships.
 
 Good interfaces do work for users.
 
-Examples:
-
-- autofill
-- smart defaults
-- remembered settings
-- automatic formatting
-- suggested actions
-
-The best interaction is often no interaction.
+Examples: autofill, smart defaults, remembered settings, automatic formatting,
+suggested actions. The best interaction is often no interaction.
 
 ## 13. Prevent Errors
 
 Don't just display errors. Prevent them.
 
-Examples:
-
-- disabled buttons
-- validation while typing
-- previews
-- confirmations for destructive actions
-
-Design should stop mistakes before they happen.
+Examples: constrained inputs, smart defaults, previews, confirmations for
+destructive actions; never disable Submit up front or flag a field mid-typing
+([form errors](../stack/uiux.md#component-defaults)). Design should stop mistakes before they happen.
 
 ## 14. Errors Should Be Recoverable
 
-When mistakes happen, explain:
-
-- what happened
-- why
-- how to fix it
-
-Never blame the user.
+When mistakes happen, explain what happened, why, and how to fix it. Never blame the user.
 
 ## 15. Readability First
 
 Typography is communication.
 
-Prioritize:
-
-- sufficient size
-- line spacing
-- contrast
-- readable fonts
-- reasonable line lengths
-
-Pretty typography that is hard to read is bad typography.
+Prioritize size, line spacing, contrast, readable fonts and line length
+([exact floors](../stack/uiux.md#design-system-dimensions)). Pretty typography that is hard to read is bad typography.
 
 ## 16. Color Should Communicate
 
@@ -209,72 +136,38 @@ Meaning should still exist in grayscale.
 
 Animation is communication.
 
-Good animation explains:
-
-- where something came from
-- where it went
-- what changed
-- what belongs together
-
+Good animation explains where something came from, where it went, what changed
+and what belongs together ([motion defaults](../stack/uiux.md#design-system-dimensions)).
 Motion should clarify: not decorate.
 
 ## 18. Respect Attention
 
 Attention is limited.
 
-Avoid:
-
-- unnecessary notifications
-- autoplay
-- flashing elements
-- popups
-- interruptions
-
-Every interruption has a cost.
+Avoid unnecessary notifications, autoplay, flashing elements, popups and
+interruptions. Every interruption has a cost.
 
 ## 19. Build Trust
 
 Interfaces should feel reliable.
 
-Use:
-
-- honest wording
-- predictable behavior
-- clear pricing
-- visible security
-- transparent permissions
-
-Never surprise users.
+Use honest wording, predictable behavior, clear pricing, visible security and
+transparent permissions. Never surprise users.
 
 ## 20. Accessibility Is Good Design
 
 Design for everyone.
 
-Support:
-
-- keyboard navigation
-- screen readers
-- high contrast
-- larger text
-- touch targets
-- color blindness
-
-Accessibility improves usability for all users. (The workflow's hard floor is
+Support keyboard navigation, screen readers, high contrast, larger text, touch
+targets and color blindness. Accessibility improves usability for all users. (The workflow's hard floor is
 WCAG 2.2 AA: see [`../stack/uiux.md`](../stack/uiux.md).)
 
 ## 21. Speed Feels Like Quality
 
 Perceived speed matters.
 
-Techniques:
-
-- skeleton loading
-- optimistic updates
-- progressive loading
-- caching
-- instant feedback
-
-People judge quality by responsiveness.
+Techniques: skeleton loading, optimistic updates, progressive loading, caching,
+instant feedback. People judge quality by responsiveness.
 
 Choose techniques contextually from the [UI/UX baseline's design-pattern
 catalog](../stack/uiux.md#contextual-design-pattern-catalog), including their
@@ -285,23 +178,12 @@ they are not mandatory additions to every screen.
 
 Ask only for information that is necessary now.
 
-Don't require:
-
-- account creation
-- unnecessary permissions
-- lengthy forms
-
-Delay requests until users understand the value.
+Don't require account creation, unnecessary permissions or lengthy forms. Delay requests until users understand the value.
 
 ## 23. Keep Navigation Predictable
 
-Users should always know:
-
-- where they are
-- where they've been
-- where they can go
-
-Navigation should disappear into habit.
+Users should always know where they are, where they've been and where they can
+go. Navigation should disappear into habit.
 
 ## 24. Make Important Things Easy to Reach
 
@@ -311,24 +193,12 @@ Optimize for common workflows.
 
 ## 25. Design for Failure
 
-Assume:
-
-- no internet
-- slow loading
-- API failures
-- empty states
-- missing data
-
+Assume no internet, slow loading, API failures, empty states and missing data.
 Graceful failure is part of good design.
 
 ## 26. Empty States Should Teach
 
-Empty screens should answer:
-
-- Why is this empty?
-- What can I do next?
-
-Always provide a path forward.
+Empty screens should answer: why is this empty, and what can I do next? Always provide a path forward.
 
 ## 27. Confirmation for Destructive Actions
 
@@ -339,13 +209,7 @@ confirmation. Minor actions should not.
 
 Celebrate progress.
 
-Examples:
-
-- subtle animations
-- completion states
-- checkmarks
-- encouraging copy
-
+Examples: subtle animations, completion states, checkmarks, encouraging copy.
 Positive reinforcement improves engagement.
 
 ## 29. Optimize for the User's Goal
@@ -370,6 +234,7 @@ it.
 Tells that internal thinking leaked into the UI:
 
 - a descriptive sentence or paragraph under every section header
+- a small eyebrow or kicker label above a large heading
 - copy that explains *why* the product works the way it does, unprompted
 - headings that name a feature the way the spec does, not the way the user
   thinks about their task
