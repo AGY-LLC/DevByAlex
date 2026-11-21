@@ -5,180 +5,92 @@ argument-hint: "[one-line idea, brief file, or 'reverse' to backfill from code]"
 license: MIT
 metadata:
   author: alex-yoza
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
-# plan-spec: Interview to a complete, approved spec
+# plan-spec
 
-The first plan stage. The user gives a brief idea; your job is to ask the
-questions that make you fully confident you could build the whole app, then
-write `docs/SPEC.md`. **You are not ready to proceed while any important
-question is unanswered**: getting an answer from the user beats guessing.
+## Goal
 
-> Read `../../knowledge/practices/project-kickoff.yaml` first and follow it,
-> it is Alex's canonical kickoff playbook. This skill is the operational
-> wrapper around it.
+A `docs/SPEC.md` complete enough that the guide, the wireframes and the build
+need no further discovery, with nothing important left to a guess. Asking the
+user beats guessing, so the spec isn't ready while an important question is
+open. Read `../../knowledge/practices/project-kickoff.yaml` before the first
+question and use its questions, prototype-or-real rigor and deep vet as the
+backbone.
 
-## When to activate
+## Done when
 
-- New project, or a vague "build me an app that…" brief.
-- The user asks to write or sharpen `docs/SPEC.md`.
-- `reverse` mode: an existing repo needs a spec backfilled from its code so the
-  rest of the workflow has a target to validate against.
+- **The interview covered every section of `../../templates/SPEC.md`,** each
+  answered or marked "N/A, because …" (a throwaway prototype marks most
+  sections "N/A, because prototype"). Beyond what the template prompts, these
+  are settled with the user, not deferred to implementation:
+  - *Auth and access* in full: who may create an account versus sign in,
+    methods per platform and whether a password exists at all, separate
+    Create account and Sign in intents (tabs by default, brand may choose
+    another), signup-only 13+ or consent affirmation, recovery (and the
+    password lifecycle only if passwords exist), whether any self-service
+    method management exists (and that it never removes the last usable
+    method), the authorization model with every role, who grants and revokes
+    and the tenant boundary, non-enumerating but actionable messages, and
+    which sensitive actions need a fresh sign-in that returns the user to the
+    exact action.
+  - *Platform and topology:* a user-facing product splits into a marketing
+    site on the apex domain and the web app on `app.<domain>` (full-stack
+    Next.js), plus a mobile app only when native is in scope; the domain is
+    recorded. Non-user-facing tools have no marketing surface.
+  - *Design and UX:* visual references are images, not names, saved under
+    `docs/design/references/` with a descriptive filename and one line on
+    what the user likes about each (palette, density, type, mood); the app
+    loading animation approach (logo-based, theme-derived or a generated
+    Lottie or video loop); and, only with a public marketing page, the
+    one-time marketing load-in. `plan-wireframes` turns these into
+    `docs/design/RESOURCES.md` and can't ask again.
+  - *Legal, privacy and compliance:* personal data and who it is shared with,
+    Terms and Privacy Policy, cookie consent, the regimes in scope, deletion
+    and export, recurring billing obligations, and the accessibility target
+    (default WCAG 2.2 AA).
+  - *SEO:* public or private, audience and key terms, locales, the OG image,
+    and whether `docs/BRAND.md` exists.
+- **The confidence gate passed:** confidence and any remaining assumptions
+  were stated, and every open item is resolved or marked deferrable in Open
+  questions. Legal and privacy posture, the accessibility target and the auth
+  contract (methods, account lifecycle, step-up) are never deferrable; for a
+  prototype the decision may be "none: prototype, no real users".
+- **`docs/SPEC.md` is written** from the template, with the design answers
+  verbatim enough for wireframing (reference image paths with their one-line
+  why) and relative dates made absolute.
+- **`docs/DECISIONS.md` has its Goal** (two or three sentences from the
+  problem, user and launch-success answers, plus what done looks like) and
+  any app-specific non-negotiable the user stated added to its Hard rules.
+- **`docs/STATUS.md` is advanced:** the Plan section's `docs/SPEC.md` written
+  row checked, a log line added, and Next action set to
+  `/marketer-brand-generation` when the app is public-facing with no
+  `docs/BRAND.md` (it seeds voice and SEO, and the launch `seo-audit` requires
+  it), otherwise `/plan-guide`. The user is told the spec needs their approval
+  and what comes next.
 
-## Workflow
+## Decisions (and why)
 
-### Step 1: Orient
-- Read `docs/STATUS.md` if present. If a `docs/SPEC.md` already exists, ask
-  whether to refine or replace.
-- Read the `project-kickoff` playbook at
-  `../../knowledge/practices/project-kickoff.yaml` and use its question set as
-  the backbone.
+- **Questions go in batches, and each batch ends by reflecting back what was
+  heard and what is still open.** Why: one-at-a-time drips waste the user's
+  time, and the reflection catches misunderstandings early.
+- **An existing `docs/SPEC.md` is refined or replaced only after asking which;**
+  `docs/STATUS.md` is read first when present. Why: the spec may already be
+  approved.
+- **Reverse mode** (an existing repo with no spec) reads the code, routes,
+  schema and README, infers each section including the legal and SEO posture
+  already present (ToS and privacy routes, consent banner, trackers, PII,
+  public pages, i18n) and what is missing, tags every inferred item, the
+  Goal included, `(needs review)`, invents no requirement the app clearly
+  doesn't need (cookie consent for a private internal tool), and asks only
+  what the code can't answer: intent, audience, out of scope, success,
+  regimes. Gaps are flagged without blocking the workflow. Why: the rest of
+  the workflow needs a target to validate against.
 
-### Step 2: Interview (the core of this skill)
-Ask questions in **batches** (grouped, not one-at-a-time), and wait for
-answers. Work backwards from the user. Cover at minimum:
+## Hard rules
 
-1. **Problem & user**: what problem, for whom, and why do they care now?
-2. **Core jobs**: the 3–5 things a user must be able to do. Everything else is
-   later.
-3. **Out of scope**: what this explicitly will *not* do for v1.
-4. **Data model shape**: the main entities and how they relate (enough to seed
-   `data-modeling`).
-5. **Auth & access**: treat this as the most important feature requirement, not
-   a one-line provider choice. Resolve:
-   - who may Create account vs. Sign in, what they can access, roles/tenancy;
-   - which methods the app supports on each platform (Google, Apple, magic
-     link, OTP, passkey, password, other) and whether password exists at all;
-   - separate Create account and Sign in intents/screens (tabs are the default
-     presentation, but brand can choose another), including signup-only 13+
-     affirmation or other consent;
-   - recovery and, only if passwords exist, forgot/change/reset password plus
-     whether adding a password is part of the management scope;
-   - whether the app exposes any self-service account/sign-in-method management
-     at all; if it does, how users add/link and disconnect methods while never
-     removing their last usable method;
-   - the authorization model: simple authenticated/owner checks, roles and
-     permissions, organization/team membership, or attribute/relationship
-     policies; define every role, grant/revoke authority, and tenant boundary;
-   - non-enumerating but actionable signup/sign-in/recovery/provider messages;
-   - which sensitive actions require a fresh sign-in and how the user returns
-     to the exact action after step-up.
-   Security/privacy is the top priority later, so do not defer these product
-   choices to implementation.
-6. **Money**: free / paid / subscription / one-time? (seed `payments`).
-7. **Platform & topology**: web, mobile web, native, desktop, multi. For a
-   **user-facing product**, record that it splits into separate surfaces (drives
-   the scaffold's monorepo): a **marketing site** on the apex domain and the
-   **web app** on `app.<domain>` (full-stack Next.js: UI + API), plus a **mobile
-   app** only if native is in scope. Capture the **domain** (apex + `app.`
-   subdomain). Non-user-facing tools skip the marketing surface.
-8. **Launch success**: what "it works and we can ship" looks like.
-9. **Design/UX questions the wireframes need**: primary screen and user goal,
-   emotional tone (2–3 adjectives), interaction density, key screens and their
-   states (empty/loading/error/onboarding/upgrade), brand assets (incl. **is a
-   logo SVG available?**), references loved/hated, anti-patterns to avoid.
-   **Ask for visual references as images, not just names:** screenshots of apps
-   or screens the user likes (or a Penpot export) go into
-   `docs/design/references/` (create the folder; any pasted image gets saved
-   there with a descriptive filename). For each, capture **one line on what
-   specifically they like about it**: the palette, the density, the type, the
-   mood: an image with no "why" is half a reference. These are first-class
-   inputs to `/plan-design`: a picture of the look they want beats three
-   adjectives describing it.
-   **Also ask the two animation questions** every app gets a decision on:
-   (a) the **app loading animation**: every app gets a custom loader inspired by
-   the theme; which approach fits this project (logo-based animation of the logo
-   SVG / a theme-derived abstract loader / a generated Lottie or video loop)?;
-   and (b) **only if there's a public landing/marketing page**, the separate
-   **marketing load-in**: a one-time hero entrance animation (staggered fade-up,
-   optional Stripe-style animated mesh-gradient background). **These must be
-   answered here** because `plan-wireframes` turns them into `docs/design/RESOURCES.md`.
-10. **Integrations & constraints**: third parties, compliance, deadlines,
-    non-negotiables.
-11. **Legal, privacy & compliance** (the "don't get sued" set): what personal
-    data/PII is collected and shared with whom; does it need **Terms of Service**
-    and a **Privacy Policy**; does the web app need a **cookie consent banner**
-    (yes when non-essential cookies/analytics run, esp. EU/UK); which **regimes**
-    apply (GDPR/UK-GDPR, CCPA/CPRA, COPPA/age, sector rules); account
-    deletion/data-export obligations; and the **accessibility target** (default
-    **WCAG 2.2 AA**). These become a build feature and the launch hard gates.
-12. **SEO & discoverability**: is the app public-facing (landing/marketing/blog)
-    or private? target audience & key terms; locales/i18n; the **social preview
-    (OG) image** (every web app gets one: default is a Stripe-style card
-    dynamically generated from brand tokens, with the logo provided by the user
-    and an optional hand-designed override); and whether a brand foundation
-    (`docs/BRAND.md`) exists. If public-facing and none exists, plan to run
-    `/marketer-brand-generation` before the guide.
+The hard rules in `docs/DECISIONS.md` apply, plus:
 
-After each batch, reflect back what you heard and list what's still open. Keep
-going until nothing important is open.
-
-### Step 3: Confidence gate
-Before writing, state your confidence and list any remaining assumptions. If
-you are not confident, ask more: do not paper over a gap with a guess. Only
-proceed when the open-questions list is empty or every remaining item is
-genuinely deferrable and marked as such. **The spec is not approvable while the
-  legal/privacy posture (ToS, privacy policy, cookie consent, regimes), the
-  accessibility target, or the auth method/account-lifecycle/step-up contract is
-  undecided**: these drive the build and the launch hard gates, so they can't be
-  left blank.
-
-### Step 4: Write docs/SPEC.md
-Use `../../templates/SPEC.md` as the structure. Capture problem, users, core
-  jobs, out-of-scope, data-model sketch, the complete auth/access requirements
-  (including password-or-passwordless choice, separate account creation and
-  sign-in, optional account-management scope, authorization/role model, safe
-  responses, recovery, and step-up), the
-**legal/privacy/compliance** section (data/PII, ToS, privacy policy, cookie
-consent, regimes, user-rights, accessibility target), monetization, platform,
-the design/UX answers (verbatim enough for wireframing: including the
-`docs/design/references/` image paths with the user's one-line "what I like
-about it" per image), the **SEO &
-discoverability** section, integrations, constraints, and the success definition.
-Convert relative dates to absolute.
-
-Then fill the **Goal** in `docs/DECISIONS.md` from the problem, user and
-launch-success answers: two or three sentences plus what done looks like.
-Add any app-specific non-negotiable the user stated to its **Hard rules**.
-Every later stage works toward that goal within those rules.
-
-### Step 5: Update STATUS and route
-- Check the **Plan → SPEC.md written** row in `docs/STATUS.md`.
-- Set `## Next action`: if the app is **public-facing and `docs/BRAND.md` does
-  not exist**, route to `/marketer-brand-generation` first (it seeds SEO + voice
-  and is required by the launch `seo-audit`), then `/plan-guide`. Otherwise set
-  it to `/plan-guide`.
-- Add a log line.
-- Tell the user the spec needs **their approval** (a gate) and that the next
-  step is the brand step (if public-facing) then `/plan-guide`.
-
-## reverse mode (backfill from code)
-When invoked on an existing repo with no spec: read the code, routes, schema,
-and README; infer problem/users/core jobs/data model/auth/monetization; write
-`docs/SPEC.md` with every inferred section tagged `(inferred: needs review)`.
-**Also infer the legal/SEO posture from what's already there**: does the code
-have ToS/privacy routes, a cookie-consent banner, analytics/trackers, PII
-collection, public marketing pages, i18n? Record what exists vs. what's missing
-in the **Legal, privacy & compliance** and **SEO & discoverability** sections,
-tagged `(inferred: needs review)`; don't invent requirements the app clearly
-doesn't need (e.g. cookie consent for a private internal tool). Then ask the user
-only the questions the code can't answer (intent, audience, out-of-scope,
-success, which regimes apply). Fill the Goal in `docs/DECISIONS.md` the same
-way, tagged `(inferred: needs review)`. Don't block the workflow on a perfect
-backfill, but flag the gaps.
-
-## Rules
-
-- **Never start coding from this skill.** It produces a spec only.
-- Batch questions; don't drip them one at a time.
-- Don't proceed past the confidence gate with important unknowns.
-- The spec must contain enough design/UX detail for `plan-wireframes` to run
-  without another interview.
-- The spec is **Alex's to approve**: flag it, don't self-approve the gate.
-
-## Output
-
-`docs/SPEC.md` written/updated (incl. legal/compliance + SEO posture), STATUS
-advanced, next action set to `/marketer-brand-generation` (public-facing, no
-brand yet) or `/plan-guide`, and an explicit request for Alex's approval.
+- Never start coding from this skill; it produces a spec only.
+- The spec is Alex's to approve: flag the gate, never self-approve it.
