@@ -1,55 +1,44 @@
 # Feature {{NN}}: {{FEATURE_NAME}}
 
-> One card per feature, written by `/plan-guide`. The `test-author` writes tests
-> from the **Acceptance criteria**; the `feature-implementer` builds from the
-> rest. The `feature-loop` builds this card to done.
+> One card per feature, written by `/plan-guide` and built to done by
+> `/feature-loop`. The card says what the feature must achieve; the ADR says
+> what is already decided and why. Everything else (data shape, routes,
+> components, file layout) is the implementer's call within the guide, the ADR
+> and the hard rules in `docs/DECISIONS.md`. `test-author` writes tests from
+> **Goal** and **Done when** only.
 
 **Status:** todo <!-- todo | in-progress | blocked | done -->
 **Depends on:** _scaffold, auth, feature NN…_
 **Wireframes:** _link(s) to the screens in `docs/wireframes/`_
-**ADR:** `docs/adr/{{NN}}-{{SLUG}}.md`: consult before changing this feature; breaking an active decision needs explicit confirmation
+**ADR:** `docs/adr/{{NN}}-{{SLUG}}.md`
 
-## Purpose
+## Goal
 
-_One paragraph. Traceable to a spec core-job._
+_One paragraph: what a user can do once this ships and why it matters.
+Traceable to a spec core job._
 
-## Behaviors / user stories
+## Done when
 
-- _As a <user>, I can <do X> so that <outcome>._
-- _Error/edge behavior: <what happens when …>._
+Outcome-based: each line is observable from outside the code.
 
-## Data model
-
-- _Entities/fields/relations/indexes this feature adds or touches. `select` to
-  avoid over-fetching; transactions for multi-step writes._
-
-## API / server surface
-
-- _Routes/handlers/services, with Zod-validated inputs/outputs. Thin handlers;
-  logic in services._
-
-## UI / screens
-
-- _Which wireframe screens; the states each needs (default, empty, loading,
-  error, onboarding, upgrade)._
-- _SEO (public pages only): page title/description, heading hierarchy, image
-  alt text, canonical/structured data if applicable._
-
-## Acceptance criteria (tests are written from THIS: keep it outcome-based)
-
-- [ ] _Given … when … then … (observable outcome)_
+- [ ] _Given … when … then …_
 - [ ] _Failure path: …_
 - [ ] _Edge case: …_
-- [ ] _Security boundary: … (authz, ownership/IDOR, validation, rate limit)_
-- [ ] _Accessibility (UI features: WCAG 2.2 AA): semantic structure + correct
-      name/role, keyboard-operable with visible focus, sufficient contrast,
-      adequate target size, labels tied to inputs and errors._
+- [ ] _Security boundary: who may and may not do this (authz, ownership/IDOR,
+      validation, rate limit)._
+- [ ] _Screens: which wireframe screens, with the states each must handle
+      (empty, loading, error, onboarding, upgrade as relevant)._
+- [ ] _Accessibility (UI features, WCAG 2.2 AA): semantic structure and
+      name/role, keyboard with visible focus, contrast, target size, labeled
+      inputs and errors._
+- [ ] _SEO (public pages only): title/description, headings, alt text._
 
-## Security & privacy notes
+## Constraints
 
-- _Authz rules (default-deny), PII handling, validation, anything sensitive._
+- _Anything sensitive the builder must respect that isn't a decision: PII
+  handling, data that must never leave the server, a limit from a provider._
 
 ## Out of scope
 
-- _What this feature explicitly does not do. Mirror each entry into the ADR's
-  **Deliberate omissions** so automated reviews don't flag it later._
+- _What this feature does not do. Each line is mirrored as an `O`-entry in the
+  ADR so reviews don't flag it later._

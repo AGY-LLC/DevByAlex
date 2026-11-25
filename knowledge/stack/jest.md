@@ -3,7 +3,7 @@ id: stack-jest
 title: "Jest"
 summary: "Unit and integration testing for JavaScript/TypeScript. The standard for a reason."
 tags: ["stack", "jest"]
-updated: 2026-05-28
+updated: 2026-11-05
 ---
 # Jest
 
@@ -25,7 +25,7 @@ const createJestConfig = nextJest({ dir: './' })
 const config: Config = {
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
-  setupFilesAfterFramework: ['<rootDir>/jest.setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'], // jsdom needs jest-environment-jsdom installed
 }
 
 export default createJestConfig(config)

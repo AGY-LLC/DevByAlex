@@ -35,7 +35,7 @@ The workflow's `docs/` artifacts are a fixed set, each with one owner:
 | `DESIGN.md` | `plan-design` / `uiux-redesign` | style pick, references, tokens |
 | `wireframes/` + `design/RESOURCES.md` | `plan-wireframes` | per-feature frames, specced assets |
 | `adr/` | `plan-guide` seed, `feature-loop` upkeep | what each feature has / deliberately lacks, and why |
-| `DECISIONS.md` | any skill (append) | chronological cross-cutting decision log |
+| `DECISIONS.md` | `plan-spec` seed, any skill (add) | project Goal, Hard rules, project-wide decisions |
 | `BUGS.md` / `TWEAKS.md` / `TODO.md` / `FEEDBACK.md` | the lanes | open work only |
 | `ACCEPTANCE_TESTS.md` | `launch-acceptance` | staging scenario spec |
 | `AI_WORKFLOW.md` | `init-ai` | the stamped map (this workflow) |
@@ -82,8 +82,9 @@ exists for. Caps (each pruned entry survives in git):
   nothing.
 - **FEEDBACK**: a triaged item keeps one routing line; delete it once the
   routed entry itself is closed.
-- **DECISIONS.md** is the one append-forever file: entries stay, but each is
-  a few lines, never an essay (detail belongs in the relevant ADR).
+- **DECISIONS.md** keeps every entry (a reversed one is marked superseded,
+  not deleted), each a few lines, never an essay (detail belongs in the
+  relevant ADR).
 
 ## 7. Supersession replaces, it never accumulates
 

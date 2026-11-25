@@ -3,7 +3,7 @@ id: checklists-production-readiness
 title: "Production Readiness Checklist"
 summary: "A more thorough version of the before-launch list. Use this for projects that need to hold up under real load, real users, and real failure modes."
 tags: ["checklists", "production-readiness"]
-updated: 2026-05-28
+updated: 2026-11-11
 ---
 # Production Readiness Checklist
 
@@ -13,7 +13,7 @@ A more thorough version of the before-launch list. Use this for projects that ne
 
 ## Infrastructure
 
-- [ ] Production database on managed infrastructure (RDS, PlanetScale, Supabase, Neon: not localhost)
+- [ ] Production database on managed infrastructure (RDS, PlanetScale, Supabase, Neon: not localhost), on a supported Postgres major (14 reaches end of life on Nov 12, 2026: upgrade it; new databases start on 17 or 18)
 - [ ] Database automated backups enabled and tested (confirm you can restore)
 - [ ] Database connection pooling in place (especially critical for serverless)
 - [ ] Application deployed to production (not "will deploy later")

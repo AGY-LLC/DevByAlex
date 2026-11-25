@@ -6,7 +6,7 @@ _meta:
   sensitivity: internal
   read_scope: brain.read
   tags: [practice, engineering, payments, stripe, billing, init, feature, review]
-  updated: 2026-05-30
+  updated: 2026-11-20
 
 practice:
   id: payments
@@ -59,7 +59,7 @@ practice:
     - ../../knowledge/stack/stripe.md
 
   output:
-    destination: "<repo>/docs/billing-spec.md (or a section of architecture-spec.md)"
+    destination: "<repo>/docs/billing-spec.md"
     format: markdown
     template: |
       # <Product>, Billing

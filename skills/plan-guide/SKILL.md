@@ -1,180 +1,110 @@
 ---
 name: plan-guide
-description: "Stage 2 of the DevByAlex plan phase. It expands an approved docs/SPEC.md into a granular implementation guide. Authentication is the first and most important feature after scaffold: it always gets a dedicated docs/features/authentication.md contract and docs/adr/auth.md before ordinary product features. For every feature, write behavior, data/API/UI, edge cases, security, and acceptance criteria, then order dependencies as scaffold, authentication, and the rest. Emits docs/IMPLEMENTATION_GUIDE.md, feature cards under docs/features/, ADRs under docs/adr/, and seeds STATUS. The 'adr-backfill' mode writes missing records for an existing repo. Use after spec approval, when asked to expand the spec, plan the build order, or backfill ADRs."
+description: "Stage 2 of the DevByAlex plan phase. It expands an approved docs/SPEC.md into a granular implementation guide. Authentication is the first and most important feature after scaffold: it always gets a dedicated docs/features/authentication.md contract and docs/adr/auth.md before ordinary product features. For every feature, write the end goal and outcome-based done-when list in its card and the decisions that bound it in its ADR, then order dependencies as scaffold, authentication, and the rest. Emits docs/IMPLEMENTATION_GUIDE.md, feature cards under docs/features/, ADRs under docs/adr/, and seeds STATUS. The 'adr-backfill' mode writes missing records for an existing repo. Use after spec approval, when asked to expand the spec, plan the build order, or backfill ADRs."
 argument-hint: "[optional: specific area to expand, or 'adr-backfill' for an existing repo]"
 license: MIT
 metadata:
   author: alex-yoza
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
-# plan-guide: Expand the spec into a build-ready guide
+# plan-guide
 
-The second plan stage. Turns the approved `docs/SPEC.md` into a detailed,
-ordered implementation guide plus one feature card per feature. This is what the
-dev stage builds against and validates against, so it must be concrete.
+## Goal
 
-> Requires an **approved** spec. If the spec gate isn't checked in
-> `docs/STATUS.md`, confirm with the user before proceeding.
+The approved `docs/SPEC.md` turned into an ordered build plan the dev stage
+can work through without another planning conversation: one feature card
+(the end goal) and one ADR (the decisions that bound it) per feature, and a
+guide that holds the build order and the cross-cutting concerns. Cards and
+ADRs say what must be true and why, never how; the builder chooses the rest.
 
-## When to activate
+## Done when
 
-- `docs/SPEC.md` exists and is approved; `docs/IMPLEMENTATION_GUIDE.md` doesn't
-  exist or is stale.
-- The user says "expand the spec," "write the implementation guide," or "plan
-  the build order."
+- **The spec gate is checked** in `docs/STATUS.md`, or the user confirmed
+  going ahead without it. `docs/SPEC.md`, `docs/STATUS.md` and the playbooks
+  the spec implies under `../../knowledge/practices/` (`data-modeling.yaml`
+  always, plus `auth.yaml`, `payments.yaml`, `testing.yaml`, `uiux.yaml` as
+  they apply) were read.
+- **Authentication has its contract:** `docs/features/authentication.md` from
+  `../../templates/auth-feature-card.md`, filled from the spec's auth
+  decisions in every section the template has, and `docs/adr/auth.md` seeded.
+  It is built by `dev-auth`, not the generic loop.
+- **Every other feature has a card and an ADR** with the same number and
+  slug: `docs/features/<NN>-<slug>.md` from `../../templates/feature-card.md`
+  and `docs/adr/<NN>-<slug>.md` from `../../templates/adr-feature.md`. Each
+  feature traces to a spec core job, or is marked a proposal for the user to
+  confirm.
+- **Compliance is a feature when the spec's Legal, privacy & compliance
+  section calls for it:** one "Compliance & legal" card and row covering the
+  Terms of Service page, a Privacy Policy that matches the real data flows,
+  a web cookie consent banner that gates non-essential cookies and analytics
+  until consent, and deletion and export where GDPR or CCPA applies.
+  `/launch-compliance` verifies it against the legal hard gate.
+- **`docs/IMPLEMENTATION_GUIDE.md` is written** from
+  `../../templates/IMPLEMENTATION_GUIDE.md`: build order with its rationale,
+  a link to every card, every cross-cutting concern the template lists, and
+  the stack decisions (Alex's defaults unless the spec forces otherwise). It
+  states that every later feature's integration validation reruns the stable
+  auth regression suite and checks `docs/adr/auth.md`.
+- **`docs/STATUS.md` is seeded:** one Features row per feature in build order,
+  all steps `⬜` (authentication keeps its own Dev row); the Plan section's
+  `docs/IMPLEMENTATION_GUIDE.md` written row checked, and Feature ADRs seeded
+  checked only when auth and every feature have their ADR; Next action
+  `/plan-design`. The user is told the guide needs their approval before dev,
+  and that `/plan-design` then `/plan-wireframes` come next.
 
-## Workflow
+## Decisions (and why)
 
-### Step 1: Load context
-- Read `docs/SPEC.md` and `docs/STATUS.md`.
-- Read the relevant playbooks for the domains the spec implies from
-  `../../knowledge/practices/`: `data-modeling.yaml` always, plus `auth.yaml`,
-  `payments.yaml`, `testing.yaml`, `uiux.yaml` as applicable.
+- **A feature is what one `feature-loop` pass can build, test and validate:**
+  small enough to validate, whole enough to mean something. Why: the loop is
+  the unit of work and of proof.
+- **The card is the end goal:** what a user can do once it ships, a Done when
+  list of observable outcomes (success, failure and edge paths, the security
+  boundary, screens and their states, accessibility for UI, SEO for public
+  pages), constraints and out of scope. Every line is outcome-based. Why:
+  `test-author` writes tests from the card blind.
+- **The ADR holds only decisions that constrain the build** and that
+  reversing would take a conversation (a data-model shape the spec implies, a
+  provider, an approach chosen over a real alternative), each with its why,
+  plus the card's out-of-scope lines as `O`-entries. No decision is restated
+  in the card. Why: one record per decision, and the validators read it to tell
+  a gap from a choice.
+- **Tables, routes, components and file layout the spec doesn't force are
+  left to the builder,** who records any material choice. Why:
+  over-specifying here stops a capable agent finding the better design.
+- **Build order is scaffold, authentication, core jobs, supporting features,
+  nice-to-haves,** highest-risk and most-depended-on first within each.
+  Authentication always comes right after scaffold and gets the deepest
+  initial validation. Why: every later feature sits on it and reruns its
+  regression suite.
+- **`adr-backfill` mode** (an existing repo, often found by `init-ai`, whose
+  features lack decision records) blocks feature work until done, because
+  without records the validators can't tell a gap from a choice. It touches
+  only `docs/adr/`, `docs/features/authentication.md` when that contract is
+  missing or still an empty template, and the absorbed docs it removes:
+  - Auth first: the contract and `docs/adr/auth.md` from the spec, auth code,
+    routes, schemas, provider config and tests, inferred items tagged
+    `(needs review)`; existing auth stays validation-pending until
+    `/dev-auth validate` proves it.
+  - Then every STATUS feature missing `docs/adr/<NN>-<slug>.md`: read its
+    card (if any), code, tests and the scattered docs `init-ai` inventoried;
+    record the approach taken as `D`-entries and visible conscious omissions
+    (no soft-delete, no rate limit on X) as `O`-entries, each `(needs review)`,
+    with the file's record state `backfilled (needs review)`. When gap and
+    choice can't be told apart, list it under Deliberate omissions as a
+    question for Alex.
+  - Still-true content from scattered docs moves into the owning ADR with
+    its source cited, and the original is deleted; stale ones are removed
+    without absorbing; when deletion isn't clearly safe, flag it for Alex.
+    Every move and removal is listed in the summary.
+  - STATUS: Feature ADRs seeded checked once no feature lacks its file, the
+    previous Next action restored, and the `(needs review)` entries listed
+    under Blockers / open questions.
 
-### Step 2: Decompose into features
-Break the app into discrete, independently buildable **features** (each becomes
-one feature card and one row in the STATUS table). A good feature is one a
-single `feature-loop` pass can build, test, and validate. Authentication is its
-own first-class item (built by `dev-auth`, not the generic loop). Always expand
-the spec's auth decisions into `docs/features/authentication.md` using
-`../../templates/auth-feature-card.md`, and seed `docs/adr/auth.md`. The auth
-card must cover enabled password or passwordless methods, separate account
-creation and sign-in, signup-only age/consent, optional account-management
-scope, identity linking and last-method protection where management exists,
-recovery/password lifecycle, safe non-enumerating responses, step-up
-return-to-action, the app's ownership/RBAC/ABAC/ReBAC/tenant authorization
-model, session rules, and its exhaustive test matrix. Keep ordinary product
-features small enough to validate but whole enough to be meaningful.
+## Hard rules
 
-When the spec's **Legal, privacy & compliance** section calls for them, add a
-first-class **"Compliance & legal" feature** (one card, one row) covering: a
-**Terms of Service** page, a **Privacy Policy** page that stays accurate to the
-real data flows, a **cookie consent banner on web** that gates non-essential
-cookies/analytics until consent, and an **account deletion / data-export** path
-where GDPR/CCPA applies. This feature is what `/launch-compliance` verifies
-against the legal hard gate.
+The hard rules in `docs/DECISIONS.md` apply, plus:
 
-### Step 3: Detail each feature
-First write the dedicated auth card and ADR above. For every remaining product
-feature, write a feature card from `../../templates/feature-card.md`
-at `docs/features/<NN>-<slug>.md` containing:
-- **Purpose**: one paragraph, traceable to a spec core-job.
-- **User stories / behaviors**: the observable outcomes (what success looks
-  like), including error and edge-case behavior.
-- **Data model**: entities/fields/relations/indexes this feature adds or
-  touches (follow `data-modeling`: `select` not over-fetch, transactions for
-  multi-step writes).
-- **API / server surface**: routes/handlers/services, with Zod boundaries.
-- **UI / screens**, which wireframe screens, and their empty/loading/error/
-  onboarding/upgrade states.
-- **Acceptance criteria**: the concrete checklist the `feature-validator` and
-  the acceptance test will hold the feature to. **This is what the test-author
-  writes tests from**: make it outcome-based, not implementation-based. For any
-  feature with UI, **include accessibility criteria** (WCAG 2.2 AA: semantic
-  structure + name/role, keyboard + visible focus, contrast, target size, labeled
-  inputs/errors), and for public pages an **SEO** line (title/description,
-  headings, alt text).
-- **Security & privacy notes**: authz rules, PII handling, validation.
-- **Dependencies**, which other features/scaffold/auth must exist first.
-
-**Seed the feature's ADR alongside its card.** Copy
-`../../templates/adr-feature.md` to `docs/adr/<NN>-<slug>.md` (same number and
-slug as the card) and record, as `D`-entries, every material choice the card
-just made: data-model shape, API approach, provider picks, anything chosen
-over a real alternative, and record the card's **Out of scope**
-items plus any capability consciously deferred. The ADR is the governing record
-the dev stage consults before changing the feature and the reason automated
-reviews won't flag deliberate omissions later (see `docs/adr/README.md`).
-Skip trivia: if reversing a choice wouldn't need a conversation, it doesn't
-need an entry.
-
-### Step 4: Decide the build order
-Order features by dependency and risk: **scaffold → authentication → core jobs →
-supporting features → nice-to-haves**. Authentication is always the first
-feature after scaffold and receives the deepest initial validation. Highest-risk
-/ most-depended-on first.
-Record the order explicitly in the guide and reflect it in the STATUS feature
-table ordering.
-
-### Step 5: Write docs/IMPLEMENTATION_GUIDE.md
-Use `../../templates/IMPLEMENTATION_GUIDE.md`. It links to each feature card,
-states the build order with rationale, lists cross-cutting concerns (auth model,
-error handling, logging, env/config, testing strategy, **accessibility** (WCAG
-2.2 AA baseline), **SEO** (semantic HTML, framework metadata, sitemap/robots,
-JSON-LD), **design resources** (the app loader, marketing load-in, and OG preview
-image specced in `docs/design/RESOURCES.md`: loader + OG image built in scaffold),
-**legal/consent** (ToS + privacy routes, cookie-consent + analytics
-gating), CI), and the stack decisions (default to Alex's: TypeScript strict, Zod
-at boundaries, thin route handlers + services, Prisma with reviewed migrations,
-Jest + Playwright). Link the detailed auth card and state that every later
-feature's integration validation reruns its stable auth regression suite and
-checks `docs/adr/auth.md`.
-
-### Step 6: Seed STATUS and route
-- Populate the **Features** table in `docs/STATUS.md` with one row per feature
-  in build order, all steps `⬜`.
-- Check **Plan → IMPLEMENTATION_GUIDE.md written** and **Plan → Feature ADRs
-  seeded** (only if authentication has `docs/adr/auth.md` and every ordinary
-  feature got its `docs/adr/` file).
-- Set `## Next action` to `/plan-design`.
-- Tell the user the guide needs **their approval** (a gate) before dev, and the
-  next step is `/plan-design` (pick the visual style) → then `/plan-wireframes`.
-
-## Mode: `adr-backfill`: write the missing ADRs for an existing repo
-
-Run when `init-ai` (or the user) finds features without decision records,
-common when the ADR system arrives at a repo that already has features, or a
-repo was integrated under an older workflow version. **Feature work is blocked
-until this completes**: without the records, the validators can't tell a gap
-from a choice. This mode touches `docs/adr/`, plus
-`docs/features/authentication.md` when the required auth contract is missing or
-still an empty template, and removals of absorbed docs. It doesn't rewrite the
-guide or ordinary feature cards.
-
-Before numbered features, backfill the authentication contract from the
-approved spec, current auth code, routes, schemas, provider config, and tests.
-Cover the same method/optional-management/authorization/safe-response/step-up
-matrix required in Step 2, tag inferred decisions `(needs review)`, and seed
-`docs/adr/auth.md`. Existing auth remains validation-pending until
-`/dev-auth validate` proves this contract.
-
-For **every** feature in the STATUS table missing `docs/adr/<NN>-<slug>.md`:
-
-1. **Read the evidence.** The feature's card (if any), its code, its tests, and
-   any scattered docs that mention it (design notes, `ARCHITECTURE.md`, README
-   sections, ad-hoc decision writeups: `init-ai` inventoried these).
-2. **Infer the decisions.** What approach did the code actually take, and what
-   does it visibly *not* do that a reviewer would expect (no soft-delete, no
-   rate limit on X, single-tenant by design)? Record approaches as `D`-entries
-   and apparent conscious omissions as `O`-entries. Tag every inferred entry
-   `(needs review)` and set the file's record state to `backfilled (needs
-   review)`: an inference is not Alex's confirmed intent. When you genuinely
-   can't tell gap from choice, list it under the file's Deliberate omissions as
-   a question for Alex rather than guessing a status.
-3. **Consolidate the scattered docs.** Move each scattered doc's still-true
-   decision content into the owning feature's ADR (cite the source in the
-   entry), then **delete the original** so there's one source of truth. A doc
-   that's stale or irrelevant is removed without absorbing; if unsure whether
-   it's safe to delete, flag it for Alex instead. Note every consolidation and
-   removal in the summary.
-4. **Reconcile STATUS.** Check the **Feature ADRs seeded** plan row once no
-   feature lacks its file, restore the previous `## Next action`, and list the
-   `(needs review)` entries in `## Blockers / open questions` for Alex.
-
-## Rules
-
-- Don't invent features the spec doesn't justify; trace every feature to a spec
-  core-job or mark it a proposal for the user to confirm.
-- Acceptance criteria must be **outcome-based** so tests aren't written just to
-  match an implementation.
-- Keep the guide the source of build order; keep per-feature detail in cards.
-- The guide is **Alex's to approve**: flag it; don't self-approve the gate.
-
-## Output
-
-`docs/IMPLEMENTATION_GUIDE.md`, one `docs/features/<NN>-<slug>.md` **and** one
-`docs/adr/<NN>-<slug>.md` per feature, a seeded STATUS feature table, and next
-action `/plan-wireframes`. In `adr-backfill` mode: the missing ADRs written
-`(needs review)`, scattered feature docs consolidated or removed, and the ADR
-plan row checked.
+- No feature the spec doesn't justify, unless it is marked a proposal.
+- The guide holds the build order; per-feature detail lives in the cards.
+- The guide is Alex's to approve: flag the gate, never self-approve it.

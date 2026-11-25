@@ -1,7 +1,8 @@
 # {{APP_NAME}}: How this repo is built (DevByAlex workflow)
 
-This project is built with the **DevByAlex** autonomous workflow. `docs/STATUS.md`
-is the live control file; this file is the map.
+This project is built with the **DevByAlex** autonomous workflow.
+`docs/DECISIONS.md` holds the project's Goal, Hard rules and decisions;
+`docs/STATUS.md` is the live control file; this file is the map.
 
 ## Stages
 
@@ -63,11 +64,15 @@ is the live control file; this file is the map.
      web surface (`marketing/` + `web/`), Maestro flows for iOS/Android. A
      reconcile pass: the feature loop's e2e gate accreted a flow per feature;
      this maps them to scenarios and backfills only the gaps.
+   - `/launch-verify` runs the acceptance suites against staging and drives
+     them green; `/launch-visual-qa` checks the screens on iOS and Android.
    - `/launch-compliance`: legal scan (ToS, privacy policy, cookie consent),
      `accessibility-critique` (WCAG 2.2 AA), `seo-audit`, and `prose-check`;
      reconciles a fix queue and the two **hard gates** (Legal & compliance,
      Accessibility) that block ship-ready in `docs/STATUS.md`.
    - Companions: `/staging-smoke-test`, `/launch-readiness`.
+   - `/launch-store-assets` builds both store listings; `/launch-submit`
+     (human-triggered only) ships to TestFlight and Play internal.
 
 4. **Live (post-launch)**
    - Raw production signal, user emails, reviews, error-tracker exports, goes
@@ -80,19 +85,22 @@ is the live control file; this file is the map.
 
 ## Rules of the road
 
+The Hard rules in `docs/DECISIONS.md` apply everywhere (no secrets, gates are
+Alex's, suite green at every commit without skipping or weakening tests, auth
+contract intact, active decisions change only on Alex's confirmation, no new
+scope without Alex). On top of them:
+
 - Dev work commits and pushes **straight to the working branch**: the branch you
   call the skill on, or one passed explicitly. No per-unit branches, no
   PR pile-up. Use a dedicated iteration branch (e.g. `staging`), not a
   protected default.
-- Agents never self-approve a gate; approvals are Alex's.
-- `docs/STATUS.md` stays accurate and the test suite stays green at every stop.
 - **ADRs govern change.** Every feature has a decision record in `docs/adr/`;
   consult it before touching the feature. Breaking an active decision needs
   explicit human confirmation + a recorded supersession; documented deliberate
   omissions are not review findings (security/legal/a11y excepted). The ADR
   blocks blind change, not criticism: evidence a decision causes real harm is
   surfaced as an `ADR-challenge` for Alex, never silently fixed or dropped.
-- Tests trace to the spec; never weakened just to make code pass.
+- Tests trace to the spec (the card's Goal and Done when), not to the code.
 - **The golden path is proven end to end before done**
   (`.claude/knowledge/workflow/e2e-gate.md`): a feature with a user-facing
   flow runs its Playwright (web) / Maestro (native) golden-path flow green

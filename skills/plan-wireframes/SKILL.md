@@ -233,7 +233,7 @@ and `/launch-compliance` can verify them:
   Must not block LCP or shift layout, and must honor `prefers-reduced-motion`. Omit
   this entirely if the app has no public marketing page.
 - **Social preview (OG) image**: the Stripe-style 1200×630 link-share card:
-  default to dynamic generation from brand tokens (`@vercel/og` / Satori
+  default to dynamic generation from brand tokens (`next/og` `ImageResponse`, Satori,
   `opengraph-image.tsx`) using the app name, tagline, logo, and colors; note the
   per-route title strategy and that a hand-designed override is allowed.
 
@@ -268,8 +268,8 @@ Write `docs/wireframes/README.md` from `../../templates/wireframes-README.md`:
   composition) so a design idea can actually be tried in them. Grey placeholder
   boxes with text labels are not an acceptable board.
 - Cover the non-happy states (empty/loading/error) they're where flows break.
-- Don't unlock the dev stage; that's Alex's approval to give (he approves a
-  captured inventory the same way he'd approve generated boards).
+- Don't unlock the dev stage; that's Alex's approval to give (a captured
+  inventory is approved the same way as generated boards).
 
 ## Output
 

@@ -1,122 +1,85 @@
 ---
 name: dev-tweak
-description: "The light lane of the DevByAlex dev stage. It applies small, provably low-risk cosmetic changes (user-facing copy, design tokens, spacing/color/radius, static asset swaps, ordering/visibility of existing elements) without paying the full per-feature build/validate loop. Each entry in docs/TWEAKS.md is put through a hard qualification test first (no logic, no data model, no API, no auth, no new dependency, no test changes; anything heavier gets reclassified to docs/BUGS.md, docs/TODO.md, or a feature proposal, never forced through); qualified tweaks are applied with a proportional gate: typecheck + lint + the existing suite green, a prose pass on changed copy, and the screenshot + design-critic pass for anything visual. ADRs still govern. A tweak that contradicts an active decision is a blocker, not a change. Drains the whole open list in one run and moves each entry to Done with its commit. Called by dev-goal after the bug log is clear; also runnable by hand for a one-off tweak. Use when the change is 'make this label say X', 'tighten this spacing', 'swap this icon'; not when behavior is wrong (that's a bug) or something new is wanted (that's a feature)."
+description: "Light lane of the DevByAlex dev stage: drains docs/TWEAKS.md of small cosmetic changes (copy, tokens, spacing, color, asset swaps, ordering or visibility of existing elements). Use for 'make this label say X', 'tighten this spacing', 'swap this icon'; not for wrong behavior (bug) or new scope (feature). Each entry must pass a hard qualification test (no logic, data, API, auth, dependency or test changes) or is rerouted. Gate: typecheck, lint, suite green, prose and design-critic passes. ADRs govern. Called by dev-goal after bugs; also runnable by hand."
 argument-hint: "[path to the app repo: defaults to cwd] [optional: a single tweak described inline, else drains docs/TWEAKS.md]"
 license: MIT
 metadata:
   author: alex-yoza
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # dev-tweak: The light lane for low-risk cosmetic changes
 
-Changing a button label should not cost what building a feature costs. This
-skill exists so small cosmetic changes have a proportional path: a hard
-qualification test in, a light-but-real verification gate out. What keeps the
-lane honest is the test: anything that fails it is **reclassified, never
-squeezed through**.
+## Goal
 
-## When to activate
+`docs/TWEAKS.md` has no open entries: each small cosmetic change shipped
+through a light but real gate, or was rerouted to the lane it belongs in.
+Changing a button label should not cost what building a feature costs, and
+the qualification test is what keeps the light lane from becoming a back door
+around the feature loop.
 
-- `docs/TWEAKS.md` has open entries (`dev-goal` calls this after the bug log
-  is clear).
-- The user asks for a one-off change that smells like a tweak: "change this
-  copy," "tighten the spacing here," "swap that icon," "make this button use
-  the accent color."
+`dev-goal` calls this after the bug log is clear; it also runs by hand for a
+one-off ("change this copy", "swap that icon"), which is logged as a
+`TWK-xxx` entry first. Work on the branch you're on or the one `dev-goal`
+passed, never a per-tweak branch.
 
-## The qualification test (hard gate: every entry, every time)
+## The qualification test (every entry, every time)
 
-A change qualifies as a tweak only if **all** of these hold:
+A change is a tweak only if all three hold:
 
-1. **It touches only:** user-visible copy · design tokens / styling values
-   (color, spacing, radius, shadow, type scale) · static assets (icon/image
-   swap) · ordering or visibility of **existing** elements.
-2. **It touches none of:** logic or branching · data model / schema · API
-   surface · auth or access control · dependencies (no additions or bumps) ·
-   test files (if a test must change, the change is behavioral: not a tweak).
-3. **No ADR conflict.** Read the ADR of whatever the tweak touches
-   (`docs/adr/<feature>.md`, or `scaffold.md` for global tokens). A "tweak"
-   that contradicts an `active` decision: including recorded copy/voice or
-   design-token decisions: is a **blocker**, not a change: cite the entry in
-   STATUS › `## Blockers / open questions` and skip it.
+1. It touches only user-visible copy, design tokens or styling values (color,
+   spacing, radius, shadow, type scale), static assets, or the ordering or
+   visibility of existing elements.
+2. It touches no logic or branching, data model, API surface, auth or access
+   control, dependency (no additions or bumps), or test file. A test that must
+   change means the change is behavioral.
+3. It contradicts no `active` ADR entry (`docs/adr/<feature>.md`, or
+   `scaffold.md` for global tokens), including recorded copy, voice and token
+   decisions. A conflict is a STATUS blocker citing the entry, not a change.
 
-**Fails the test → reclassify, don't force.** Behavior wrong or risk present →
-move it to `docs/BUGS.md` as a proper bug entry. A deliberate behavior change
-that adds no scope → move it to `docs/TODO.md`, the planned-change lane.
-Something new wanted → record it as a feature proposal in STATUS › Blockers for
-Alex (scope is his call).
-In every case, note the reclassification on the TWEAKS entry so the requester sees
-where it went. Never silently drop an entry, and never let the light lane become
-the back door around the feature loop.
+A failing entry is reclassified, never squeezed through: wrong behavior goes
+to `docs/BUGS.md`, a deliberate behavior change with no new scope to
+`docs/TODO.md`, and anything new to Alex as a feature proposal in STATUS
+blockers. The TWEAKS entry notes where it went.
 
-## Workflow
+## Done when
 
-### Step 1: Load the lane
-Resolve the repo (arg or cwd) and the working branch (the branch you're on, or
-the one `dev-goal` passed down: same iteration rule, no per-tweak
-branches). Read `docs/TWEAKS.md`. If invoked with an inline tweak instead, log
-it as a `TWK-xxx` entry first: the lane's audit trail applies to one-offs too.
+- Every open entry is applied, reclassified or blocked; applied ones moved to
+  `## Done` with what changed, branch, commit and date.
+- Each change is the smallest diff that fits the surrounding code and the
+  `docs/DESIGN.md` token system: a styling tweak changes or reuses a token,
+  never hardcodes a one-off value.
+- Typecheck, lint and the existing suite are green. No new tests are written,
+  and the e2e gate doesn't apply (`knowledge/workflow/e2e-gate.md` exempts
+  this lane, since a change to a user flow fails qualification).
+- Changed copy passed a `prose-check`-standard pass (no AI tells, no decision
+  leakage into UI copy).
+- Anything visual was screenshotted (key states, light and dark where
+  supported) under `docs/visual-qa/<run-date>/` and passed `design-critic`
+  with `docs/DESIGN.md` and the universal design rules; `CRIT-xxx` findings
+  went through `fix-errors` and were re-captured until it passed.
+- A changed screen structure or state set is updated in the screen inventory
+  in `docs/wireframes/README.md`.
+- STATUS has a log line naming the TWK IDs cleared, with the pulse
+  (screenshots and staging URL) when UI changed, and the batch is committed and
+  pushed once green.
 
-### Step 2: Qualify every open entry
-Run the qualification test on each. Reclassify failures as above. What remains
-is the qualified batch.
+## Decisions (and why)
 
-### Step 3: Apply the batch
-Make the changes: smallest possible diff per tweak, matching the surrounding
-code and the `docs/DESIGN.md` token system (a styling tweak changes the token
-or uses an existing one; it doesn't hardcode a one-off value that drifts from
-the system).
+- **One commit for the batch is fine.** Why: the TWEAKS entries are the
+  per-item record.
+- **Penpot is not touched for a tweak**
+  ([`../../knowledge/workflow/penpot-wireframes.md`](../../knowledge/workflow/penpot-wireframes.md)).
+  Why: boards are a plan-time artifact refreshed on demand; the text
+  inventory carries current state without a browser.
+- **The critic still judges "just cosmetic" changes.** Why: cosmetic is
+  exactly what it judges.
 
-**Do not touch Penpot for a tweak.** Per
-[`../../knowledge/workflow/penpot-wireframes.md`](../../knowledge/workflow/penpot-wireframes.md)
-the boards are a plan-time artifact refreshed only on demand, so a tweak ships
-code-only: no Penpot-first step, no sync debt, no browser connection needed.
-What you **do** keep current is the text: if the tweak changes a screen's
-structure or the states it covers, update that row in the screen inventory in
-`docs/wireframes/README.md`.
+## Hard rules
 
-### Step 4: The light gate (proportional, but real)
-- **Always:** typecheck + lint + the **existing** test suite green. (No new
-  tests: a change that needs one failed the qualification test. The e2e gate
-  never applies here: `knowledge/workflow/e2e-gate.md` exempts the tweak lane
-  by construction, because a change that alters a user flow fails
-  qualification.)
-- **Changed copy:** a quick prose pass over the changed strings (the
-  `prose-check` standard: no AI tells, no decision leakage into UI copy per
-  universal rule 31).
-- **Anything visual:** capture screenshots of the affected screens (key states,
-  light + dark where supported) under `docs/visual-qa/<run-date>/` and put them
-  through the **`design-critic`** agent with `docs/DESIGN.md` and the universal
-  design rules: same judge as the feature loop, smaller docket. Route
-  `CRIT-xxx` findings to `fix-errors`, re-capture, re-submit until it passes.
-  The critic never gets skipped because a change is "just cosmetic": cosmetic
-  is exactly what it judges.
+The hard rules in `docs/DECISIONS.md` apply, plus:
 
-### Step 5: Record and stop
-- Move each applied entry from `## Open` to `## Done` in `docs/TWEAKS.md`
-  (title · what changed · branch · commit · date). Reclassified entries note
-  where they went.
-- Add a STATUS log line naming the TWK IDs cleared; include the pulse
-  (screenshots + staging URL) per the goal run's pulse rule when UI changed.
-- Commit and push to the working branch once green. One commit for the batch is
-  fine: the lane is light; the TWEAKS entries are the per-item record.
-
-## Rules
-
-- **The qualification test is the lane.** No exceptions, no "it's almost a
-  tweak." Reclassify and move on.
-- **ADRs govern here too.** Recorded decisions about copy, tokens, or layout
-  aren't overridden by a tweak entry: conflict goes to Alex.
-- **Never weaken the suite.** If an existing test fails after a tweak, the
-  change was behavioral: reclassify it as a bug and revert the change; don't
-  adjust the test.
-- **The critic gate holds.** Visual change → screenshots → design-critic pass,
-  every time.
-- Drain the whole open list in one run (entries are cheap); stop when it's
-  empty or everything left is reclassified/blocked.
-
-## Output
-
-`docs/TWEAKS.md` drained (each entry Done, reclassified, or blocked with a
-reason), the suite green, changes pushed to the working branch, and a STATUS
-log line: with screenshots for anything visual.
+- No exceptions to the qualification test.
+- An existing test failing after a tweak means the change was behavioral:
+  revert it and reclassify it as a bug; never adjust the test.
+- Never drop an entry silently.

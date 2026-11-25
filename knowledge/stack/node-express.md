@@ -3,7 +3,7 @@ id: stack-node-express
 title: "Node.js + Express"
 summary: "My go-to for standalone API services that don't belong in a Next.js project. Not glamorous. Extremely reliable once you know its quirks."
 tags: ["stack", "node-express"]
-updated: 2026-05-28
+updated: 2026-11-05
 ---
 # Node.js + Express
 
@@ -58,7 +58,7 @@ My go-to for standalone API services that don't belong in a Next.js project. Not
 ## Rules
 
 - Always add a global error handler middleware (4-parameter: `(err, req, res, next)`)
-- `async` route handlers need a wrapper or you'll silently swallow errors in Express v4
+- Use Express 5: it forwards rejected `async` handlers to the error handler. Only v4 needs a wrapper
 - Validate all request inputs: use Zod at the route handler level
 - Rate limit public endpoints; don't rely on infra alone
 
@@ -71,8 +71,6 @@ My go-to for standalone API services that don't belong in a Next.js project. Not
 
 ## AI notes
 
-AI is very good at Express boilerplate. Watch for missing async error handling: AI often generates `async` route handlers without the error propagation wrapper.
-
-Also watch for outdated patterns (Express 4 vs 5, which is now stable).
+AI is very good at Express boilerplate. Watch for Express 4 patterns (async wrappers, `req.param()`, string-pattern `*` routes) in Express 5 code.
 
 Useful prompt: *"Create an Express route handler for [endpoint]. Use TypeScript. Validate input with Zod. Handle async errors properly."*

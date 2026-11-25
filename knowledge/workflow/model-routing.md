@@ -343,7 +343,9 @@ impossible.
 
 ## 14. How the DevByAlex agents map to the tiers
 
-The plugin's agents carry their tier in frontmatter (`model:`); orchestrators
+The plugin's agents carry their tier in frontmatter (`model:`, plus
+`effort: high` on the `sonnet` agents so their reasoning depth is fixed rather
+than taken from whatever effort the session runs at); orchestrators
 (`dev-goal`, `feature-loop`, `feature-builder`) route work between them.
 
 | Agent | Tier | Notes |

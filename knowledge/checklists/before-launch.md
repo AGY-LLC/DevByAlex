@@ -3,7 +3,7 @@ id: checklists-before-launch
 title: "Before Launch Checklist"
 summary: "The things I check before going live. This has grown from painful experience."
 tags: ["checklists", "before-launch"]
-updated: 2026-05-28
+updated: 2026-11-05
 ---
 # Before Launch Checklist
 
@@ -83,4 +83,4 @@ For the broader *process*, staging environment, manual smoke testing, compliance
 
 ---
 
-*See also: [Production Readiness](./production-readiness.md) | [Security Basics](./security-basics.md) | [How I Start Projects](./how-i-start-projects.md)*
+*See also: [Production Readiness](./production-readiness.md) | [Security Basics](./security-basics.md)*

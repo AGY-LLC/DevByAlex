@@ -3,7 +3,7 @@ id: stack-server-actions-vs-api-routes
 title: "Server Actions vs API Routes"
 summary: "One of the first structural decisions in any Next.js App Router project: where does mutation logic live?"
 tags: ["stack", "server-actions-vs-api-routes"]
-updated: 2026-05-28
+updated: 2026-11-11
 ---
 # Server Actions vs API Routes
 
@@ -73,12 +73,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyToken } from '@/lib/auth'
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params // a Promise since Next 15
   const user = await verifyToken(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (user.id !== id) return NextResponse.json({ error: 'Not found' }, { status: 404 }) // ownership, no IDOR
 
   const profile = await prisma.user.findUnique({
-    where: { id: params.id },
+    where: { id },
     select: { id: true, name: true, email: true },
   })
 
@@ -129,7 +131,3 @@ This avoids duplicating business logic while allowing both clients to use the ap
 - Default to server actions for in-app mutations on web; move to an API route only when there's a reason
 - Keep the service layer as the shared logic core: actions and routes are thin wrappers
 - Name service functions clearly: `updateProfile`, `cancelSubscription`, not `handleFormSubmit`
-
----
-
-*See also: [Architecture Patterns index](./index.md) | [AI Directives](../ai/directives.md)*
